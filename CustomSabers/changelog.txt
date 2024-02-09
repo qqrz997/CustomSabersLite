@@ -1,0 +1,32 @@
+changelog
+
+0.3.2
+- Fix for settings now apply to custom and default trails correctly
+- Trail type setting now works as expected when using default sabers
+- Fix for disabling trails now makes trails completely invisible
+- Fixed an exception when trying to use custom trails while playing with the default sabers
+
+0.3.1
+- Settings UI is now more user friendly
+- Trail duration slider is now a percentage rather than absolute value
+
+0.3.0
+- Now loads custom trails with basic settings (doesn't work well with most trails)
+
+0.2.2
+- Added setting to change trail type (Vanilla, Custom, No trail)
+- Setup for custom trails
+- Code cleanup
+
+0.2.1
+- Added settings UI which allows changing trail duration and toggling white trail gradient
+- Setttings currently only apply to default trails
+
+0.2.0
+- Added UI list to select sabers
+- Custom sabers now use player's colours
+- Custom colors set in maps may not work
+
+0.1.0
+- Ability to replace default saber model with a custom saber model
+- Basic asset bundle loading and reading from config file
