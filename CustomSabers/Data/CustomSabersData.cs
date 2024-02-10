@@ -1,6 +1,10 @@
 ﻿using CustomSaber.Utilities;
 using System.IO;
 using UnityEngine;
+using AssetBundleLoadingTools.Utilities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System;
 
 namespace CustomSaber.Data
 {
@@ -10,9 +14,12 @@ namespace CustomSaber.Data
 
         public AssetBundle AssetBundle { get; }
 
-        public GameObject Sabers {  get; }
+        public GameObject Sabers { get; }
 
         public SaberDescriptor Descriptor { get; }
+
+        //Find out where to load the saber object
+        //Pass the saber object to the constructor?
 
         public CustomSaberData(string fileName)
         {
@@ -24,6 +31,27 @@ namespace CustomSaber.Data
                 {
                     AssetBundle = AssetBundle.LoadFromFile(Path.Combine(Plugin.CustomSaberAssetsPath, fileName));
                     Sabers = AssetBundle.LoadAsset<GameObject>("_CustomSaber");
+
+                    List<Material> materials = ShaderRepair.GetMaterialsFromGameObjectRenderers(Sabers);
+
+                    // Manually add CustomTrails to materials list
+                    foreach (var customTrail in Sabers.GetComponentsInChildren<CustomTrail>(true))
+                    {
+                        if (!materials.Contains(customTrail.TrailMaterial))
+                        {
+                            materials.Add(customTrail.TrailMaterial);
+                        }
+                    }
+                    var replacementInfo = ShaderRepair.FixShadersOnMaterials(materials);
+                    if (!replacementInfo.AllShadersReplaced)
+                    {
+                        Plugin.Log.Warn($"Missing shader replacement data for {fileName}:");
+                        foreach (var shaderName in replacementInfo.MissingShaderNames)
+                        {
+                            Plugin.Log.Warn($"\t- {shaderName}");
+                        }
+                    }
+
                     Descriptor = Sabers.GetComponent<SaberDescriptor>();
                     Descriptor.CoverImage = Descriptor.CoverImage ?? CustomSaberUtils.GetNullCoverImage();
                 }
@@ -52,26 +80,50 @@ namespace CustomSaber.Data
             }
         }
 
-        public CustomSaberData(GameObject leftSaber, GameObject rightSaber)
+        /*private static async Task<GameObject> LoadSaberFromAssetAsync(string fileName)
         {
-            FileName = "DefaultSabers";
+            string filePath = Path.Combine(Plugin.CustomSaberAssetsPath, fileName);
 
-            Descriptor = new SaberDescriptor
-            {
-                SaberName = "Default",
-                AuthorName = "Beat Games",
-                Description = "Vanilla game sabers"
-            };
+            Plugin.Log.Info($"1");
+            //Load bundle from file
+            var bundle = await AssetBundleExtensions.LoadFromFileAsync(filePath);
 
-            GameObject saberParent = new GameObject();
-            if (saberParent)
+            Plugin.Log.Info("2");
+            //Load saber object from asset bundle
+            var saberObject = await AssetBundleExtensions.LoadAssetAsync<GameObject>(bundle, "_CustomSaber");
+            Plugin.Log.Info("3");
+            //List of materials from the saber
+            List<Material> customSaberMaterials = ShaderRepair.GetMaterialsFromGameObjectRenderers(saberObject);
+            Plugin.Log.Info("4");
+            //Add CustomTrails to materials list
+            foreach (var customTrail in saberObject.GetComponentsInChildren<CustomTrail>(true))
             {
-                leftSaber.transform.SetParent(saberParent.transform);
-                rightSaber.transform.SetParent (saberParent.transform);
+                if (!customSaberMaterials.Contains(customTrail.TrailMaterial))
+                {
+                    customSaberMaterials.Add(customTrail.TrailMaterial);
+                }
+            }
+            Plugin.Log.Info("5");
+            //Fix shaders by comparing against .shaderbundle library 
+            var replacementInfo = await ShaderRepair.FixShadersOnMaterialsAsync(customSaberMaterials);
+
+            if (!replacementInfo.AllShadersReplaced)
+            {
+                Plugin.Log.Warn($"Missing shader replacement data for {fileName}");
             }
 
-            Sabers = saberParent;
-        }
+            *//*foreach (Material trailMaterial in customSaberMaterials)
+            {
+                var trailInfo = await ShaderRepair.FixShaderOnMaterialAsync(trailMaterial);
+
+                if (!trailInfo.AllShadersReplaced)
+                {
+                    Plugin.Log.Warn("Missing trail shader replacement data. Will use default trails.");
+                }
+            }*//*
+
+            return saberObject;
+        }*/
 
         public void Destroy()
         {
@@ -81,7 +133,7 @@ namespace CustomSaber.Data
             }
             else
             {
-                Object.Destroy(Descriptor);
+                UnityEngine.Object.Destroy(Descriptor);
             }
         }
     }

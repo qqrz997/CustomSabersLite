@@ -13,9 +13,13 @@ namespace CustomSaber.Utilities
     public class CustomSaberAssetLoader
     {
         public static bool IsLoaded {  get; private set; }
+
         public static int SelectedSaber { get; internal set; } = 0;
+
         public static IList<CustomSaberData> CustomSaber { get; private set; } = new List<CustomSaberData>();
+
         public static IEnumerable<string> CustomSaberFiles { get; private set; } = Enumerable.Empty<string>();
+
         public static Action customSabersLoaded;
 
         internal static void Load()
@@ -77,6 +81,7 @@ namespace CustomSaber.Utilities
         {
             IList<CustomSaberData> customSabers = new List<CustomSaberData>
             {
+                //Add default sabers to the start of the list
                 new CustomSaberData("DefaultSabers"),
             };
             
@@ -100,6 +105,6 @@ namespace CustomSaber.Utilities
             return customSabers;
         }
         
-        //public static int DeleteCurrentSaber(){}
+        //public static int DeleteSelectedSaber(){}
     }
 }
