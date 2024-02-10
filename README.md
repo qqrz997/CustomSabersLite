@@ -1,5 +1,8 @@
 # Custom Sabers Lite
-A beat saber plugin to replace default sabers with custom sabers
+A beat saber plugin to replace default sabers with custom sabers similar to how the original [Custom Sabers](https://github.com/Kylemc1413/CustomSaberPlugin) mod worked. This is essentially a stripped-down and re-assembled version that implements some of the basic functionality.
+
+Unlike the original Custom Sabers mod - this mod doesn't allow you to preview sabers in the game menu, currently only has a few config options, and it also does not handle `EventManager`s. This means that not all custom sabers will work fully as intended. However, most custom sabers should look correct.
+
 - Saber files are loaded from the `CustomSabers` folder in the Beat Saber game directory
 - Saber selection and settings can be found in the left panel in the main menu
 
