@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using static PlayerSaveData;
 
 namespace CustomSaber.Utilities
 {
@@ -26,6 +27,10 @@ namespace CustomSaber.Utilities
 
         private MeshRenderer defaultMeshRenderer;
 
+        private int defaultSamplingFrequency;
+
+        private int defaultGranularity;
+
         private SaberTrailRenderer defaultSaberTrailRenderer;
 
         private TrailElementCollection defaultTrailElementCollection;
@@ -34,12 +39,13 @@ namespace CustomSaber.Utilities
 
         public void CreateTrail(SaberTrail defaultTrail, Color saberColor)
         {
-            Plugin.Log.Info($"Replacing trail");
             try
             {
                 defaultTrailRendererPrefab = ReflectionUtil.GetField<SaberTrailRenderer, SaberTrail>(defaultTrail, "_trailRendererPrefab");
                 defaultSaberTrailRenderer = ReflectionUtil.GetField<SaberTrailRenderer, SaberTrail>(defaultTrail, "_trailRenderer");
                 defaultMeshRenderer = ReflectionUtil.GetField<MeshRenderer, SaberTrailRenderer>(defaultSaberTrailRenderer, "_meshRenderer");
+                defaultSamplingFrequency = ReflectionUtil.GetField<int, SaberTrail>(defaultTrail, "_samplingFrequency");
+                defaultGranularity = ReflectionUtil.GetField<int, SaberTrail>(defaultTrail, "_granularity");
                 defaultTrailElementCollection = ReflectionUtil.GetField<TrailElementCollection, SaberTrail>(defaultTrail, "_trailElementCollection");
                 defaultBladeMovementData = ReflectionUtil.GetField<IBladeMovementData, SaberTrail>(defaultTrail, "_movementData");
             }
@@ -49,16 +55,11 @@ namespace CustomSaber.Utilities
                 throw;
             }
 
-            TrailInstance.Setup(
-                defaultTrailRendererPrefab,
-                defaultSaberTrailRenderer,
-                defaultMeshRenderer,
-                defaultTrailElementCollection,
-                defaultBladeMovementData,
-                _customTrail.PointStart,
-                _customTrail.PointEnd,
-                _customTrail.TrailMaterial
-            );
+            TrailInstance.Setup();
+            //We will setup the trail values here
+
+            float trailIntensity = BS_Utils.Plugin.LevelData.GameplayCoreSceneSetupData.playerSpecificSettings.saberTrailIntensity;
+            Color trailColor = new Color { r = saberColor.r, g = saberColor.g, b = saberColor.b, a = trailIntensity };
 
             //a later version should do this in a more elegant way if i can figure out a way to
             //Swap material
@@ -78,7 +79,9 @@ namespace CustomSaber.Utilities
             {
                 CustomSaberUtils.SetWhiteTrailDuration(TrailInstance);
             }
-            ReflectionUtil.SetField<SaberTrail, Color>(TrailInstance, "_color", saberColor);
+            ReflectionUtil.SetField<SaberTrail, int>(TrailInstance, "_samplingFrequency", defaultSamplingFrequency);
+            ReflectionUtil.SetField<SaberTrail, int>(TrailInstance, "_granularity", defaultGranularity);
+            ReflectionUtil.SetField<SaberTrail, Color>(TrailInstance, "_color", trailColor);
             ReflectionUtil.SetField<SaberTrail, IBladeMovementData>(TrailInstance, "_movementData", defaultBladeMovementData);
             ReflectionUtil.SetField<SaberTrail, SaberTrailRenderer>(TrailInstance, "_trailRenderer", defaultSaberTrailRenderer);
             ReflectionUtil.SetField<SaberTrail, TrailElementCollection>(TrailInstance, "_trailElementCollection", defaultTrailElementCollection);

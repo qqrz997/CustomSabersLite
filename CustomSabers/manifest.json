@@ -2,8 +2,8 @@
   "$schema": "https://raw.githubusercontent.com/bsmg/BSIPA-MetadataFileSchema/master/Schema.json",
   "id": "CustomSabersLite",
   "name": "CustomSabersLite",
-  "author": "Various Modders",
-  "version": "0.3.3",
+  "author": "qqrz997",
+  "version": "0.3.4",
   "description": "A beat saber plugin to replace default sabers with custom sabers.",
   "gameVersion": "1.34.2",
   "dependsOn": {

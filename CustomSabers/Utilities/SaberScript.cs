@@ -23,9 +23,9 @@ namespace CustomSaber.Utilities
 
         public static ColorScheme colorScheme;
 
-        private EventManager leftEventMananger;
+        //private EventManager leftEventMananger; todo
 
-        private EventManager rightEventMananger;
+        //private EventManager rightEventMananger; todo
 
         public static void Load()
         {
@@ -111,14 +111,14 @@ namespace CustomSaber.Utilities
 
             foreach (Saber defaultSaber in defaultSabers)
             {
-                Plugin.Log.Info($"Hiding default saber model for {defaultSaber.saberType}");
+                Plugin.Log.Debug($"Hiding default saber model for {defaultSaber.saberType}");
 
                 SaberTrail defaultTrail = GetVanillaTrail(defaultSaber);
 
                 Color saberColor = GetSaberColorByType(defaultSaber.saberType);
 
+                //Hide each saber mesh
                 IEnumerable<MeshFilter> meshFilters = defaultSaber.transform.GetComponentsInChildren<MeshFilter>();
-
                 foreach (MeshFilter meshFilter in meshFilters)
                 {
                     meshFilter.gameObject.SetActive(!saberRoot);
@@ -127,21 +127,23 @@ namespace CustomSaber.Utilities
                     filter.gameObject.SetActive(!saberRoot);
                 }
 
-                GameObject saber = GetCustomSaberByType(defaultSaber.saberType);
+                GameObject customSaber = GetCustomSaberByType(defaultSaber.saberType);
 
-                AttachSaberToDefaultSaber(saber, defaultSaber);
-                SetSaberColour(saber, saberColor);
+                AttachSaberToDefaultSaber(customSaber, defaultSaber);
+                SetCustomSaberColour(customSaber, saberColor);
 
                 switch (CustomSaberConfig.Instance.TrailType)
                 {
                     case TrailType.Custom:
-                        AddCustomSaberTrails(saber, saberColor, defaultSaber, defaultTrail);
+                        AddCustomSaberTrails(customSaber, saberColor, defaultSaber, defaultTrail);
                         break;
+
                     case TrailType.Vanilla:
                         CustomSaberUtils.SetTrailDuration(defaultTrail);
                         CustomSaberUtils.SetWhiteTrailDuration(defaultTrail);
                         break;
-                    default:
+
+                    case TrailType.None:
                         CustomSaberUtils.HideTrail(defaultTrail); 
                         break;
                 }
@@ -150,11 +152,12 @@ namespace CustomSaber.Utilities
 
         private Color GetSaberColorByType(SaberType type)
         {
-            Color color = Color.black;
+            Color color = Color.white;
             switch (type)
             {
                 case SaberType.SaberA:
                     color = colorScheme.saberAColor; break;
+                    
                 case SaberType.SaberB:
                     color = colorScheme.saberBColor; break;
             }
@@ -182,14 +185,18 @@ namespace CustomSaber.Utilities
             }
             else
             {
-                Plugin.Log.Info($"Initializing custom trail to {defaultTrail.name}");
+                Plugin.Log.Debug($"Initializing custom trail to {defaultTrail.name}");
+
+                //Set trail transforms before initializing the trails
+                ReflectionUtil.SetField(defaultSaber, "_saberBladeTopTransform", customTrail.PointEnd);
+                ReflectionUtil.SetField(defaultSaber, "_saberBladeBottomTransform", customTrail.PointStart);
 
                 var handler = new CustomSaberTrailHandler(defaultSaber, customTrail);
                 handler.CreateTrail(defaultTrail, saberColor);
             }
         }
 
-        private void SetSaberColour(GameObject saber, Color color)
+        private void SetCustomSaberColour(GameObject saber, Color color)
         {
             IEnumerable<Renderer> renderers = saber.GetComponentsInChildren<Renderer>();
 
@@ -213,8 +220,6 @@ namespace CustomSaber.Utilities
                 }
             }
         }
-
-        
 
         private SaberTrail GetVanillaTrail(Saber defaultSaber)
         {

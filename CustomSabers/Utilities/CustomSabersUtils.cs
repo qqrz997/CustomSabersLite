@@ -66,18 +66,6 @@ namespace CustomSaber.Utilities
             return nullCoverImage;
         }
 
-        public static GameObject CreateGameObject(this Transform parent, string name, bool worldPositionStays = false)
-        {
-            var go = new GameObject(name);
-            go.transform.SetParent(parent, worldPositionStays);
-            return go;
-        }
-
-        public static GameObject CreateGameObject(this GameObject parent, string name, bool worldPositionStays = false)
-        {
-            return parent.transform.CreateGameObject(name, worldPositionStays);
-        }
-
         public static void HideTrail(SaberTrail trail)
         {
             trail.enabled = false;

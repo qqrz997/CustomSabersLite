@@ -80,21 +80,20 @@ namespace CustomSaber.Data
             }
         }
 
+        //todo
         /*private static async Task<GameObject> LoadSaberFromAssetAsync(string fileName)
         {
             string filePath = Path.Combine(Plugin.CustomSaberAssetsPath, fileName);
 
-            Plugin.Log.Info($"1");
             //Load bundle from file
             var bundle = await AssetBundleExtensions.LoadFromFileAsync(filePath);
 
-            Plugin.Log.Info("2");
             //Load saber object from asset bundle
             var saberObject = await AssetBundleExtensions.LoadAssetAsync<GameObject>(bundle, "_CustomSaber");
-            Plugin.Log.Info("3");
+
             //List of materials from the saber
             List<Material> customSaberMaterials = ShaderRepair.GetMaterialsFromGameObjectRenderers(saberObject);
-            Plugin.Log.Info("4");
+
             //Add CustomTrails to materials list
             foreach (var customTrail in saberObject.GetComponentsInChildren<CustomTrail>(true))
             {
@@ -103,7 +102,7 @@ namespace CustomSaber.Data
                     customSaberMaterials.Add(customTrail.TrailMaterial);
                 }
             }
-            Plugin.Log.Info("5");
+
             //Fix shaders by comparing against .shaderbundle library 
             var replacementInfo = await ShaderRepair.FixShadersOnMaterialsAsync(customSaberMaterials);
 
