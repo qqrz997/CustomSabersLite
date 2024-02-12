@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.ViewControllers;
-using UnityEngine;
-using TMPro;
-using IPA.Utilities;
 using HMUI;
 using CustomSaber.Data;
 using CustomSaber.Utilities;
@@ -31,8 +25,8 @@ namespace CustomSaber.UI
         public void Select(TableView _, int row)
         {
             CustomSaberAssetLoader.SelectedSaber = row;
-            CustomSaberConfig.Instance.CurrentlySelectedSaber = CustomSaberAssetLoader.CustomSaber[row].FileName;
-            customSaberChanged?.Invoke(CustomSaberAssetLoader.CustomSaber[row]);
+            CustomSaberConfig.Instance.CurrentlySelectedSaber = CustomSaberAssetLoader.CustomSabers[row].FileName;
+            customSaberChanged?.Invoke(CustomSaberAssetLoader.CustomSabers[row]);
         }
 
         [UIAction("reloadSabers")]
@@ -50,9 +44,9 @@ namespace CustomSaber.UI
 
             Plugin.Log.Debug("Showing list of selectable sabers");
 
-            for (int i = 0; i < CustomSaberAssetLoader.CustomSaber.Count; i++)
+            for (int i = 0; i < CustomSaberAssetLoader.CustomSabers.Count; i++)
             {
-                CustomSaberData saber = CustomSaberAssetLoader.CustomSaber[i];
+                CustomSaberData saber = CustomSaberAssetLoader.CustomSabers[i];
                 Plugin.Log.Debug($"#{i+1} \"{saber.FileName}\"");
                 var customCellInfo = new CustomListTableData.CustomCellInfo(saber.Descriptor.SaberName, saber.Descriptor.AuthorName, saber.Descriptor.CoverImage);
                 customListTableData.data.Add(customCellInfo);

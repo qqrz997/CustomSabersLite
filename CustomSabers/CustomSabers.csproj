@@ -148,7 +148,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\SaberSettingsViewController.cs" />
     <Compile Include="UI\SettingsUI.cs" />
-    <Compile Include="Utilities\CustomSaberModelController.cs" />
     <Compile Include="Utilities\CustomSabersAssetLoader.cs" />
     <Compile Include="Utilities\CustomSabersUtils.cs" />
     <Compile Include="Utilities\CustomSaberTrail.cs" />

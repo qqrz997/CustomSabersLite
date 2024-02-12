@@ -11,6 +11,7 @@ namespace CustomSaber.UI
         public bool AllowFlowCoordinatorChange { get; protected set; } = true;
 
         private SaberListViewController saberList;
+
         private SaberSettingsViewController saberSettings;
 
         public void Awake()

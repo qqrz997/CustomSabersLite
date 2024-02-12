@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using UnityEngine;
-using System.Reflection;
-using CustomSaber.Utilities;
 using CustomSaber.Configuration;
 using IPA.Utilities;
 

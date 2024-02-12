@@ -16,7 +16,7 @@ namespace CustomSaber.Utilities
 
         public static int SelectedSaber { get; internal set; } = 0;
 
-        public static IList<CustomSaberData> CustomSaber { get; private set; } = new List<CustomSaberData>();
+        public static IList<CustomSaberData> CustomSabers { get; private set; } = new List<CustomSaberData>();
 
         public static IEnumerable<string> CustomSaberFiles { get; private set; } = Enumerable.Empty<string>();
 
@@ -24,6 +24,8 @@ namespace CustomSaber.Utilities
 
         internal static void Load()
         {
+            var startTime = DateTime.Now;
+
             Directory.CreateDirectory(Plugin.CustomSaberAssetsPath);
 
             IEnumerable<string> saberExt = new List<string> { "*.saber" };
@@ -34,17 +36,17 @@ namespace CustomSaber.Utilities
 
             Plugin.Log.Info($"{CustomSaberFiles.Count()} external sabers found.");
 
-            CustomSaber = LoadCustomSaber(CustomSaberFiles);
+            CustomSabers = LoadCustomSaber(CustomSaberFiles);
 
-            Plugin.Log.Info($"{CustomSaber.Count} total sabers loaded");
+            Plugin.Log.Info($"{CustomSabers.Count} total sabers loaded in {(DateTime.Now - startTime).TotalMilliseconds}ms");
 
             Plugin.Log.Debug($"Currently selected saber: {CustomSaberConfig.Instance.CurrentlySelectedSaber}");
 
             if (CustomSaberConfig.Instance.CurrentlySelectedSaber != null)
             {
-                for (int i = 0; i < CustomSaber.Count; i++)
+                for (int i = 0; i < CustomSabers.Count; i++)
                 {
-                    if (CustomSaber[i].FileName == CustomSaberConfig.Instance.CurrentlySelectedSaber)
+                    if (CustomSabers[i].FileName == CustomSaberConfig.Instance.CurrentlySelectedSaber)
                     {
                         SelectedSaber = i;
                         break;
@@ -65,15 +67,15 @@ namespace CustomSaber.Utilities
 
         internal static void Clear()
         {
-            int numberOfObjects = CustomSaber.Count;
+            int numberOfObjects = CustomSabers.Count;
             for (int i = 0; i < numberOfObjects; i++)
             {
-                CustomSaber[i].Destroy();
-                CustomSaber[i] = null;
+                CustomSabers[i].Destroy();
+                CustomSabers[i] = null;
             }
 
             SelectedSaber = 0;
-            CustomSaber = new List<CustomSaberData>();
+            CustomSabers = new List<CustomSaberData>();
             CustomSaberFiles = Enumerable.Empty<string>();
         }
 

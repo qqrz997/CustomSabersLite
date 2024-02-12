@@ -3,8 +3,6 @@ using System.IO;
 using UnityEngine;
 using AssetBundleLoadingTools.Utilities;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using System;
 
 namespace CustomSaber.Data
 {
@@ -14,7 +12,7 @@ namespace CustomSaber.Data
 
         public AssetBundle AssetBundle { get; }
 
-        public GameObject Sabers { get; }
+        public GameObject SabersObject { get; }
 
         public SaberDescriptor Descriptor { get; }
 
@@ -30,12 +28,12 @@ namespace CustomSaber.Data
                 try
                 {
                     AssetBundle = AssetBundle.LoadFromFile(Path.Combine(Plugin.CustomSaberAssetsPath, fileName));
-                    Sabers = AssetBundle.LoadAsset<GameObject>("_CustomSaber");
+                    SabersObject = AssetBundle.LoadAsset<GameObject>("_CustomSaber");
 
-                    List<Material> materials = ShaderRepair.GetMaterialsFromGameObjectRenderers(Sabers);
+                    List<Material> materials = ShaderRepair.GetMaterialsFromGameObjectRenderers(SabersObject);
 
                     // Manually add CustomTrails to materials list
-                    foreach (var customTrail in Sabers.GetComponentsInChildren<CustomTrail>(true))
+                    foreach (var customTrail in SabersObject.GetComponentsInChildren<CustomTrail>(true))
                     {
                         if (!materials.Contains(customTrail.TrailMaterial))
                         {
@@ -52,7 +50,7 @@ namespace CustomSaber.Data
                         }
                     }
 
-                    Descriptor = Sabers.GetComponent<SaberDescriptor>();
+                    Descriptor = SabersObject.GetComponent<SaberDescriptor>();
                     Descriptor.CoverImage = Descriptor.CoverImage ?? CustomSaberUtils.GetNullCoverImage();
                 }
                 catch

@@ -7,6 +7,7 @@ namespace CustomSaber.UI
     internal class SettingsUI
     {
         public static CustomSaberFlowCoordinator flowCoordinator;
+
         public static bool created = false;
 
         public static void CreateMenu()

@@ -17,10 +17,10 @@ namespace CustomSaber.Utilities
 
         private readonly CustomTrail _customTrail;
 
-        public CustomSaberTrailHandler(Saber defaultSaber, CustomTrail customTrail)
+        public CustomSaberTrailHandler(GameObject customSaber, CustomTrail customTrail)
         {
             _customTrail = customTrail;
-            TrailInstance = defaultSaber.gameObject.AddComponent<CustomSaberTrail>();
+            TrailInstance = customSaber.gameObject.AddComponent<CustomSaberTrail>();
         }
 
         private SaberTrailRenderer defaultTrailRendererPrefab;

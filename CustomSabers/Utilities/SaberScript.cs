@@ -53,23 +53,23 @@ namespace CustomSaber.Utilities
                 sabers = null;
             }
 
-            CustomSaberData customSaberData = CustomSaberAssetLoader.CustomSaber[CustomSaberAssetLoader.SelectedSaber];
+            CustomSaberData customSaberData = CustomSaberAssetLoader.CustomSabers[CustomSaberAssetLoader.SelectedSaber];
 
             if (customSaberData != null)
             {
-                Plugin.Log.Debug($"Selected saber: #{CustomSaberAssetLoader.SelectedSaber + 1} {customSaberData.FileName}"); //DefaultSabers
+                Plugin.Log.Debug($"Selected saber: #{CustomSaberAssetLoader.SelectedSaber + 1} {customSaberData.FileName}");
 
                 if (customSaberData.FileName != "DefaultSabers")
-                {//
-                    if (customSaberData.Sabers)
+                {
+                    if (customSaberData.SabersObject)
                     {
                         Plugin.Log.Debug($"Custom saber is selected, replacing sabers: {customSaberData.FileName}");
-                        sabers = Instantiate(customSaberData.Sabers);
+                        sabers = Instantiate(customSaberData.SabersObject);
                         rightSaber = sabers.transform.Find("RightSaber").gameObject;
                         leftSaber = sabers.transform.Find("LeftSaber").gameObject;
                     }
 
-                    StartCoroutine(WaitForSabers(customSaberData.Sabers));
+                    StartCoroutine(WaitForSabers(customSaberData.SabersObject));
                 }
                 else
                 {
@@ -174,9 +174,9 @@ namespace CustomSaber.Utilities
             }
         }
 
-        private void AddCustomSaberTrails(GameObject saber, Color saberColor, Saber defaultSaber, SaberTrail defaultTrail)
+        private void AddCustomSaberTrails(GameObject customSaber, Color saberColor, Saber defaultSaber, SaberTrail defaultTrail)
         {
-            CustomTrail customTrail = GetCustomTrail(saber);
+            CustomTrail customTrail = GetCustomTrail(customSaber);
 
             if (customTrail == null)
             {
@@ -191,7 +191,7 @@ namespace CustomSaber.Utilities
                 ReflectionUtil.SetField(defaultSaber, "_saberBladeTopTransform", customTrail.PointEnd);
                 ReflectionUtil.SetField(defaultSaber, "_saberBladeBottomTransform", customTrail.PointStart);
 
-                var handler = new CustomSaberTrailHandler(defaultSaber, customTrail);
+                var handler = new CustomSaberTrailHandler(customSaber, customTrail);
                 handler.CreateTrail(defaultTrail, saberColor);
             }
         }

@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HMUI;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.ViewControllers;
 using CustomSaber.Configuration;
 using CustomSaber.Data;
-using CustomSaber.Utilities;
 
 namespace CustomSaber.UI
 {
