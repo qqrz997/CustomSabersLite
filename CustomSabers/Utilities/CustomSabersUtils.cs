@@ -74,7 +74,7 @@ namespace CustomSaber.Utilities
                 trailDuration = CustomSaberConfig.Instance.TrailDuration / 100f * trailDuration;
             }
 
-            if (trailDuration <= 0.01)
+            if (trailDuration == 0)
             {
                 HideTrail(trail);
             }

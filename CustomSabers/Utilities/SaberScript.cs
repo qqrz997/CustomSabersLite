@@ -21,7 +21,7 @@ namespace CustomSaber.Utilities
 
         private GameObject rightSaber;
 
-        public static ColorScheme colorScheme;
+        public static ColorScheme colourScheme;
 
         //private EventManager leftEventMananger; todo
 
@@ -45,7 +45,7 @@ namespace CustomSaber.Utilities
 
         private void Awake()
         {
-            colorScheme = BS_Utils.Plugin.LevelData.GameplayCoreSceneSetupData.colorScheme;
+            colourScheme = BS_Utils.Plugin.LevelData.GameplayCoreSceneSetupData.colorScheme;
             
             if (sabers)
             {
@@ -115,7 +115,7 @@ namespace CustomSaber.Utilities
 
                 SaberTrail defaultTrail = GetVanillaTrail(defaultSaber);
 
-                Color saberColor = GetSaberColorByType(defaultSaber.saberType);
+                Color saberColour = GetSaberColourByType(defaultSaber.saberType);
 
                 //Hide each saber mesh
                 IEnumerable<MeshFilter> meshFilters = defaultSaber.transform.GetComponentsInChildren<MeshFilter>();
@@ -130,12 +130,12 @@ namespace CustomSaber.Utilities
                 GameObject customSaber = GetCustomSaberByType(defaultSaber.saberType);
 
                 AttachSaberToDefaultSaber(customSaber, defaultSaber);
-                SetCustomSaberColour(customSaber, saberColor);
+                SetCustomSaberColour(customSaber, saberColour);
 
                 switch (CustomSaberConfig.Instance.TrailType)
                 {
                     case TrailType.Custom:
-                        AddCustomSaberTrails(customSaber, saberColor, defaultSaber, defaultTrail);
+                        AddCustomSaberTrails(customSaber, saberColour, defaultSaber, defaultTrail);
                         break;
 
                     case TrailType.Vanilla:
@@ -150,18 +150,18 @@ namespace CustomSaber.Utilities
             }
         }
 
-        private Color GetSaberColorByType(SaberType type)
+        private Color GetSaberColourByType(SaberType type)
         {
-            Color color = Color.white;
+            Color colour = Color.white;
             switch (type)
             {
                 case SaberType.SaberA:
-                    color = colorScheme.saberAColor; break;
+                    colour = colourScheme.saberAColor; break;
                     
                 case SaberType.SaberB:
-                    color = colorScheme.saberBColor; break;
+                    colour = colourScheme.saberBColor; break;
             }
-            return color;
+            return colour;
         }
 
         private void AttachSaberToDefaultSaber(GameObject saber, Saber defaultSaber)
@@ -174,7 +174,7 @@ namespace CustomSaber.Utilities
             }
         }
 
-        private void AddCustomSaberTrails(GameObject customSaber, Color saberColor, Saber defaultSaber, SaberTrail defaultTrail)
+        private void AddCustomSaberTrails(GameObject customSaber, Color saberColour, Saber defaultSaber, SaberTrail defaultTrail)
         {
             CustomTrail customTrail = GetCustomTrail(customSaber);
 
@@ -192,11 +192,11 @@ namespace CustomSaber.Utilities
                 ReflectionUtil.SetField(defaultSaber, "_saberBladeBottomTransform", customTrail.PointStart);
 
                 var handler = new CustomSaberTrailHandler(customSaber, customTrail);
-                handler.CreateTrail(defaultTrail, saberColor);
+                handler.CreateTrail(defaultTrail, saberColour);
             }
         }
 
-        private void SetCustomSaberColour(GameObject saber, Color color)
+        private void SetCustomSaberColour(GameObject saber, Color colour)
         {
             IEnumerable<Renderer> renderers = saber.GetComponentsInChildren<Renderer>();
 
@@ -209,12 +209,12 @@ namespace CustomSaber.Utilities
                         if (rendererMaterial.HasProperty("_CustomColors"))
                         {
                             if (rendererMaterial.GetFloat("_CustomColors") > 0)
-                                rendererMaterial.SetColor("_Color", color);
+                                rendererMaterial.SetColor("_Color", colour);
                         }
                         else if (rendererMaterial.HasProperty("_Glow") && rendererMaterial.GetFloat("_Glow") > 0
                             || rendererMaterial.HasProperty("_Bloom") && rendererMaterial.GetFloat("_Bloom") > 0)
                         {
-                            rendererMaterial.SetColor("_Color", color);
+                            rendererMaterial.SetColor("_Color", colour);
                         }
                     }
                 }

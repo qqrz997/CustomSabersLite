@@ -1,5 +1,8 @@
 changelog
 
+0.3.5
+- Fix for trail duration setting now correctly applies to custom trails at all values
+
 0.3.4
 - Now uses correct trail width set by saber author (most sabers should now look relatively accurate)
 - Fix for trail intensity which now controls the transparency of custom trails as well as default trails
@@ -33,7 +36,7 @@ changelog
 0.2.0
 - Added UI list to select sabers
 - Custom sabers now use player's colours
-- Custom colors set in maps may not work
+- Custom colours set in maps may not work
 
 0.1.0
 - Ability to replace default saber model with a custom saber model
