@@ -3,7 +3,7 @@
   "id": "CustomSabersLite",
   "name": "CustomSabersLite",
   "author": "qqrz997",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "A PC beat saber plugin to replace default sabers with custom sabers.",
   "gameVersion": "1.34.2",
   "dependsOn": {
