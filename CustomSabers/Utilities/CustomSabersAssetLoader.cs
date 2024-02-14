@@ -38,7 +38,7 @@ namespace CustomSaber.Utilities
 
             CustomSabers = LoadCustomSaber(CustomSaberFiles);
 
-            Plugin.Log.Info($"{CustomSabers.Count} total sabers loaded in {(DateTime.Now - startTime).TotalMilliseconds}ms");
+            Plugin.Log.Info($"{CustomSabers.Count} total sabers loaded in {Math.Floor((DateTime.Now - startTime).TotalMilliseconds)}ms");
 
             Plugin.Log.Debug($"Currently selected saber: {CustomSaberConfig.Instance.CurrentlySelectedSaber}");
 

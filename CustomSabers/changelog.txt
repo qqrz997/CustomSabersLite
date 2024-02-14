@@ -1,5 +1,8 @@
 changelog
 
+0.3.6
+- Trail duration slider setting is now only interactable when Override Trail Duration is toggled on to make the link between the two settings immediately obvious
+
 0.3.5
 - Fix for trail duration setting now correctly applies to custom trails at all values
 
