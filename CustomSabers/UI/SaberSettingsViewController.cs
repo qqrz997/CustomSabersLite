@@ -7,6 +7,7 @@ using BeatSaberMarkupLanguage.TypeHandlers;
 using BeatSaberMarkupLanguage.ViewControllers;
 using CustomSaber.Configuration;
 using CustomSaber.Data;
+using UnityEngine;
 using TMPro;
 
 namespace CustomSaber.UI
@@ -20,7 +21,10 @@ namespace CustomSaber.UI
         private bool parsed;
         
         [UIComponent("trail-duration")]
-        private GenericInteractableSetting TrailDurationInteractable;
+        private GenericInteractableSetting trailDurationInteractable;
+
+        [UIComponent("trail-duration")]
+        private TextMeshProUGUI trailDurationText;
 
         [UIValue("disable-white-trail")]
         public bool DisableWhiteTrail
@@ -42,7 +46,8 @@ namespace CustomSaber.UI
 
             if (parsed)
             {
-                TrailDurationInteractable.interactable = OverrideTrailDuration;
+                trailDurationText.color = new Color(1f, 1f, 1f, value ? 1f : 0.5f);
+                trailDurationInteractable.interactable = OverrideTrailDuration;
             }
         }
 

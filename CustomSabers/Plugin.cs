@@ -54,9 +54,9 @@ namespace CustomSaber
         #endregion
 
         [OnStart]
-        public void OnApplicationStart()
+        public async void OnApplicationStart()
         {
-            CustomSaberAssetLoader.Load();
+            await CustomSaberAssetLoader.Load();
             SettingsUI.CreateMenu();
             AddEvents();
         }
@@ -64,7 +64,7 @@ namespace CustomSaber
         [OnExit]
         public void OnApplicationQuit()
         {
-            //CustomSaberAssetLoader.Clear();
+            CustomSaberAssetLoader.Clear();
             RemoveEvents();
         }
 

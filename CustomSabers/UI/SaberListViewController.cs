@@ -30,9 +30,9 @@ namespace CustomSaber.UI
         }
 
         [UIAction("reloadSabers")]
-        public void ReloadMaterials()
+        public async void ReloadMaterials()
         {
-            CustomSaberAssetLoader.Reload();
+            await CustomSaberAssetLoader.Reload();
             SetupList();
             Select(customListTableData.tableView, CustomSaberAssetLoader.SelectedSaber);
         }
