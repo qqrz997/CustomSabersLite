@@ -1,18 +1,25 @@
 <bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
   <vertical vertical-fit='MinSize' spacing='5'>
+    
     <horizontal background='panel-top' pad-left='8' pad-right='8' horizontal-fit='PreferredSize'>
       <text text='Settings' align='Center' font-size='6'></text>
     </horizontal>
+    
     <horizontal background='round-rect-panel' pad='3' horizontal-fit='PreferredSize'>
       <vertical child-control-height='False' child-expand-height='False'>
+        
         <!--Toggle white trail gradient-->
         <checkbox-setting text='Disable White Trail' value='disable-white-trail' apply-on-change='true' hover-hint='Toggles the initial white part of trails' />
+        
         <!--Toggle trail duration overriding-->
         <checkbox-setting text='Override Trail Length' value='override-trail-duration' on-change='set-interactable' apply-on-change='false' hover-hint='Allows you to set the length of trails' />
+        
         <!--Trail duration as a multiplier to SaberTail _trailDuration from 0% to 100%-->
         <slider-setting text='Trail Length' value='trail-duration' id='trail-duration' interactable='true' min='0' max='100' increment='1' integer-only='true' show-buttons='true' apply-on-change='true' hover-hint='Tune the duration/length of sabers&apos; trails' />
+        
         <!--Trail type (custom, vanilla, none)-->
         <list-setting text='Saber Trail Type' value='trail-type' options='trail-type-list' apply-on-change='true' hover-hint='Select the type of trail you want to use' />
+        
       </vertical>
     </horizontal>
   </vertical>

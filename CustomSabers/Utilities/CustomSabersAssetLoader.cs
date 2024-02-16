@@ -91,6 +91,21 @@ namespace CustomSaber.Utilities
                 new CustomSaberData("DefaultSabers")
             };
 
+            /*List<Task<CustomSaberData>> tasks = new List<Task<CustomSaberData>>();
+
+            foreach (string file in customSaberFiles)
+            {
+                tasks.Add(Task.Run(() => LoadSaberFromAssetAsync(file)));
+            }
+
+            var results = await Task.WhenAll(tasks);
+
+            foreach (var saberData in results)
+            {
+                Plugin.Log.Info($"{saberData.FileName} by {saberData.Descriptor.AuthorName} loaded");
+                customSabers.Add(saberData);
+            }*/
+
             foreach (string file in customSaberFiles)
             {
                 customSabers.Add(await Task.Run(() => LoadSaberFromAssetAsync(file)));
@@ -142,7 +157,6 @@ namespace CustomSaber.Utilities
             GameObject sabers = null;
             SaberDescriptor descriptor;
 
-            Plugin.Log.Info($"Loading saber from {fileName}");
             try
             {
                 bundle = await AssetBundleExtensions.LoadFromFileAsync(Path.Combine(Plugin.CustomSaberAssetsPath, fileName));
