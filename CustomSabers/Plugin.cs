@@ -1,22 +1,13 @@
 ﻿using IPA;
 using IPALogger = IPA.Logging.Logger;
-using IPA.Config;
 using IPA.Utilities;
 using IPA.Config.Stores;
 using Config = IPA.Config.Config;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
-using UnityEngine.SceneManagement;
-using BS_Utils;
 using CustomSaber.Configuration;
 using CustomSaber.Utilities;
 using BS_Utils.Utilities;
 using System.IO;
 using CustomSaber.UI;
-using System.Reflection;
 
 namespace CustomSaber
 {

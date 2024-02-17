@@ -179,8 +179,5 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\defaultsabers-image.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="changelog.txt" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

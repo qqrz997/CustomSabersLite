@@ -18,10 +18,10 @@ namespace CustomSaber.UI
 
         public Action<CustomSaberData> customSaberChanged;
 
-        [UIComponent("saberList")]
+        [UIComponent("SaberList")]
         public CustomListTableData customListTableData;
 
-        [UIAction("saberSelect")]
+        [UIAction("SelectSaber")]
         public void Select(TableView _, int row)
         {
             CustomSaberAssetLoader.SelectedSaber = row;
@@ -29,13 +29,27 @@ namespace CustomSaber.UI
             customSaberChanged?.Invoke(CustomSaberAssetLoader.CustomSabers[row]);
         }
 
-        [UIAction("reloadSabers")]
+        [UIAction("OpenInExplorer")]
+        public void OpenInExplorer()
+        {
+            //todo - open custom sabers folder
+        }
+
+        [UIAction("DeleteSelectedSaber")]
+        public void DeleteSelectedSaber()
+        {
+            //todo - saber deletion
+        }
+
+        [UIAction("ReloadSabers")]
         public async void ReloadMaterials()
         {
             await CustomSaberAssetLoader.Reload();
             SetupList();
             Select(customListTableData.tableView, CustomSaberAssetLoader.SelectedSaber);
         }
+
+        
 
         [UIAction("#post-parse")]
         public void SetupList()

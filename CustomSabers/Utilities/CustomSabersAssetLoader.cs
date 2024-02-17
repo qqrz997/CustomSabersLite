@@ -91,6 +91,7 @@ namespace CustomSaber.Utilities
                 new CustomSaberData("DefaultSabers")
             };
 
+            //todo - faster async saber loading ?
             /*List<Task<CustomSaberData>> tasks = new List<Task<CustomSaberData>>();
 
             foreach (string file in customSaberFiles)
@@ -188,6 +189,7 @@ namespace CustomSaber.Utilities
             return newSaberData;
         }
         
+        //todo - saber deletion
         //public static int DeleteSelectedSaber(){}
     }
 }

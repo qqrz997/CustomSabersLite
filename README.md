@@ -14,4 +14,12 @@ Settings are set in-game from the left panel in the Custom Sabers menu. The poss
 - `Trail Type` Change the type of trail to use between Custom, Vanilla, and no trails.
 
 ## Manual Installation
-Place the contents of the unzipped folder from the latest [release](https://github.com/qqrz997/CustomSabersLite/releases/latest) into your Beat Saber installation folder. For help with installing mods join the Beat Saber Modding Group discord server.
+> [!IMPORTANT]
+> In addition to BSIPA, you must have [AssetBundleLoadingTools](https://github.com/nicoco007/AssetBundleLoadingTools), [BS Utils](https://github.com/Kylemc1413/Beat-Saber-Utils), and [BeatSaberMarkupLanguage (BSML)](https://github.com/monkeymanboy/BeatSaberMarkupLanguage) installed for this mod to load. Install them using your mod manager i.e. [ModAssistant](https://bsmg.wiki/pc-modding.html#mod-assistant).
+
+Place the contents of the unzipped folder from the latest [release](https://github.com/qqrz997/CustomSabersLite/releases/latest) into your Beat Saber installation folder. For help with installing mods join the [Beat Saber Modding Group](https://discord.gg/beatsabermods) discord server.
+
+### Todo
+- Some sabers are incorrectly getting the same colour for both sabers
+- Event managers
+- More settings and possibly better UI

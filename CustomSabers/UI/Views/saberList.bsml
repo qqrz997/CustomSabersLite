@@ -4,29 +4,34 @@
     <vertical child-control-height='True' child-expand-height='True' child-align='MiddleCenter'>
 
       <horizontal>
-        <page-button event-click='saberList#PageUp' direction='Up' />
+        <page-button event-click='SaberList#PageUp' direction='Up' />
       </horizontal>
       
       <horizontal background='round-rect-panel' pad='3'>
-        <list id='saberList' select-cell='saberSelect' visible-cells='6' expand-cell='true'/>
+        <list id='SaberList' select-cell='SelectSaber' visible-cells='6' expand-cell='true'/>
       </horizontal>
 
       <horizontal>
-        <page-button event-click='saberList#PageDown' direction='Down' />
+        <page-button event-click='SaberList#PageDown' direction='Down' />
       </horizontal>
       
     </vertical>
+    
     <!-- buttons panel -->
     <vertical child-control-height='False' child-expand-height='False' child-align='MiddleCenter'>
 
       <horizontal>
-        <button text='Refresh Sabers' on-click='reloadSabers' />
+        <button on-click='OpenInExplorer' text='Open Sabers Folder (WIP)'/>
       </horizontal>
-
+        
       <horizontal>
-        <button text='Delete Saber (WIP)' face-color='#a83232'/>
+        <button on-click='ReloadSabers' text='Refresh Sabers' />
       </horizontal>
       
+      <horizontal>
+        <button on-click='DeleteSelectedSaber' text='Delete Saber (WIP)' face-color='#a83232'/>
+      </horizontal>
+    
     </vertical>
   </horizontal>
 </bg>

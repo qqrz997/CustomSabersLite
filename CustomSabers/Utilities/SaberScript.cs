@@ -23,9 +23,9 @@ namespace CustomSaber.Utilities
 
         public static ColorScheme colourScheme;
 
-        //private EventManager leftEventMananger; todo
+        //private EventManager leftEventMananger; todo - event managers
 
-        //private EventManager rightEventMananger; todo
+        //private EventManager rightEventMananger; todo - event managers
 
         public static void Load()
         {
@@ -113,10 +113,6 @@ namespace CustomSaber.Utilities
             {
                 Plugin.Log.Debug($"Hiding default saber model for {defaultSaber.saberType}");
 
-                SaberTrail defaultTrail = GetVanillaTrail(defaultSaber);
-
-                Color saberColour = GetSaberColourByType(defaultSaber.saberType);
-
                 //Hide each saber mesh
                 IEnumerable<MeshFilter> meshFilters = defaultSaber.transform.GetComponentsInChildren<MeshFilter>();
                 foreach (MeshFilter meshFilter in meshFilters)
@@ -127,10 +123,41 @@ namespace CustomSaber.Utilities
                     filter.gameObject.SetActive(!saberRoot);
                 }
 
-                GameObject customSaber = GetCustomSaberByType(defaultSaber.saberType);
+                Color saberColour;
+                switch (defaultSaber.saberType)
+                {
+                    case SaberType.SaberA:
+                        saberColour = colourScheme.saberAColor; break;
 
-                AttachSaberToDefaultSaber(customSaber, defaultSaber);
+                    case SaberType.SaberB:
+                        saberColour = colourScheme.saberBColor; break;
+
+                    default:
+                        saberColour = Color.white; break;
+                }
+                
+                GameObject customSaber;
+                switch (defaultSaber.saberType)
+                {
+                    case SaberType.SaberA:
+                        customSaber = leftSaber; break;
+
+                    case SaberType.SaberB:
+                        customSaber = rightSaber; break;
+
+                    default:
+                        customSaber = null; break;
+                }
+
+                if (customSaber)
+                {
+                    customSaber.transform.SetParent(defaultSaber.transform);
+                    customSaber.transform.position = defaultSaber.transform.position;
+                    customSaber.transform.rotation = defaultSaber.transform.rotation;
+                }
                 SetCustomSaberColour(customSaber, saberColour);
+
+                SaberTrail defaultTrail = GetVanillaTrail(defaultSaber);
 
                 switch (CustomSaberConfig.Instance.TrailType)
                 {
@@ -150,52 +177,35 @@ namespace CustomSaber.Utilities
             }
         }
 
-        private Color GetSaberColourByType(SaberType type)
-        {
-            Color colour = Color.white;
-            switch (type)
-            {
-                case SaberType.SaberA:
-                    colour = colourScheme.saberAColor; break;
-                    
-                case SaberType.SaberB:
-                    colour = colourScheme.saberBColor; break;
-            }
-            return colour;
-        }
-
-        private void AttachSaberToDefaultSaber(GameObject saber, Saber defaultSaber)
-        {
-            if (saber)
-            {
-                saber.transform.SetParent(defaultSaber.transform);
-                saber.transform.position = defaultSaber.transform.position;
-                saber.transform.rotation = defaultSaber.transform.rotation;
-            }
-        }
-
         private void AddCustomSaberTrails(GameObject customSaber, Color saberColour, Saber defaultSaber, SaberTrail defaultTrail)
         {
-            CustomTrail customTrail = GetCustomTrail(customSaber);
-
-            if (customTrail == null)
+            CustomTrail customTrail;
+            try
+            {
+                customTrail = customSaber.GetComponent<CustomTrail>();
+                Plugin.Log.Debug("Successfully got CustomTrail from custom saber.");
+            }
+            catch
             {
                 Plugin.Log.Warn("No custom trails. Defaulting to existing saber trails.");
                 CustomSaberUtils.SetTrailDuration(defaultTrail);
+                return;
             }
-            else
-            {
-                Plugin.Log.Debug($"Initializing custom trail to {defaultTrail.name}");
+            
+            Plugin.Log.Debug($"Initializing custom trail to {defaultTrail.name}");
 
-                //Set trail transforms before initializing the trails
-                ReflectionUtil.SetField(defaultSaber, "_saberBladeTopTransform", customTrail.PointEnd);
-                ReflectionUtil.SetField(defaultSaber, "_saberBladeBottomTransform", customTrail.PointStart);
+            //Set trail transforms before initializing the trails
+            ReflectionUtil.SetField(defaultSaber, "_saberBladeTopTransform", customTrail.PointEnd);
+            ReflectionUtil.SetField(defaultSaber, "_saberBladeBottomTransform", customTrail.PointStart);
 
-                var handler = new CustomSaberTrailHandler(customSaber, customTrail);
-                handler.CreateTrail(defaultTrail, saberColour);
-            }
+            var handler = new CustomSaberTrailHandler(customSaber, customTrail);
+            handler.CreateTrail(defaultTrail, saberColour);
         }
 
+        //todo - custom saber colours
+        //This reportedly doesn't always work, some sabers are coming out with the same colour for both sabers
+        //I need to find out how these defunct sabers are made and find out what is going on there
+        //Some sabers, however, are intentionally made to be the same colour for both sabers and these seem to work
         private void SetCustomSaberColour(GameObject saber, Color colour)
         {
             IEnumerable<Renderer> renderers = saber.GetComponentsInChildren<Renderer>();
@@ -234,35 +244,6 @@ namespace CustomSaber.Utilities
                 trail = null;
             }
             return trail;
-        }
-
-        private CustomTrail GetCustomTrail(GameObject saber)
-        {
-            CustomTrail trail;
-            try
-            {
-                trail = saber.GetComponent<CustomTrail>();
-                Plugin.Log.Debug("Successfully got CustomTrail from custom saber.");
-            }
-            catch
-            {
-                trail = null;
-            }
-            return trail;
-        }
-
-        private GameObject GetCustomSaberByType(SaberType saberType)
-        {
-            GameObject saber = null;
-            if (saberType == SaberType.SaberA)
-            {
-                saber = leftSaber;
-            }
-            else if (saberType == SaberType.SaberB)
-            {
-                saber = rightSaber;
-            }
-            return saber;
         }
     }
 }
