@@ -1,5 +1,12 @@
 changelog
 
+0.3.7
+- Most sabers, and their trails, should now be coloured correctly
+- Fix for most saber trails not using Vertex Colors now have the correct colour 
+- Fix for sabers with sharedmaterials not applying the right colour to both sabers
+- UI adjustments (WIP)
+- Basic asynchronous loading
+
 0.3.6
 - Trail duration slider setting is now only interactable when Override Trail Duration is toggled on to make the link between the two settings immediately obvious
 
