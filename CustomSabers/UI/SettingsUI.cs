@@ -1,6 +1,8 @@
 ﻿using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.MenuButtons;
 using HMUI;
+using System.ComponentModel;
+using UnityEngine.SceneManagement;
 
 namespace CustomSaber.UI
 {
@@ -8,7 +10,11 @@ namespace CustomSaber.UI
     {
         public static CustomSaberFlowCoordinator flowCoordinator;
 
-        public static bool created = false;
+        private static bool created = false;
+
+        public static MenuButton MenuButton { get; private set; }
+
+        public static bool MenuButtonActive { get; set; } = false;
 
         public static void CreateMenu()
         {
@@ -16,9 +22,29 @@ namespace CustomSaber.UI
             {
                 created = true;
 
-                MenuButton menuButton = new MenuButton("Custom Sabers", "Choose your custom sabers.", SabersMenuButtonPressed, true);
-                MenuButtons.instance.RegisterButton(menuButton);
+                MenuButton = new MenuButton("Loading Sabers", "Choose your custom sabers.", SabersMenuButtonPressed, false);
+                MenuButtons.instance.RegisterButton(MenuButton);
             }
+        }
+
+        public static void UpdateMenuOnSabersLoaded()
+        {
+            //todo - menu button refresh (surely there's a proper way to do this)
+            MenuButton.Interactable = true;
+            MenuButton.Text = "Custom Sabers";
+
+            if (SceneManager.GetActiveScene().name == BS_Utils.SceneNames.Menu)
+            { 
+                UpdateMenu();
+            }
+        }
+
+        public static void UpdateMenu()
+        {
+            MenuButtons.instance.UnregisterButton(MenuButton);
+            MenuButtons.instance.RegisterButton(MenuButton);
+
+            MenuButtonActive = true;
         }
 
         public static void ShowCustomSaberFlowCoordinator()

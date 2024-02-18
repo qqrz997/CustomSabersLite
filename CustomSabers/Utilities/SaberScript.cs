@@ -124,29 +124,24 @@ namespace CustomSaber.Utilities
                 }
 
                 Color saberColour;
-                switch (defaultSaber.saberType)
-                {
-                    case SaberType.SaberA:
-                        saberColour = colourScheme.saberAColor; break;
-
-                    case SaberType.SaberB:
-                        saberColour = colourScheme.saberBColor; break;
-
-                    default:
-                        saberColour = Color.white; break;
-                }
-                
                 GameObject customSaber;
+
                 switch (defaultSaber.saberType)
                 {
                     case SaberType.SaberA:
-                        customSaber = leftSaber; break;
+                        customSaber = leftSaber;
+                        saberColour = colourScheme.saberAColor;
+                        break;
 
                     case SaberType.SaberB:
-                        customSaber = rightSaber; break;
+                        customSaber = rightSaber;
+                        saberColour = colourScheme.saberBColor;
+                        break;
 
                     default:
-                        customSaber = null; break;
+                        saberColour = Color.white;
+                        customSaber = null;
+                        break;
                 }
 
                 if (customSaber)
@@ -155,6 +150,7 @@ namespace CustomSaber.Utilities
                     customSaber.transform.position = defaultSaber.transform.position;
                     customSaber.transform.rotation = defaultSaber.transform.rotation;
                 }
+
                 SetCustomSaberColour(customSaber, saberColour);
 
                 SaberTrail defaultTrail = GetVanillaTrail(defaultSaber);
@@ -187,39 +183,55 @@ namespace CustomSaber.Utilities
             }
             catch
             {
+                customTrail = null;
+            }
+
+            if (customTrail == null)
+            {
                 Plugin.Log.Warn("No custom trails. Defaulting to existing saber trails.");
                 CustomSaberUtils.SetTrailDuration(defaultTrail);
-                return;
+                CustomSaberUtils.SetWhiteTrailDuration(defaultTrail);
             }
-            
-            Plugin.Log.Debug($"Initializing custom trail to {defaultTrail.name}");
+            else
+            {
+                Plugin.Log.Debug($"Initializing custom trail to {defaultTrail.name}");
 
-            //Set trail transforms before initializing the trails
-            ReflectionUtil.SetField(defaultSaber, "_saberBladeTopTransform", customTrail.PointEnd);
-            ReflectionUtil.SetField(defaultSaber, "_saberBladeBottomTransform", customTrail.PointStart);
+                //Set trail transforms before initializing the trails
+                ReflectionUtil.SetField(defaultSaber, "_saberBladeTopTransform", customTrail?.PointEnd);
+                ReflectionUtil.SetField(defaultSaber, "_saberBladeBottomTransform", customTrail?.PointStart);
 
-            var handler = new CustomSaberTrailHandler(customSaber, customTrail);
-            handler.CreateTrail(defaultTrail, saberColour);
+                var handler = new CustomSaberTrailHandler(customSaber, customTrail);
+                handler.CreateTrail(defaultTrail, saberColour);
+            }
         }
 
         //todo - custom saber colours
         //This reportedly doesn't always work, some sabers are coming out with the same colour for both sabers
         //I need to find out how these defunct sabers are made and find out what is going on there
         //Some sabers, however, are intentionally made to be the same colour for both sabers and these seem to work
+        //Edit: this seems to work for now
+
+        //the default trail setup when there are no custom trails is incomplete
         private void SetCustomSaberColour(GameObject saber, Color colour)
         {
             IEnumerable<Renderer> renderers = saber.GetComponentsInChildren<Renderer>();
 
             foreach (Renderer renderer in renderers)
             {
-                foreach (Material rendererMaterial in renderer.sharedMaterials)
+                if (renderer == null) continue;
+
+                foreach (Material rendererMaterial in renderer.materials)
                 {
+                    if (rendererMaterial == null) continue;
+
                     if (rendererMaterial.HasProperty("_Color"))
                     {
                         if (rendererMaterial.HasProperty("_CustomColors"))
                         {
                             if (rendererMaterial.GetFloat("_CustomColors") > 0)
+                            {
                                 rendererMaterial.SetColor("_Color", colour);
+                            }
                         }
                         else if (rendererMaterial.HasProperty("_Glow") && rendererMaterial.GetFloat("_Glow") > 0
                             || rendererMaterial.HasProperty("_Bloom") && rendererMaterial.GetFloat("_Bloom") > 0)

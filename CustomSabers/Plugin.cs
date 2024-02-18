@@ -8,6 +8,8 @@ using CustomSaber.Utilities;
 using BS_Utils.Utilities;
 using System.IO;
 using CustomSaber.UI;
+using System.Threading.Tasks;
+using UnityEngine;
 
 namespace CustomSaber
 {
@@ -22,34 +24,32 @@ namespace CustomSaber
 
         public static string CustomSaberAssetsPath => Path.Combine(UnityGame.InstallPath, "CustomSabers");
 
+        public static bool AssetLoaderInitialized { get; set; }
+
         public static IPALogger Log { get; private set; }
 
         [Init]
         public void Init(IPALogger logger, Config config)
         {
+            AssetLoaderInitialized = false;
             Log = logger;
             CustomSaberConfig.Instance = config.Generated<CustomSaberConfig>();
             Log.Debug("Config Loaded");
         }
 
-        #region BSIPA Config
-        //Uncomment to use BSIPA's config
-        /*
-        [Init]
-        public void InitWithConfig(Config conf)
-        {
-            Configuration.PluginConfig.Instance = conf.Generated<Configuration.PluginConfig>();
-            Log.Debug("Config loaded");
-        }
-        */
-        #endregion
-
         [OnStart]
-        public async void OnApplicationStart()
+        public async Task OnApplicationStart()
         {
-            await CustomSaberAssetLoader.Load();
             SettingsUI.CreateMenu();
             AddEvents();
+            try
+            {
+                //await Task.WhenAll(CustomSaberAssetLoader.LoadAsync());
+                CustomSaberAssetLoader.Load();
+                AssetLoaderInitialized = true;
+                SettingsUI.UpdateMenuOnSabersLoaded();
+            } 
+            catch { }
         }
 
         [OnExit]
@@ -61,18 +61,26 @@ namespace CustomSaber
 
         private void OnGameSceneLoaded()
         {
-            SaberScript.Load();
+            if (AssetLoaderInitialized) SaberScript.Load();
+        }
+
+        private void OnMenuSceneLoaded()
+        {
+            //this doesn't actually refresh the button
+            if (!SettingsUI.MenuButtonActive && AssetLoaderInitialized) SettingsUI.UpdateMenu();
         }
 
         private void AddEvents()
         {
             RemoveEvents();
             BSEvents.gameSceneLoaded += OnGameSceneLoaded;
+            BSEvents.menuSceneActive += OnMenuSceneLoaded;
         }
 
         private void RemoveEvents()
         {
             BSEvents.gameSceneLoaded -= OnGameSceneLoaded;
+            BSEvents.menuSceneActive -= OnMenuSceneLoaded;
         }
     }
 }

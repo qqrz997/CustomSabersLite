@@ -13,7 +13,7 @@ namespace CustomSaber.Utilities
 {
     internal class CustomSaberTrailHandler
     {
-        public CustomSaberTrail TrailInstance { get; set; }
+        public CustomSaberTrail TrailInstance { get; private set; }
 
         private readonly CustomTrail _customTrail;
 
@@ -65,6 +65,7 @@ namespace CustomSaber.Utilities
             //Swap material
             MeshRenderer newMeshRenderer = defaultMeshRenderer;
             newMeshRenderer.material = _customTrail.TrailMaterial;
+            newMeshRenderer.material.SetColor("_Color", trailColour);
 
             //Adjusting the trail's meshrenderer before adding it to our trail
             ReflectionUtil.SetField(defaultSaberTrailRenderer, "_meshRenderer", newMeshRenderer);
