@@ -6,6 +6,9 @@ Unlike the original Custom Sabers mod - this mod doesn't allow you to preview sa
 - Saber files are loaded from the `CustomSabers` folder in the Beat Saber game directory
 - Saber selection and settings can be found in the left panel in the main menu
 
+> [!WARNING]
+> If you have severel hundreds of MB of sabers, you may experience a much longer load time for your game. I plan on optimizing the loading of sabers in the future.
+
 ## Config
 Settings are set in-game from the left panel in the Custom Sabers menu. The possible settable settings are as follows:
 - `Disable White Trail` Disables the initial white section of trails 
@@ -20,6 +23,5 @@ Settings are set in-game from the left panel in the Custom Sabers menu. The poss
 Place the contents of the unzipped folder from the latest [release](https://github.com/qqrz997/CustomSabersLite/releases/latest) into your Beat Saber installation folder. For help with installing mods join the [Beat Saber Modding Group](https://discord.gg/beatsabermods) discord server.
 
 ### Todo
-- Some sabers are incorrectly getting the same colour for both sabers
 - Event managers
 - More settings and possibly better UI
