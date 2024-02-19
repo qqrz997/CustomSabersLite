@@ -64,10 +64,6 @@ namespace CustomSaber.Utilities
             //a later version should do this in a more elegant way if i can figure out a way to
             //Swap material
             MeshRenderer newMeshRenderer = defaultMeshRenderer;
-            if (_customTrail.TrailMaterial.mainTexture != null)
-            {
-                _customTrail.TrailMaterial.mainTexture.wrapMode = TextureWrapMode.Clamp;
-            }
             newMeshRenderer.material = _customTrail.TrailMaterial;
             newMeshRenderer.material.SetColor("_Color", trailColour);
 
