@@ -305,6 +305,8 @@ namespace CustomSaber.Utilities
                 fileName = "DefaultSabers";
             }
 
+            descriptor.CoverImage.texture.wrapMode = TextureWrapMode.Clamp;
+
             CustomSaberData newSaberData = new CustomSaberData(fileName)
             {
                 AssetBundle = bundle,
