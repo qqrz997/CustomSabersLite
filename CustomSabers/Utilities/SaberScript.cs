@@ -53,12 +53,20 @@ namespace CustomSaber.Utilities
                 sabers = null;
             }
 
-            CustomSaberData customSaberData = CustomSaberAssetLoader.CustomSabers[CustomSaberAssetLoader.SelectedSaber];
+            if (CustomSaberAssetLoader.SelectedSaber.FileName != CustomSaberConfig.Instance.CurrentlySelectedSaber &&
+                CustomSaberConfig.Instance.CurrentlySelectedSaber != "Default")
+            {
+                CustomSaberAssetLoader.SelectedSaber.Destroy();
+                CustomSaberAssetLoader.SelectedSaber = CustomSaberAssetLoader.LoadSaberFromAsset(CustomSaberConfig.Instance.CurrentlySelectedSaber);
+            }
+            if (CustomSaberConfig.Instance.CurrentlySelectedSaber == "Default")
+            {
+                CustomSaberAssetLoader.SelectedSaber = new CustomSaberData("DefaultSabers");
+            }
+            CustomSaberData customSaberData = CustomSaberAssetLoader.SelectedSaber;
 
             if (customSaberData != null)
             {
-                Plugin.Log.Debug($"Selected saber: #{CustomSaberAssetLoader.SelectedSaber + 1} {customSaberData.FileName}");
-
                 if (customSaberData.FileName != "DefaultSabers")
                 {
                     if (customSaberData.SabersObject)
@@ -204,12 +212,6 @@ namespace CustomSaber.Utilities
                 handler.CreateTrail(defaultTrail, saberColour);
             }
         }
-
-        //todo - custom saber colours
-        //This reportedly doesn't always work, some sabers are coming out with the same colour for both sabers
-        //I need to find out how these defunct sabers are made and find out what is going on there
-        //Some sabers, however, are intentionally made to be the same colour for both sabers and these seem to work
-        //Edit: this seems to work for now
 
         //the default trail setup when there are no custom trails is incomplete
         private void SetCustomSaberColour(GameObject saber, Color colour)

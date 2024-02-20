@@ -12,9 +12,25 @@ namespace CustomSaber.Utilities
             return LoadSpriteRaw(LoadFromResource(resourcePath), pixelsPerUnit);
         }
 
+        public static Texture2D DuplicateTexture(Texture2D source)
+        {
+            if (source == null) return null;
+            RenderTexture renderTex = RenderTexture.GetTemporary(source.width, source.height, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Linear);
+            Graphics.Blit(source, renderTex);
+            RenderTexture previous = RenderTexture.active;
+            RenderTexture.active = renderTex;
+            Texture2D readableText = new Texture2D(source.width, source.height);
+            readableText.ReadPixels(new Rect(0, 0, renderTex.width, renderTex.height), 0, 0);
+            readableText.Apply();
+            RenderTexture.active = previous;
+            RenderTexture.ReleaseTemporary(renderTex);
+            return readableText;
+        }
+
         public static Sprite LoadSpriteRaw(byte[] image, float pixelsPerUnit = 100.0f)
         {
-            return LoadSpriteFromTexture(LoadTextureRaw(image), pixelsPerUnit);
+            if (image != null) return LoadSpriteFromTexture(LoadTextureRaw(image), pixelsPerUnit);
+            else return null;
         }
 
         public static Texture2D LoadTextureRaw(byte[] file)

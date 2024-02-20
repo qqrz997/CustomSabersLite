@@ -61,6 +61,24 @@ namespace CustomSaber.Utilities
             return nullCoverImage;
         }
 
+        private static Sprite defaultCoverImage = null;
+        public static Sprite GetDefaultCoverImage()
+        {
+            if (!defaultCoverImage)
+            {
+                try
+                {
+                    defaultCoverImage = ImageLoading.LoadSpriteFromResources("CustomSaber.Resources.defaultsabers-image.png");
+                    defaultCoverImage.texture.wrapMode = TextureWrapMode.Clamp;
+                }
+                catch (Exception ex)
+                {
+                    Plugin.Log.Error(ex);
+                }
+            }
+            return defaultCoverImage;
+        }
+
         public static void HideTrail(SaberTrail trail)
         {
             trail.enabled = false;

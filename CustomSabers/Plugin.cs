@@ -22,18 +22,14 @@ namespace CustomSaber
 
         public static string PluginGUID => "qqrz.CustomSabersLite";
 
-        public static string CustomSaberAssetsPath => Path.Combine(UnityGame.InstallPath, "CustomSabers");
-
-        public static bool AssetLoaderInitialized { get; set; }
-
         public static IPALogger Log { get; private set; }
 
         [Init]
         public void Init(IPALogger logger, Config config)
         {
-            AssetLoaderInitialized = false;
             Log = logger;
             CustomSaberConfig.Instance = config.Generated<CustomSaberConfig>();
+            PluginDirs.Init();
             Log.Debug("Config Loaded");
         }
 
@@ -46,7 +42,6 @@ namespace CustomSaber
             {
                 //await Task.WhenAll(CustomSaberAssetLoader.LoadAsync());
                 CustomSaberAssetLoader.Load();
-                AssetLoaderInitialized = true;
                 SettingsUI.UpdateMenuOnSabersLoaded();
             } 
             catch { }
@@ -61,13 +56,13 @@ namespace CustomSaber
 
         private void OnGameSceneLoaded()
         {
-            if (AssetLoaderInitialized) SaberScript.Load();
+            if (CustomSaberAssetLoader.IsLoaded) SaberScript.Load();
         }
 
         private void OnMenuSceneLoaded()
         {
             //this doesn't actually refresh the button
-            if (!SettingsUI.MenuButtonActive && AssetLoaderInitialized) SettingsUI.UpdateMenu();
+            if (!SettingsUI.MenuButtonActive && CustomSaberAssetLoader.IsLoaded) SettingsUI.UpdateMenu();
         }
 
         private void AddEvents()

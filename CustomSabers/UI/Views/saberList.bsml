@@ -25,7 +25,7 @@
       </horizontal>
         
       <horizontal>
-        <button on-click='ReloadSabers' text='Refresh Sabers' />
+        <button on-click='ReloadSabers' id='ReloadButton' text='Refresh Sabers' />
       </horizontal>
       
       <horizontal>

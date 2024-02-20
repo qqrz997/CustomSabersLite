@@ -28,7 +28,6 @@ namespace CustomSaber.Data
                     SaberName = "Default",
                     AuthorName = "Beat Games",
                     Description = "Default Sabers",
-                    CoverImage = ImageLoading.LoadSpriteFromResources("CustomSaber.Resources.defaultsabers-image.png")
                 };
             }
         }
