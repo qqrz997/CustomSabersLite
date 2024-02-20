@@ -43,6 +43,7 @@ namespace CustomSaber.UI
         public void OpenInExplorer()
         {
             //todo - open custom sabers folder
+            System.Diagnostics.Process.Start("explorer.exe", "/select," + PluginDirs.CustomSabers.FullName);
         }
 
         [UIAction("DeleteSelectedSaber")]

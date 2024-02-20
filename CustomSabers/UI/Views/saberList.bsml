@@ -21,7 +21,7 @@
     <vertical child-control-height='False' child-expand-height='False' child-align='MiddleCenter'>
 
       <horizontal>
-        <button on-click='OpenInExplorer' text='Open Sabers Folder (WIP)'/>
+        <button on-click='OpenInExplorer' text='Open Sabers Folder'/>
       </horizontal>
         
       <horizontal>
