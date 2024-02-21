@@ -1,5 +1,10 @@
 changelog
 
+0.4.0
+- Now caches data for sabers after the first time they're loaded, to reduce subsequent loading times
+- Added a button to open the CustomSabers folder
+- Added a button to delete sabers
+
 0.3.7
 - Most sabers, and their trails, should now be coloured correctly
 - Fix for most saber trails not using Vertex Colors now have the correct colour 
