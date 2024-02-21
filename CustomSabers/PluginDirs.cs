@@ -11,6 +11,9 @@ namespace CustomSaber
 
         public static DirectoryInfo Cache;
 
+        //todo - temporary saber removal solution
+        public static DirectoryInfo DeletedSabers;
+
         public static void Init()
         {
             DirectoryInfo installPath = new DirectoryInfo(UnityGame.InstallPath);
@@ -19,6 +22,7 @@ namespace CustomSaber
             CustomSabers = installPath.CreateSubdirectory("CustomSabers");
             UserData = userDataPath.CreateSubdirectory("Custom Sabers Lite");
             Cache = UserData.CreateSubdirectory("Cache");
+            DeletedSabers = UserData.CreateSubdirectory("Deleted Sabers");
         }
     }
 }

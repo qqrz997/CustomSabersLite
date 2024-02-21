@@ -2,18 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using AssetBundleLoadingTools.Utilities;
 using CustomSaber.Configuration;
 using CustomSaber.Data;
 using UnityEngine;
 using System.Diagnostics;
-using System.Collections;
-using IPA.Loader;
-using UnityEngine.TestTools;
 
 namespace CustomSaber.Utilities
 {
@@ -37,8 +32,6 @@ namespace CustomSaber.Utilities
 
         public static Action customSabersLoaded;
 
-        private static readonly Sprite nullCoverImage = CustomSaberUtils.GetNullCoverImage();
-
         private static readonly string saberAssetPath = PluginDirs.CustomSabers.FullName;
 
         private static readonly string cachePath = PluginDirs.Cache.FullName;
@@ -55,17 +48,20 @@ namespace CustomSaber.Utilities
             Plugin.Log.Info($"{CustomSaberFiles.Count()} external sabers found.");
 
             SaberMetadataFiles = CustomSaberUtils.GetFileNames(cachePath, metaExt, SearchOption.AllDirectories, false);
-            Plugin.Log.Debug($"{SaberMetadataFiles.Count()} metadata files found.");
+            Plugin.Log.Info($"{SaberMetadataFiles.Count()} metadata files found.");
 
             Dictionary<string, CustomSaberMetadata> fileMetadata = new Dictionary<string, CustomSaberMetadata>();
 
             foreach (string filePath in SaberMetadataFiles)
             {
-                string json = await File.ReadAllTextAsync(filePath);
+                string json = File.ReadAllText(filePath);
                 CustomSaberMetadata metadata = JsonConvert.DeserializeObject<CustomSaberMetadata>(json);
-                string fileName = metadata.SaberFileName;
-
-                fileMetadata.Add(fileName, metadata);
+                string saberFileName = metadata.SaberFileName;
+                string saberPath = Path.Combine(saberAssetPath, saberFileName);
+                if (File.Exists(saberPath))
+                {
+                    fileMetadata.Add(saberFileName, metadata);
+                }
 
             }
 
@@ -149,7 +145,7 @@ namespace CustomSaber.Utilities
             Plugin.Log.Info($"{CustomSaberFiles.Count()} external sabers found.");
 
             SaberMetadataFiles = CustomSaberUtils.GetFileNames(cachePath, metaExt, SearchOption.AllDirectories, false);
-            Plugin.Log.Debug($"{SaberMetadataFiles.Count()} metadata files found.");
+            Plugin.Log.Info($"{SaberMetadataFiles.Count()} metadata files found.");
 
             Dictionary<string, CustomSaberMetadata> fileMetadata = new Dictionary<string, CustomSaberMetadata>();
 
@@ -157,10 +153,12 @@ namespace CustomSaber.Utilities
             {
                 string json = File.ReadAllText(filePath);
                 CustomSaberMetadata metadata = JsonConvert.DeserializeObject<CustomSaberMetadata>(json);
-                string fileName = metadata.SaberFileName;
-
-                fileMetadata.Add(fileName, metadata);
-
+                string saberFileName = metadata.SaberFileName;
+                string saberPath = Path.Combine(saberAssetPath, saberFileName);
+                if (File.Exists(saberPath))
+                {
+                    fileMetadata.Add(saberFileName, metadata);
+                }
             }
 
             foreach (string saberFile in CustomSaberFiles)
@@ -211,12 +209,13 @@ namespace CustomSaber.Utilities
             SabersMetadata.Add(defaultSabers);
             foreach (CustomSaberMetadata customMetadata in fileMetadata.Values)
             {
-                SabersMetadata.Add(customMetadata);
+                //only use metadata for sabers that currently exist
+                if (File.Exists(Path.Combine(PluginDirs.CustomSabers.FullName, customMetadata.SaberFileName))) SabersMetadata.Add(customMetadata);
             }
 
             if (CustomSaberConfig.Instance.CurrentlySelectedSaber != null)
             {
-                Plugin.Log.Debug($"Currently selected saber: {CustomSaberConfig.Instance.CurrentlySelectedSaber}");
+                Plugin.Log.Info($"Currently selected saber: {CustomSaberConfig.Instance.CurrentlySelectedSaber}");
 
                 SelectedSaber = LoadSaberFromAsset(CustomSaberConfig.Instance.CurrentlySelectedSaber);
 
@@ -251,9 +250,11 @@ namespace CustomSaber.Utilities
                 SelectedSaber.Destroy();
                 SelectedSaber = null;
             }
-
+            sabersToLoad.Clear();
             sabersToLoad = new List<string>();
+            loadedSaberData.Clear();
             loadedSaberData = new List<CustomSaberData>();
+            SabersMetadata.Clear();
             SabersMetadata = new List<CustomSaberMetadata>();
             CustomSaberFiles = Enumerable.Empty<string>();
             SaberMetadataFiles = Enumerable.Empty<string>();
@@ -265,7 +266,7 @@ namespace CustomSaber.Utilities
 
             foreach (string file in customSaberFiles)
             {
-                Plugin.Log.Info($"No cache for {file}\nLoading saber from asset: {file}");
+                Plugin.Log.Debug($"No cache for {file}\nLoading saber from asset: {file}");
 
                 customSabers.Add(await Task.Run(() => LoadSaberFromAssetAsync(file)));
                 //customSabers.Add(await LoadSaberFromAssetAsync(file));
@@ -358,11 +359,18 @@ namespace CustomSaber.Utilities
             AssetBundle bundle = null;
             GameObject sabers = null;
             SaberDescriptor descriptor;
+            string filePath = Path.Combine(saberAssetPath, fileName);
 
             if (fileName != "Default")
             {
                 try
                 {
+                    if (!File.Exists(filePath))
+                    {
+                        Plugin.Log.Warn($"{fileName} no longer exists, switching to default sabers");
+                        CustomSaberConfig.Instance.CurrentlySelectedSaber = "Default";
+                        return new CustomSaberData("DefaultSabers");
+                    }
                     bundle = await AssetBundleExtensions.LoadFromFileAsync(Path.Combine(saberAssetPath, fileName));
                     sabers = await AssetBundleExtensions.LoadAssetAsync<GameObject>(bundle, "_CustomSaber");
 
@@ -403,12 +411,19 @@ namespace CustomSaber.Utilities
             AssetBundle bundle = null;
             GameObject sabers = null;
             SaberDescriptor descriptor;
+            string filePath = Path.Combine(saberAssetPath, fileName);
 
             if (fileName != "Default")
             {
                 try
                 {
-                    bundle = AssetBundle.LoadFromFile(Path.Combine(saberAssetPath, fileName));
+                    if (!File.Exists(filePath))
+                    {
+                        Plugin.Log.Warn($"{fileName} no longer exists, switching to default sabers");
+                        CustomSaberConfig.Instance.CurrentlySelectedSaber = "Default";
+                        return new CustomSaberData("DefaultSabers");
+                    }
+                    bundle = AssetBundle.LoadFromFile(filePath);
                     sabers = bundle.LoadAsset<GameObject>("_CustomSaber");
 
                     descriptor = sabers.GetComponent<SaberDescriptor>();

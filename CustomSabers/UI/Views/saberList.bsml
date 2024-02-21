@@ -29,9 +29,25 @@
       </horizontal>
       
       <horizontal>
-        <button on-click='DeleteSelectedSaber' text='Delete Saber (WIP)' face-color='#a83232'/>
+        <button on-click='show-delete-saber-modal' text='Delete Saber' face-color='#a83232'/>
       </horizontal>
     
     </vertical>
   </horizontal>
+
+  <modal id='delete-saber-modal' clickerino-offerino-closerino='true' size-delta-x='67' size-delta-y='29'>
+    <vertical horizontal-fit='PreferredSize' vertical-fit='PreferredSize' pad='3'>
+      <!-- text -->
+      <horizontal>
+        <text id='delete-saber-modal-text' text='cyan is a furry' align='Center' font-size='6' />
+      </horizontal>
+
+      <!-- buttons -->
+      <horizontal>
+        <action-button on-click='delete-selected-saber' text='Confirm' face-color='#FF1010' />
+
+        <button on-click='hide-delete-saber-modal' text='Cancel' />
+      </horizontal>
+    </vertical>
+  </modal>
 </bg>
