@@ -53,11 +53,11 @@ namespace CustomSaber.Utilities
                 sabers = null;
             }
 
-            if (CustomSaberAssetLoader.SelectedSaber.FileName != CustomSaberConfig.Instance.CurrentlySelectedSaber &&
+            if (CustomSaberAssetLoader.SelectedSaber?.FileName != CustomSaberConfig.Instance.CurrentlySelectedSaber &&
                 CustomSaberConfig.Instance.CurrentlySelectedSaber != "Default")
             {
-                CustomSaberAssetLoader.SelectedSaber.Destroy();
-                CustomSaberAssetLoader.SelectedSaber = CustomSaberAssetLoader.LoadSaberFromAsset(CustomSaberConfig.Instance.CurrentlySelectedSaber);
+                CustomSaberAssetLoader.SelectedSaber?.Destroy();
+                CustomSaberAssetLoader.SelectedSaber = CustomSaberAssetLoader.LoadSaberWithRepair(CustomSaberConfig.Instance.CurrentlySelectedSaber);
             }
             if (CustomSaberConfig.Instance.CurrentlySelectedSaber == "Default")
             {
@@ -83,6 +83,10 @@ namespace CustomSaber.Utilities
                 {
                     StartCoroutine(WaitForDefaultSabers());
                 }
+            }
+            else
+            {
+                Plugin.Log.Error("Current CustomSaberData is null");
             }
         }
 

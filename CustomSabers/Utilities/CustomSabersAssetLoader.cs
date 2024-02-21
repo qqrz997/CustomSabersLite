@@ -215,7 +215,7 @@ namespace CustomSaber.Utilities
 
             if (CustomSaberConfig.Instance.CurrentlySelectedSaber != null)
             {
-                Plugin.Log.Info($"Currently selected saber: {CustomSaberConfig.Instance.CurrentlySelectedSaber}");
+                Plugin.Log.Debug($"Currently selected saber: {CustomSaberConfig.Instance.CurrentlySelectedSaber}");
 
                 SelectedSaber = LoadSaberFromAsset(CustomSaberConfig.Instance.CurrentlySelectedSaber);
 
@@ -371,7 +371,7 @@ namespace CustomSaber.Utilities
                         CustomSaberConfig.Instance.CurrentlySelectedSaber = "Default";
                         return new CustomSaberData("DefaultSabers");
                     }
-                    bundle = await AssetBundleExtensions.LoadFromFileAsync(Path.Combine(saberAssetPath, fileName));
+                    bundle = await AssetBundleExtensions.LoadFromFileAsync(filePath);
                     sabers = await AssetBundleExtensions.LoadAssetAsync<GameObject>(bundle, "_CustomSaber");
 
                     descriptor = sabers.GetComponent<SaberDescriptor>();
@@ -448,14 +448,21 @@ namespace CustomSaber.Utilities
                     SabersObject = sabers,
                     Descriptor = descriptor
                 };
-
-                FixSaberShaders(newSaberData);
             }
             else
             {
                 newSaberData = new CustomSaberData("DefaultSabers");
             }
             return newSaberData;
+        }
+
+        public static CustomSaberData LoadSaberWithRepair(string fileName)
+        {
+            CustomSaberData saber = LoadSaberFromAsset(fileName);
+
+            saber = FixSaberShaders(saber);
+
+            return saber;
         }
 
         //todo - saber deletion
