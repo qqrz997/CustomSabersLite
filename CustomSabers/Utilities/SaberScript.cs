@@ -94,6 +94,12 @@ namespace CustomSaber.Utilities
         {
             yield return new WaitUntil(() => Resources.FindObjectsOfTypeAll<Saber>().Any());
 
+            if (GameObject.Find("MultiplayerController"))
+            {
+                Plugin.Log.Warn("Multiplayer is currently not supported for custom sabers.");
+                yield break;
+            }
+
             IEnumerable<Saber> defaultSabers = Resources.FindObjectsOfTypeAll<Saber>();
 
             //Hide the default trails if 'None' trail is selected
@@ -118,6 +124,14 @@ namespace CustomSaber.Utilities
         private IEnumerator WaitForSabers(GameObject saberRoot)
         {
             yield return new WaitUntil(() => Resources.FindObjectsOfTypeAll<Saber>().Any());
+
+            //todo - multiplayer support
+            if (GameObject.Find("MultiplayerController"))
+            {
+                Plugin.Log.Warn("Multiplayer is currently not supported for custom sabers.");
+                DestroyImmediate(sabers);
+                yield break;
+            }
 
             IEnumerable<Saber> defaultSabers = Resources.FindObjectsOfTypeAll<Saber>();
 

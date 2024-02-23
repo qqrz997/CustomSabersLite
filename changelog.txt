@@ -1,5 +1,9 @@
 changelog
 
+0.4.1
+- Patch to disable the script in multiplayer so that the default sabers aren't removed
+note: multiplayer support is planned but is not of high priority
+
 0.4.0
 - Now caches data for sabers after the first time they're loaded, to reduce subsequent loading times
 - Added a button to open the CustomSabers folder
@@ -56,3 +60,5 @@ changelog
 0.1.0
 - Ability to replace default saber model with a custom saber model
 - Basic asset bundle loading and reading from config file
+
+dependencies: BSIPA@4.3.2,BS Utils@1.13.0,BeatSaberMarkupLanguage@1.8.1,AssetBundleLoadingTools@1.1.3
