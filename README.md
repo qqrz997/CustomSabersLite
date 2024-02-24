@@ -20,5 +20,10 @@ Settings are set in-game from the left panel in the Custom Sabers menu. The poss
 - `Trail Type` Change the type of trail to use between Custom, Vanilla, and no trails.
 
 ### Todo
-- Event managers
 - More settings and possibly better UI
+  - Figure out why trail intensity doesn't always work
+  - Try to add trail intensity to settings
+- Event managers
+- Look into missing shaders for shader repair
+- Independent trail system
+- Make sabers appear in multiplayer
