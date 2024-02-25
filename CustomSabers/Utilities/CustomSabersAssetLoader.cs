@@ -94,7 +94,7 @@ namespace CustomSaber.Utilities
                     coverImage = ImageLoading.DuplicateTexture(saber.Descriptor.CoverImage.texture).EncodeToPNG();
                 }
 
-                CustomSaberMetadata metadata = new CustomSaberMetadata(saber.FileName, saber.Descriptor.AuthorName, coverImage);
+                CustomSaberMetadata metadata = new CustomSaberMetadata(saber.FileName, saber.Descriptor.AuthorName, saber.MissingShaders, coverImage);
 
                 //Cache data for each loaded saber
                 string metaFilePath = Path.Combine(cachePath, saber.Descriptor.SaberName + ".json");
@@ -109,7 +109,7 @@ namespace CustomSaber.Utilities
                 saber.Destroy();
             }
 
-            CustomSaberMetadata defaultSabers = new CustomSaberMetadata("Default", "Beat Games", null);
+            CustomSaberMetadata defaultSabers = new CustomSaberMetadata("Default", "Beat Games", false, null);
             SabersMetadata.Add(defaultSabers);
             foreach (CustomSaberMetadata customMetadata in fileMetadata.Values)
             {
@@ -190,7 +190,7 @@ namespace CustomSaber.Utilities
                     coverImage = ImageLoading.DuplicateTexture(saber.Descriptor.CoverImage.texture).EncodeToPNG();
                 }
 
-                CustomSaberMetadata metadata = new CustomSaberMetadata(saber.FileName, saber.Descriptor.AuthorName, coverImage);
+                CustomSaberMetadata metadata = new CustomSaberMetadata(saber.FileName, saber.Descriptor.AuthorName, saber.MissingShaders, coverImage);
 
                 //Cache data for each loaded saber
                 string metaFilePath = Path.Combine(cachePath, saber.Descriptor.SaberName + ".json");
@@ -205,7 +205,7 @@ namespace CustomSaber.Utilities
                 saber.Destroy();
             }
 
-            CustomSaberMetadata defaultSabers = new CustomSaberMetadata("Default", "Beat Games", null);
+            CustomSaberMetadata defaultSabers = new CustomSaberMetadata("Default", "Beat Games", false, null);
             SabersMetadata.Add(defaultSabers);
             foreach (CustomSaberMetadata customMetadata in fileMetadata.Values)
             {
@@ -283,7 +283,7 @@ namespace CustomSaber.Utilities
             {
                 Plugin.Log.Debug($"No cache for {file}\nLoading saber from asset: {file}");
 
-                customSabers.Add(LoadSaberFromAsset(file));
+                customSabers.Add(LoadSaberWithRepair(file));
             }
 
             return customSabers;
@@ -291,6 +291,7 @@ namespace CustomSaber.Utilities
 
         private static CustomSaberData FixSaberShaders(CustomSaberData saber)
         {
+            Plugin.Log.Debug($"Repairing shaders for {saber.FileName}");
             try
             {
                 List<Material> materials = ShaderRepair.GetMaterialsFromGameObjectRenderers(saber.SabersObject);
@@ -306,12 +307,14 @@ namespace CustomSaber.Utilities
                 var replacementInfo = ShaderRepair.FixShadersOnMaterials(materials);
                 if (!replacementInfo.AllShadersReplaced)
                 {
-                    Plugin.Log.Warn($"Missing shader replacement data for {saber.FileName}:");
+                    Plugin.Log.Warn($"Missing shader replacement data:");
                     foreach (var shaderName in replacementInfo.MissingShaderNames)
                     {
                         Plugin.Log.Warn($"\t- {shaderName}");
                     }
+                    saber.MissingShaders = true;
                 }
+                else { saber.MissingShaders = false; Plugin.Log.Debug("All shaders replaced!"); }
             }
             catch (Exception ex)
             {

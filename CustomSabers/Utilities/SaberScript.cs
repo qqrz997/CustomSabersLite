@@ -94,9 +94,8 @@ namespace CustomSaber.Utilities
         {
             yield return new WaitUntil(() => Resources.FindObjectsOfTypeAll<Saber>().Any());
 
-            if (GameObject.Find("MultiplayerController"))
+            if (CustomSaberUtils.CheckMultiplayer())
             {
-                Plugin.Log.Warn("Multiplayer is currently not supported for custom sabers.");
                 yield break;
             }
 
@@ -125,12 +124,10 @@ namespace CustomSaber.Utilities
         {
             yield return new WaitUntil(() => Resources.FindObjectsOfTypeAll<Saber>().Any());
 
-            //todo - multiplayer support
-            if (GameObject.Find("MultiplayerController"))
-            {
-                Plugin.Log.Warn("Multiplayer is currently not supported for custom sabers.");
-                DestroyImmediate(sabers);
-                yield break;
+            if (CustomSaberUtils.CheckMultiplayer())
+            { 
+                DestroyImmediate(saberRoot);
+                yield break; 
             }
 
             IEnumerable<Saber> defaultSabers = Resources.FindObjectsOfTypeAll<Saber>();
@@ -145,12 +142,12 @@ namespace CustomSaber.Utilities
                 {
                     meshFilter.gameObject.SetActive(!saberRoot);
 
-                    MeshFilter filter = meshFilter.GetComponentInChildren<MeshFilter>();
-                    filter.gameObject.SetActive(!saberRoot);
+                    /*MeshFilter filter = meshFilter.GetComponentInChildren<MeshFilter>();
+                    filter.gameObject.SetActive(!saberRoot);*/
                 }
 
-                Color saberColour;
-                GameObject customSaber;
+                Color saberColour = Color.white;
+                GameObject customSaber = null;
 
                 switch (defaultSaber.saberType)
                 {
@@ -163,18 +160,17 @@ namespace CustomSaber.Utilities
                         customSaber = rightSaber;
                         saberColour = colourScheme.saberBColor;
                         break;
-
-                    default:
-                        saberColour = Color.white;
-                        customSaber = null;
-                        break;
                 }
 
-                if (customSaber)
+                if (customSaber != null)
                 {
                     customSaber.transform.SetParent(defaultSaber.transform);
                     customSaber.transform.position = defaultSaber.transform.position;
                     customSaber.transform.rotation = defaultSaber.transform.rotation;
+                }
+                else
+                {
+                    Plugin.Log.Error("Something went wrong when getting the custom saber instance"); yield break;
                 }
 
                 SetCustomSaberColour(customSaber, saberColour);

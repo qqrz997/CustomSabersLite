@@ -17,6 +17,8 @@ namespace CustomSaber.Data
 
         public SaberDescriptor Descriptor { get; set; }
 
+        public bool MissingShaders;
+
         public CustomSaberData(string fileName)
         {
             FileName = fileName;

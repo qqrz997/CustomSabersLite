@@ -110,5 +110,16 @@ namespace CustomSaber.Utilities
             }
             ReflectionUtil.SetField(defaultTrail, "_whiteSectionMaxDuration", whiteSectionMaxDuration);
         }
+
+        public static bool CheckMultiplayer()
+        {
+            //todo - multiplayer support
+            if (GameObject.Find("MultiplayerController"))
+            {
+                Plugin.Log.Warn("Multiplayer is currently not supported for custom sabers.");
+                return true;
+            }
+            return false;
+        }
     }
 }

@@ -13,12 +13,15 @@ namespace CustomSaber.Data
 
         public string AuthorName;
 
+        public bool MissingShaders;
+
         public byte[] CoverImage;
 
-        public CustomSaberMetadata(string saberName,  string authorName, byte[] coverImage)
+        public CustomSaberMetadata(string saberName,  string authorName, bool missingShaders, byte[] coverImage)
         {
             SaberFileName = saberName;
             AuthorName = authorName;
+            MissingShaders = missingShaders;
             CoverImage = coverImage;
         }
     }
