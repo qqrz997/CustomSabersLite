@@ -1,5 +1,9 @@
 changelog
 
+0.4.2
+- Fixed shader repair not running on selected saber from startup whereas it only would run when the selected saber was changed
+- Store info for sabers stating if they failed shader repair
+
 0.4.1
 - Patch to disable the script in multiplayer so that the default sabers aren't removed
 note: multiplayer support is planned but is not of high priority
