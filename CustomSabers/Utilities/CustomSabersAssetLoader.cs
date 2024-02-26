@@ -217,7 +217,7 @@ namespace CustomSaber.Utilities
             {
                 Plugin.Log.Debug($"Currently selected saber: {CustomSaberConfig.Instance.CurrentlySelectedSaber}");
 
-                SelectedSaber = LoadSaberFromAsset(CustomSaberConfig.Instance.CurrentlySelectedSaber);
+                SelectedSaber = LoadSaberWithRepair(CustomSaberConfig.Instance.CurrentlySelectedSaber);
 
                 for (int i = 0; i < SabersMetadata.Count(); i++)
                 {
