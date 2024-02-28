@@ -187,19 +187,35 @@ namespace CustomSaber.Utilities
                 byte[] coverImage = null;
                 if (saber.Descriptor.CoverImage != null)
                 {
-                    coverImage = ImageLoading.DuplicateTexture(saber.Descriptor.CoverImage.texture).EncodeToPNG();
+                    try
+                    {
+                        coverImage = ImageLoading.DuplicateTexture(saber.Descriptor.CoverImage.texture).EncodeToPNG();
+                    }
+                    catch (Exception ex)
+                    {
+                        Plugin.Log.Error("Problem encountered when reading stored image");
+                        Plugin.Log.Error(ex);
+                    }
                 }
 
-                CustomSaberMetadata metadata = new CustomSaberMetadata(saber.FileName, saber.Descriptor.AuthorName, saber.MissingShaders, coverImage);
-
-                //Cache data for each loaded saber
-                string metaFilePath = Path.Combine(cachePath, saber.Descriptor.SaberName + ".json");
-                string json = JsonConvert.SerializeObject(metadata);
-
-                if (!File.Exists(metaFilePath))
+                try
                 {
-                    File.WriteAllText(metaFilePath, json);
-                    fileMetadata.Add(metaFilePath, metadata);
+                    CustomSaberMetadata metadata = new CustomSaberMetadata(saber.FileName, saber.Descriptor.AuthorName, saber.MissingShaders, coverImage);
+
+                    //Cache data for each loaded saber
+                    string metaFilePath = Path.Combine(cachePath, saber.Descriptor.SaberName + ".json");
+                    string json = JsonConvert.SerializeObject(metadata);
+
+                    if (!File.Exists(metaFilePath))
+                    {
+                        File.WriteAllText(metaFilePath, json);
+                        fileMetadata.Add(metaFilePath, metadata);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Plugin.Log.Error($"Problem encountered when creating metadata for {saber.FileName}");
+                    Plugin.Log.Error(ex);
                 }
 
                 saber.Destroy();

@@ -35,16 +35,16 @@ namespace CustomSaber.UI
 
             if (SceneManager.GetActiveScene().name == BS_Utils.SceneNames.Menu)
             { 
-                UpdateMenu();
+                UpdateMenu(true);
             }
         }
 
-        public static void UpdateMenu()
+        public static void UpdateMenu(bool active)
         {
             MenuButtons.instance.UnregisterButton(MenuButton);
             MenuButtons.instance.RegisterButton(MenuButton);
 
-            MenuButtonActive = true;
+            MenuButtonActive = active;
         }
 
         public static void ShowCustomSaberFlowCoordinator()

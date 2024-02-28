@@ -10,6 +10,7 @@ using System.IO;
 using CustomSaber.UI;
 using System.Threading.Tasks;
 using UnityEngine;
+using System;
 
 namespace CustomSaber
 {
@@ -34,7 +35,7 @@ namespace CustomSaber
         }
 
         [OnStart]
-        public async Task OnApplicationStart()
+        public void OnApplicationStart()
         {
             SettingsUI.CreateMenu();
             AddEvents();
@@ -42,9 +43,13 @@ namespace CustomSaber
             {
                 //await Task.WhenAll(CustomSaberAssetLoader.LoadAsync());
                 CustomSaberAssetLoader.Load();
-                SettingsUI.UpdateMenuOnSabersLoaded();
             } 
-            catch { }
+            catch (Exception ex)
+            {
+                Log.Error("Issue encountered when loading custom sabers");
+                Log.Error(ex);
+            }
+            SettingsUI.UpdateMenuOnSabersLoaded();
         }
 
         [OnExit]
@@ -62,7 +67,7 @@ namespace CustomSaber
         private void OnMenuSceneLoaded()
         {
             //this doesn't actually refresh the button
-            if (!SettingsUI.MenuButtonActive && CustomSaberAssetLoader.IsLoaded) SettingsUI.UpdateMenu();
+            if (!SettingsUI.MenuButtonActive && CustomSaberAssetLoader.IsLoaded) SettingsUI.UpdateMenu(true);
         }
 
         private void AddEvents()
