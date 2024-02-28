@@ -19,9 +19,11 @@ namespace CustomSaber
     {
         internal static Plugin Instance { get; private set; }
 
-        public static string PluginName => "Custom Sabers Lite";
+        private static string PluginName => "Custom Sabers Lite";
 
-        public static string PluginGUID => "qqrz.CustomSabersLite";
+        private static string PluginGUID => "qqrz.CustomSabersLite";
+
+        public static string Version => "0.4.3";
 
         public static IPALogger Log { get; private set; }
 
@@ -30,8 +32,9 @@ namespace CustomSaber
         {
             Log = logger;
             CustomSaberConfig.Instance = config.Generated<CustomSaberConfig>();
-            PluginDirs.Init();
             Log.Debug("Config Loaded");
+            
+            PluginDirs.Init();
         }
 
         [OnStart]
@@ -42,7 +45,7 @@ namespace CustomSaber
             try
             {
                 //await Task.WhenAll(CustomSaberAssetLoader.LoadAsync());
-                CustomSaberAssetLoader.Load();
+                CustomSaberAssetLoader.Init();
             } 
             catch (Exception ex)
             {

@@ -1,8 +1,14 @@
 changelog
 
+0.4.3
+- Cached metadata is now automatically replaced when the mod is updated to make sure the new flags are included
+- Fixed an issue where the loader would get stuck when the saber name contained invalid file name characters
+- Flag for sabers if their name contains invalid file name characters
+- Fixed some cases where shader repair would happen while default sabers were selected
+
 0.4.2
 - Fixed shader repair not running on selected saber from startup whereas it only would run when the selected saber was changed
-- Store info for sabers stating if they failed shader repair
+- Flag for sabers if they failed shader repair
 
 0.4.1
 - Patch to disable the script in multiplayer so that the default sabers aren't removed

@@ -21,6 +21,8 @@ namespace CustomSaber.Configuration
 
         public virtual bool DisableWhiteTrail { get; internal set; }
 
+        public virtual string PluginVer { get; internal set; }
+
         /// <summary>
         /// This is called whenever BSIPA reads the config from disk (including when file changes are detected).
         /// </summary>

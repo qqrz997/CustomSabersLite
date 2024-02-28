@@ -4,15 +4,15 @@
     <vertical child-control-height='True' child-expand-height='True' child-align='MiddleCenter'>
 
       <horizontal>
-        <page-button event-click='SaberList#PageUp' direction='Up' />
+        <page-button event-click='saber-list#PageUp' direction='Up' />
       </horizontal>
       
       <horizontal background='round-rect-panel' pad='3'>
-        <list id='SaberList' select-cell='SelectSaber' visible-cells='6' expand-cell='true'/>
+        <list id='saber-list' select-cell='select-saber' visible-cells='6' expand-cell='true'/>
       </horizontal>
 
       <horizontal>
-        <page-button event-click='SaberList#PageDown' direction='Down' />
+        <page-button event-click='saber-list#PageDown' direction='Down' />
       </horizontal>
       
     </vertical>
@@ -21,11 +21,11 @@
     <vertical child-control-height='False' child-expand-height='False' child-align='MiddleCenter'>
 
       <horizontal>
-        <button on-click='OpenInExplorer' text='Open Sabers Folder'/>
+        <button on-click='open-in-explorer' text='Open Sabers Folder'/>
       </horizontal>
         
       <horizontal>
-        <button on-click='ReloadSabers' id='ReloadButton' text='Refresh Sabers' />
+        <button on-click='reload-sabers' id='reload-button' text='Refresh Sabers' />
       </horizontal>
       
       <horizontal>

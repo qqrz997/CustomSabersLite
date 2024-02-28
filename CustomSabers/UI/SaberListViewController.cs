@@ -13,6 +13,7 @@ using System.IO;
 using BeatSaberMarkupLanguage.Components.Settings;
 using UnityEngine.UI;
 using TMPro;
+using System.Diagnostics;
 
 namespace CustomSaber.UI
 {
@@ -26,10 +27,10 @@ namespace CustomSaber.UI
 
         private static readonly Sprite nullCoverImage = CustomSaberUtils.GetNullCoverImage();
 
-        [UIComponent("SaberList")]
+        [UIComponent("saber-list")]
         public CustomListTableData customListTableData;
 
-        [UIComponent("ReloadButton")]
+        [UIComponent("reload-button")]
         public Selectable reloadButtonSelectable;
 
         [UIComponent("delete-saber-modal")]
@@ -38,7 +39,7 @@ namespace CustomSaber.UI
         [UIComponent("delete-saber-modal-text")]
         public TextMeshProUGUI deleteSaberModalText;
 
-        [UIAction("SelectSaber")]
+        [UIAction("select-saber")]
         public void Select(TableView _, int row)
         {
             Plugin.Log.Debug($"saber selected at row {row}");
@@ -50,7 +51,7 @@ namespace CustomSaber.UI
             //that can be used for saber previewing
         }
 
-        [UIAction("OpenInExplorer")]
+        [UIAction("open-in-explorer")]
         public void OpenInExplorer()
         {
             System.Diagnostics.Process.Start("explorer.exe", PluginDirs.CustomSabers.FullName);
@@ -59,7 +60,11 @@ namespace CustomSaber.UI
         [UIAction("show-delete-saber-modal")]
         public void ShowDeleteSaberModal()
         {
-            if (CustomSaberConfig.Instance.CurrentlySelectedSaber == "Default") return;
+            if (CustomSaberConfig.Instance.CurrentlySelectedSaber == "Default")
+            {
+                Plugin.Log.Warn("You can't delete the default sabers! >:(");
+                return;
+            }
 
             deleteSaberModalText.text = $"Are you sure you want to delete\n{ Path.GetFileNameWithoutExtension(CustomSaberConfig.Instance.CurrentlySelectedSaber) }?";
             deleteSaberModal.Show(true);
@@ -103,16 +108,13 @@ namespace CustomSaber.UI
                 }
                 catch (Exception ex)
                 {
+                    Plugin.Log.Error("Problem encountered when trying to delete selected saber");
                     Plugin.Log.Error(ex);
                 }
             }
-            else
-            {
-                Plugin.Log.Warn("You can't delete the default sabers! >:(");
-            }
         }
 
-        [UIAction("ReloadSabers")]
+        [UIAction("reload-sabers")]
         public async void ReloadSabers()
         {
             reloadButtonSelectable.interactable = false;
@@ -123,7 +125,12 @@ namespace CustomSaber.UI
         }
 
         [UIAction("#post-parse")]
-        public void SetupList()
+        public void PostParse()
+        {
+            SetupList();
+        }
+
+        private void SetupList()
         {
             customListTableData.data.Clear();
 
@@ -158,6 +165,7 @@ namespace CustomSaber.UI
                 customListTableData.data.Add(customCellInfo);
             }
 
+            //todo - better ui - look into making reload smoother
             customListTableData.tableView.ReloadData();
 
             int selectedSaber = CustomSaberAssetLoader.SelectedSaberIndex;
