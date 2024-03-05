@@ -7,17 +7,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
-using static PlayerSaveData;
 
 namespace CustomSaber.Utilities
 {
-    internal class CustomSaberTrailHandler
+    internal class TrailHandler
     {
         public CustomSaberTrail TrailInstance { get; private set; }
 
         private readonly CustomTrail _customTrail;
 
-        public CustomSaberTrailHandler(GameObject customSaber, CustomTrail customTrail)
+        public TrailHandler(GameObject customSaber, CustomTrail customTrail)
         {
             _customTrail = customTrail;
             TrailInstance = customSaber.gameObject.AddComponent<CustomSaberTrail>();

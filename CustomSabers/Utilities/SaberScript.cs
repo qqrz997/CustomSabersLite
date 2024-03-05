@@ -219,10 +219,10 @@ namespace CustomSaber.Utilities
                 Plugin.Log.Debug($"Initializing custom trail to {defaultTrail.name}");
 
                 //Set trail transforms before initializing the trails
-                ReflectionUtil.SetField(defaultSaber, "_saberBladeTopTransform", customTrail?.PointEnd);
-                ReflectionUtil.SetField(defaultSaber, "_saberBladeBottomTransform", customTrail?.PointStart);
+                /*ReflectionUtil.SetField(defaultSaber, "_saberBladeTopTransform", customTrail?.PointEnd);
+                ReflectionUtil.SetField(defaultSaber, "_saberBladeBottomTransform", customTrail?.PointStart);*/
 
-                var handler = new CustomSaberTrailHandler(customSaber, customTrail);
+                var handler = new TrailHandler(customSaber, customTrail);
                 handler.CreateTrail(defaultTrail, saberColour);
             }
         }

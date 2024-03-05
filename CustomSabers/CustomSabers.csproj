@@ -140,6 +140,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\CustomSaberTrailRenderer.cs" />
     <Compile Include="Data\ColorType.cs" />
     <Compile Include="Data\CustomSaberMetadata.cs" />
     <Compile Include="Data\CustomTrail.cs" />
@@ -157,8 +158,8 @@
     <Compile Include="UI\SettingsUI.cs" />
     <Compile Include="Utilities\CustomSabersAssetLoader.cs" />
     <Compile Include="Utilities\CustomSabersUtils.cs" />
-    <Compile Include="Utilities\CustomSaberTrail.cs" />
-    <Compile Include="Utilities\CustomSaberTrailHandler.cs" />
+    <Compile Include="Components\CustomSaberTrail.cs" />
+    <Compile Include="Components\TrailHandler.cs" />
     <Compile Include="Utilities\ImageLoading.cs" />
     <Compile Include="Utilities\SaberScript.cs" />
   </ItemGroup>
