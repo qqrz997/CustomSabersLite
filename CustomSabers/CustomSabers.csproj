@@ -150,7 +150,6 @@
     <Compile Include="Data\CustomTrail.cs" />
     <Compile Include="Data\EventManager.cs" />
     <Compile Include="Data\TrailType.cs" />
-    <Compile Include="Patches\SaberTrailPatch.cs" />
     <Compile Include="PluginDirs.cs" />
     <Compile Include="UI\CustomSabersFlowCoordinator.cs" />
     <Compile Include="UI\SaberListViewController.cs" />

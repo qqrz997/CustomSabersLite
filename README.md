@@ -1,5 +1,5 @@
 > [!NOTE]
-> If any of your sabers only appear in one of your VR headset's eyes, please send the saber to me so I can try to analyse the problem. This mod is in an unfinished state. There especially may be bugs with regards to sabers that were made for other mods that outdate the original Custom Saber plugin.
+> If any of your sabers only appear in one of your VR headset's eyes, please send the saber to me (unless it's private, then I would rather ask the saber creator) so I can try to analyse the problem. This mod is in an unfinished state. There may be bugs especially with regards to sabers that were made for other mods that outdate the original Custom Saber plugin.
 
 # Custom Sabers Lite
 A PC Beat Saber plugin to replace default sabers with custom sabers similar to how the original [Custom Sabers](https://github.com/Kylemc1413/CustomSaberPlugin) mod worked. This is essentially a stripped-down and re-assembled version that implements some of the basic functionality.

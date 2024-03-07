@@ -1,5 +1,8 @@
 changelog
 
+0.4.4
+- Fixed a major gameplay breaking bug where custom trails would interfere with the hitbox of the sabers
+
 0.4.3
 - Cached metadata is now automatically replaced when the mod is updated to make sure the new flags are included
 - Fixed an issue where the loader would get stuck when the saber name contained invalid file name characters

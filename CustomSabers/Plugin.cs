@@ -19,7 +19,7 @@ namespace CustomSaber
 
         private static string PluginGUID => "qqrz997.CustomSabersLite";
 
-        public static string Version => "0.4.3";
+        public const string Version = "0.4.4";
 
         internal static IPALogger Log { get; private set; }
 
