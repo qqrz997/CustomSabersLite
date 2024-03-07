@@ -10,13 +10,13 @@ using UnityEngine;
 
 namespace CustomSaber.Utilities
 {
-    internal class TrailHandler
+    internal class CustomTrailHandler
     {
         public CustomSaberTrail TrailInstance { get; private set; }
 
         private readonly CustomTrail _customTrail;
 
-        public TrailHandler(GameObject customSaber, CustomTrail customTrail)
+        public CustomTrailHandler(GameObject customSaber, CustomTrail customTrail)
         {
             _customTrail = customTrail;
             TrailInstance = customSaber.gameObject.AddComponent<CustomSaberTrail>();
@@ -54,7 +54,7 @@ namespace CustomSaber.Utilities
                 throw;
             }
 
-            TrailInstance.Setup();
+            TrailInstance.Setup(_customTrail.PointEnd, _customTrail.PointStart);
             //We will setup the trail values here
 
             float trailIntensity = BS_Utils.Plugin.LevelData.GameplayCoreSceneSetupData.playerSpecificSettings.saberTrailIntensity;
@@ -74,7 +74,7 @@ namespace CustomSaber.Utilities
             ReflectionUtil.SetField<SaberTrail, int>(TrailInstance, "_samplingFrequency", defaultSamplingFrequency);
             ReflectionUtil.SetField<SaberTrail, int>(TrailInstance, "_granularity", defaultGranularity);
             ReflectionUtil.SetField<SaberTrail, Color>(TrailInstance, "_color", trailColour);
-            ReflectionUtil.SetField<SaberTrail, IBladeMovementData>(TrailInstance, "_movementData", defaultBladeMovementData);
+            ReflectionUtil.SetField<SaberTrail, IBladeMovementData>(TrailInstance, "_movementData", TrailInstance.customTrailMovementData);
             ReflectionUtil.SetField<SaberTrail, SaberTrailRenderer>(TrailInstance, "_trailRenderer", defaultSaberTrailRenderer);
             ReflectionUtil.SetField<SaberTrail, TrailElementCollection>(TrailInstance, "_trailElementCollection", defaultTrailElementCollection);
             if (CustomSaberConfig.Instance.OverrideTrailDuration)

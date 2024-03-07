@@ -1,15 +1,11 @@
 ﻿using IPA;
 using IPALogger = IPA.Logging.Logger;
-using IPA.Utilities;
 using IPA.Config.Stores;
 using Config = IPA.Config.Config;
 using CustomSaber.Configuration;
 using CustomSaber.Utilities;
 using BS_Utils.Utilities;
-using System.IO;
 using CustomSaber.UI;
-using System.Threading.Tasks;
-using UnityEngine;
 using System;
 
 namespace CustomSaber
@@ -21,11 +17,11 @@ namespace CustomSaber
 
         private static string PluginName => "Custom Sabers Lite";
 
-        private static string PluginGUID => "qqrz.CustomSabersLite";
+        private static string PluginGUID => "qqrz997.CustomSabersLite";
 
         public static string Version => "0.4.3";
 
-        public static IPALogger Log { get; private set; }
+        internal static IPALogger Log { get; private set; }
 
         [Init]
         public void Init(IPALogger logger, Config config)

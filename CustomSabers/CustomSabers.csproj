@@ -40,6 +40,11 @@
     <DisableZipRelease>True</DisableZipRelease>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="0Harmony, Version=2.10.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <Private>False</Private>
+      <HintPath>$(BeatSaberDir)\Libs\0Harmony.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="AssetBundleLoadingTools">
       <HintPath>$(BeatSaberDir)\Plugins\AssetBundleLoadingTools.dll</HintPath>
       <Private>False</Private>
@@ -140,12 +145,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Components\CustomSaberTrailRenderer.cs" />
     <Compile Include="Data\ColorType.cs" />
     <Compile Include="Data\CustomSaberMetadata.cs" />
     <Compile Include="Data\CustomTrail.cs" />
     <Compile Include="Data\EventManager.cs" />
     <Compile Include="Data\TrailType.cs" />
+    <Compile Include="Patches\SaberTrailPatch.cs" />
     <Compile Include="PluginDirs.cs" />
     <Compile Include="UI\CustomSabersFlowCoordinator.cs" />
     <Compile Include="UI\SaberListViewController.cs" />
