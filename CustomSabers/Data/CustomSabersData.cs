@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CustomSaber.Data
 {
-    public class CustomSaberData
+    internal class CustomSaberData
     {
         public string FileName { get; set; }
 

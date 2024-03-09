@@ -13,7 +13,7 @@ using System.Text.RegularExpressions;
 
 namespace CustomSaber.Utilities
 {
-    public class CustomSaberAssetLoader
+    internal class CustomSaberAssetLoader
     {
         public static bool IsLoaded {  get; private set; }
 
@@ -30,8 +30,6 @@ namespace CustomSaber.Utilities
         private static List<string> sabersToLoad = new List<string>();
 
         private static IList<CustomSaberData> loadedSaberData = new List<CustomSaberData>();
-
-        public static Action customSabersLoaded;
 
         private static readonly string saberAssetPath = PluginDirs.CustomSabers.FullName;
 
@@ -62,7 +60,6 @@ namespace CustomSaber.Utilities
             }
 
             IsLoaded = true;
-            customSabersLoaded?.Invoke();
 
             UpdateCache(fileMetadata);
 
@@ -93,7 +90,6 @@ namespace CustomSaber.Utilities
             }
 
             IsLoaded = true;
-            customSabersLoaded?.Invoke();
 
             UpdateCache(fileMetadata);
 
@@ -227,7 +223,7 @@ namespace CustomSaber.Utilities
 
                 CustomSaberMetadata metadata = new CustomSaberMetadata(saber.FileName, saber.Descriptor.AuthorName, saber.MissingShaders, nameContainsInvalidChars, coverImage);
 
-                //Cache data for each loaded saber
+                // Cache data for each loaded saber
                 string metaFilePath = Path.Combine(cachePath, saber.Descriptor.SaberName + ".meta");
 
                 if (!File.Exists(metaFilePath))
@@ -271,7 +267,7 @@ namespace CustomSaber.Utilities
                 Plugin.Log.Debug($"No cache for {file}\nLoading saber from asset: {file}");
 
                 customSabers.Add(await Task.Run(() => LoadSaberFromAssetAsync(file)));
-                //customSabers.Add(await LoadSaberFromAssetAsync(file));
+                // customSabers.Add(await LoadSaberFromAssetAsync(file));
             }
 
             stopwatch.Stop();
@@ -305,7 +301,7 @@ namespace CustomSaber.Utilities
             {
                 List<Material> materials = ShaderRepair.GetMaterialsFromGameObjectRenderers(saber.SabersObject);
 
-                //Manually add CustomTrails to materials list
+                // Manually add CustomTrails to materials list
                 foreach (var customTrail in saber.SabersObject.GetComponentsInChildren<CustomTrail>(true))
                 {
                     if (!materials.Contains(customTrail.TrailMaterial))
@@ -339,7 +335,7 @@ namespace CustomSaber.Utilities
             {
                 List<Material> materials = ShaderRepair.GetMaterialsFromGameObjectRenderers(saber.SabersObject);
 
-                //Manually add CustomTrails to materials list
+                // Manually add CustomTrails to materials list
                 foreach (var customTrail in saber.SabersObject.GetComponentsInChildren<CustomTrail>(true))
                 {
                     if (!materials.Contains(customTrail.TrailMaterial))

@@ -13,9 +13,9 @@ namespace CustomSaber.Data
 
         public string AuthorName;
 
-        public bool MissingShaders; //todo - flag
+        public bool MissingShaders; // todo - flag
 
-        public bool InvalidChars; //todo - flag
+        public bool InvalidChars; // todo - flag
 
         public byte[] CoverImage;
 

@@ -7,11 +7,12 @@ using CustomSaber.Utilities;
 using BS_Utils.Utilities;
 using CustomSaber.UI;
 using System;
+using CustomSaber.Components;
 
 namespace CustomSaber
 {
     [Plugin(RuntimeOptions.SingleStartInit)]
-    public class Plugin
+    internal class Plugin
     {
         internal static Plugin Instance { get; private set; }
 
@@ -40,7 +41,7 @@ namespace CustomSaber
             AddEvents();
             try
             {
-                //await Task.WhenAll(CustomSaberAssetLoader.LoadAsync());
+                // await Task.WhenAll(CustomSaberAssetLoader.LoadAsync());
                 CustomSaberAssetLoader.Init();
             } 
             catch (Exception ex)
@@ -60,12 +61,16 @@ namespace CustomSaber
 
         private void OnGameSceneLoaded()
         {
-            if (CustomSaberAssetLoader.IsLoaded) SaberScript.Load();
+            if (CustomSaberAssetLoader.IsLoaded)
+            {
+                CustomSaberManager customSaberManager = new CustomSaberManager();
+                customSaberManager.Init();
+            }
         }
 
         private void OnMenuSceneLoaded()
         {
-            //this doesn't actually refresh the button
+            // this doesn't actually refresh the button
             if (!SettingsUI.MenuButtonActive && CustomSaberAssetLoader.IsLoaded) SettingsUI.UpdateMenu(true);
         }
 

@@ -14,11 +14,11 @@ namespace CustomSaber.Utilities
     {
         public CustomSaberTrail TrailInstance { get; private set; }
 
-        private readonly CustomTrail _customTrail;
+        private readonly CustomTrail customTrail;
 
         public CustomTrailHandler(GameObject customSaber, CustomTrail customTrail)
         {
-            _customTrail = customTrail;
+            this.customTrail = customTrail;
             TrailInstance = customSaber.gameObject.AddComponent<CustomSaberTrail>();
         }
 
@@ -34,8 +34,6 @@ namespace CustomSaber.Utilities
 
         private TrailElementCollection defaultTrailElementCollection;
 
-        private IBladeMovementData defaultBladeMovementData;
-
         public void CreateTrail(SaberTrail defaultTrail, Color saberColour)
         {
             try
@@ -46,7 +44,6 @@ namespace CustomSaber.Utilities
                 defaultSamplingFrequency = ReflectionUtil.GetField<int, SaberTrail>(defaultTrail, "_samplingFrequency");
                 defaultGranularity = ReflectionUtil.GetField<int, SaberTrail>(defaultTrail, "_granularity");
                 defaultTrailElementCollection = ReflectionUtil.GetField<TrailElementCollection, SaberTrail>(defaultTrail, "_trailElementCollection");
-                defaultBladeMovementData = ReflectionUtil.GetField<IBladeMovementData, SaberTrail>(defaultTrail, "_movementData");
             }
             catch (Exception ex)
             {
@@ -54,32 +51,32 @@ namespace CustomSaber.Utilities
                 throw;
             }
 
-            TrailInstance.Setup(_customTrail.PointEnd, _customTrail.PointStart);
-            //We will setup the trail values here
+            TrailInstance.Setup(customTrail.PointEnd, customTrail.PointStart);
+            // We will setup the trail values here
 
             float trailIntensity = BS_Utils.Plugin.LevelData.GameplayCoreSceneSetupData.playerSpecificSettings.saberTrailIntensity;
             Color trailColour = new Color { r = saberColour.r, g = saberColour.g, b = saberColour.b, a = trailIntensity };
 
-            //a later version should do this in a more elegant way if i can figure out a way to
-            //Swap material
+            // a later version should do this in a more elegant way if i can figure out a way to
+            // Swap material
             MeshRenderer newMeshRenderer = defaultMeshRenderer;
-            newMeshRenderer.material = _customTrail.TrailMaterial;
+            newMeshRenderer.material = customTrail.TrailMaterial;
             newMeshRenderer.material.SetColor("_Color", trailColour);
 
-            //Adjusting the trail's meshrenderer before adding it to our trail
+            // Adjusting the trail's meshrenderer before adding it to our trail
             ReflectionUtil.SetField(defaultSaberTrailRenderer, "_meshRenderer", newMeshRenderer);
 
-            //Variables are null so set them
+            // Variables are null so set them
             ReflectionUtil.SetField<SaberTrail, SaberTrailRenderer>(TrailInstance, "_trailRendererPrefab", defaultTrailRendererPrefab);
             ReflectionUtil.SetField<SaberTrail, int>(TrailInstance, "_samplingFrequency", defaultSamplingFrequency);
             ReflectionUtil.SetField<SaberTrail, int>(TrailInstance, "_granularity", defaultGranularity);
             ReflectionUtil.SetField<SaberTrail, Color>(TrailInstance, "_color", trailColour);
-            ReflectionUtil.SetField<SaberTrail, IBladeMovementData>(TrailInstance, "_movementData", TrailInstance.customTrailMovementData);
+            ReflectionUtil.SetField<SaberTrail, IBladeMovementData>(TrailInstance, "_movementData", TrailInstance.CustomTrailMovementData);
             ReflectionUtil.SetField<SaberTrail, SaberTrailRenderer>(TrailInstance, "_trailRenderer", defaultSaberTrailRenderer);
             ReflectionUtil.SetField<SaberTrail, TrailElementCollection>(TrailInstance, "_trailElementCollection", defaultTrailElementCollection);
             if (CustomSaberConfig.Instance.OverrideTrailDuration)
             {
-                CustomSaberUtils.SetTrailDuration(TrailInstance); //Has to be done at the end
+                CustomSaberUtils.SetTrailDuration(TrailInstance); // Has to be done at the end
             }
             if (CustomSaberConfig.Instance.DisableWhiteTrail)
             {

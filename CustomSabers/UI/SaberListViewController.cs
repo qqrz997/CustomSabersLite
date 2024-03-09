@@ -47,8 +47,8 @@ namespace CustomSaber.UI
             CustomSaberConfig.Instance.CurrentlySelectedSaber = CustomSaberAssetLoader.SabersMetadata[row].SaberFileName;
             CustomSaberChanged?.Invoke(CustomSaberAssetLoader.SabersMetadata[row]);
 
-            //currently loading saber on game load, probably should do it on saber select instead
-            //that can be used for saber previewing
+            // currently loading saber on game load, probably should do it on saber select instead
+            // that can be used for saber previewing
         }
 
         [UIAction("open-in-explorer")]
@@ -130,7 +130,7 @@ namespace CustomSaber.UI
             SetupList();
         }
 
-        private void SetupList()
+        private void SetupList() // todo - smoother saber list refresh
         {
             customListTableData.data.Clear();
 
@@ -165,7 +165,6 @@ namespace CustomSaber.UI
                 customListTableData.data.Add(customCellInfo);
             }
 
-            //todo - better ui - look into making reload smoother
             customListTableData.tableView.ReloadData();
 
             int selectedSaber = CustomSaberAssetLoader.SelectedSaberIndex;

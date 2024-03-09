@@ -105,15 +105,15 @@ namespace CustomSaber.Utilities
         {
             if (CustomSaberConfig.Instance.DisableWhiteTrail)
             {
-                //setting the trail duration to 0 doesn't completely hide trails, i assume this works the same but it's small enough to be completely unnoticeable
-                whiteSectionMaxDuration = 0f; //Could add config to adjust the white section length for fun
+                // setting the trail duration to 0 doesn't completely hide trails, i assume this works the same but it's small enough to be completely unnoticeable
+                whiteSectionMaxDuration = 0f; // Could add config to adjust the white section length for fun
             }
             ReflectionUtil.SetField(defaultTrail, "_whiteSectionMaxDuration", whiteSectionMaxDuration);
         }
 
         public static bool CheckMultiplayer()
         {
-            //todo - multiplayer support
+            // todo - multiplayer support
             if (GameObject.Find("MultiplayerController"))
             {
                 Plugin.Log.Warn("Multiplayer is currently not supported for custom sabers.");

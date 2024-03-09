@@ -29,7 +29,7 @@ namespace CustomSaber.UI
 
         public static void UpdateMenuOnSabersLoaded()
         {
-            //todo - menu button refresh (surely there's a proper way to do this)
+            // todo - menu button refresh (surely there's a proper way to do this)
             MenuButton.Interactable = true;
             MenuButton.Text = "Custom Sabers";
 

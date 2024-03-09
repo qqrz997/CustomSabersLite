@@ -3,7 +3,7 @@ using System.IO;
 
 namespace CustomSaber
 {
-    public class PluginDirs
+    internal class PluginDirs
     {
         public static DirectoryInfo CustomSabers;
 
@@ -11,7 +11,6 @@ namespace CustomSaber
 
         public static DirectoryInfo Cache;
 
-        //todo - temporary saber removal solution
         public static DirectoryInfo DeletedSabers;
 
         public static void Init()
