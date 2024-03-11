@@ -1,6 +1,6 @@
 ﻿namespace CustomSaber.Data
 {
-    public enum ColourType
+    public enum CustomSaberColorType
     {
         LeftSaber,
         RightSaber,

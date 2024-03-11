@@ -12,7 +12,7 @@ namespace CustomSaber
 
         public Material TrailMaterial;
 
-        public ColourType colorType = ColourType.CustomColor;
+        public CustomSaberColorType colorType = CustomSaberColorType.CustomColor;
 
         public Color TrailColor = new Color(1f, 1f, 1f, 1f);
 

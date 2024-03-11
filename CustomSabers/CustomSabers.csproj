@@ -152,7 +152,7 @@
   <ItemGroup>
     <Compile Include="Components\CustomSaber.cs" />
     <Compile Include="Components\CustomSaberManager.cs" />
-    <Compile Include="Data\ColorType.cs" />
+    <Compile Include="Data\CustomSaberColorType.cs" />
     <Compile Include="Data\CustomSaberMetadata.cs" />
     <Compile Include="Data\CustomTrail.cs" />
     <Compile Include="Data\EventManager.cs" />
