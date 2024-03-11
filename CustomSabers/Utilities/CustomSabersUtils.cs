@@ -8,7 +8,7 @@ using IPA.Utilities;
 
 namespace CustomSaber.Utilities
 {
-    public static class CustomSaberUtils
+    public class CustomSaberUtils
     {
         public static IEnumerable<string> GetFileNames(string path, IEnumerable<string> filters, SearchOption searchOption, bool returnShortPath = false)
         {

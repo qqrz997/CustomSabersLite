@@ -46,7 +46,7 @@ namespace CustomSaber.Utilities
                 CustomSaberConfig.Instance.PluginVer = Plugin.Version;
             }
 
-            Plugin.Log.Info("Starting the CustomSabersAssetLoader");
+            Plugin.Log.Debug("Starting the CustomSabersAssetLoader");
             Load();
         }
 
@@ -177,7 +177,7 @@ namespace CustomSaber.Utilities
                 }
             }
             sw.Stop();
-            Plugin.Log.Info($"{SaberMetadataFiles.Count()} metadata files read in {sw.ElapsedMilliseconds}ms");
+            Plugin.Log.Debug($"{SaberMetadataFiles.Count()} metadata files read in {sw.ElapsedMilliseconds}ms");
 
             foreach (string saberFile in CustomSaberFiles)
             {

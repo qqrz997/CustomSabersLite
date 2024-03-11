@@ -1,5 +1,4 @@
-﻿using BS_Utils.Gameplay;
-using CustomSaber.Configuration;
+﻿using CustomSaber.Configuration;
 using CustomSaber.Data;
 using CustomSaber.Utilities;
 using IPA.Utilities;
@@ -22,31 +21,26 @@ namespace CustomSaber.Components
         private GameObject customSabersObject;
 
         private GameObject leftSaberObject;
-
         private GameObject rightSaberObject;
 
         private EventManager leftSaberEventManager;
-
         private EventManager rightSaberEventManager;
 
         private BeatmapObjectManager beatmapObjectManager;
         private ScoreController scoreController;
         private ComboController comboController;
+        private RelativeScoreAndImmediateRankCounter relativeScoreCounter;
         private ObstacleSaberSparkleEffectManager saberCollisionManager;
         private GameEnergyCounter gameEnergyCounter;
-        private BeatmapCallbacksController beatmapCallback;
-        private PlayerHeadAndObstacleInteraction playerHeadAndObstacleInteraction;
-        private PauseController pauseController;
-        private float lastNoteTime;
-
-        private CustomSaberManager instance;
+        private float? lastNoteTime;
+        private float previousScore;
 
         public void Init()
         {
             Plugin.Log.Info("Game scene loaded, initializing the CustomSaberManager");
 
             GameObject go = GameObject.Find("VRGameCore");
-            instance = go.AddComponent<CustomSaberManager>();
+            go.AddComponent<CustomSaberManager>();
         }
 
         private void Awake()
@@ -268,8 +262,6 @@ namespace CustomSaber.Components
             }
         }
 
-        private void OnDestroy() => RemoveEvents();
-
         private SaberTrail GetVanillaTrail(Saber defaultSaber)
         {
             SaberTrail trail;
@@ -319,182 +311,134 @@ namespace CustomSaber.Components
                 return;
             }
 
-            leftSaberEventManager.OnLevelStart.Invoke();
-            rightSaberEventManager.OnLevelStart.Invoke();
+            Plugin.Log.Info("CustomSaberManger.AddEvents");
+
+            IReadonlyBeatmapData beatmapData = BS_Utils.Plugin.LevelData.GameplayCoreSceneSetupData.transformedBeatmapData;
+
+            lastNoteTime = GetLastNoteTime(beatmapData);
 
             try
             {
-                scoreController = FindObjectsOfType<ScoreController>().FirstOrDefault();
-                if (scoreController)
-                {
-                    scoreController.multiplierDidChangeEvent += MultiplierCallBack;
-                }
-                else
-                {
-                    Plugin.Log.Warn($"Failed to locate a suitable '{nameof(ScoreController)}'.");
-                }
-
+                scoreController = FindObjectsOfType<ScoreController>().FirstOrDefault(); //?
                 beatmapObjectManager = ReflectionUtil.GetField<BeatmapObjectManager, ScoreController>(scoreController, "_beatmapObjectManager");
-                if (beatmapObjectManager != null)
-                {
-                    beatmapObjectManager.noteWasCutEvent += SliceCallBack;
-                    beatmapObjectManager.noteWasMissedEvent += NoteMissCallBack;
-                }
-                else
-                {
-                    Plugin.Log.Warn($"Failed to locate a suitable '{nameof(BeatmapObjectManager)}'.");
-                }
-
-                comboController = FindObjectsOfType<ComboController>().FirstOrDefault();
-                if (scoreController)
-                {
-                    comboController.comboDidChangeEvent += ComboChangeEvent;
-                }
-                else
-                {
-                    Plugin.Log.Warn($"Failed to locate a suitable '{nameof(ScoreController)}'.");
-                }
-
+                comboController = FindObjectsOfType<ComboController>().FirstOrDefault(); //?
                 saberCollisionManager = Resources.FindObjectsOfTypeAll<ObstacleSaberSparkleEffectManager>().FirstOrDefault();
-                if (saberCollisionManager)
-                {
-                    saberCollisionManager.sparkleEffectDidStartEvent += SaberStartCollide;
-                    saberCollisionManager.sparkleEffectDidEndEvent += SaberEndCollide;
-                }
-                else
-                {
-                    Plugin.Log.Warn($"Failed to locate a suitable '{nameof(ObstacleSaberSparkleEffectManager)}'.");
-                }
-
                 gameEnergyCounter = Resources.FindObjectsOfTypeAll<GameEnergyCounter>().FirstOrDefault();
-                if (gameEnergyCounter)
-                {
-                    gameEnergyCounter.gameEnergyDidReach0Event += FailLevelCallBack;
-                }
-                else
-                {
-                    Plugin.Log.Warn($"Failed to locate a suitable '{nameof(GameEnergyCounter)}'.");
-                }
-
-                /*beatmapCallback = Resources.FindObjectsOfTypeAll<BeatmapCallbacksController>().FirstOrDefault();
-                if (beatmapCallback)
-                {
-                    beatmapCallback.beatmapEventDidTriggerEvent += LightEventCallBack;
-                }
-                else
-                {
-                    Plugin.Log.Warn($"Failed to locate a suitable '{nameof(BeatmapObjectCallbackController)}'.");
-                }*/
-
-                playerHeadAndObstacleInteraction = scoreController.GetField<PlayerHeadAndObstacleInteraction, ScoreController>("_playerHeadAndObstacleInteraction");
-                if (playerHeadAndObstacleInteraction == null)
-                {
-                    Plugin.Log.Warn($"Failed to locate a suitable '{nameof(PlayerHeadAndObstacleInteraction)}'.");
-                }
+                relativeScoreCounter = Resources.FindObjectsOfTypeAll<RelativeScoreAndImmediateRankCounter>().FirstOrDefault();
             }
             catch (Exception ex)
             {
+                Plugin.Log.Error("Problem encountered when trying to get event objects");
                 Plugin.Log.Error(ex);
-                throw;
-            }
-
-            /*try
-            {
-                float LastTime = 0.0f;
-                LevelData levelData = BS_Utils.Plugin.LevelData;
-                BeatmapData beatmapData = levelData.GameplayCoreSceneSetupData.difficultyBeatmap.beatmapData;
-
-                IReadOnlyList<IReadonlyBeatmapLineData> beatmapLinesData = beatmapData.beatmapLinesData;
-                foreach (BeatmapLineData beatMapLineData in beatmapLinesData)
-                {
-                    IReadOnlyList<BeatmapObjectData> beatmapObjectsData = beatMapLineData.beatmapObjectsData;
-                    for (int i = beatmapObjectsData.Count - 1; i >= 0; i--)
-                    {
-                        BeatmapObjectData beatmapObjectData = beatmapObjectsData[i];
-                        if (beatmapObjectData.beatmapObjectType == BeatmapObjectType.Note
-                            && ((NoteData)beatmapObjectData).colorType != global::ColorType.None)
-                        {
-                            if (beatmapObjectData.time > LastTime)
-                            {
-                                LastTime = beatmapObjectData.time;
-                            }
-                        }
-                    }
-                }
-
-                lastNoteTime = LastTime;
-            }
-            catch (Exception ex)
-            {
-                Plugin.Log.Error(ex);
-                throw;
-            }*/
-        }
-
-        private void RemoveEvents()
-        {
-            if (pauseController != null)
-            {
-                pauseController.didResumeEvent += OnPauseResume;
-            }
-
-            if (beatmapObjectManager != null)
-            {
-                beatmapObjectManager.noteWasCutEvent -= SliceCallBack;
-                beatmapObjectManager.noteWasMissedEvent -= NoteMissCallBack;
             }
 
             if (scoreController)
             {
-                scoreController.multiplierDidChangeEvent -= MultiplierCallBack;
+                scoreController.multiplierDidChangeEvent += MultiplierChanged;
             }
 
-            if (comboController)
+            if (beatmapObjectManager != null)
             {
-                comboController.comboDidChangeEvent -= ComboChangeEvent;
+                beatmapObjectManager.noteWasCutEvent += NoteWasCut;
+                beatmapObjectManager.noteWasMissedEvent += NoteWasMissed;
+            }
+
+            if (scoreController)
+            {
+                comboController.comboDidChangeEvent += ComboChanged;
             }
 
             if (saberCollisionManager)
             {
-                saberCollisionManager.sparkleEffectDidStartEvent -= SaberStartCollide;
-                saberCollisionManager.sparkleEffectDidEndEvent -= SaberEndCollide;
+                saberCollisionManager.sparkleEffectDidStartEvent += SaberStartedCollision;
+                saberCollisionManager.sparkleEffectDidEndEvent += SaberEndedCollision;
             }
 
             if (gameEnergyCounter)
             {
-                gameEnergyCounter.gameEnergyDidReach0Event -= FailLevelCallBack;
+                gameEnergyCounter.gameEnergyDidReach0Event += LevelWasFailed;
             }
 
-            /*if (beatmapCallback != null)
+            if (relativeScoreCounter)
             {
-                beatmapCallback.beatmapEventDidTriggerEvent -= LightEventCallBack;
-            }*/
+                relativeScoreCounter.relativeScoreOrImmediateRankDidChangeEvent += ScoreChangedEvent;
+            }
+
+            leftSaberEventManager.OnLevelStart.Invoke();
+            rightSaberEventManager.OnLevelStart.Invoke();
         }
 
-        private void OnPauseResume()
+        private void OnDestroy() => RemoveEvents();
+
+        private void RemoveEvents()
         {
-            foreach (var saberTrailRenderer in Resources.FindObjectsOfTypeAll<SaberTrailRenderer>())
+            Plugin.Log.Info("REMOVE EVENTS");
+            if (beatmapObjectManager != null)
             {
-                saberTrailRenderer.enabled = true;
+                beatmapObjectManager.noteWasCutEvent -= NoteWasCut;
+                beatmapObjectManager.noteWasMissedEvent -= NoteWasMissed;
+            }
+
+            if (scoreController)
+            {
+                scoreController.multiplierDidChangeEvent -= MultiplierChanged;
+            }
+
+            if (comboController)
+            {
+                comboController.comboDidChangeEvent -= ComboChanged;
+            }
+
+            if (saberCollisionManager)
+            {
+                saberCollisionManager.sparkleEffectDidStartEvent -= SaberStartedCollision;
+                saberCollisionManager.sparkleEffectDidEndEvent -= SaberEndedCollision;
+            }
+
+            if (gameEnergyCounter)
+            {
+                gameEnergyCounter.gameEnergyDidReach0Event -= LevelWasFailed;
+            }
+
+            if (relativeScoreCounter)
+            {
+                relativeScoreCounter.relativeScoreOrImmediateRankDidChangeEvent -= ScoreChangedEvent;
             }
         }
 
-        private void SliceCallBack(NoteController noteController, in NoteCutInfo noteCutInfo)
+        private float GetLastNoteTime(IReadonlyBeatmapData beatmapData)
         {
-            if (!noteCutInfo.allIsOK)
+            float lastNoteTime = 0.0f;
+            foreach (var noteData in beatmapData.GetBeatmapDataItems<NoteData>(0))
             {
-                leftSaberEventManager?.OnComboBreak?.Invoke();
-                rightSaberEventManager?.OnComboBreak?.Invoke();
-                // StartCoroutine(CalculateAccuracyAndFireEvents());
+                if (noteData.colorType == ColorType.None) continue;
+
+                if (noteData.time > lastNoteTime)
+                {
+                    lastNoteTime = noteData.time;
+                }
+            }
+            return lastNoteTime;
+        }
+
+        private void NoteWasCut(NoteController noteController, in NoteCutInfo noteCutInfo)
+        {
+            if (!lastNoteTime.HasValue) return;
+
+            if (noteCutInfo.allIsOK)
+            {
+                // Note was cut
+                EventManager eventManager = GetEventManagerByType(noteCutInfo.saberType);
+                eventManager?.OnSlice?.Invoke();
             }
             else
             {
-                EventManager eventManager = GetEventManagerByType(noteCutInfo.saberType);
-                eventManager?.OnSlice?.Invoke();
-                // noteCutInfo.swingRatingCounter.didFinishEvent += OnSwingRatingCounterFinished;
+                // Player has skill issue
+                leftSaberEventManager?.OnComboBreak?.Invoke();
+                rightSaberEventManager?.OnComboBreak?.Invoke();
             }
 
-            if (Mathf.Approximately(noteController.noteData.time, lastNoteTime))
+            if (Mathf.Approximately(noteController.noteData.time, lastNoteTime.Value))
             {
                 lastNoteTime = 0;
                 leftSaberEventManager?.OnLevelEnded?.Invoke();
@@ -502,25 +446,25 @@ namespace CustomSaber.Components
             }
         }
 
-        private void NoteMissCallBack(NoteController noteController)
+        private void NoteWasMissed(NoteController noteController)
         {
-            if (noteController.noteData.colorType != global::ColorType.None)
+            if (!lastNoteTime.HasValue) return;
+
+            if (noteController.noteData.colorType != ColorType.None)
             {
                 leftSaberEventManager?.OnComboBreak?.Invoke();
                 rightSaberEventManager?.OnComboBreak?.Invoke();
             }
 
-            if (Mathf.Approximately(noteController.noteData.time, lastNoteTime))
+            if (Mathf.Approximately(noteController.noteData.time, lastNoteTime.Value))
             {
                 lastNoteTime = 0;
                 leftSaberEventManager?.OnLevelEnded?.Invoke();
                 rightSaberEventManager?.OnLevelEnded?.Invoke();
             }
-
-            // StartCoroutine(CalculateAccuracyAndFireEvents());
         }
 
-        private void MultiplierCallBack(int multiplier, float progress)
+        private void MultiplierChanged(int multiplier, float progress)
         {
             if (multiplier > 1 && progress < 0.1f)
             {
@@ -529,64 +473,44 @@ namespace CustomSaber.Components
             }
         }
 
-        private void SaberStartCollide(SaberType saberType)
-        {
-            EventManager eventManager = GetEventManagerByType(saberType);
-            eventManager?.SaberStartColliding?.Invoke();
-        }
-
-        private void SaberEndCollide(SaberType saberType)
-        {
-            EventManager eventManager = GetEventManagerByType(saberType);
-            eventManager?.SaberStopColliding?.Invoke();
-        }
-
-        private void FailLevelCallBack()
-        {
-            leftSaberEventManager?.OnLevelFail?.Invoke();
-            rightSaberEventManager?.OnLevelFail?.Invoke();
-        }
-
-        /*private void LightEventCallBack(BeatmapEventData songEvent)
-        {
-            if ((int)songEvent.type < 5)
-            {
-                if (songEvent. > 0 && songEvent.value < 4)
-                {
-                    leftSaberEventManager?.OnBlueLightOn?.Invoke();
-                    rightSaberEventManager?.OnBlueLightOn?.Invoke();
-                }
-
-                if (songEvent.value > 4 && songEvent.value < 8)
-                {
-                    leftSaberEventManager?.OnRedLightOn?.Invoke();
-                    rightSaberEventManager?.OnRedLightOn?.Invoke();
-                }
-            }
-        }*/
-
-        private void ComboChangeEvent(int combo)
+        private void ComboChanged(int combo)
         {
             leftSaberEventManager?.OnComboChanged?.Invoke(combo);
             rightSaberEventManager?.OnComboChanged?.Invoke(combo);
         }
 
-        /*private IEnumerator CalculateAccuracyAndFireEvents()
+        private void SaberStartedCollision(SaberType saberType)
         {
-            yield return null;
+            EventManager eventManager = GetEventManagerByType(saberType);
+            eventManager?.SaberStartColliding?.Invoke();
+        }
 
-            var rawScore = scoreController.modifiedScore;
-            var maximumScore = ScoreModel.ComputeMaxMultipliedScoreForBeatmap(ReflectionUtil.GetField<int, ScoreController>(scoreController, "_cutOrMissedNotes"));
-            var accuracy = (float)rawScore / (float)maximumScore;
-
-            leftEventManager?.OnAccuracyChanged?.Invoke(accuracy);
-            rightEventManager?.OnAccuracyChanged?.Invoke(accuracy);
-        }*/
-
-        /*private void OnSwingRatingCounterFinished(ISaberSwingRatingCounter afterCutRating)
+        private void SaberEndedCollision(SaberType saberType)
         {
-            afterCutRating.didFinishEvent -= OnSwingRatingCounterFinished;
-            StartCoroutine(CalculateAccuracyAndFireEvents());
-        }*/
+            EventManager eventManager = GetEventManagerByType(saberType);
+            eventManager?.SaberStopColliding?.Invoke();
+        }
+
+        private void LevelWasFailed()
+        {
+            leftSaberEventManager?.OnLevelFail?.Invoke();
+            rightSaberEventManager?.OnLevelFail?.Invoke();
+        }
+
+        private void ScoreChangedEvent()
+        {
+            float relativeScore = relativeScoreCounter.relativeScore;
+            if (Math.Abs(previousScore - relativeScore) > 0f)
+            {
+                leftSaberEventManager?.OnAccuracyChanged?.Invoke(relativeScore);
+                rightSaberEventManager?.OnAccuracyChanged?.Invoke(relativeScore);
+                previousScore = relativeScore;
+            }
+        }
+
+        private void LightEventCallback()
+        {
+
+        }
     }
 }
