@@ -76,13 +76,13 @@ namespace CustomSaber.Utilities
             ReflectionUtil.SetField(defaultSaberTrailRenderer, "_meshRenderer", newMeshRenderer);
 
             // Variables are null so set them
-            ReflectionUtil.SetField<SaberTrail, SaberTrailRenderer>(TrailInstance, "_trailRendererPrefab", defaultTrailRendererPrefab);
-            ReflectionUtil.SetField<SaberTrail, int>(TrailInstance, "_samplingFrequency", defaultSamplingFrequency);
-            ReflectionUtil.SetField<SaberTrail, int>(TrailInstance, "_granularity", defaultGranularity);
-            ReflectionUtil.SetField<SaberTrail, Color>(TrailInstance, "_color", saberTrailColor);
-            ReflectionUtil.SetField<SaberTrail, IBladeMovementData>(TrailInstance, "_movementData", TrailInstance.CustomTrailMovementData);
-            ReflectionUtil.SetField<SaberTrail, SaberTrailRenderer>(TrailInstance, "_trailRenderer", defaultSaberTrailRenderer);
-            ReflectionUtil.SetField<SaberTrail, TrailElementCollection>(TrailInstance, "_trailElementCollection", defaultTrailElementCollection);
+            TrailInstance.TrailRendererPrefab = defaultTrailRendererPrefab;
+            TrailInstance.SamplingFrequency = defaultSamplingFrequency;
+            TrailInstance.Granularity = defaultGranularity;
+            TrailInstance.Color = saberTrailColor;
+            TrailInstance.MovementData = TrailInstance.CustomTrailMovementData;
+            TrailInstance.TrailRenderer = defaultSaberTrailRenderer;
+            TrailInstance.TrailElementCollection = defaultTrailElementCollection;
             if (CustomSaberConfig.Instance.OverrideTrailDuration)
             {
                 CustomSaberUtils.SetTrailDuration(TrailInstance); // Has to be done at the end

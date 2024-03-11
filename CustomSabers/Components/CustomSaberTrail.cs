@@ -1,9 +1,58 @@
 ﻿using UnityEngine;
+using ReflectionUtil = IPA.Utilities.ReflectionUtil;
 
 namespace CustomSaber.Utilities
 {
     internal class CustomSaberTrail : SaberTrail
     {
+        public SaberTrailRenderer TrailRendererPrefab
+        {
+            get { return ReflectionUtil.GetField<SaberTrailRenderer, SaberTrail>(this, "_trailRendererPrefab"); }
+            set { ReflectionUtil.SetField<SaberTrail, SaberTrailRenderer>(this, "_trailRendererPrefab", value); }
+        }
+
+        public int SamplingFrequency
+        {
+            get { return ReflectionUtil.GetField<int, SaberTrail>(this, "_samplingFrequency"); }
+            set { ReflectionUtil.SetField<SaberTrail, int>(this, "_samplingFrequency", value); }
+        }
+
+        public int Granularity
+        {
+            get { return ReflectionUtil.GetField<int, SaberTrail>(this, "_granularity"); }
+            set { ReflectionUtil.SetField<SaberTrail, int>(this, "_granularity", value); }
+        }
+
+        public Color Color
+        {
+            get { return ReflectionUtil.GetField<Color, SaberTrail>(this, "_color"); }
+            set { ReflectionUtil.SetField<SaberTrail, Color>(this, "_color", value); }
+        }
+
+        public IBladeMovementData MovementData
+        {
+            get { return ReflectionUtil.GetField<IBladeMovementData, SaberTrail>(this, "_movementData"); }
+            set { ReflectionUtil.SetField<SaberTrail, IBladeMovementData>(this, "_movementData", value); }
+        }
+
+        public SaberTrailRenderer TrailRenderer
+        {
+            get { return ReflectionUtil.GetField<SaberTrailRenderer, SaberTrail>(this, "_trailRenderer"); }
+            set { ReflectionUtil.SetField<SaberTrail, SaberTrailRenderer>(this, "_trailRenderer", value); }
+        }
+        
+        public MeshRenderer MeshRenderer
+        {
+            get { return ReflectionUtil.GetField<MeshRenderer, SaberTrailRenderer>(TrailRenderer, "_meshRenderer"); }
+            set { ReflectionUtil.SetField<SaberTrailRenderer, MeshRenderer>(TrailRenderer, "_meshRenderer", value); }
+        }
+
+        public TrailElementCollection TrailElementCollection
+        {
+            get { return ReflectionUtil.GetField<TrailElementCollection, SaberTrail>(this, "_trailElementCollection"); }
+            set { ReflectionUtil.SetField<SaberTrail, TrailElementCollection>(this, "_trailElementCollection", value); }
+        }
+
         private Transform customTrailTopTransform;
 
         private Transform customTrailBottomTransform;
