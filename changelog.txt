@@ -1,5 +1,8 @@
 changelog
 
+0.5.1
+- Fixed missed case for trail custom colours where material colour would be set to the vertex colours
+
 0.5.0
 - Now handles custom events for sabers which have event managers
 - Fixed trails that used their own custom colours
