@@ -9,19 +9,19 @@ namespace CustomSaber.Configuration
     {
         public static CustomSaberConfig Instance { get; set; }
 
-        public virtual string CurrentlySelectedSaber { get; internal set; } 
+        public virtual string CurrentlySelectedSaber { get; internal set; } = "Default";
 
-        public virtual TrailType TrailType { get; internal set; }
+        public virtual TrailType TrailType { get; internal set; } = TrailType.Custom;
 
-        public virtual bool CustomEventsEnabled { get; internal set; }
+        public virtual bool CustomEventsEnabled { get; internal set; } = true;
 
-        public virtual bool OverrideTrailDuration {  get; internal set; }
+        public virtual bool OverrideTrailDuration { get; internal set; } = false;
 
-        public virtual int TrailDuration { get; internal set; }
+        public virtual int TrailDuration { get; internal set; } = 100;
 
-        public virtual bool DisableWhiteTrail { get; internal set; }
+        public virtual bool DisableWhiteTrail { get; internal set; } = true;
 
-        public virtual string PluginVer { get; internal set; }
+        public virtual string PluginVer { get; internal set; } = string.Empty;
 
         // public virtual void OnReload() { }
 
