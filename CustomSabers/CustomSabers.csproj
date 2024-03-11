@@ -172,6 +172,7 @@
     <Compile Include="Components\CustomSaberTrail.cs" />
     <Compile Include="Components\TrailHandler.cs" />
     <Compile Include="Utilities\ImageLoading.cs" />
+    <Compile Include="Utilities\MaterialHelpers.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="manifest.json" />

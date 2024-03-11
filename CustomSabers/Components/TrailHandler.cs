@@ -30,7 +30,7 @@ namespace CustomSaber.Utilities
 
         private TrailElementCollection defaultTrailElementCollection;
 
-        public void CreateTrail(SaberTrail defaultTrail, Color saberColor)
+        public void CreateTrail(SaberTrail defaultTrail, Color saberTrailColor)
         {
             try
             {
@@ -50,28 +50,28 @@ namespace CustomSaber.Utilities
             TrailInstance.Setup(customTrail.PointEnd, customTrail.PointStart);
             // We will setup the trail values here
 
-            Color trailColor;
+            Color materialColor;
+            MeshRenderer newMeshRenderer = defaultMeshRenderer;
+            float trailIntensity = BS_Utils.Plugin.LevelData.GameplayCoreSceneSetupData.playerSpecificSettings.saberTrailIntensity;
+
+            // a later version should do this in a more elegant way if i can figure out a way to
+            // Swap material
+            newMeshRenderer.material = customTrail.TrailMaterial;
 
             switch (customTrail.colorType)
             {
                 case CustomSaberColorType.CustomColor:
-                    trailColor = customTrail.TrailColor;
+                    materialColor = customTrail.TrailColor;
                     break;
 
                 default:
-                    trailColor = saberColor;
+                    materialColor = saberTrailColor;
+                    materialColor.a = trailIntensity;
                     break;
             }
 
-            float trailIntensity = BS_Utils.Plugin.LevelData.GameplayCoreSceneSetupData.playerSpecificSettings.saberTrailIntensity;
-            trailColor.a = trailIntensity;
-
-            // a later version should do this in a more elegant way if i can figure out a way to
-            // Swap material
-            MeshRenderer newMeshRenderer = defaultMeshRenderer;
-            newMeshRenderer.material = customTrail.TrailMaterial;
-            newMeshRenderer.material.SetColor("_Color", trailColor);
-
+            newMeshRenderer.material.color = materialColor;
+            
             // Adjusting the trail's meshrenderer before adding it to our trail
             ReflectionUtil.SetField(defaultSaberTrailRenderer, "_meshRenderer", newMeshRenderer);
 
@@ -79,7 +79,7 @@ namespace CustomSaber.Utilities
             ReflectionUtil.SetField<SaberTrail, SaberTrailRenderer>(TrailInstance, "_trailRendererPrefab", defaultTrailRendererPrefab);
             ReflectionUtil.SetField<SaberTrail, int>(TrailInstance, "_samplingFrequency", defaultSamplingFrequency);
             ReflectionUtil.SetField<SaberTrail, int>(TrailInstance, "_granularity", defaultGranularity);
-            ReflectionUtil.SetField<SaberTrail, Color>(TrailInstance, "_color", trailColor);
+            ReflectionUtil.SetField<SaberTrail, Color>(TrailInstance, "_color", saberTrailColor);
             ReflectionUtil.SetField<SaberTrail, IBladeMovementData>(TrailInstance, "_movementData", TrailInstance.CustomTrailMovementData);
             ReflectionUtil.SetField<SaberTrail, SaberTrailRenderer>(TrailInstance, "_trailRenderer", defaultSaberTrailRenderer);
             ReflectionUtil.SetField<SaberTrail, TrailElementCollection>(TrailInstance, "_trailElementCollection", defaultTrailElementCollection);
@@ -90,6 +90,14 @@ namespace CustomSaber.Utilities
             if (CustomSaberConfig.Instance.DisableWhiteTrail)
             {
                 CustomSaberUtils.SetWhiteTrailDuration(TrailInstance);
+            }
+        }
+
+        private void SetClampTexture(Material mat)
+        {
+            if(mat.TryGetMainTexture(out Texture texture))
+            {
+                texture.wrapMode = TextureWrapMode.Clamp;
             }
         }
     }
