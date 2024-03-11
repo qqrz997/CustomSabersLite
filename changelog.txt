@@ -1,5 +1,9 @@
 changelog
 
+0.5.0
+- Now handles custom events for sabers which have event managers
+- Fixed trails that used their own custom colours
+
 0.4.4
 - Fixed a major gameplay breaking bug where custom trails would interfere with the hitbox of the sabers
 
