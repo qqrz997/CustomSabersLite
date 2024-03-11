@@ -13,7 +13,7 @@ namespace CustomSaber.Configuration
 
         public virtual TrailType TrailType { get; internal set; }
 
-        // public virtual bool CustomEventsEnabled { get; internal set; }
+        public virtual bool CustomEventsEnabled { get; internal set; }
 
         public virtual bool OverrideTrailDuration {  get; internal set; }
 

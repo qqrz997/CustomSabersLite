@@ -68,6 +68,13 @@ namespace CustomSaber.UI
         [UIValue("trail-type-list")]
         public List<object> trailType = Enum.GetNames(typeof(TrailType)).ToList<object>();
 
+        [UIValue("enable-custom-events")]
+        public bool CustomEventsEnabled
+        {
+            get => CustomSaberConfig.Instance.CustomEventsEnabled;
+            set => CustomSaberConfig.Instance.CustomEventsEnabled = value;
+        }
+
         [UIAction("#post-parse")]
         private void SetupSettings()
         {

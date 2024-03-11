@@ -136,7 +136,7 @@ namespace CustomSaber.Components
                 yield break;
             }
 
-            AddEvents();
+            if (CustomSaberConfig.Instance.CustomEventsEnabled) AddEvents();
 
             IEnumerable<Saber> defaultSabers = Resources.FindObjectsOfTypeAll<Saber>();
 
@@ -277,20 +277,7 @@ namespace CustomSaber.Components
             return trail;
         }
 
-        private EventManager GetEventManagerByType(SaberType saberType)
-        {
-            EventManager eventManager = null;
-            switch (saberType)
-            {
-                case SaberType.SaberA:
-                    eventManager = leftSaberEventManager; break;
-
-                case SaberType.SaberB:
-                    eventManager = rightSaberEventManager; break;
-            }
-            return eventManager;
-        }
-
+        #region events
         private void AddEvents()
         {
             leftSaberEventManager = leftSaberObject?.GetComponent<EventManager>();
@@ -311,7 +298,7 @@ namespace CustomSaber.Components
                 return;
             }
 
-            Plugin.Log.Info("CustomSaberManger.AddEvents");
+            Plugin.Log.Debug("Adding events");
 
             IReadonlyBeatmapData beatmapData = BS_Utils.Plugin.LevelData.GameplayCoreSceneSetupData.transformedBeatmapData;
 
@@ -372,7 +359,6 @@ namespace CustomSaber.Components
 
         private void RemoveEvents()
         {
-            Plugin.Log.Info("REMOVE EVENTS");
             if (beatmapObjectManager != null)
             {
                 beatmapObjectManager.noteWasCutEvent -= NoteWasCut;
@@ -404,21 +390,6 @@ namespace CustomSaber.Components
             {
                 relativeScoreCounter.relativeScoreOrImmediateRankDidChangeEvent -= ScoreChangedEvent;
             }
-        }
-
-        private float GetLastNoteTime(IReadonlyBeatmapData beatmapData)
-        {
-            float lastNoteTime = 0.0f;
-            foreach (var noteData in beatmapData.GetBeatmapDataItems<NoteData>(0))
-            {
-                if (noteData.colorType == ColorType.None) continue;
-
-                if (noteData.time > lastNoteTime)
-                {
-                    lastNoteTime = noteData.time;
-                }
-            }
-            return lastNoteTime;
         }
 
         private void NoteWasCut(NoteController noteController, in NoteCutInfo noteCutInfo)
@@ -512,5 +483,35 @@ namespace CustomSaber.Components
         {
 
         }
+
+        private EventManager GetEventManagerByType(SaberType saberType)
+        {
+            EventManager eventManager = null;
+            switch (saberType)
+            {
+                case SaberType.SaberA:
+                    eventManager = leftSaberEventManager; break;
+
+                case SaberType.SaberB:
+                    eventManager = rightSaberEventManager; break;
+            }
+            return eventManager;
+        }
+
+        private float GetLastNoteTime(IReadonlyBeatmapData beatmapData)
+        {
+            float lastNoteTime = 0.0f;
+            foreach (var noteData in beatmapData.GetBeatmapDataItems<NoteData>(0))
+            {
+                if (noteData.colorType == ColorType.None) continue;
+
+                if (noteData.time > lastNoteTime)
+                {
+                    lastNoteTime = noteData.time;
+                }
+            }
+            return lastNoteTime;
+        }
+        #endregion
     }
 }

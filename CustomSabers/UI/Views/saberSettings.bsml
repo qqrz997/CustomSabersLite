@@ -19,6 +19,9 @@
         
         <!--Trail type (custom, vanilla, none)-->
         <list-setting text='Saber Trail Type' value='trail-type' options='trail-type-list' apply-on-change='true' hover-hint='Select the type of trail you want to use' />
+
+        <!--Toggle saber custom events-->
+        <checkbox-setting text='Enable Saber Events' value='enable-custom-events' apply-on-change='true' hover-hint='Toggles saber events. For instance, an effect happening when you achieve a full combo' />
         
       </vertical>
     </horizontal>
