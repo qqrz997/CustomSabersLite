@@ -35,8 +35,6 @@ namespace CustomSaber.Utilities
 
         private static readonly string cachePath = PluginDirs.Cache.FullName;
 
-        private static readonly Regex invalidPathChars = new Regex(new string(Path.GetInvalidFileNameChars()));
-
         internal static async Task Init()
         {
             if (CustomSaberConfig.Instance.PluginVer != Plugin.Version)
@@ -213,20 +211,11 @@ namespace CustomSaber.Utilities
                     }
                 }
 
-                bool nameContainsInvalidChars = false;
-                if (invalidPathChars.IsMatch(saber.FileName))
-                {
-                    saber.FileName = string.Concat(saber.FileName.Split(Path.GetInvalidFileNameChars()));
-                    Plugin.Log.Warn($"{saber.FileName}: saber file name contains invalid file name characters! If you are the saber creator please consider changing this.");
-                    nameContainsInvalidChars = true;
-                }
-
                 CustomSaberMetadata metadata = new CustomSaberMetadata(
                     saber.Descriptor.SaberName,
                     saber.Descriptor.AuthorName,
                     saber.FileName,
                     saber.MissingShaders,
-                    nameContainsInvalidChars,
                     coverImage);
 
                 // Cache data for each loaded saber
@@ -415,7 +404,6 @@ namespace CustomSaber.Utilities
             {
                 newSaberData = new CustomSaberData("DefaultSabers");
             }
-
             return newSaberData;
         }
 
