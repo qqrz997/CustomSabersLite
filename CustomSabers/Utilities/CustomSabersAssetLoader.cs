@@ -214,17 +214,23 @@ namespace CustomSaber.Utilities
                 }
 
                 bool nameContainsInvalidChars = false;
-                if (invalidPathChars.IsMatch(saber.Descriptor.SaberName))
+                if (invalidPathChars.IsMatch(saber.FileName))
                 {
-                    saber.Descriptor.SaberName = string.Concat(saber.Descriptor.SaberName.Split(Path.GetInvalidFileNameChars()));
-                    Plugin.Log.Warn($"{saber.Descriptor.SaberName}: descriptor contains invalid file name characters! If you are the saber creator please consider changing this.");
+                    saber.FileName = string.Concat(saber.FileName.Split(Path.GetInvalidFileNameChars()));
+                    Plugin.Log.Warn($"{saber.FileName}: saber file name contains invalid file name characters! If you are the saber creator please consider changing this.");
                     nameContainsInvalidChars = true;
                 }
 
-                CustomSaberMetadata metadata = new CustomSaberMetadata(saber.FileName, saber.Descriptor.AuthorName, saber.MissingShaders, nameContainsInvalidChars, coverImage);
+                CustomSaberMetadata metadata = new CustomSaberMetadata(
+                    saber.Descriptor.SaberName,
+                    saber.Descriptor.AuthorName,
+                    saber.FileName,
+                    saber.MissingShaders,
+                    nameContainsInvalidChars,
+                    coverImage);
 
                 // Cache data for each loaded saber
-                string metaFilePath = Path.Combine(cachePath, saber.Descriptor.SaberName + ".meta");
+                string metaFilePath = Path.Combine(cachePath, saber.FileName + ".meta");
 
                 if (!File.Exists(metaFilePath))
                 {

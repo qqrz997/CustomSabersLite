@@ -9,9 +9,11 @@ namespace CustomSaber.Data
 {
     public struct CustomSaberMetadata
     {
-        public string SaberFileName;
+        public string SaberName;
 
         public string AuthorName;
+
+        public string SaberFileName;
 
         public bool MissingShaders; // todo - flag
 
@@ -19,10 +21,11 @@ namespace CustomSaber.Data
 
         public byte[] CoverImage;
 
-        public CustomSaberMetadata(string saberName,  string authorName, bool missingShaders = false, bool invalidChars = false, byte[] coverImage = null)
+        public CustomSaberMetadata(string saberName,  string authorName, string saberFileName = null, bool missingShaders = false, bool invalidChars = false, byte[] coverImage = null)
         {
-            SaberFileName = saberName;
+            SaberName = saberName;
             AuthorName = authorName;
+            SaberFileName = saberFileName;
             MissingShaders = missingShaders;
             InvalidChars = invalidChars;
             CoverImage = coverImage;

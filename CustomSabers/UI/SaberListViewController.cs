@@ -139,13 +139,13 @@ namespace CustomSaber.UI
             for (int i = 0; i < CustomSaberAssetLoader.SabersMetadata.Count; i++)
             {
                 CustomSaberMetadata metadata = CustomSaberAssetLoader.SabersMetadata[i];
-
-                if (!File.Exists(Path.Combine(PluginDirs.CustomSabers.FullName, metadata.SaberFileName)) && metadata.SaberFileName != "Default")
+                
+                if (metadata.SaberFileName != null)
                 {
-                    continue;
+                    if (!File.Exists(Path.Combine(PluginDirs.CustomSabers.FullName, metadata.SaberFileName))) continue;
                 }
 
-                Plugin.Log.Debug($"#{i+1} \"{metadata.SaberFileName}\"");
+                Plugin.Log.Debug($"#{i+1} \"{metadata.SaberName}\"");
 
                 Sprite cover = null;
                 if (metadata.CoverImage != null)
@@ -159,9 +159,9 @@ namespace CustomSaber.UI
                     cover = nullCoverImage;
                 }
 
-                if (metadata.SaberFileName == "Default") cover = CustomSaberUtils.GetDefaultCoverImage(); 
+                if (metadata.SaberName == "Default") cover = CustomSaberUtils.GetDefaultCoverImage(); 
 
-                var customCellInfo = new CustomListTableData.CustomCellInfo(Path.GetFileNameWithoutExtension(metadata.SaberFileName), metadata.AuthorName, cover);
+                var customCellInfo = new CustomListTableData.CustomCellInfo(metadata.SaberName, metadata.AuthorName, cover);
                 customListTableData.data.Add(customCellInfo);
             }
 
