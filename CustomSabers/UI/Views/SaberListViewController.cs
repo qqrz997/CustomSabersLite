@@ -14,16 +14,15 @@ using BeatSaberMarkupLanguage.Components.Settings;
 using UnityEngine.UI;
 using TMPro;
 using System.Diagnostics;
+using BeatSaberMarkupLanguage.TypeHandlers;
 
 namespace CustomSaber.UI
 {
     internal class SaberListViewController : BSMLResourceViewController
     {
-        public override string ResourceName => "CustomSaber.UI.Views.saberList.bsml";
+        public override string ResourceName => "CustomSaber.UI.BSML.saberList.bsml";
 
         public static SaberListViewController Instance;
-
-        public Action<CustomSaberMetadata> CustomSaberChanged;
 
         private static readonly Sprite nullCoverImage = CustomSaberUtils.GetNullCoverImage();
 
@@ -45,7 +44,6 @@ namespace CustomSaber.UI
             Plugin.Log.Debug($"saber selected at row {row}");
             CustomSaberAssetLoader.SelectedSaberIndex = row;
             CustomSaberConfig.Instance.CurrentlySelectedSaber = CustomSaberAssetLoader.SabersMetadata[row].SaberFileName;
-            CustomSaberChanged?.Invoke(CustomSaberAssetLoader.SabersMetadata[row]);
 
             // currently loading saber on game load, probably should do it on saber select instead
             // that can be used for saber previewing

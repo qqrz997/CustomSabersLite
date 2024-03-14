@@ -14,7 +14,7 @@ namespace CustomSaber.UI
 {
     internal class SaberSettingsViewController : BSMLResourceViewController
     {
-        public override string ResourceName => "CustomSaber.UI.Views.saberSettings.bsml";
+        public override string ResourceName => "CustomSaber.UI.BSML.saberSettings.bsml";
 
         public static SaberSettingsViewController Instance;
 
@@ -37,13 +37,15 @@ namespace CustomSaber.UI
         public bool OverrideTrailDuration
         {
             get => CustomSaberConfig.Instance.OverrideTrailDuration;
+            set
+            {
+                CustomSaberConfig.Instance.OverrideTrailDuration = value;
+                SetTrailDurationInteractable(value);
+            }
         }
 
-        [UIAction("set-interactable")]
-        private void TrailDurationSetInteractable(bool value)
+        private void SetTrailDurationInteractable(bool value)
         {
-            CustomSaberConfig.Instance.OverrideTrailDuration = value;
-
             if (parsed)
             {
                 trailDurationText.color = new Color(1f, 1f, 1f, value ? 1f : 0.5f);
@@ -76,10 +78,10 @@ namespace CustomSaber.UI
         }
 
         [UIAction("#post-parse")]
-        private void SetupSettings()
+        private void PostParse()
         {
             parsed = true;
-            TrailDurationSetInteractable(CustomSaberConfig.Instance.OverrideTrailDuration);
+            SetTrailDurationInteractable(OverrideTrailDuration);
         }
     }
 }

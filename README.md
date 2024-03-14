@@ -20,8 +20,9 @@ Place the contents of the unzipped folder from the latest [release](https://gith
 Settings are set in-game from the left panel in the Custom Sabers menu.
 
 ### Todo
-- More settings and possibly better UI
-  - Try to add trail intensity to settings
+- Try to add trail intensity to settings
 - Look into missing shaders for shader repair
-- Independent trail system
+- Look into chroma custom note colour compatibility
+- Look into HMD only sabers compatibility
 - Make sabers appear in multiplayer
+- Independent trail system

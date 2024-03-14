@@ -2,6 +2,7 @@
 using System;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Animations;
+using CustomSaber.UI.Views;
 
 namespace CustomSaber.UI
 {
@@ -11,8 +12,10 @@ namespace CustomSaber.UI
         public bool AllowFlowCoordinatorChange { get; protected set; } = true;
 
         private SaberListViewController saberList;
-
         private SaberSettingsViewController saberSettings;
+        private TestViewController test;
+
+        private GameplaySetupTab playerSettingsTab;
 
         public void Awake()
         {
@@ -24,6 +27,11 @@ namespace CustomSaber.UI
             if (!saberSettings)
             {
                 saberSettings = BeatSaberUI.CreateViewController<SaberSettingsViewController>();
+            }
+
+            if (!test)
+            {
+                test = BeatSaberUI.CreateViewController<TestViewController>();
             }
         }
 

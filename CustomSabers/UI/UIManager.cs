@@ -1,12 +1,14 @@
 ﻿using BeatSaberMarkupLanguage;
+using BeatSaberMarkupLanguage.GameplaySetup;
 using BeatSaberMarkupLanguage.MenuButtons;
 using HMUI;
 using System.ComponentModel;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace CustomSaber.UI
 {
-    internal class SettingsUI
+    internal class UIManager
     {
         public static CustomSaberFlowCoordinator flowCoordinator;
 
@@ -22,8 +24,13 @@ namespace CustomSaber.UI
             {
                 created = true;
 
+                Plugin.Log.Info("Creating menu button");
                 MenuButton = new MenuButton("Loading Sabers", "Choose your custom sabers.", SabersMenuButtonPressed, false);
                 MenuButtons.instance.RegisterButton(MenuButton);
+
+                Plugin.Log.Info("Creating tab");
+                GameplaySetupTab tab = new GameplaySetupTab();
+                GameplaySetup.instance.AddTab("Custom Sabers", "CustomSaber.UI.BSML.playerSettingsTab.bsml", tab);
             }
         }
 

@@ -8,6 +8,8 @@ using BS_Utils.Utilities;
 using CustomSaber.UI;
 using System;
 using CustomSaber.Components;
+// using SiraUtil.Zenject;
+// using CustomSaber.Installers;
 
 namespace CustomSaber
 {
@@ -20,24 +22,27 @@ namespace CustomSaber
 
         private static string PluginGUID => "qqrz997.CustomSabersLite";
 
-        public const string Version = "0.5.1";
+        public const string Version = "0.6.0";
 
         internal static IPALogger Log { get; private set; }
 
         [Init]
-        public void Init(IPALogger logger, Config config)
+        public void Init(IPALogger logger, Config config/*, Zenjector zenjector*/)
         {
             Log = logger;
+
             CustomSaberConfig.Instance = config.Generated<CustomSaberConfig>();
-            Log.Debug("Config Loaded");
-            
+
             PluginDirs.Init();
+
+            /*zenjector.Install(Location.App, Container => Container.BindInstance(config).AsSingle());
+            zenjector.Install<CustomSabersMenuInstaller>(Location.Menu);*/
         }
 
         [OnStart]
         public void OnApplicationStart()
         {
-            SettingsUI.CreateMenu();
+            UIManager.CreateMenu();
             AddEvents();
             try
             {
@@ -49,7 +54,7 @@ namespace CustomSaber
                 Log.Error("Issue encountered when loading custom sabers");
                 Log.Error(ex);
             }
-            SettingsUI.UpdateMenuOnSabersLoaded();
+            UIManager.UpdateMenuOnSabersLoaded();
         }
 
         [OnExit]
@@ -71,7 +76,7 @@ namespace CustomSaber
         private void OnMenuSceneLoaded()
         {
             // this doesn't actually refresh the button
-            if (!SettingsUI.MenuButtonActive && CustomSaberAssetLoader.IsLoaded) SettingsUI.UpdateMenu(true);
+            if (!UIManager.MenuButtonActive && CustomSaberAssetLoader.IsLoaded) UIManager.UpdateMenu(true);
         }
 
         private void AddEvents()

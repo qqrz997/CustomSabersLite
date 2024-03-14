@@ -12,7 +12,7 @@
         <checkbox-setting text='Disable White Trail' value='disable-white-trail' apply-on-change='true' hover-hint='Toggles the initial white part of trails' />
         
         <!--Toggle trail duration overriding-->
-        <checkbox-setting text='Override Trail Length' value='override-trail-duration' on-change='set-interactable' apply-on-change='false' hover-hint='Allows you to set the length of trails' />
+        <checkbox-setting text='Override Trail Length' value='override-trail-duration' apply-on-change='true' hover-hint='Allows you to set the length of trails' />
         
         <!--Trail duration as a multiplier to SaberTail _trailDuration from 0% to 100%-->
         <slider-setting text='Trail Length' value='trail-duration' id='trail-duration' interactable='true' min='0' max='100' increment='1' integer-only='true' show-buttons='true' apply-on-change='true' hover-hint='Tune the duration/length of sabers&apos; trails' />

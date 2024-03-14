@@ -1,0 +1,68 @@
+<!--thanks kinsi for the reference!-->
+<vertical preferred-width="110" anchor-min-y="-1" child-control-height="false" xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd' bg='round-rect-panel'>
+
+  <horizontal horizontal-fit='PreferredSize' spacing='2' child-control-height='false'>
+
+    <!--Settings container-->
+    <vertical spacing='1'>
+      <!--Settings title-->
+      <vertical child-control-height='false' preferred-width='54' child-expand-height='true' >
+        <horizontal horizontal-fit='PreferredSize' background='panel-top' preferred-width='40' preferred-height='7'>
+          <text text='Trail Settings' align='Capline' font-size='6' />
+        </horizontal>
+      </vertical>
+
+      <!--Trail settings panel-->
+      <vertical child-control-height='false' child-expand-height='false' background='round-rect-panel' bg-color='#000000AA' pad='2' pad-bottom='1' pad-top='1' preferred-width='54' min-height='37.5'>
+        <!--Toggle white trail gradient-->
+        <checkbox-setting text='Disable White Trail' hover-hint='Toggles the initial white part of trails' apply-on-change='true' />
+
+        <!--Toggle trail duration overriding-->
+        <checkbox-setting text='Override Trail Length' hover-hint='Allows you to set the length of trails' apply-on-change='true' />
+
+        <!--Trail duration as a multiplier to SaberTail _trailDuration from 0% to 100%-->
+        <slider-setting text='' interactable='true' min='0' max='100' increment='1' integer-only='true' show-buttons='true' hover-hint='Tune the duration/length of sabers&apos; trails' apply-on-change='true'/>
+
+        <!--Trail type (custom, vanilla, none)-->
+        <list-setting text='Saber Trail Type' overflow-mode='Overflow' options='trail-type-list' hover-hint='Select the type of trail you want to use' apply-on-change='true' value='trail-type-list'/>
+      </vertical>
+      <!--Saber settings panel-->
+      <vertical child-control-height='false' child-expand-height='false' background='round-rect-panel' bg-color='#000000AA' pad='2' pad-bottom='1' pad-top='1' preferred-width='54' min-height='37.5' active='false'>
+        <!--Toggle saber custom events-->
+        <checkbox-setting text='Enable Saber Events'  hover-hint='Toggles saber events. For instance, an effect happening when you achieve a full combo' apply-on-change='true' />
+      </vertical>
+
+      <!--Tab buttons-->
+      <vertical child-control-height='false' pad='2' pad-bottom='1' pad-top='1' preferred-width='54'>
+        <horizontal child-align='MiddleCenter' child-expand-width='true'>
+          <horizontal child-align='MiddleCenter' child-expand-width='false'>
+            <clickable-image source='#OptionsButton' hover-hint='Not yet implemented'/>
+          </horizontal>
+          <horizontal child-align='MiddleCenter' child-expand-width='false'>
+            <clickable-image source='#EditorButton' hover-hint='Not yet implemented'/>
+          </horizontal>
+          <horizontal child-align='MiddleCenter' child-expand-width='false'>
+            <clickable-image source='#HelpButton' hover-hint='Not yet implemented'/>
+          </horizontal>
+        </horizontal>
+      </vertical>
+    </vertical>
+    <!--Settings container end-->
+
+    <!--Saber list container-->
+    <vertical spacing='2'>
+      <horizontal child-control-height='false' preferred-width='54'>
+        <page-button event-click='saber-list#PageUp' direction='Up' />
+      </horizontal>
+
+      <horizontal child-control-height='false' background='round-rect-panel' bg-color='#000000AA' pad='1' preferred-width='54'>
+        <list list-style='Simple' visible-cells='5' stick-scrolling='false' select-cell='select-saber' id='saber-list'/>
+      </horizontal>
+
+      <horizontal child-control-height='false' preferred-width='54'>
+        <page-button event-click='saber-list#PageDown' direction='Down' />
+      </horizontal>
+    </vertical>
+    <!--Saber list container end-->
+  </horizontal>
+</vertical>

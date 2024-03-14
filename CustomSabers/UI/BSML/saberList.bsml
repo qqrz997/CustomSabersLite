@@ -1,7 +1,7 @@
 ﻿<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
   <horizontal horizontal-fit='PreferredSize' vertical-fit='Unconstrained' spacing='10'>
     <!-- saber list panel -->
-    <vertical child-control-height='True' child-expand-height='True' child-align='MiddleCenter'>
+    <vertical child-control-height='true' child-expand-height='true' child-align='MiddleCenter'>
 
       <horizontal>
         <page-button event-click='saber-list#PageUp' direction='Up' />
@@ -18,7 +18,7 @@
     </vertical>
     
     <!-- buttons panel -->
-    <vertical child-control-height='False' child-expand-height='False' child-align='MiddleCenter'>
+    <vertical child-control-height='false' child-expand-height='false' child-align='MiddleCenter'>
 
       <horizontal>
         <button on-click='open-in-explorer' text='Open Sabers Folder'/>
