@@ -53,17 +53,18 @@ namespace CustomSaber.Components
                 customSabersObject = null;
             }
 
-            if (CustomSaberConfig.Instance.CurrentlySelectedSaber == "Default")
+            string selectedSaber = CustomSaberConfig.Instance.CurrentlySelectedSaber;
+            if (selectedSaber == "Default" || selectedSaber == null)
             {
                 CustomSaberAssetLoader.SelectedSaber = new CustomSaberData("DefaultSabers");
             }
             else
             {
-                if (CustomSaberConfig.Instance.CurrentlySelectedSaber != CustomSaberAssetLoader.SelectedSaber?.FileName)
+                if (selectedSaber != CustomSaberAssetLoader.SelectedSaber?.FileName)
                 {
                     // The saber was changed so load the new one
                     CustomSaberAssetLoader.SelectedSaber?.Destroy();
-                    CustomSaberAssetLoader.SelectedSaber = CustomSaberAssetLoader.LoadSaberWithRepair(CustomSaberConfig.Instance.CurrentlySelectedSaber);
+                    CustomSaberAssetLoader.SelectedSaber = CustomSaberAssetLoader.LoadSaberWithRepair(selectedSaber);
                 }
             }
 

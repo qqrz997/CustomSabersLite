@@ -1,5 +1,8 @@
 changelog
 
+0.6.0
+- Added a tab in the gameplay options menu (left of song list) so you can more conveniently swap and adjust sabers 
+
 0.5.1
 - Fixed missed case for trail custom colours where material colour would be set to the vertex colours
 

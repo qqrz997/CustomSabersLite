@@ -17,7 +17,8 @@ Unlike the original Custom Sabers mod - this mod doesn't allow you to preview sa
 Place the contents of the unzipped folder from the latest [release](https://github.com/qqrz997/CustomSabersLite/releases/latest) into your Beat Saber installation folder. For help with installing mods join the [Beat Saber Modding Group](https://discord.gg/beatsabermods) discord server.
 
 ## Configuration
-Settings are set in-game from the left panel in the Custom Sabers menu.
+Settings are set in-game from the left panel in the Custom Sabers menu. This is accessed by clicking the Custom Sabers button on the left of the main menu.
+You can also adjust settings by clicking the Mods tab at the top of the gameplay settings menu to the left of the song list, then clicking the Custom Sabers tab.
 
 ### Todo
 - Try to add trail intensity to settings

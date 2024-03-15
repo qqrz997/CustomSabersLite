@@ -79,10 +79,11 @@ namespace CustomSaber.UI
         {
             HideDeleteSaberModal();
 
-            if (CustomSaberConfig.Instance.CurrentlySelectedSaber != "Default")
+            string selectedSaber = CustomSaberConfig.Instance.CurrentlySelectedSaber;
+            if (selectedSaber != "Default")
             {
-                string currentSaberPath = Path.Combine(PluginDirs.CustomSabers.FullName, CustomSaberConfig.Instance.CurrentlySelectedSaber);
-                string destinationPath = Path.Combine(PluginDirs.DeletedSabers.FullName, CustomSaberConfig.Instance.CurrentlySelectedSaber);
+                string currentSaberPath = Path.Combine(PluginDirs.CustomSabers.FullName, selectedSaber);
+                string destinationPath = Path.Combine(PluginDirs.DeletedSabers.FullName, selectedSaber);
                 try
                 {
                     if (File.Exists(destinationPath)) File.Delete(destinationPath);
