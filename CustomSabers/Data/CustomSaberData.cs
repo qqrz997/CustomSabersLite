@@ -1,11 +1,11 @@
-﻿using CustomSaber.Utilities;
+﻿using CustomSabersLite.Utilities;
 using System.IO;
 using UnityEngine;
 using AssetBundleLoadingTools.Utilities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CustomSaber.Data
+namespace CustomSabersLite.Data
 {
     internal class CustomSaberData
     {

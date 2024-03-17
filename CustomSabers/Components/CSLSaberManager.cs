@@ -1,20 +1,21 @@
-﻿using CustomSaber.Configuration;
-using CustomSaber.Data;
-using CustomSaber.Utilities;
+﻿using CustomSabersLite.Configuration;
+using CustomSabersLite.Data;
+using CustomSabersLite.Utilities;
 using IPA.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using CustomSaber;
 
-namespace CustomSaber.Components
+namespace CustomSabersLite.Components
 {
-    internal class CustomSaberManager : MonoBehaviour
+    internal class CSLSaberManager : MonoBehaviour
     {
-        public CustomSaber LeftSaber { get; private set; }
+        public static CSLSaber LeftSaber { get; private set; }
 
-        public CustomSaber RightSaber { get; private set; }
+        public static CSLSaber RightSaber { get; private set; }
 
         private ColorScheme colorScheme;
 
@@ -40,7 +41,7 @@ namespace CustomSaber.Components
             Plugin.Log.Info("Game scene loaded, initializing the CustomSaberManager");
 
             GameObject go = GameObject.Find("VRGameCore");
-            go.AddComponent<CustomSaberManager>();
+            go.AddComponent<CSLSaberManager>();
         }
 
         private void Awake()
@@ -53,22 +54,22 @@ namespace CustomSaber.Components
                 customSabersObject = null;
             }
 
-            string selectedSaber = CustomSaberConfig.Instance.CurrentlySelectedSaber;
+            string selectedSaber = CSLConfig.Instance.CurrentlySelectedSaber;
             if (selectedSaber == "Default" || selectedSaber == null)
             {
-                CustomSaberAssetLoader.SelectedSaber = new CustomSaberData("DefaultSabers");
+                CSLAssetLoader.SelectedSaber = new CustomSaberData("DefaultSabers");
             }
             else
             {
-                if (selectedSaber != CustomSaberAssetLoader.SelectedSaber?.FileName)
+                if (selectedSaber != CSLAssetLoader.SelectedSaber?.FileName)
                 {
                     // The saber was changed so load the new one
-                    CustomSaberAssetLoader.SelectedSaber?.Destroy();
-                    CustomSaberAssetLoader.SelectedSaber = CustomSaberAssetLoader.LoadSaberWithRepair(selectedSaber);
+                    CSLAssetLoader.SelectedSaber?.Destroy();
+                    CSLAssetLoader.SelectedSaber = CSLAssetLoader.LoadSaberWithRepair(selectedSaber);
                 }
             }
 
-            CustomSaberData customSaberData = CustomSaberAssetLoader.SelectedSaber;
+            CustomSaberData customSaberData = CSLAssetLoader.SelectedSaber;
 
             if (customSaberData != null)
             {
@@ -80,8 +81,11 @@ namespace CustomSaber.Components
                         customSabersObject = Instantiate(customSaberData.SabersObject);
                         leftSaberObject = customSabersObject.transform.Find("RightSaber").gameObject;
                         rightSaberObject = customSabersObject.transform.Find("LeftSaber").gameObject;
-                        LeftSaber = leftSaberObject.AddComponent<CustomSaber>();
-                        RightSaber = rightSaberObject.AddComponent<CustomSaber>();
+                        LeftSaber = leftSaberObject.AddComponent<CSLSaber>();
+                        RightSaber = rightSaberObject.AddComponent<CSLSaber>();
+
+                        LeftSaber.Init();
+                        RightSaber.Init();
                     }
 
                     StartCoroutine(WaitForSabers(customSaberData.SabersObject));
@@ -101,7 +105,7 @@ namespace CustomSaber.Components
         {
             yield return new WaitUntil(() => Resources.FindObjectsOfTypeAll<Saber>().Any());
 
-            if (CustomSaberUtils.CheckMultiplayer())
+            if (CSLUtils.CheckMultiplayer())
             {
                 yield break;
             }
@@ -114,14 +118,14 @@ namespace CustomSaber.Components
             {
                 SaberTrail defaultTrail = GetVanillaTrail(saber);
 
-                if (CustomSaberConfig.Instance.TrailType == TrailType.None)
+                if (CSLConfig.Instance.TrailType == TrailType.None)
                 {
-                    CustomSaberUtils.HideTrail(defaultTrail);
+                    CSLUtils.HideTrail(defaultTrail);
                 }
                 else
                 {
-                    CustomSaberUtils.SetTrailDuration(defaultTrail);
-                    CustomSaberUtils.SetWhiteTrailDuration(defaultTrail);
+                    CSLUtils.SetTrailDuration(defaultTrail);
+                    CSLUtils.SetWhiteTrailDuration(defaultTrail);
                     defaultTrail.enabled = true;
                 }
             }
@@ -131,13 +135,13 @@ namespace CustomSaber.Components
         {
             yield return new WaitUntil(() => Resources.FindObjectsOfTypeAll<Saber>().Any());
 
-            if (CustomSaberUtils.CheckMultiplayer())
+            if (CSLUtils.CheckMultiplayer())
             {
                 DestroyImmediate(saberRoot);
                 yield break;
             }
 
-            if (CustomSaberConfig.Instance.CustomEventsEnabled) AddEvents();
+            if (CSLConfig.Instance.CustomEventsEnabled) AddEvents();
 
             IEnumerable<Saber> defaultSabers = Resources.FindObjectsOfTypeAll<Saber>();
 
@@ -186,23 +190,25 @@ namespace CustomSaber.Components
 
                 SaberTrail defaultTrail = GetVanillaTrail(defaultSaber);
 
-                switch (CustomSaberConfig.Instance.TrailType)
+                switch (CSLConfig.Instance.TrailType)
                 {
                     case TrailType.Custom:
                         AddCustomSaberTrails(customSaber, saberColour, defaultSaber, defaultTrail);
                         break;
 
                     case TrailType.Vanilla:
-                        CustomSaberUtils.SetTrailDuration(defaultTrail);
-                        CustomSaberUtils.SetWhiteTrailDuration(defaultTrail);
+                        CSLUtils.SetTrailDuration(defaultTrail);
+                        CSLUtils.SetWhiteTrailDuration(defaultTrail);
                         break;
 
                     case TrailType.None:
-                        CustomSaberUtils.HideTrail(defaultTrail);
+                        CSLUtils.HideTrail(defaultTrail);
                         break;
                 }
             }
         }
+
+        public static CustomTrailHandler TrailHandler { get; private set; }
 
         private void AddCustomSaberTrails(GameObject customSaber, Color saberColour, Saber defaultSaber, SaberTrail defaultTrail)
         {
@@ -220,16 +226,22 @@ namespace CustomSaber.Components
             if (customTrail == null)
             {
                 Plugin.Log.Warn("No custom trails. Defaulting to existing saber trails.");
-                CustomSaberUtils.SetTrailDuration(defaultTrail);
-                CustomSaberUtils.SetWhiteTrailDuration(defaultTrail);
+                CSLUtils.SetTrailDuration(defaultTrail);
+                CSLUtils.SetWhiteTrailDuration(defaultTrail);
             }
             else
             {
                 Plugin.Log.Debug($"Initializing custom trail to {defaultTrail.name}");
 
-                var handler = new CustomTrailHandler(customSaber, customTrail);
-                handler.CreateTrail(defaultTrail, saberColour);
+                TrailHandler = new CustomTrailHandler(customSaber, customTrail);
+                TrailHandler.CreateTrail(defaultTrail, saberColour);
             }
+        }
+
+        public void SetSaberColorWithType(SaberType saberType, Color color)
+        {
+            SetCustomSaberColour(leftSaberObject, color);
+
         }
 
         private void SetCustomSaberColour(GameObject saber, Color colour)

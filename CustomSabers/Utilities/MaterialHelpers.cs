@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace CustomSaber.Utilities
+namespace CustomSabersLite.Utilities
 {
     public static class MaterialHelpers
     {

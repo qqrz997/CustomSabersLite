@@ -1,21 +1,21 @@
-﻿using CustomSaber.Configuration;
-using CustomSaber.Data;
+﻿using CustomSabersLite.Configuration;
+using CustomSaber;
 using IPA.Utilities;
 using System;
 using UnityEngine;
 
-namespace CustomSaber.Utilities
+namespace CustomSabersLite.Utilities
 {
     internal class CustomTrailHandler
     {
-        public CustomSaberTrail TrailInstance { get; private set; }
+        public CSLSaberTrail TrailInstance { get; private set; }
 
         private readonly CustomTrail customTrail;
 
         public CustomTrailHandler(GameObject customSaber, CustomTrail customTrail)
         {
             this.customTrail = customTrail;
-            TrailInstance = customSaber.gameObject.AddComponent<CustomSaberTrail>();
+            TrailInstance = customSaber.gameObject.AddComponent<CSLSaberTrail>();
         }
 
         private SaberTrailRenderer defaultTrailRendererPrefab;
@@ -60,7 +60,7 @@ namespace CustomSaber.Utilities
 
             switch (customTrail.colorType)
             {
-                case CustomSaberColorType.CustomColor:
+                case CustomSaber.ColorType.CustomColor:
                     materialColor = customTrail.TrailColor;
                     break;
 
@@ -83,13 +83,14 @@ namespace CustomSaber.Utilities
             TrailInstance.MovementData = TrailInstance.CustomTrailMovementData;
             TrailInstance.TrailRenderer = defaultSaberTrailRenderer;
             TrailInstance.TrailElementCollection = defaultTrailElementCollection;
-            if (CustomSaberConfig.Instance.OverrideTrailDuration)
+            TrailInstance.colorType = customTrail.colorType;
+            if (CSLConfig.Instance.OverrideTrailDuration)
             {
-                CustomSaberUtils.SetTrailDuration(TrailInstance); // Has to be done at the end
+                CSLUtils.SetTrailDuration(TrailInstance); // Has to be done at the end
             }
-            if (CustomSaberConfig.Instance.DisableWhiteTrail)
+            if (CSLConfig.Instance.DisableWhiteTrail)
             {
-                CustomSaberUtils.SetWhiteTrailDuration(TrailInstance);
+                CSLUtils.SetWhiteTrailDuration(TrailInstance);
             }
         }
 

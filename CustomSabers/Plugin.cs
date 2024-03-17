@@ -2,16 +2,17 @@
 using IPALogger = IPA.Logging.Logger;
 using IPA.Config.Stores;
 using Config = IPA.Config.Config;
-using CustomSaber.Configuration;
-using CustomSaber.Utilities;
+using CustomSabersLite.Configuration;
+using CustomSabersLite.Utilities;
 using BS_Utils.Utilities;
-using CustomSaber.UI;
+using CustomSabersLite.UI;
 using System;
-using CustomSaber.Components;
-// using SiraUtil.Zenject;
-// using CustomSaber.Installers;
+using CustomSabersLite.Components;
+using SiraUtil.Zenject;
+using CustomSabersLite.Installers;
 
-namespace CustomSaber
+
+namespace CustomSabersLite
 {
     [Plugin(RuntimeOptions.SingleStartInit)]
     internal class Plugin
@@ -27,16 +28,24 @@ namespace CustomSaber
         internal static IPALogger Log { get; private set; }
 
         [Init]
-        public void Init(IPALogger logger, Config config/*, Zenjector zenjector*/)
+        public async void Init(IPALogger logger, Config config, Zenjector zenjector)
         {
             Log = logger;
 
-            CustomSaberConfig.Instance = config.Generated<CustomSaberConfig>();
+            CSLConfig.Instance = config.Generated<CSLConfig>();
 
-            PluginDirs.Init();
+            // PluginDirs.Init();
 
-            /*zenjector.Install(Location.App, Container => Container.BindInstance(config).AsSingle());
-            zenjector.Install<CustomSabersMenuInstaller>(Location.Menu);*/
+            if (!await CSLUtils.LoadCustomSaberAssembly())
+            {
+                return;
+            }
+
+            zenjector.UseLogger(logger);
+
+            zenjector.Install<CSLAppInstaller>(Location.App, logger);
+            zenjector.Install<CSLGameInstaller>(Location.Player);
+            zenjector.Install<CSLMenuInstaller>(Location.Menu);
         }
 
         [OnStart]
@@ -47,7 +56,7 @@ namespace CustomSaber
             try
             {
                 // await Task.WhenAll(CustomSaberAssetLoader.LoadAsync());
-                CustomSaberAssetLoader.Init();
+                // CustomSaberAssetLoader.Init();
             } 
             catch (Exception ex)
             {
@@ -60,15 +69,15 @@ namespace CustomSaber
         [OnExit]
         public void OnApplicationQuit()
         {
-            CustomSaberAssetLoader.Clear();
+            CSLAssetLoader.Clear();
             RemoveEvents();
         }
 
         private void OnGameSceneLoaded()
         {
-            if (CustomSaberAssetLoader.IsLoaded)
+            if (CSLAssetLoader.IsLoaded)
             {
-                CustomSaberManager customSaberManager = new CustomSaberManager();
+                CSLSaberManager customSaberManager = new CSLSaberManager();
                 customSaberManager.Init();
             }
         }
@@ -76,7 +85,7 @@ namespace CustomSaber
         private void OnMenuSceneLoaded()
         {
             // this doesn't actually refresh the button
-            if (!UIManager.MenuButtonActive && CustomSaberAssetLoader.IsLoaded) UIManager.UpdateMenu(true);
+            if (!UIManager.MenuButtonActive && CSLAssetLoader.IsLoaded) UIManager.UpdateMenu(true);
         }
 
         private void AddEvents()

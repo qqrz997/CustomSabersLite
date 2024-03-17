@@ -1,28 +1,97 @@
 ﻿using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components.Settings;
 using BeatSaberMarkupLanguage.GameplaySetup;
-using CustomSaber.Configuration;
-using CustomSaber.Data;
+using CustomSabersLite.Configuration;
+using CustomSabersLite.Data;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using TMPro;
-// using Zenject;
+using Zenject;
 using BeatSaberMarkupLanguage.Components;
-using CustomSaber.Utilities;
+using CustomSabersLite.Utilities;
 using System.IO;
 using HMUI;
 using System.Text.RegularExpressions;
+using Logger = IPA.Logging.Logger;
 
-namespace CustomSaber.UI
+namespace CustomSabersLite.UI
 {
-    internal class GameplaySetupTab /*: IInitializable, IDisposable*/
+    internal class GameplaySetupTab : IInitializable, IDisposable
     {
-        private string resourceName => "CustomSaber.UI.BSML.playerSettingsTab.bsml";
+        private string resourceName => "CustomSabersLite.UI.BSML.playerSettingsTab.bsml";
         private bool parsed;
 
+        private readonly PluginDirs pluginDirs;
+
+        private GameplaySetupTab(PluginDirs pluginDirs)
+        {
+            Plugin.Log.Info("GameplaySetupTab constructing");
+
+            this.pluginDirs = pluginDirs;
+        }
+
+        private string saberAssetPath;
+
+        public void Initialize()
+        {
+            Plugin.Log.Info("Gameplay setup tab Initialize()");
+            saberAssetPath = pluginDirs.CustomSabers.FullName;
+
+            Plugin.Log.Debug("Creating tab");
+            GameplaySetup.instance.AddTab("Custom Sabers", "CustomSabersLite.UI.BSML.playerSettingsTab.bsml", this);
+        }
+
         #region trail settings
+
+        [UIValue("disable-white-trail")]
+        public bool DisableWhiteTrail
+        {
+            get => CSLConfig.Instance.DisableWhiteTrail;
+            set => CSLConfig.Instance.DisableWhiteTrail = value;
+        }
+
+        [UIValue("override-trail-duration")]
+        public bool OverrideTrailDuration
+        {
+            get => CSLConfig.Instance.OverrideTrailDuration;
+            set
+            {
+                CSLConfig.Instance.OverrideTrailDuration = value;
+                SetTrailDurationInteractable(value);
+            }
+        }
+
+        [UIValue("trail-duration")]
+        public int TrailDurationMultiplier
+        {
+            get => CSLConfig.Instance.TrailDuration;
+            set => CSLConfig.Instance.TrailDuration = value;
+        }
+
+        [UIValue("trail-type")]
+        public string TrailType
+        {
+            get => CSLConfig.Instance.TrailType.ToString();
+            set => CSLConfig.Instance.TrailType = Enum.TryParse(value, out TrailType trailType) ? trailType : CSLConfig.Instance.TrailType;
+        }
+
+        [UIValue("trail-type-list")]
+        public List<object> trailType = Enum.GetNames(typeof(TrailType)).ToList<object>();
+
+        #endregion
+
+        #region saber settings
+        [UIValue("enable-custom-events")]
+        public bool CustomEventsEnabled
+        {
+            get => CSLConfig.Instance.CustomEventsEnabled;
+            set => CSLConfig.Instance.CustomEventsEnabled = value;
+        }
+
+        #endregion
+
         [UIComponent("trail-duration")]
         private GenericInteractableSetting trailDurationInteractable;
 
@@ -32,61 +101,6 @@ namespace CustomSaber.UI
         [UIComponent("trail-type")]
         private RectTransform trailTypeRT;
 
-        [UIValue("trail-type-list")]
-        public List<object> trailType = Enum.GetNames(typeof(TrailType)).ToList<object>();
-
-        [UIValue("disable-white-trail")]
-        public bool DisableWhiteTrail
-        {
-            get => CustomSaberConfig.Instance.DisableWhiteTrail;
-            set => CustomSaberConfig.Instance.DisableWhiteTrail = value;
-        }
-
-        [UIValue("override-trail-duration")]
-        public bool OverrideTrailDuration
-        {
-            get => CustomSaberConfig.Instance.OverrideTrailDuration;
-            set
-            {
-                CustomSaberConfig.Instance.OverrideTrailDuration = value;
-                SetTrailDurationInteractable(value);
-            }
-        }
-
-        [UIValue("trail-duration")]
-        public int TrailDurationMultiplier
-        {
-            get => CustomSaberConfig.Instance.TrailDuration;
-            set => CustomSaberConfig.Instance.TrailDuration = value;
-        }
-
-        [UIValue("trail-type")]
-        public string TrailType
-        {
-            get => CustomSaberConfig.Instance.TrailType.ToString();
-            set => CustomSaberConfig.Instance.TrailType = Enum.TryParse(value, out TrailType trailType) ? trailType : CustomSaberConfig.Instance.TrailType;
-        }
-        
-        private void SetTrailDurationInteractable(bool value)
-        {
-            if (parsed)
-            {
-                trailDurationText.color = new Color(1f, 1f, 1f, value ? 1f : 0.5f);
-                trailDurationInteractable.interactable = OverrideTrailDuration;
-            }
-        }
-        #endregion
-
-        #region saber settings
-        [UIValue("enable-custom-events")]
-        public bool CustomEventsEnabled
-        {
-            get => CustomSaberConfig.Instance.CustomEventsEnabled;
-            set => CustomSaberConfig.Instance.CustomEventsEnabled = value;
-        }
-        #endregion
-
-
         [UIComponent("saber-list")]
         public CustomListTableData saberList;
 
@@ -94,8 +108,8 @@ namespace CustomSaber.UI
         public void Select(TableView t, int row)
         {
             Plugin.Log.Info($"Saber selected at row {row}");
-            CustomSaberAssetLoader.SelectedSaberIndex = row;
-            CustomSaberConfig.Instance.CurrentlySelectedSaber = CustomSaberAssetLoader.SabersMetadata[row].SaberFileName;
+            CSLAssetLoader.SelectedSaberIndex = row;
+            CSLConfig.Instance.CurrentlySelectedSaber = CSLAssetLoader.SabersMetadata[row].SaberFileName;
 
             t.SelectCellWithIdx(row);
         }
@@ -105,10 +119,10 @@ namespace CustomSaber.UI
         TextMeshProUGUI settingsTitleText;
 
         [UIComponent("trail-settings-panel")]
-        RectTransform trailSettingsPanel;
+        Transform trailSettingsPanel;
 
         [UIComponent("saber-settings-panel")]
-        RectTransform saberSettingsPanel;
+        Transform saberSettingsPanel;
 
         private enum ActiveSettingsTab
         {
@@ -123,7 +137,6 @@ namespace CustomSaber.UI
         {
             if (!activeSettingsTab.Equals(ActiveSettingsTab.Trail))
             {
-                Plugin.Log.Info("Changing tab");
                 activeSettingsTab = ActiveSettingsTab.Trail;
                 settingsTitleText.text = "Trail Settings";
                 saberSettingsPanel.gameObject.SetActive(false);
@@ -136,7 +149,6 @@ namespace CustomSaber.UI
         {
             if (!activeSettingsTab.Equals(ActiveSettingsTab.Saber))
             {
-                Plugin.Log.Info("Changing tab");
                 activeSettingsTab = ActiveSettingsTab.Saber;
                 settingsTitleText.text = "Saber Settings";
                 trailSettingsPanel.gameObject.SetActive(false);
@@ -151,6 +163,15 @@ namespace CustomSaber.UI
             parsed = true;
             SetComponentSettings();
             SetupList();
+        }
+
+        private void SetTrailDurationInteractable(bool value)
+        {
+            if (parsed)
+            {
+                trailDurationText.color = new Color(1f, 1f, 1f, value ? 1f : 0.5f);
+                trailDurationInteractable.interactable = OverrideTrailDuration;
+            }
         }
 
         private void SetComponentSettings()
@@ -171,14 +192,14 @@ namespace CustomSaber.UI
         private void SetupList()
         {
             saberList.data.Clear();
-            for (int i = 0; i < CustomSaberAssetLoader.SabersMetadata.Count; i++) 
+            for (int i = 0; i < CSLAssetLoader.SabersMetadata.Count; i++) 
             {
-                CustomSaberMetadata metadata = CustomSaberAssetLoader.SabersMetadata[i];
+                CustomSaberMetadata metadata = CSLAssetLoader.SabersMetadata[i];
                 string saberName = metadata.SaberName;
 
                 if (metadata.SaberFileName != null)
                 {
-                    if (!File.Exists(Path.Combine(PluginDirs.CustomSabers.FullName, metadata.SaberFileName))) continue;
+                    if (!File.Exists(Path.Combine(saberAssetPath, metadata.SaberFileName))) continue;
                 }
 
                 // Remove TMPro rich text tags
@@ -198,7 +219,7 @@ namespace CustomSaber.UI
 
             saberList.tableView.ReloadData();
             
-            int selectedSaber = CustomSaberAssetLoader.SelectedSaberIndex;
+            int selectedSaber = CSLAssetLoader.SelectedSaberIndex;
             saberList.tableView.SelectCellWithIdx(selectedSaber);
 
             if (!saberList.tableView.visibleCells.Where(x => x.selected).Any())
@@ -207,14 +228,9 @@ namespace CustomSaber.UI
             }
         }
 
-        /*public void Initialize()
-        {
-            GameplaySetup.instance.AddTab("Custom Sabers", resourceName, this);
-        }
-
         public void Dispose()
         {
             GameplaySetup.instance.RemoveTab("Custom Sabers");
-        }*/
+        }
     }
 }

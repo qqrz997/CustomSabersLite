@@ -3,7 +3,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
-namespace CustomSaber.Utilities
+namespace CustomSabersLite.Utilities
 {
     internal class ImageLoading
     {

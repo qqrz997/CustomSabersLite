@@ -1,4 +1,4 @@
-﻿namespace CustomSaber.Data
+﻿namespace CustomSabersLite.Data
 {
     public enum TrailType
     {

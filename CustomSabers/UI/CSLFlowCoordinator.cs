@@ -2,11 +2,11 @@
 using System;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Animations;
-using CustomSaber.UI.Views;
+using CustomSabersLite.UI.Views;
 
-namespace CustomSaber.UI
+namespace CustomSabersLite.UI
 {
-    internal class CustomSaberFlowCoordinator : FlowCoordinator
+    internal class CSLFlowCoordinator : FlowCoordinator
     {
         public FlowCoordinator ParentFlowCoordinator { get; protected set; }
         public bool AllowFlowCoordinatorChange { get; protected set; } = true;

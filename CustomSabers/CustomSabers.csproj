@@ -8,8 +8,8 @@
     <ProjectGuid>{D0C9A074-9512-4949-A730-4F63A51C8F61}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CustomSaber</RootNamespace>
-    <AssemblyName>CustomSaber</AssemblyName>
+    <RootNamespace>CustomSabersLite</RootNamespace>
+    <AssemblyName>CustomSabersLite</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <DebugSymbols>true</DebugSymbols>
@@ -66,6 +66,10 @@
     <Reference Include="Colors, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>H:\SteamLibrary\steamapps\common\Beat Saber\Beat Saber_Data\Managed\Colors.dll</HintPath>
+    </Reference>
+    <Reference Include="CustomSaber, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Resources\CustomSaber.dll</HintPath>
     </Reference>
     <Reference Include="GameplayCore, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -160,30 +164,29 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Components\CustomSaber.cs" />
-    <Compile Include="Components\CustomSaberManager.cs" />
-    <Compile Include="Data\CustomSaberColorType.cs" />
+    <Compile Include="Components\CSLSaber.cs" />
+    <Compile Include="Components\CSLSaberManager.cs" />
+    <Compile Include="Components\CSLSaberModelController.cs" />
     <Compile Include="Data\CustomSaberMetadata.cs" />
-    <Compile Include="Data\CustomTrail.cs" />
-    <Compile Include="Data\EventManager.cs" />
     <Compile Include="Data\TrailType.cs" />
-    <Compile Include="Installers\CustomSabersMenuInstaller.cs" />
-    <Compile Include="Managers\CustomSabersViewManager.cs" />
+    <Compile Include="Installers\CSLAppInstaller.cs" />
+    <Compile Include="Installers\CSLGameInstaller.cs" />
+    <Compile Include="Installers\CSLMenuInstaller.cs" />
+    <Compile Include="Managers\CSLViewManager.cs" />
     <Compile Include="PluginDirs.cs" />
-    <Compile Include="UI\CustomSabersFlowCoordinator.cs" />
+    <Compile Include="UI\CSLFlowCoordinator.cs" />
     <Compile Include="UI\Views\GameplaySetupTab.cs" />
     <Compile Include="UI\Views\SaberListViewController.cs" />
-    <Compile Include="Data\CustomSabersData.cs" />
-    <Compile Include="Data\SabersDescriptor.cs" />
+    <Compile Include="Data\CustomSaberData.cs" />
     <Compile Include="Plugin.cs" />
-    <Compile Include="Configuration\CustomSabersConfig.cs" />
+    <Compile Include="Configuration\CSLConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\Views\SaberSettingsViewController.cs" />
     <Compile Include="UI\UIManager.cs" />
     <Compile Include="UI\Views\TestViewController.cs" />
-    <Compile Include="Utilities\CustomSabersAssetLoader.cs" />
-    <Compile Include="Utilities\CustomSabersUtils.cs" />
-    <Compile Include="Components\CustomSaberTrail.cs" />
+    <Compile Include="Utilities\CSLAssetLoader.cs" />
+    <Compile Include="Utilities\CSLUtils.cs" />
+    <Compile Include="Components\CSLSaberTrail.cs" />
     <Compile Include="Components\TrailHandler.cs" />
     <Compile Include="Utilities\ImageLoading.cs" />
     <Compile Include="Utilities\MaterialHelpers.cs" />
@@ -213,6 +216,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\defaultsabers-image.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\CustomSaber.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

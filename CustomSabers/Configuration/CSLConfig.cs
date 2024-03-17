@@ -1,13 +1,13 @@
 ﻿using System.Runtime.CompilerServices;
 using IPA.Config.Stores;
-using CustomSaber.Data;
+using CustomSabersLite.Data;
 
 [assembly: InternalsVisibleTo(GeneratedStore.AssemblyVisibilityTarget)]
-namespace CustomSaber.Configuration
+namespace CustomSabersLite.Configuration
 {
-    internal class CustomSaberConfig
+    internal class CSLConfig
     {
-        public static CustomSaberConfig Instance { get; set; }
+        public static CSLConfig Instance { get; set; }
 
         public virtual string CurrentlySelectedSaber { get; internal set; } = "Default";
 

@@ -6,11 +6,11 @@ using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace CustomSaber.UI
+namespace CustomSabersLite.UI
 {
     internal class UIManager
     {
-        public static CustomSaberFlowCoordinator flowCoordinator;
+        public static CSLFlowCoordinator flowCoordinator;
 
         private static bool created = false;
 
@@ -24,13 +24,13 @@ namespace CustomSaber.UI
             {
                 created = true;
 
-                Plugin.Log.Info("Creating menu button");
+                Plugin.Log.Debug("Creating menu button");
                 MenuButton = new MenuButton("Loading Sabers", "Choose your custom sabers.", SabersMenuButtonPressed, false);
                 MenuButtons.instance.RegisterButton(MenuButton);
 
-                Plugin.Log.Info("Creating tab");
+                /*Plugin.Log.Debug("Creating tab");
                 GameplaySetupTab tab = new GameplaySetupTab();
-                GameplaySetup.instance.AddTab("Custom Sabers", "CustomSaber.UI.BSML.playerSettingsTab.bsml", tab);
+                GameplaySetup.instance.AddTab("Custom Sabers", "CustomSabersLite.UI.BSML.playerSettingsTab.bsml", tab);*/
             }
         }
 
@@ -58,7 +58,7 @@ namespace CustomSaber.UI
         {
             if (flowCoordinator == null)
             {
-                flowCoordinator = BeatSaberUI.CreateFlowCoordinator<CustomSaberFlowCoordinator>();
+                flowCoordinator = BeatSaberUI.CreateFlowCoordinator<CSLFlowCoordinator>();
             }
 
             flowCoordinator.SetParentFlowCoordinator(BeatSaberUI.MainFlowCoordinator);

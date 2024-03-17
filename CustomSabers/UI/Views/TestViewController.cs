@@ -1,8 +1,8 @@
 ﻿using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.ViewControllers;
-using CustomSaber.Data;
-using CustomSaber.Utilities;
+using CustomSabersLite.Data;
+using CustomSabersLite.Utilities;
 using HMUI;
 using System;
 using System.Collections.Generic;
@@ -12,10 +12,10 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace CustomSaber.UI.Views
+namespace CustomSabersLite.UI.Views
 {
     [HotReload(RelativePathToLayout = "../BSML/test.bsml")]
-    [ViewDefinition("CustomSaber.UI.BSML.test.bsml")]
+    [ViewDefinition("CustomSabersLite.UI.BSML.test.bsml")]
     internal class TestViewController : BSMLAutomaticViewController
     {
         /*[UIValue("trail-type-list")]

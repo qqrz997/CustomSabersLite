@@ -1,25 +1,37 @@
 ﻿using IPA.Utilities;
 using System.IO;
 
-namespace CustomSaber
+namespace CustomSabersLite
 {
     internal class PluginDirs
     {
-        public static DirectoryInfo CustomSabers;
+        public DirectoryInfo CustomSabers;
 
-        public static DirectoryInfo UserData;
+        public DirectoryInfo UserData;
 
-        public static DirectoryInfo Cache;
+        public DirectoryInfo Cache;
 
-        public static DirectoryInfo DeletedSabers;
+        public DirectoryInfo DeletedSabers;
 
-        public static void Init()
+        /*public static void Init()
         {
             DirectoryInfo installPath = new DirectoryInfo(UnityGame.InstallPath);
             DirectoryInfo userDataPath = new DirectoryInfo(UnityGame.UserDataPath);
 
             CustomSabers = installPath.CreateSubdirectory("CustomSabers");
             UserData = userDataPath.CreateSubdirectory("Custom Sabers Lite");
+            Cache = UserData.CreateSubdirectory("Cache");
+            DeletedSabers = UserData.CreateSubdirectory("Deleted Sabers");
+        }*/
+
+        public PluginDirs()
+        {
+            Plugin.Log.Info("Setting directories");
+
+            DirectoryInfo installDirectory = new DirectoryInfo(UnityGame.InstallPath);
+            DirectoryInfo userDataDirectory = new DirectoryInfo(UnityGame.UserDataPath);
+            CustomSabers = installDirectory.CreateSubdirectory("CustomSabers");
+            UserData = userDataDirectory.CreateSubdirectory("Custom Sabers Lite");
             Cache = UserData.CreateSubdirectory("Cache");
             DeletedSabers = UserData.CreateSubdirectory("Deleted Sabers");
         }

@@ -1,9 +1,14 @@
-﻿using UnityEngine;
+﻿using CustomSaber;
+using CustomSabersLite.Data;
+using IPA.Config.Data;
+using IPA.Utilities;
+using UnityEngine;
+using static CloudsMeshGenerator;
 using ReflectionUtil = IPA.Utilities.ReflectionUtil;
 
-namespace CustomSaber.Utilities
+namespace CustomSabersLite.Utilities
 {
-    internal class CustomSaberTrail : SaberTrail
+    internal class CSLSaberTrail : SaberTrail
     {
         public SaberTrailRenderer TrailRendererPrefab
         {
@@ -40,12 +45,6 @@ namespace CustomSaber.Utilities
             get { return ReflectionUtil.GetField<SaberTrailRenderer, SaberTrail>(this, "_trailRenderer"); }
             set { ReflectionUtil.SetField<SaberTrail, SaberTrailRenderer>(this, "_trailRenderer", value); }
         }
-        
-        public MeshRenderer MeshRenderer
-        {
-            get { return ReflectionUtil.GetField<MeshRenderer, SaberTrailRenderer>(TrailRenderer, "_meshRenderer"); }
-            set { ReflectionUtil.SetField<SaberTrailRenderer, MeshRenderer>(TrailRenderer, "_meshRenderer", value); }
-        }
 
         public TrailElementCollection TrailElementCollection
         {
@@ -64,6 +63,8 @@ namespace CustomSaber.Utilities
         private Vector3 customTrailBottomPos;
 
         public SaberMovementData CustomTrailMovementData => customTrailMovementData;
+
+        public CustomSaber.ColorType colorType;
 
         void Awake()
         {
@@ -87,6 +88,38 @@ namespace CustomSaber.Utilities
                 customTrailBottomPos = customTrailBottomTransform.position;
                 customTrailMovementData.AddNewData(customTrailTopPos, customTrailBottomPos, TimeHelper.time);
             }
+        }
+
+        public void SetColor(Color color)
+        {
+            ReflectionUtil.SetField<SaberTrail, Color>(this, "_color", color);
+
+            MeshRenderer renderer = ReflectionUtil.GetField<MeshRenderer, SaberTrailRenderer>(TrailRenderer, "_meshRenderer");
+
+            if (renderer == null) return;
+
+            foreach (Material rendererMaterial in renderer.materials)
+            {
+                if (rendererMaterial == null) continue;
+
+                if (rendererMaterial.HasProperty("_Color"))
+                {
+                    if (rendererMaterial.HasProperty("_CustomColors"))
+                    {
+                        if (rendererMaterial.GetFloat("_CustomColors") > 0)
+                        {
+                            rendererMaterial.SetColor("_Color", color);
+                        }
+                    }
+                    else if (rendererMaterial.HasProperty("_Glow") && rendererMaterial.GetFloat("_Glow") > 0
+                        || rendererMaterial.HasProperty("_Bloom") && rendererMaterial.GetFloat("_Bloom") > 0)
+                    {
+                        rendererMaterial.SetColor("_Color", color);
+                    }
+                }
+            }
+
+            TrailRenderer.SetField("_meshRenderer", renderer);
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace CustomSaber.Data
+namespace CustomSabersLite.Data
 {
     public struct CustomSaberMetadata
     {

@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using UnityEngine;
-using CustomSaber.Configuration;
+using CustomSabersLite.Configuration;
 using IPA.Utilities;
+using System.Reflection;
+using System.Threading.Tasks;
 
-namespace CustomSaber.Utilities
+namespace CustomSabersLite.Utilities
 {
-    public class CustomSaberUtils
+    public static class CSLUtils
     {
         public static IEnumerable<string> GetFileNames(string path, IEnumerable<string> filters, SearchOption searchOption, bool returnShortPath = false)
         {
@@ -50,7 +52,7 @@ namespace CustomSaber.Utilities
             {
                 try
                 {
-                    nullCoverImage = ImageLoading.LoadSpriteFromResources("CustomSaber.Resources.null-image.png");
+                    nullCoverImage = ImageLoading.LoadSpriteFromResources("CustomSabersLite.Resources.null-image.png");
                     nullCoverImage.texture.wrapMode = TextureWrapMode.Clamp;
                 }
                 catch (Exception ex) 
@@ -68,7 +70,7 @@ namespace CustomSaber.Utilities
             {
                 try
                 {
-                    defaultCoverImage = ImageLoading.LoadSpriteFromResources("CustomSaber.Resources.defaultsabers-image.png");
+                    defaultCoverImage = ImageLoading.LoadSpriteFromResources("CustomSabersLite.Resources.defaultsabers-image.png");
                     defaultCoverImage.texture.wrapMode = TextureWrapMode.Clamp;
                 }
                 catch (Exception ex)
@@ -86,9 +88,9 @@ namespace CustomSaber.Utilities
 
         public static void SetTrailDuration(SaberTrail trail, float trailDuration = 0.4f)
         {
-            if (CustomSaberConfig.Instance.OverrideTrailDuration)
+            if (CSLConfig.Instance.OverrideTrailDuration)
             {
-                trailDuration = CustomSaberConfig.Instance.TrailDuration / 100f * trailDuration;
+                trailDuration = CSLConfig.Instance.TrailDuration / 100f * trailDuration;
             }
 
             if (trailDuration == 0)
@@ -103,7 +105,7 @@ namespace CustomSaber.Utilities
 
         public static void SetWhiteTrailDuration(SaberTrail defaultTrail, float whiteSectionMaxDuration = 0.03f)
         {
-            if (CustomSaberConfig.Instance.DisableWhiteTrail)
+            if (CSLConfig.Instance.DisableWhiteTrail)
             {
                 // setting the trail duration to 0 doesn't completely hide trails, i assume this works the same but it's small enough to be completely unnoticeable
                 whiteSectionMaxDuration = 0f; // Could add config to adjust the white section length for fun
@@ -120,6 +122,31 @@ namespace CustomSaber.Utilities
                 return true;
             }
             return false;
+        }
+
+        public static async Task<bool> LoadCustomSaberAssembly()
+        {
+            try
+            {
+                Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("CustomSabersLite.Resources.CustomSaber.dll");
+                
+                if (stream == null)
+                {
+                    return false;
+                }
+
+                byte[] result = new byte[stream.Length];
+                await stream.ReadAsync(result, 0, result.Length);
+
+                Assembly.Load(result);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                Plugin.Log.Error(e);
+                return false;
+            }
         }
     }
 }
