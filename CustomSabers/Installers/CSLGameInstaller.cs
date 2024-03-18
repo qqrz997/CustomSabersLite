@@ -14,14 +14,10 @@ namespace CustomSabersLite.Installers
     {
         public override void InstallBindings()
         {
-            Logger.Info("Installing Game Bindings");
-
             Container.BindInstance(SaberModelRegistration.Create<CSLSaberModelController>(5)).AsSingle();
 
             Container.Bind<CustomTrailHandler>().AsSingle().NonLazy();
 
-
-            Logger.Info("Creating saber manager");
             Container.Bind<CSLSaberManager>().FromNewComponentOnNewGameObject().AsSingle().NonLazy();
         }
     }

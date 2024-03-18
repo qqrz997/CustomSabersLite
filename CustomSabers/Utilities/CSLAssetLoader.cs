@@ -53,7 +53,7 @@ namespace CustomSabersLite.Utilities
 
             if (config.PluginVer != Plugin.Version)
             {
-                Logger.Info("Mod version has changed! Clearing cache");
+                Logger.Debug("Mod version has changed! Clearing cache");
                 ClearCache();
                 config.PluginVer = Plugin.Version;
             }
@@ -64,7 +64,6 @@ namespace CustomSabersLite.Utilities
 
         public void Dispose()
         {
-            Logger.Info("Disposing the asset loader");
             Clear();
         }
 

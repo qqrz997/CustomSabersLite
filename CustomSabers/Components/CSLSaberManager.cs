@@ -21,7 +21,6 @@ namespace CustomSabersLite.Components
         [Inject]
         public void Construct(CSLConfig config, CustomTrailHandler trailHandler, CSLAssetLoader assetLoader)
         {
-            Logger.Info("Cringe");
             this.config = config;
             this.trailHandler = trailHandler;
             this.assetLoader = assetLoader;
@@ -52,7 +51,7 @@ namespace CustomSabersLite.Components
 
         public void Start()
         {
-            Logger.Info("Game scene loaded, initializing the CustomSaberManager");
+            Logger.Debug("Game scene loaded, initializing the CustomSaberManager");
 
             /*GameObject go = GameObject.Find("VRGameCore");
             transform.SetParent(go.transform);
@@ -162,7 +161,7 @@ namespace CustomSabersLite.Components
 
             foreach (Saber defaultSaber in defaultSabers)
             {
-                Logger.Info($"Hiding default saber model for {defaultSaber.saberType}");
+                Logger.Debug($"Hiding default saber model for {defaultSaber.saberType}");
 
                 // Hide each saber mesh
                 IEnumerable<MeshFilter> meshFilters = defaultSaber.transform.GetComponentsInChildren<MeshFilter>();
@@ -226,7 +225,7 @@ namespace CustomSabersLite.Components
             try
             {
                 customTrail = customSaber.GetComponent<CustomTrail>();
-                Logger.Info("Successfully got CustomTrail from custom saber.");
+                Logger.Debug("Successfully got CustomTrail from custom saber.");
             }
             catch
             {
@@ -288,7 +287,7 @@ namespace CustomSabersLite.Components
             try
             {
                 trail = defaultSaber.gameObject.GetComponentInChildren<SaberTrail>();
-                Logger.Info("Successfully got SaberTrail from default saber.");
+                Logger.Debug("Successfully got SaberTrail from default saber.");
             }
             catch
             {
@@ -345,7 +344,7 @@ namespace CustomSabersLite.Components
                 return;
             }
 
-            Logger.Info("Adding events");
+            Logger.Debug("Adding events");
 
             IReadonlyBeatmapData beatmapData = BS_Utils.Plugin.LevelData.GameplayCoreSceneSetupData.transformedBeatmapData;
 

@@ -26,8 +26,6 @@ namespace CustomSabersLite.UI
 
         private GameplaySetupTab(PluginDirs pluginDirs, CSLConfig config, CSLAssetLoader assetLoader)
         {
-            Logger.Info("GameplaySetupTab constructing");
-
             this.pluginDirs = pluginDirs;
             this.config = config;
             this.assetLoader = assetLoader;
@@ -115,7 +113,6 @@ namespace CustomSabersLite.UI
         [UIAction("select-saber")]
         public void Select(TableView t, int row)
         {
-            Logger.Info($"Saber selected at row {row}");
             assetLoader.SelectedSaberIndex = row;
             config.CurrentlySelectedSaber = assetLoader.SabersMetadata[row].SaberFileName;
 

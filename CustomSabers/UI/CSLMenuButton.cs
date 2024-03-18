@@ -26,12 +26,10 @@ namespace CustomSabersLite.UI
         private void PresentCSLFlowCoordinator()
         {
             mainFlowCoordinator.PresentFlowCoordinator(sabersFlowCoordinator);
-            Logger.Info("flow coordinator presented");
         }
 
         public void Initialize()
         {
-            Logger.Info($"Menu button init");
             MenuButtons.instance.RegisterButton(button);
         }
 

@@ -8,8 +8,6 @@ namespace CustomSabersLite.Installers
     {
         public override void InstallBindings()
         {
-            Logger.Info("Installing Menu Bindings");
-
             Container.Bind<SaberListViewController>().FromNewComponentAsViewController().AsSingle();
             Container.Bind<SaberSettingsViewController>().FromNewComponentAsViewController().AsSingle();
             Container.Bind<TestViewController>().FromNewComponentAsViewController().AsSingle();

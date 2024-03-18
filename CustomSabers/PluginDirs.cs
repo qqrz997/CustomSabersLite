@@ -15,8 +15,6 @@ namespace CustomSabersLite
 
         public PluginDirs()
         {
-            Logger.Info("Setting directories");
-
             DirectoryInfo installDirectory = new DirectoryInfo(UnityGame.InstallPath);
             DirectoryInfo userDataDirectory = new DirectoryInfo(UnityGame.UserDataPath);
             CustomSabers = installDirectory.CreateSubdirectory("CustomSabers");

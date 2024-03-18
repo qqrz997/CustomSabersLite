@@ -24,8 +24,6 @@ namespace CustomSabersLite.Installers
 
         public override void InstallBindings()
         {
-            Logger.Info("Installing App Bindings");
-
             Container.BindInstance(logger).AsSingle();
 
             Container.Bind<PluginDirs>().AsSingle();

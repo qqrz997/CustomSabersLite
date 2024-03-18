@@ -103,7 +103,6 @@ namespace CustomSabersLite.Utilities
             }
             if (config.DisableWhiteTrail)
             {
-                Logger.Info("Disabling white trail");
                 ReflectionUtil.SetField<SaberTrail, float>(TrailInstance, "_whiteSectionMaxDuration", 0f);
             }
         }
