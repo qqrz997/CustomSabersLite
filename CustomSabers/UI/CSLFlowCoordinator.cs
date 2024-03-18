@@ -3,43 +3,24 @@ using System;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Animations;
 using CustomSabersLite.UI.Views;
+using Zenject;
 
 namespace CustomSabersLite.UI
 {
     internal class CSLFlowCoordinator : FlowCoordinator
     {
-        public FlowCoordinator ParentFlowCoordinator { get; protected set; }
-        public bool AllowFlowCoordinatorChange { get; protected set; } = true;
-
+        private MainFlowCoordinator mainFlowCoordinator;
         private SaberListViewController saberList;
         private SaberSettingsViewController saberSettings;
         private TestViewController test;
 
-        private GameplaySetupTab playerSettingsTab;
-
-        public void Awake()
+        [Inject]
+        public void Contruct(MainFlowCoordinator mainFlowCoordinator, SaberListViewController saberList, SaberSettingsViewController saberSettings, TestViewController test)
         {
-            if (!saberList)
-            {
-                saberList = BeatSaberUI.CreateViewController<SaberListViewController>();
-            }
-
-            if (!saberSettings)
-            {
-                saberSettings = BeatSaberUI.CreateViewController<SaberSettingsViewController>();
-            }
-
-            if (!test)
-            {
-                test = BeatSaberUI.CreateViewController<TestViewController>();
-            }
-        }
-
-        public void SetParentFlowCoordinator(FlowCoordinator parent)
-        {
-            if (!AllowFlowCoordinatorChange)
-                throw new InvalidOperationException("Changing the parent FlowCoordinator is not allowed on this instance.");
-            ParentFlowCoordinator = parent;
+            this.mainFlowCoordinator = mainFlowCoordinator;
+            this.saberList = saberList;
+            this.saberSettings = saberSettings;
+            this.test = test;
         }
 
         protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
@@ -50,18 +31,27 @@ namespace CustomSabersLite.UI
                 {
                     SetTitle("Custom Sabers");
                     showBackButton = true;
-                    ProvideInitialViewControllers(saberList, saberSettings);
                 }
+
+                ProvideInitialViewControllers(saberList, saberSettings);
+
+                // ProvideInitialViewControllers(test);
             }
             catch (Exception ex)
             {
-                Plugin.Log.Error(ex);
+                Logger.Error("CSLFlowCoordinator.DidActivate");
+                Logger.Error(ex.ToString());
             }
+        }
+
+        protected override void DidDeactivate(bool removedFromHierarchy, bool screenSystemDisabling)
+        {
+            base.DidDeactivate(removedFromHierarchy, screenSystemDisabling);
         }
 
         protected override void BackButtonWasPressed(ViewController topViewController)
         {
-            ParentFlowCoordinator.DismissFlowCoordinator(this);
+            mainFlowCoordinator.DismissFlowCoordinator(this);
         }
     }
 }

@@ -7,8 +7,6 @@ namespace CustomSabersLite.Configuration
 {
     internal class CSLConfig
     {
-        public static CSLConfig Instance { get; set; }
-
         public virtual string CurrentlySelectedSaber { get; internal set; } = "Default";
 
         public virtual TrailType TrailType { get; internal set; } = TrailType.Custom;
@@ -27,7 +25,7 @@ namespace CustomSabersLite.Configuration
 
         public virtual void Changed()
         {
-            Plugin.Log.Debug("Config changed");
+            Logger.Debug("Config changed");
         }
 
         // public virtual void CopyFrom(CustomSaberConfig other) { }

@@ -21,23 +21,29 @@ namespace CustomSabersLite.UI
 {
     internal class SaberListViewController : BSMLResourceViewController
     {
-        public override string ResourceName => "CustomSabersLite.UI.BSML.saberList.bsml";
-
         private PluginDirs pluginDirs;
+        private CSLConfig config;
+        private CSLAssetLoader assetLoader;
 
-        public SaberListViewController(PluginDirs pluginDirs)
+        [Inject]
+        public void Construct(PluginDirs pluginDirs, CSLConfig config, CSLAssetLoader assetLoader)
         {
             this.pluginDirs = pluginDirs;
+            this.config = config;
+            this.assetLoader = assetLoader;
+            Init();
         }
 
         private string saberAssetPath;
         private string deletedSabersPath;
 
-        public void Start()
+        private void Init()
         {
             saberAssetPath = pluginDirs.CustomSabers.FullName;
             deletedSabersPath = pluginDirs.DeletedSabers.FullName;
         }
+
+        public override string ResourceName => "CustomSabersLite.UI.BSML.saberList.bsml";
 
         private static readonly Sprite nullCoverImage = CSLUtils.GetNullCoverImage();
 
@@ -56,9 +62,9 @@ namespace CustomSabersLite.UI
         [UIAction("select-saber")]
         public void Select(TableView _, int row)
         {
-            Plugin.Log.Debug($"saber selected at row {row}");
-            CSLAssetLoader.SelectedSaberIndex = row;
-            CSLConfig.Instance.CurrentlySelectedSaber = CSLAssetLoader.SabersMetadata[row].SaberFileName;
+            Logger.Debug($"saber selected at row {row}");
+            assetLoader.SelectedSaberIndex = row;
+            config.CurrentlySelectedSaber = assetLoader.SabersMetadata[row].SaberFileName;
 
             // currently loading saber on game load, probably should do it on saber select instead
             // that can be used for saber previewing
@@ -67,19 +73,19 @@ namespace CustomSabersLite.UI
         [UIAction("open-in-explorer")]
         public void OpenInExplorer()
         {
-            System.Diagnostics.Process.Start("explorer.exe", saberAssetPath);
+            Process.Start("explorer.exe", saberAssetPath);
         }
 
         [UIAction("show-delete-saber-modal")]
         public void ShowDeleteSaberModal()
         {
-            if (CSLConfig.Instance.CurrentlySelectedSaber == "Default")
+            if (config.CurrentlySelectedSaber == "Default")
             {
-                Plugin.Log.Warn("You can't delete the default sabers! >:(");
+                Logger.Warn("You can't delete the default sabers! >:(");
                 return;
             }
 
-            deleteSaberModalText.text = $"Are you sure you want to delete\n{ Path.GetFileNameWithoutExtension(CSLConfig.Instance.CurrentlySelectedSaber) }?";
+            deleteSaberModalText.text = $"Are you sure you want to delete\n{ Path.GetFileNameWithoutExtension(config.CurrentlySelectedSaber) }?";
             deleteSaberModal.Show(true);
         }
 
@@ -94,7 +100,7 @@ namespace CustomSabersLite.UI
         {
             HideDeleteSaberModal();
 
-            string selectedSaber = CSLConfig.Instance.CurrentlySelectedSaber;
+            string selectedSaber = config.CurrentlySelectedSaber;
             if (selectedSaber != "Default")
             {
                 string currentSaberPath = Path.Combine(saberAssetPath, selectedSaber);
@@ -105,25 +111,25 @@ namespace CustomSabersLite.UI
 
                     if (File.Exists(currentSaberPath))
                     {
-                        Plugin.Log.Debug($"Moving {currentSaberPath}\nto {deletedSabersPath}");
+                        Logger.Debug($"Moving {currentSaberPath}\nto {deletedSabersPath}");
 
                         File.Move(currentSaberPath, destinationPath);
 
-                        CSLAssetLoader.SabersMetadata.RemoveAt(CSLAssetLoader.SelectedSaberIndex);
+                        assetLoader.SabersMetadata.RemoveAt(assetLoader.SelectedSaberIndex);
 
-                        Select(customListTableData.tableView, CSLAssetLoader.SelectedSaberIndex - 1);
+                        Select(customListTableData.tableView, assetLoader.SelectedSaberIndex - 1);
 
                         SetupList();
                     }
                     else
                     {
-                        Plugin.Log.Warn($"Saber doesn't exist at {currentSaberPath}");
+                        Logger.Warn($"Saber doesn't exist at {currentSaberPath}");
                     }
                 }
                 catch (Exception ex)
                 {
-                    Plugin.Log.Error("Problem encountered when trying to delete selected saber");
-                    Plugin.Log.Error(ex);
+                    Logger.Error("Problem encountered when trying to delete selected saber");
+                    Logger.Error(ex.ToString());
                 }
             }
         }
@@ -132,9 +138,9 @@ namespace CustomSabersLite.UI
         public async void ReloadSabers()
         {
             reloadButtonSelectable.interactable = false;
-            await CSLAssetLoader.ReloadAsync();
+            await assetLoader.ReloadAsync();
             SetupList();
-            Select(customListTableData.tableView, CSLAssetLoader.SelectedSaberIndex);
+            Select(customListTableData.tableView, assetLoader.SelectedSaberIndex);
             reloadButtonSelectable.interactable = true;
         }
 
@@ -148,18 +154,18 @@ namespace CustomSabersLite.UI
         {
             customListTableData.data.Clear();
 
-            Plugin.Log.Debug("Showing list of selectable sabers");
+            Logger.Debug("Showing list of selectable sabers");
 
-            for (int i = 0; i < CSLAssetLoader.SabersMetadata.Count; i++)
+            for (int i = 0; i < assetLoader.SabersMetadata.Count; i++)
             {
-                CustomSaberMetadata metadata = CSLAssetLoader.SabersMetadata[i];
+                CustomSaberMetadata metadata = assetLoader.SabersMetadata[i];
                 
                 if (metadata.SaberFileName != null)
                 {
                     if (!File.Exists(Path.Combine(saberAssetPath, metadata.SaberFileName))) continue;
                 }
 
-                Plugin.Log.Debug($"#{i+1} \"{metadata.SaberName}\"");
+                Logger.Debug($"#{i+1} \"{metadata.SaberName}\"");
 
                 Sprite cover = null;
                 if (metadata.CoverImage != null)
@@ -181,7 +187,7 @@ namespace CustomSabersLite.UI
 
             customListTableData.tableView.ReloadData();
 
-            int selectedSaber = CSLAssetLoader.SelectedSaberIndex;
+            int selectedSaber = assetLoader.SelectedSaberIndex;
             customListTableData.tableView.SelectCellWithIdx(selectedSaber);
 
             if (!customListTableData.tableView.visibleCells.Where(x => x.selected).Any())

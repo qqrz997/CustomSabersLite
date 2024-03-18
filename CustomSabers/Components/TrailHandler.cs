@@ -3,35 +3,34 @@ using CustomSaber;
 using IPA.Utilities;
 using System;
 using UnityEngine;
+using Zenject;
 
 namespace CustomSabersLite.Utilities
 {
     internal class CustomTrailHandler
     {
-        public CSLSaberTrail TrailInstance { get; private set; }
+        private readonly CSLConfig config;
 
-        private readonly CustomTrail customTrail;
-
-        public CustomTrailHandler(GameObject customSaber, CustomTrail customTrail)
+        public CustomTrailHandler(CSLConfig config)
         {
-            this.customTrail = customTrail;
-            TrailInstance = customSaber.gameObject.AddComponent<CSLSaberTrail>();
+            this.config = config;
         }
 
+        private CSLSaberTrail TrailInstance;
+
         private SaberTrailRenderer defaultTrailRendererPrefab;
-
         private MeshRenderer defaultMeshRenderer;
-
         private int defaultSamplingFrequency;
-
         private int defaultGranularity;
-
         private SaberTrailRenderer defaultSaberTrailRenderer;
-
         private TrailElementCollection defaultTrailElementCollection;
 
-        public void CreateTrail(SaberTrail defaultTrail, Color saberTrailColor)
+        public void CreateTrail(SaberTrail defaultTrail, Color saberTrailColor, GameObject customSaber, CustomTrail customTrail)
         {
+
+            Logger.Debug($"Initializing custom trail to {defaultTrail.name}");
+            TrailInstance = customSaber.gameObject.AddComponent<CSLSaberTrail>();
+
             try
             {
                 defaultTrailRendererPrefab = ReflectionUtil.GetField<SaberTrailRenderer, SaberTrail>(defaultTrail, "_trailRendererPrefab");
@@ -43,7 +42,7 @@ namespace CustomSabersLite.Utilities
             }
             catch (Exception ex)
             {
-                Plugin.Log.Error(ex);
+                Logger.Error(ex.ToString());
                 throw;
             }
 
@@ -84,13 +83,28 @@ namespace CustomSabersLite.Utilities
             TrailInstance.TrailRenderer = defaultSaberTrailRenderer;
             TrailInstance.TrailElementCollection = defaultTrailElementCollection;
             TrailInstance.colorType = customTrail.colorType;
-            if (CSLConfig.Instance.OverrideTrailDuration)
+            if (config.OverrideTrailDuration)
             {
-                CSLUtils.SetTrailDuration(TrailInstance); // Has to be done at the end
+                // CSLUtils.Instance.SetTrailDuration(TrailInstance); // Has to be done at the end
+                float trailDuration = 0.4f;
+                if (config.OverrideTrailDuration)
+                {
+                    trailDuration = config.TrailDuration / 100f * trailDuration;
+                }
+
+                if (trailDuration == 0)
+                {
+                    CSLUtils.HideTrail(TrailInstance);
+                }
+                else
+                {
+                    ReflectionUtil.SetField<SaberTrail, float>(TrailInstance, "_trailDuration", trailDuration);
+                }
             }
-            if (CSLConfig.Instance.DisableWhiteTrail)
+            if (config.DisableWhiteTrail)
             {
-                CSLUtils.SetWhiteTrailDuration(TrailInstance);
+                Logger.Info("Disabling white trail");
+                ReflectionUtil.SetField<SaberTrail, float>(TrailInstance, "_whiteSectionMaxDuration", 0f);
             }
         }
 

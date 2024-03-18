@@ -1,4 +1,5 @@
 ﻿using CustomSabersLite.UI;
+using CustomSabersLite.UI.Views;
 using Zenject;
 
 namespace CustomSabersLite.Installers
@@ -7,10 +8,16 @@ namespace CustomSabersLite.Installers
     {
         public override void InstallBindings()
         {
-            Plugin.Log.Info("Installing Menu Bindings");
+            Logger.Info("Installing Menu Bindings");
+
+            Container.Bind<SaberListViewController>().FromNewComponentAsViewController().AsSingle();
+            Container.Bind<SaberSettingsViewController>().FromNewComponentAsViewController().AsSingle();
+            Container.Bind<TestViewController>().FromNewComponentAsViewController().AsSingle();
+
+            Container.Bind<CSLFlowCoordinator>().FromNewComponentOnNewGameObject().AsSingle();
 
             Container.BindInterfacesAndSelfTo<GameplaySetupTab>().AsSingle();
-            Container.Bind<SaberListViewController>().AsSingle();
+            Container.BindInterfacesTo<CSLMenuButton>().AsSingle();
         }
     }
 }

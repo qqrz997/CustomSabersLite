@@ -7,10 +7,11 @@ using CustomSabersLite.Configuration;
 using IPA.Utilities;
 using System.Reflection;
 using System.Threading.Tasks;
+using Zenject;
 
 namespace CustomSabersLite.Utilities
 {
-    public static class CSLUtils
+    internal class CSLUtils
     {
         public static IEnumerable<string> GetFileNames(string path, IEnumerable<string> filters, SearchOption searchOption, bool returnShortPath = false)
         {
@@ -57,7 +58,7 @@ namespace CustomSabersLite.Utilities
                 }
                 catch (Exception ex) 
                 {
-                    Plugin.Log.Error(ex);
+                    Logger.Error(ex.ToString());
                 }
             }
             return nullCoverImage;
@@ -75,7 +76,7 @@ namespace CustomSabersLite.Utilities
                 }
                 catch (Exception ex)
                 {
-                    Plugin.Log.Error(ex);
+                    Logger.Error(ex.ToString());
                 }
             }
             return defaultCoverImage;
@@ -86,39 +87,12 @@ namespace CustomSabersLite.Utilities
             trail.enabled = false;
         }
 
-        public static void SetTrailDuration(SaberTrail trail, float trailDuration = 0.4f)
-        {
-            if (CSLConfig.Instance.OverrideTrailDuration)
-            {
-                trailDuration = CSLConfig.Instance.TrailDuration / 100f * trailDuration;
-            }
-
-            if (trailDuration == 0)
-            {
-                HideTrail(trail);
-            }
-            else
-            {
-                ReflectionUtil.SetField(trail, "_trailDuration", trailDuration);
-            }
-        }
-
-        public static void SetWhiteTrailDuration(SaberTrail defaultTrail, float whiteSectionMaxDuration = 0.03f)
-        {
-            if (CSLConfig.Instance.DisableWhiteTrail)
-            {
-                // setting the trail duration to 0 doesn't completely hide trails, i assume this works the same but it's small enough to be completely unnoticeable
-                whiteSectionMaxDuration = 0f; // Could add config to adjust the white section length for fun
-            }
-            ReflectionUtil.SetField(defaultTrail, "_whiteSectionMaxDuration", whiteSectionMaxDuration);
-        }
-
         public static bool CheckMultiplayer()
         {
             // todo - multiplayer support
             if (GameObject.Find("MultiplayerController"))
             {
-                Plugin.Log.Warn("Multiplayer is currently not supported for custom sabers.");
+                Logger.Warn("Multiplayer is currently not supported for custom sabers.");
                 return true;
             }
             return false;
@@ -142,9 +116,9 @@ namespace CustomSabersLite.Utilities
 
                 return true;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Plugin.Log.Error(e);
+                Logger.Error(ex.ToString());
                 return false;
             }
         }

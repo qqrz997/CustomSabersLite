@@ -20,27 +20,35 @@ namespace CustomSabersLite.UI
 {
     internal class GameplaySetupTab : IInitializable, IDisposable
     {
-        private string resourceName => "CustomSabersLite.UI.BSML.playerSettingsTab.bsml";
-        private bool parsed;
-
         private readonly PluginDirs pluginDirs;
+        private readonly CSLConfig config;
+        private readonly CSLAssetLoader assetLoader;
 
-        private GameplaySetupTab(PluginDirs pluginDirs)
+        private GameplaySetupTab(PluginDirs pluginDirs, CSLConfig config, CSLAssetLoader assetLoader)
         {
-            Plugin.Log.Info("GameplaySetupTab constructing");
+            Logger.Info("GameplaySetupTab constructing");
 
             this.pluginDirs = pluginDirs;
+            this.config = config;
+            this.assetLoader = assetLoader;
         }
+
+        private string resourceName => "CustomSabersLite.UI.BSML.playerSettingsTab.bsml";
+        private bool parsed;
 
         private string saberAssetPath;
 
         public void Initialize()
         {
-            Plugin.Log.Info("Gameplay setup tab Initialize()");
             saberAssetPath = pluginDirs.CustomSabers.FullName;
 
-            Plugin.Log.Debug("Creating tab");
-            GameplaySetup.instance.AddTab("Custom Sabers", "CustomSabersLite.UI.BSML.playerSettingsTab.bsml", this);
+            Logger.Debug("Creating tab");
+            GameplaySetup.instance.AddTab("Custom Sabers", resourceName, this);
+        }
+
+        public void Dispose()
+        {
+            GameplaySetup.instance.RemoveTab("Custom Sabers");
         }
 
         #region trail settings
@@ -48,17 +56,17 @@ namespace CustomSabersLite.UI
         [UIValue("disable-white-trail")]
         public bool DisableWhiteTrail
         {
-            get => CSLConfig.Instance.DisableWhiteTrail;
-            set => CSLConfig.Instance.DisableWhiteTrail = value;
+            get => config.DisableWhiteTrail;
+            set => config.DisableWhiteTrail = value;
         }
 
         [UIValue("override-trail-duration")]
         public bool OverrideTrailDuration
         {
-            get => CSLConfig.Instance.OverrideTrailDuration;
+            get => config.OverrideTrailDuration;
             set
             {
-                CSLConfig.Instance.OverrideTrailDuration = value;
+                config.OverrideTrailDuration = value;
                 SetTrailDurationInteractable(value);
             }
         }
@@ -66,15 +74,15 @@ namespace CustomSabersLite.UI
         [UIValue("trail-duration")]
         public int TrailDurationMultiplier
         {
-            get => CSLConfig.Instance.TrailDuration;
-            set => CSLConfig.Instance.TrailDuration = value;
+            get => config.TrailDuration;
+            set => config.TrailDuration = value;
         }
 
         [UIValue("trail-type")]
         public string TrailType
         {
-            get => CSLConfig.Instance.TrailType.ToString();
-            set => CSLConfig.Instance.TrailType = Enum.TryParse(value, out TrailType trailType) ? trailType : CSLConfig.Instance.TrailType;
+            get => config.TrailType.ToString();
+            set => config.TrailType = Enum.TryParse(value, out TrailType trailType) ? trailType : config.TrailType;
         }
 
         [UIValue("trail-type-list")]
@@ -86,8 +94,8 @@ namespace CustomSabersLite.UI
         [UIValue("enable-custom-events")]
         public bool CustomEventsEnabled
         {
-            get => CSLConfig.Instance.CustomEventsEnabled;
-            set => CSLConfig.Instance.CustomEventsEnabled = value;
+            get => config.CustomEventsEnabled;
+            set => config.CustomEventsEnabled = value;
         }
 
         #endregion
@@ -107,9 +115,9 @@ namespace CustomSabersLite.UI
         [UIAction("select-saber")]
         public void Select(TableView t, int row)
         {
-            Plugin.Log.Info($"Saber selected at row {row}");
-            CSLAssetLoader.SelectedSaberIndex = row;
-            CSLConfig.Instance.CurrentlySelectedSaber = CSLAssetLoader.SabersMetadata[row].SaberFileName;
+            Logger.Info($"Saber selected at row {row}");
+            assetLoader.SelectedSaberIndex = row;
+            config.CurrentlySelectedSaber = assetLoader.SabersMetadata[row].SaberFileName;
 
             t.SelectCellWithIdx(row);
         }
@@ -192,9 +200,9 @@ namespace CustomSabersLite.UI
         private void SetupList()
         {
             saberList.data.Clear();
-            for (int i = 0; i < CSLAssetLoader.SabersMetadata.Count; i++) 
+            for (int i = 0; i < assetLoader.SabersMetadata.Count; i++) 
             {
-                CustomSaberMetadata metadata = CSLAssetLoader.SabersMetadata[i];
+                CustomSaberMetadata metadata = assetLoader.SabersMetadata[i];
                 string saberName = metadata.SaberName;
 
                 if (metadata.SaberFileName != null)
@@ -219,18 +227,13 @@ namespace CustomSabersLite.UI
 
             saberList.tableView.ReloadData();
             
-            int selectedSaber = CSLAssetLoader.SelectedSaberIndex;
+            int selectedSaber = assetLoader.SelectedSaberIndex;
             saberList.tableView.SelectCellWithIdx(selectedSaber);
 
             if (!saberList.tableView.visibleCells.Where(x => x.selected).Any())
             {
                 saberList.tableView.ScrollToCellWithIdx(selectedSaber, TableView.ScrollPositionType.Beginning, true);
             }
-        }
-
-        public void Dispose()
-        {
-            GameplaySetup.instance.RemoveTab("Custom Sabers");
         }
     }
 }

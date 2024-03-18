@@ -13,20 +13,9 @@ namespace CustomSabersLite
 
         public DirectoryInfo DeletedSabers;
 
-        /*public static void Init()
-        {
-            DirectoryInfo installPath = new DirectoryInfo(UnityGame.InstallPath);
-            DirectoryInfo userDataPath = new DirectoryInfo(UnityGame.UserDataPath);
-
-            CustomSabers = installPath.CreateSubdirectory("CustomSabers");
-            UserData = userDataPath.CreateSubdirectory("Custom Sabers Lite");
-            Cache = UserData.CreateSubdirectory("Cache");
-            DeletedSabers = UserData.CreateSubdirectory("Deleted Sabers");
-        }*/
-
         public PluginDirs()
         {
-            Plugin.Log.Info("Setting directories");
+            Logger.Info("Setting directories");
 
             DirectoryInfo installDirectory = new DirectoryInfo(UnityGame.InstallPath);
             DirectoryInfo userDataDirectory = new DirectoryInfo(UnityGame.UserDataPath);

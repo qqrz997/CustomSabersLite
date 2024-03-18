@@ -19,22 +19,14 @@ namespace CustomSabersLite
     {
         internal static Plugin Instance { get; private set; }
 
-        private static string PluginName => "Custom Sabers Lite";
-
-        private static string PluginGUID => "qqrz997.CustomSabersLite";
-
         public const string Version = "0.6.0";
-
-        internal static IPALogger Log { get; private set; }
 
         [Init]
         public async void Init(IPALogger logger, Config config, Zenjector zenjector)
         {
-            Log = logger;
-
-            CSLConfig.Instance = config.Generated<CSLConfig>();
-
-            // PluginDirs.Init();
+            Logger.Log = logger;
+            
+            CSLConfig pluginConfig = config.Generated<CSLConfig>();
 
             if (!await CSLUtils.LoadCustomSaberAssembly())
             {
@@ -43,15 +35,15 @@ namespace CustomSabersLite
 
             zenjector.UseLogger(logger);
 
-            zenjector.Install<CSLAppInstaller>(Location.App, logger);
-            zenjector.Install<CSLGameInstaller>(Location.Player);
+            zenjector.Install<CSLAppInstaller>(Location.App, logger, pluginConfig);
             zenjector.Install<CSLMenuInstaller>(Location.Menu);
+            zenjector.Install<CSLGameInstaller>(Location.Player);
         }
 
         [OnStart]
         public void OnApplicationStart()
         {
-            UIManager.CreateMenu();
+            // UIManager.CreateMenu();
             AddEvents();
             try
             {
@@ -60,32 +52,31 @@ namespace CustomSabersLite
             } 
             catch (Exception ex)
             {
-                Log.Error("Issue encountered when loading custom sabers");
-                Log.Error(ex);
+                Logger.Error("Issue encountered when loading custom sabers");
+                Logger.Error(ex.ToString());
             }
-            UIManager.UpdateMenuOnSabersLoaded();
+            // UIManager.UpdateMenuOnSabersLoaded();
         }
+
+        private CSLSaberManager saberManager;
 
         [OnExit]
         public void OnApplicationQuit()
         {
-            CSLAssetLoader.Clear();
+            // CSLAssetLoader.Clear();
             RemoveEvents();
         }
 
         private void OnGameSceneLoaded()
         {
-            if (CSLAssetLoader.IsLoaded)
-            {
-                CSLSaberManager customSaberManager = new CSLSaberManager();
-                customSaberManager.Init();
-            }
+            /*Logger.Info("game scene loaded");
+            saberManager = new CSLSaberManager();
+            saberManager.Init();*/
         }
 
         private void OnMenuSceneLoaded()
         {
-            // this doesn't actually refresh the button
-            if (!UIManager.MenuButtonActive && CSLAssetLoader.IsLoaded) UIManager.UpdateMenu(true);
+
         }
 
         private void AddEvents()

@@ -1,4 +1,5 @@
 ﻿using CustomSabersLite.Components;
+using CustomSabersLite.Utilities;
 using SiraUtil.Sabers;
 using System;
 using System.Collections.Generic;
@@ -13,9 +14,15 @@ namespace CustomSabersLite.Installers
     {
         public override void InstallBindings()
         {
-            Plugin.Log.Info("Installing Game Bindings");
+            Logger.Info("Installing Game Bindings");
 
             Container.BindInstance(SaberModelRegistration.Create<CSLSaberModelController>(5)).AsSingle();
+
+            Container.Bind<CustomTrailHandler>().AsSingle().NonLazy();
+
+
+            Logger.Info("Creating saber manager");
+            Container.Bind<CSLSaberManager>().FromNewComponentOnNewGameObject().AsSingle().NonLazy();
         }
     }
 }

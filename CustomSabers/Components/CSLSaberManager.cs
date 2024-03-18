@@ -8,11 +8,25 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using CustomSaber;
+using Zenject;
 
 namespace CustomSabersLite.Components
 {
     internal class CSLSaberManager : MonoBehaviour
     {
+        private CSLConfig config;
+        private CustomTrailHandler trailHandler;
+        private CSLAssetLoader assetLoader;
+
+        [Inject]
+        public void Construct(CSLConfig config, CustomTrailHandler trailHandler, CSLAssetLoader assetLoader)
+        {
+            Logger.Info("Cringe");
+            this.config = config;
+            this.trailHandler = trailHandler;
+            this.assetLoader = assetLoader;
+        }
+
         public static CSLSaber LeftSaber { get; private set; }
 
         public static CSLSaber RightSaber { get; private set; }
@@ -36,12 +50,13 @@ namespace CustomSabersLite.Components
         private float? lastNoteTime;
         private float previousScore;
 
-        public void Init()
+        public void Start()
         {
-            Plugin.Log.Info("Game scene loaded, initializing the CustomSaberManager");
+            Logger.Info("Game scene loaded, initializing the CustomSaberManager");
 
-            GameObject go = GameObject.Find("VRGameCore");
-            go.AddComponent<CSLSaberManager>();
+            /*GameObject go = GameObject.Find("VRGameCore");
+            transform.SetParent(go.transform);
+            go.AddComponent<CSLSaberManager>();*/
         }
 
         private void Awake()
@@ -54,22 +69,22 @@ namespace CustomSabersLite.Components
                 customSabersObject = null;
             }
 
-            string selectedSaber = CSLConfig.Instance.CurrentlySelectedSaber;
+            string selectedSaber = config.CurrentlySelectedSaber;
             if (selectedSaber == "Default" || selectedSaber == null)
             {
-                CSLAssetLoader.SelectedSaber = new CustomSaberData("DefaultSabers");
+                assetLoader.SelectedSaber = new CustomSaberData("DefaultSabers");
             }
             else
             {
-                if (selectedSaber != CSLAssetLoader.SelectedSaber?.FileName)
+                if (selectedSaber != assetLoader.SelectedSaber?.FileName)
                 {
                     // The saber was changed so load the new one
-                    CSLAssetLoader.SelectedSaber?.Destroy();
-                    CSLAssetLoader.SelectedSaber = CSLAssetLoader.LoadSaberWithRepair(selectedSaber);
+                    assetLoader.SelectedSaber?.Destroy();
+                    assetLoader.SelectedSaber = assetLoader.LoadSaberWithRepair(selectedSaber);
                 }
             }
 
-            CustomSaberData customSaberData = CSLAssetLoader.SelectedSaber;
+            CustomSaberData customSaberData = assetLoader.SelectedSaber;
 
             if (customSaberData != null)
             {
@@ -77,7 +92,7 @@ namespace CustomSabersLite.Components
                 {
                     if (customSaberData.SabersObject)
                     {
-                        Plugin.Log.Debug($"Custom saber is selected, replacing sabers: {customSaberData.FileName}");
+                        Logger.Info($"Custom saber is selected, replacing sabers: {customSaberData.FileName}");
                         customSabersObject = Instantiate(customSaberData.SabersObject);
                         leftSaberObject = customSabersObject.transform.Find("RightSaber").gameObject;
                         rightSaberObject = customSabersObject.transform.Find("LeftSaber").gameObject;
@@ -97,7 +112,7 @@ namespace CustomSabersLite.Components
             }
             else
             {
-                Plugin.Log.Error("Current CustomSaberData is null");
+                Logger.Error("Current CustomSaberData is null");
             }
         }
 
@@ -118,14 +133,14 @@ namespace CustomSabersLite.Components
             {
                 SaberTrail defaultTrail = GetVanillaTrail(saber);
 
-                if (CSLConfig.Instance.TrailType == TrailType.None)
+                if (config.TrailType == TrailType.None)
                 {
                     CSLUtils.HideTrail(defaultTrail);
                 }
                 else
                 {
-                    CSLUtils.SetTrailDuration(defaultTrail);
-                    CSLUtils.SetWhiteTrailDuration(defaultTrail);
+                    SetTrailDuration(defaultTrail);
+                    SetWhiteTrailDuration(defaultTrail);
                     defaultTrail.enabled = true;
                 }
             }
@@ -141,22 +156,19 @@ namespace CustomSabersLite.Components
                 yield break;
             }
 
-            if (CSLConfig.Instance.CustomEventsEnabled) AddEvents();
+            if (config.CustomEventsEnabled) AddEvents();
 
             IEnumerable<Saber> defaultSabers = Resources.FindObjectsOfTypeAll<Saber>();
 
             foreach (Saber defaultSaber in defaultSabers)
             {
-                Plugin.Log.Debug($"Hiding default saber model for {defaultSaber.saberType}");
+                Logger.Info($"Hiding default saber model for {defaultSaber.saberType}");
 
                 // Hide each saber mesh
                 IEnumerable<MeshFilter> meshFilters = defaultSaber.transform.GetComponentsInChildren<MeshFilter>();
                 foreach (MeshFilter meshFilter in meshFilters)
                 {
                     meshFilter.gameObject.SetActive(!saberRoot);
-
-                    /*MeshFilter filter = meshFilter.GetComponentInChildren<MeshFilter>();
-                    filter.gameObject.SetActive(!saberRoot);*/
                 }
 
                 Color saberColour = Color.white;
@@ -183,22 +195,22 @@ namespace CustomSabersLite.Components
                 }
                 else
                 {
-                    Plugin.Log.Error("Something went wrong when getting the custom saber instance"); yield break;
+                    Logger.Error("Something went wrong when getting the custom saber instance"); yield break;
                 }
 
                 SetCustomSaberColour(customSaber, saberColour);
 
                 SaberTrail defaultTrail = GetVanillaTrail(defaultSaber);
 
-                switch (CSLConfig.Instance.TrailType)
+                switch (config.TrailType)
                 {
                     case TrailType.Custom:
                         AddCustomSaberTrails(customSaber, saberColour, defaultSaber, defaultTrail);
                         break;
 
                     case TrailType.Vanilla:
-                        CSLUtils.SetTrailDuration(defaultTrail);
-                        CSLUtils.SetWhiteTrailDuration(defaultTrail);
+                        SetTrailDuration(defaultTrail);
+                        SetWhiteTrailDuration(defaultTrail);
                         break;
 
                     case TrailType.None:
@@ -208,15 +220,13 @@ namespace CustomSabersLite.Components
             }
         }
 
-        public static CustomTrailHandler TrailHandler { get; private set; }
-
         private void AddCustomSaberTrails(GameObject customSaber, Color saberColour, Saber defaultSaber, SaberTrail defaultTrail)
         {
             CustomTrail customTrail;
             try
             {
                 customTrail = customSaber.GetComponent<CustomTrail>();
-                Plugin.Log.Debug("Successfully got CustomTrail from custom saber.");
+                Logger.Info("Successfully got CustomTrail from custom saber.");
             }
             catch
             {
@@ -225,16 +235,13 @@ namespace CustomSabersLite.Components
 
             if (customTrail == null)
             {
-                Plugin.Log.Warn("No custom trails. Defaulting to existing saber trails.");
-                CSLUtils.SetTrailDuration(defaultTrail);
-                CSLUtils.SetWhiteTrailDuration(defaultTrail);
+                Logger.Warn("No custom trails. Defaulting to existing saber trails.");
+                SetTrailDuration(defaultTrail);
+                SetWhiteTrailDuration(defaultTrail);
             }
             else
             {
-                Plugin.Log.Debug($"Initializing custom trail to {defaultTrail.name}");
-
-                TrailHandler = new CustomTrailHandler(customSaber, customTrail);
-                TrailHandler.CreateTrail(defaultTrail, saberColour);
+                trailHandler.CreateTrail(defaultTrail, saberColour, customSaber, customTrail);
             }
         }
 
@@ -281,13 +288,40 @@ namespace CustomSabersLite.Components
             try
             {
                 trail = defaultSaber.gameObject.GetComponentInChildren<SaberTrail>();
-                Plugin.Log.Debug("Successfully got SaberTrail from default saber.");
+                Logger.Info("Successfully got SaberTrail from default saber.");
             }
             catch
             {
                 trail = null;
             }
             return trail;
+        }
+
+        private void SetTrailDuration(SaberTrail trail, float trailDuration = 0.4f)
+        {
+            if (config.OverrideTrailDuration)
+            {
+                trailDuration = config.TrailDuration / 100f * trailDuration;
+            }
+
+            if (trailDuration == 0)
+            {
+                CSLUtils.HideTrail(trail);
+            }
+            else
+            {
+                ReflectionUtil.SetField<SaberTrail, float>(trail, "_trailDuration", trailDuration);
+            }
+        }
+
+        private void SetWhiteTrailDuration(SaberTrail trail, float whiteSectionMaxDuration = 0.03f)
+        {
+            if (config.DisableWhiteTrail)
+            {
+                // setting the trail duration to 0 doesn't completely hide trails, i assume this works the same but it's small enough to be completely unnoticeable
+                whiteSectionMaxDuration = 0f; // Could add config to adjust the white section length for fun
+            }
+            ReflectionUtil.SetField<SaberTrail, float>(trail, "_whiteSectionMaxDuration", whiteSectionMaxDuration);
         }
 
         #region events
@@ -311,7 +345,7 @@ namespace CustomSabersLite.Components
                 return;
             }
 
-            Plugin.Log.Debug("Adding events");
+            Logger.Info("Adding events");
 
             IReadonlyBeatmapData beatmapData = BS_Utils.Plugin.LevelData.GameplayCoreSceneSetupData.transformedBeatmapData;
 
@@ -328,8 +362,8 @@ namespace CustomSabersLite.Components
             }
             catch (Exception ex)
             {
-                Plugin.Log.Error("Problem encountered when trying to get event objects");
-                Plugin.Log.Error(ex);
+                Logger.Error("Problem encountered when trying to get event objects");
+                Logger.Error(ex.ToString());
             }
 
             if (scoreController)

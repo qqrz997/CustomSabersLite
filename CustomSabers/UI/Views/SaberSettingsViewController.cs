@@ -9,11 +9,20 @@ using CustomSabersLite.Configuration;
 using CustomSabersLite.Data;
 using UnityEngine;
 using TMPro;
+using Zenject;
 
 namespace CustomSabersLite.UI
 {
     internal class SaberSettingsViewController : BSMLResourceViewController
     {
+        private CSLConfig config;
+
+        [Inject]
+        public void Construct(CSLConfig config)
+        {
+            this.config = config;
+        }
+
         public override string ResourceName => "CustomSabersLite.UI.BSML.saberSettings.bsml";
 
         public static SaberSettingsViewController Instance;
@@ -29,17 +38,17 @@ namespace CustomSabersLite.UI
         [UIValue("disable-white-trail")]
         public bool DisableWhiteTrail
         {
-            get => CSLConfig.Instance.DisableWhiteTrail;
-            set => CSLConfig.Instance.DisableWhiteTrail = value;
+            get => config.DisableWhiteTrail;
+            set => config.DisableWhiteTrail = value;
         }
 
         [UIValue("override-trail-duration")]
         public bool OverrideTrailDuration
         {
-            get => CSLConfig.Instance.OverrideTrailDuration;
+            get => config.OverrideTrailDuration;
             set
             {
-                CSLConfig.Instance.OverrideTrailDuration = value;
+                config.OverrideTrailDuration = value;
                 SetTrailDurationInteractable(value);
             }
         }
@@ -56,15 +65,15 @@ namespace CustomSabersLite.UI
         [UIValue("trail-duration")]
         public int TrailDurationMultiplier
         {
-            get => CSLConfig.Instance.TrailDuration;
-            set => CSLConfig.Instance.TrailDuration = value;
+            get => config.TrailDuration;
+            set => config.TrailDuration = value;
         }
 
         [UIValue("trail-type")]
         public string TrailType
         {
-            get => CSLConfig.Instance.TrailType.ToString();
-            set => CSLConfig.Instance.TrailType = Enum.TryParse(value, out TrailType trailType) ? trailType : CSLConfig.Instance.TrailType;
+            get => config.TrailType.ToString();
+            set => config.TrailType = Enum.TryParse(value, out TrailType trailType) ? trailType : config.TrailType;
         }
 
         [UIValue("trail-type-list")]
@@ -73,8 +82,8 @@ namespace CustomSabersLite.UI
         [UIValue("enable-custom-events")]
         public bool CustomEventsEnabled
         {
-            get => CSLConfig.Instance.CustomEventsEnabled;
-            set => CSLConfig.Instance.CustomEventsEnabled = value;
+            get => config.CustomEventsEnabled;
+            set => config.CustomEventsEnabled = value;
         }
 
         [UIAction("#post-parse")]

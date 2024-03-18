@@ -1,4 +1,6 @@
-﻿using CustomSabersLite.Utilities;
+﻿using CustomSabersLite.Components;
+using CustomSabersLite.Configuration;
+using CustomSabersLite.Utilities;
 using IPA.Logging;
 using System;
 using System.Collections.Generic;
@@ -11,18 +13,24 @@ namespace CustomSabersLite.Installers
 {
     internal class CSLAppInstaller : Installer
     {
-        private readonly Logger logger;
+        private readonly IPA.Logging.Logger logger;
+        private readonly CSLConfig config;
 
-        public CSLAppInstaller(Logger logger)
+        public CSLAppInstaller(IPA.Logging.Logger logger, CSLConfig config)
         {
             this.logger = logger;
+            this.config = config;
         }
 
         public override void InstallBindings()
         {
-            Plugin.Log.Info("Installing App Bindings");
+            Logger.Info("Installing App Bindings");
+
+            Container.BindInstance(logger).AsSingle();
 
             Container.Bind<PluginDirs>().AsSingle();
+
+            Container.BindInstance(config);
 
             Container.BindInterfacesAndSelfTo<CSLAssetLoader>().AsSingle();
         }

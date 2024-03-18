@@ -14,55 +14,61 @@ using Zenject;
 
 namespace CustomSabersLite.Utilities
 {
-    internal class CSLAssetLoader : IInitializable
+    internal class CSLAssetLoader : IInitializable, IDisposable
     {
-        public static bool IsLoaded {  get; private set; }
-
-        public static int SelectedSaberIndex { get; internal set; } = 0;
-
-        public static CustomSaberData SelectedSaber { get; set; }
-
-        public static List<CustomSaberMetadata> SabersMetadata { get; private set; } = new List<CustomSaberMetadata>();
-
-        public static IEnumerable<string> CustomSaberFiles { get; private set; } = Enumerable.Empty<string>();
-        
-        public static IEnumerable<string> SaberMetadataFiles { get; private set; } = Enumerable.Empty<string>();
-
-        private static List<string> sabersToLoad = new List<string>();
-
-        private static IList<CustomSaberData> loadedSaberData = new List<CustomSaberData>();
-
-        private static string saberAssetPath;
-        private static string cachePath;
-        private static string deletedSabersPath;
-
         private readonly PluginDirs pluginDirs;
+        private readonly CSLConfig config;
 
-        private CSLAssetLoader(PluginDirs pluginDirs)
+        private CSLAssetLoader(PluginDirs pluginDirs, CSLConfig config)
         {
             this.pluginDirs = pluginDirs;
+            this.config = config;
         }
 
-        public async void Initialize() => Init();
+        public bool IsLoaded {  get; private set; }
 
-        internal async Task Init()
+        public int SelectedSaberIndex { get; internal set; } = 0;
+
+        public CustomSaberData SelectedSaber { get; set; }
+
+        public List<CustomSaberMetadata> SabersMetadata { get; private set; } = new List<CustomSaberMetadata>();
+
+        public IEnumerable<string> CustomSaberFiles { get; private set; } = Enumerable.Empty<string>();
+        
+        public IEnumerable<string> SaberMetadataFiles { get; private set; } = Enumerable.Empty<string>();
+
+        private List<string> sabersToLoad = new List<string>();
+
+        private IList<CustomSaberData> loadedSaberData = new List<CustomSaberData>();
+
+        private string saberAssetPath;
+        private string cachePath;
+        private string deletedSabersPath;
+
+        public async void Initialize()
         {
             saberAssetPath = pluginDirs.CustomSabers.FullName;
             cachePath = pluginDirs.Cache.FullName;
             deletedSabersPath = pluginDirs.DeletedSabers.FullName;
 
-            if (CSLConfig.Instance.PluginVer != Plugin.Version)
+            if (config.PluginVer != Plugin.Version)
             {
-                Plugin.Log.Info("Mod version has changed! Clearing cache");
+                Logger.Info("Mod version has changed! Clearing cache");
                 ClearCache();
-                CSLConfig.Instance.PluginVer = Plugin.Version;
+                config.PluginVer = Plugin.Version;
             }
 
-            Plugin.Log.Debug("Starting the CustomSabersAssetLoader");
+            Logger.Debug("Starting the CustomSabersAssetLoader");
             Load();
         }
 
-        internal static async Task LoadAsync()
+        public void Dispose()
+        {
+            Logger.Info("Disposing the asset loader");
+            Clear();
+        }
+
+        internal async Task LoadAsync()
         {
             Dictionary<string, CustomSaberMetadata> fileMetadata = GetMetadataFromFiles();
 
@@ -75,15 +81,15 @@ namespace CustomSabersLite.Utilities
 
             UpdateCache(fileMetadata);
 
-            if (CSLConfig.Instance.CurrentlySelectedSaber != null)
+            if (config.CurrentlySelectedSaber != null)
             {
-                Plugin.Log.Debug($"Currently selected saber: {CSLConfig.Instance.CurrentlySelectedSaber}");
+                Logger.Debug($"Currently selected saber: {config.CurrentlySelectedSaber}");
 
-                SelectedSaber = await LoadSaberFromAssetAsync(CSLConfig.Instance.CurrentlySelectedSaber);
+                SelectedSaber = await LoadSaberFromAssetAsync(config.CurrentlySelectedSaber);
 
                 for (int i = 0; i < SabersMetadata.Count(); i++)
                 {
-                    if (SabersMetadata[i].SaberFileName == CSLConfig.Instance.CurrentlySelectedSaber)
+                    if (SabersMetadata[i].SaberFileName == config.CurrentlySelectedSaber)
                     {
                         SelectedSaberIndex = i;
                         break;
@@ -92,7 +98,7 @@ namespace CustomSabersLite.Utilities
             }
         }
 
-        internal static void Load()
+        internal void Load()
         {
             Dictionary<string, CustomSaberMetadata> fileMetadata = GetMetadataFromFiles();
 
@@ -105,15 +111,15 @@ namespace CustomSabersLite.Utilities
 
             UpdateCache(fileMetadata);
 
-            if (CSLConfig.Instance.CurrentlySelectedSaber != null)
+            if (config.CurrentlySelectedSaber != null)
             {
-                Plugin.Log.Debug($"Currently selected saber: {CSLConfig.Instance.CurrentlySelectedSaber}");
+                Logger.Debug($"Currently selected saber: {config.CurrentlySelectedSaber}");
 
-                SelectedSaber = LoadSaberWithRepair(CSLConfig.Instance.CurrentlySelectedSaber);
+                SelectedSaber = LoadSaberWithRepair(config.CurrentlySelectedSaber);
 
                 for (int i = 0; i < SabersMetadata.Count(); i++)
                 {
-                    if (SabersMetadata[i].SaberFileName == CSLConfig.Instance.CurrentlySelectedSaber)
+                    if (SabersMetadata[i].SaberFileName == config.CurrentlySelectedSaber)
                     {
                         SelectedSaberIndex = i;
                         break;
@@ -122,14 +128,14 @@ namespace CustomSabersLite.Utilities
             }
         }
 
-        internal static async Task ReloadAsync()
+        internal async Task ReloadAsync()
         {
-            Plugin.Log.Debug("Reloading the CustomSaberAssetLoader");
+            Logger.Debug("Reloading the CustomSaberAssetLoader");
             Clear();
             await LoadAsync();
         }
 
-        internal static void Clear()
+        internal void Clear()
         {
             for (int i = 0; i < loadedSaberData.Count; i++)
             {
@@ -152,23 +158,23 @@ namespace CustomSabersLite.Utilities
             SaberMetadataFiles = Enumerable.Empty<string>();
         }
 
-        private static IEnumerable<string> GetSaberFiles(bool returnShortPath = false)
+        private IEnumerable<string> GetSaberFiles(bool returnShortPath = false)
         {
             IEnumerable<string> saberExt = new List<string> { "*.saber" };
             IEnumerable<string> saberFiles = CSLUtils.GetFileNames(saberAssetPath, saberExt, SearchOption.AllDirectories, returnShortPath);
-            Plugin.Log.Info($"{saberFiles.Count()} external sabers found");
+            Logger.Info($"{saberFiles.Count()} external sabers found");
             return saberFiles;
         }
 
-        private static IEnumerable<string> GetMetadataFiles(bool returnShortPath = false)
+        private IEnumerable<string> GetMetadataFiles(bool returnShortPath = false)
         {
             IEnumerable<string> metaExt = new List<string> { "*.meta" };
             IEnumerable<string> saberMetadataFiles = CSLUtils.GetFileNames(cachePath, metaExt, SearchOption.AllDirectories, returnShortPath);
-            Plugin.Log.Info($"{saberMetadataFiles.Count()} metadata files found");
+            Logger.Info($"{saberMetadataFiles.Count()} metadata files found");
             return saberMetadataFiles;
         }
 
-        private static Dictionary<string, CustomSaberMetadata> GetMetadataFromFiles()
+        private Dictionary<string, CustomSaberMetadata> GetMetadataFromFiles()
         {
             CustomSaberFiles = GetSaberFiles(true);
 
@@ -189,7 +195,7 @@ namespace CustomSabersLite.Utilities
                 }
             }
             sw.Stop();
-            Plugin.Log.Debug($"{SaberMetadataFiles.Count()} metadata files read in {sw.ElapsedMilliseconds}ms");
+            Logger.Debug($"{SaberMetadataFiles.Count()} metadata files read in {sw.ElapsedMilliseconds}ms");
 
             foreach (string saberFile in CustomSaberFiles)
             {
@@ -202,7 +208,7 @@ namespace CustomSabersLite.Utilities
             return fileMetadata;
         }
 
-        private static void UpdateCache(Dictionary<string, CustomSaberMetadata> fileMetadata)
+        private void UpdateCache(Dictionary<string, CustomSaberMetadata> fileMetadata)
         {
             CustomSaberMetadata defaultSabers = new CustomSaberMetadata("Default", "Beat Games");
             SabersMetadata.Add(defaultSabers);
@@ -220,8 +226,8 @@ namespace CustomSabersLite.Utilities
                     }
                     catch (Exception ex)
                     {
-                        Plugin.Log.Error("Problem encountered when reading stored image");
-                        Plugin.Log.Error(ex);
+                        Logger.Error("Problem encountered when reading stored image");
+                        Logger.Error(ex.ToString());
                     }
                 }
 
@@ -251,7 +257,7 @@ namespace CustomSabersLite.Utilities
             }
         }
 
-        internal static void ClearCache()
+        internal void ClearCache()
         {
             SaberMetadataFiles = GetMetadataFiles(false);
 
@@ -266,46 +272,46 @@ namespace CustomSabersLite.Utilities
             }
         }
 
-        private static async Task<IList<CustomSaberData>> LoadCustomSabersAsync(IEnumerable<string> customSaberFiles)
+        private async Task<IList<CustomSaberData>> LoadCustomSabersAsync(IEnumerable<string> customSaberFiles)
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
             IList<CustomSaberData> customSabers = new List<CustomSaberData>();
 
             foreach (string file in customSaberFiles)
             {
-                Plugin.Log.Debug($"No cache for {file}\nLoading saber from asset: {file}");
+                Logger.Debug($"No cache for {file}\nLoading saber from asset: {file}");
 
                 customSabers.Add(await Task.Run(() => LoadSaberFromAssetAsync(file)));
                 // customSabers.Add(await LoadSaberFromAssetAsync(file));
             }
 
             stopwatch.Stop();
-            Plugin.Log.Info($"{customSabers.Count} total sabers loaded in {stopwatch.ElapsedMilliseconds}ms");
+            Logger.Info($"{customSabers.Count} total sabers loaded in {stopwatch.ElapsedMilliseconds}ms");
 
             return customSabers;
         }
 
-        private static IList<CustomSaberData> LoadCustomSabers(IEnumerable<string> customSaberFiles)
+        private IList<CustomSaberData> LoadCustomSabers(IEnumerable<string> customSaberFiles)
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
             IList<CustomSaberData> customSabers = new List<CustomSaberData>();
 
             foreach (string file in customSaberFiles)
             {
-                Plugin.Log.Debug($"No cache for {file}\nLoading saber from asset: {file}");
+                Logger.Debug($"No cache for {file}\nLoading saber from asset: {file}");
 
                 customSabers.Add(LoadSaberWithRepair(file));
             }
 
             stopwatch.Stop();
-            Plugin.Log.Info($"{customSabers.Count} total sabers loaded in {stopwatch.ElapsedMilliseconds}ms");
+            Logger.Info($"{customSabers.Count} total sabers loaded in {stopwatch.ElapsedMilliseconds}ms");
 
             return customSabers;
         }
 
         private static CustomSaberData FixSaberShaders(CustomSaberData saber)
         {
-            Plugin.Log.Debug($"Repairing shaders for {saber.FileName}");
+            Logger.Debug($"Repairing shaders for {saber.FileName}");
             try
             {
                 List<Material> materials = ShaderRepair.GetMaterialsFromGameObjectRenderers(saber.SabersObject);
@@ -321,19 +327,19 @@ namespace CustomSabersLite.Utilities
                 var replacementInfo = ShaderRepair.FixShadersOnMaterials(materials);
                 if (!replacementInfo.AllShadersReplaced)
                 {
-                    Plugin.Log.Warn($"Missing shader replacement data:");
+                    Logger.Warn($"Missing shader replacement data:");
                     foreach (var shaderName in replacementInfo.MissingShaderNames)
                     {
-                        Plugin.Log.Warn($"\t- {shaderName}");
+                        Logger.Warn($"\t- {shaderName}");
                     }
                     saber.MissingShaders = true;
                 }
-                else { saber.MissingShaders = false; Plugin.Log.Debug("All shaders replaced!"); }
+                else { saber.MissingShaders = false; Logger.Debug("All shaders replaced!"); }
             }
             catch (Exception ex)
             {
-                Plugin.Log.Warn($"Problem encountered when repairing shaders for {saber.FileName}");
-                Plugin.Log.Error(ex);
+                Logger.Warn($"Problem encountered when repairing shaders for {saber.FileName}");
+                Logger.Error(ex.ToString());
             }
             return saber;
         }
@@ -355,22 +361,22 @@ namespace CustomSabersLite.Utilities
                 var replacementInfo = await ShaderRepair.FixShadersOnMaterialsAsync(materials);
                 if (!replacementInfo.AllShadersReplaced)
                 {
-                    Plugin.Log.Warn($"Missing shader replacement data for {saber.FileName}:");
+                    Logger.Warn($"Missing shader replacement data for {saber.FileName}:");
                     foreach (var shaderName in replacementInfo.MissingShaderNames)
                     {
-                        Plugin.Log.Warn($"\t- {shaderName}");
+                        Logger.Warn($"\t- {shaderName}");
                     }
                 }
             }
             catch (Exception ex)
             {
-                Plugin.Log.Warn($"Problem encountered when repairing shaders for {saber.FileName}");
-                Plugin.Log.Error(ex);
+                Logger.Warn($"Problem encountered when repairing shaders for {saber.FileName}");
+                Logger.Error(ex.ToString());
             }
             return saber;
         }
 
-        private static async Task<CustomSaberData> LoadSaberFromAssetAsync(string fileName)
+        private async Task<CustomSaberData> LoadSaberFromAssetAsync(string fileName)
         {
             CustomSaberData newSaberData;
             AssetBundle bundle = null;
@@ -384,8 +390,8 @@ namespace CustomSabersLite.Utilities
                 {
                     if (!File.Exists(filePath))
                     {
-                        Plugin.Log.Warn($"{fileName} no longer exists, switching to default sabers");
-                        CSLConfig.Instance.CurrentlySelectedSaber = "Default";
+                        Logger.Warn($"{fileName} no longer exists, switching to default sabers");
+                        config.CurrentlySelectedSaber = "Default";
                         return new CustomSaberData("DefaultSabers");
                     }
                     bundle = await AssetBundleExtensions.LoadFromFileAsync(filePath);
@@ -396,7 +402,7 @@ namespace CustomSabersLite.Utilities
                 }
                 catch
                 {
-                    Plugin.Log.Warn($"Problem encountered when getting the AssetBundle for {fileName}");
+                    Logger.Warn($"Problem encountered when getting the AssetBundle for {fileName}");
 
                     descriptor = new SaberDescriptor
                     {
@@ -421,7 +427,7 @@ namespace CustomSabersLite.Utilities
             return newSaberData;
         }
 
-        public static CustomSaberData LoadSaberFromAsset(string fileName)
+        public CustomSaberData LoadSaberFromAsset(string fileName)
         {
             CustomSaberData newSaberData;
             AssetBundle bundle = null;
@@ -435,8 +441,8 @@ namespace CustomSabersLite.Utilities
                 {
                     if (!File.Exists(filePath))
                     {
-                        Plugin.Log.Warn($"{fileName} no longer exists, switching to default sabers");
-                        CSLConfig.Instance.CurrentlySelectedSaber = "Default";
+                        Logger.Warn($"{fileName} no longer exists, switching to default sabers");
+                        config.CurrentlySelectedSaber = "Default";
                         return new CustomSaberData("DefaultSabers");
                     }
                     bundle = AssetBundle.LoadFromFile(filePath);
@@ -447,7 +453,7 @@ namespace CustomSabersLite.Utilities
                 }
                 catch
                 {
-                    Plugin.Log.Warn($"Problem encountered when getting the AssetBundle for {fileName}");
+                    Logger.Warn($"Problem encountered when getting the AssetBundle for {fileName}");
 
                     descriptor = new SaberDescriptor
                     {
@@ -472,7 +478,7 @@ namespace CustomSabersLite.Utilities
             return newSaberData;
         }
 
-        public static CustomSaberData LoadSaberWithRepair(string fileName)
+        public CustomSaberData LoadSaberWithRepair(string fileName)
         {
             CustomSaberData saber = LoadSaberFromAsset(fileName);
 
