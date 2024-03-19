@@ -176,7 +176,6 @@
     <Compile Include="Logger.cs" />
     <Compile Include="PluginDirs.cs" />
     <Compile Include="UI\CSLFlowCoordinator.cs" />
-    <Compile Include="UI\CSLUIBehaviour.cs" />
     <Compile Include="UI\CSLViewManager.cs" />
     <Compile Include="UI\Views\GameplaySetupTab.cs" />
     <Compile Include="UI\Views\SaberListViewController.cs" />
