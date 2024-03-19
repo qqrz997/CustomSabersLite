@@ -1,5 +1,14 @@
 changelog
 
+0.7.0
+- Renamed the assembly to CustomSabersLite from CustomSaber
+- Removed BS Utils dependency and added SiraUtil dependency
+- Added Chroma coloured note compatibility; sabers will now change colour on maps that use Chroma's custom note colours
+- Added compatibility for sabers which use dynamic bones
+- Full rewrite using SiraUtil and Zenject
+- Fixed missing data for Default Saber
+- Fixed custom sabers being in the wrong hands
+
 0.6.0
 - Added a tab in the gameplay options menu (left of song list) so you can more conveniently swap and adjust sabers 
 
