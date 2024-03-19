@@ -9,6 +9,8 @@ namespace CustomSabersLite.Components
 {
     internal class CSLSaber : MonoBehaviour
     {
+        public CSLSaberModelController Controller;
+
         private IEnumerable<Renderer> saberRenderers;
 
         private EventManager eventManager;

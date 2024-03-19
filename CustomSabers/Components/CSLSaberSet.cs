@@ -6,7 +6,7 @@ using Zenject;
 
 namespace CustomSabersLite.Components
 {
-    internal class CSLSaberSet : MonoBehaviour // todo - make non-monobehaviour
+    internal class CSLSaberSet : IInitializable
     {
         private CSLConfig config;
         private CSLAssetLoader assetLoader;
@@ -22,7 +22,7 @@ namespace CustomSabersLite.Components
 
         public CSLSaber RightSaber { get; private set; }
 
-        private void Awake()
+        public void Initialize()
         {
             string selectedSaber = config.CurrentlySelectedSaber;
             if (selectedSaber == "Default" || selectedSaber == null)
@@ -50,7 +50,7 @@ namespace CustomSabersLite.Components
 
             if (customSaberData.FileName != "DefaultSabers")
             {
-                GameObject sabersObject = Instantiate(customSaberData.SabersObject);
+                GameObject sabersObject = GameObject.Instantiate(customSaberData.SabersObject);
 
                 GameObject leftSaberObject = sabersObject.transform.Find("LeftSaber").gameObject;
                 GameObject rightSaberObject = sabersObject.transform.Find("RightSaber").gameObject;

@@ -35,6 +35,9 @@ namespace CustomSabersLite.UI
         [UIComponent("trail-duration")]
         private TextMeshProUGUI trailDurationText;
 
+        [UIComponent("forcefully-foolish")]
+        private Transform foolishSetting;
+
         [UIValue("disable-white-trail")]
         public bool DisableWhiteTrail
         {
@@ -86,9 +89,21 @@ namespace CustomSabersLite.UI
             set => config.CustomEventsEnabled = value;
         }
 
+        [UIValue("forcefully-foolish")]
+        public bool ForcefullyFoolish
+        {
+            get => config.ForcefullyFoolish;
+            set => config.ForcefullyFoolish = value;
+        }
+
         [UIAction("#post-parse")]
         private void PostParse()
         {
+            if (config.Fooled)
+            {
+                foolishSetting.gameObject.SetActive(true);
+            }
+
             parsed = true;
             SetTrailDurationInteractable(OverrideTrailDuration);
         }

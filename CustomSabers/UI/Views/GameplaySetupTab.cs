@@ -94,11 +94,19 @@ namespace CustomSabersLite.UI
         #endregion
 
         #region saber settings
+
         [UIValue("enable-custom-events")]
         public bool CustomEventsEnabled
         {
             get => config.CustomEventsEnabled;
             set => config.CustomEventsEnabled = value;
+        }
+
+        [UIValue("forcefully-foolish")]
+        public bool ForcefullyFoolish
+        {
+            get => config.ForcefullyFoolish;
+            set => config.ForcefullyFoolish = value;
         }
 
         #endregion
@@ -108,6 +116,9 @@ namespace CustomSabersLite.UI
 
         [UIComponent("trail-duration")]
         private TextMeshProUGUI trailDurationText;
+
+        [UIComponent("forcefully-foolish")]
+        private Transform foolishSetting;
 
         [UIComponent("trail-type")]
         private RectTransform trailTypeRT;
@@ -238,8 +249,12 @@ namespace CustomSabersLite.UI
 
         public void TabWasActivated()
         {
-            
             ScrollToSelectedCell();
+
+            if (config.Fooled)
+            {
+                foolishSetting.gameObject.SetActive(true);
+            }
         }
 
         private void ScrollToSelectedCell()

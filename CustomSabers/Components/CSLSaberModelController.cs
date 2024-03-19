@@ -24,9 +24,9 @@ namespace CustomSabersLite.Components
 
         private Color? color;
 
-        private CSLSaber customSaberInstance;
+        public CSLSaber customSaberInstance;
 
-        private CSLSaberTrail customTrailInstance;
+        public CSLSaberTrail customTrailInstance;
 
         public Color Color
         {
@@ -50,9 +50,15 @@ namespace CustomSabersLite.Components
                 return true;
             }
 
+            if (CSLUtils.CheckMultiplayer())
+            {
+                return true;
+            }
+
             transform.SetParent(parent, false);
 
             customSaberInstance.Setup(gameSetupData.transformedBeatmapData, saber.transform);
+            customSaberInstance.Controller = this;
 
             Color saberColor = colorManager.ColorForSaberType(saber.saberType);
             customSaberInstance.SetColor(saberColor);

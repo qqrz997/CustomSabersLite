@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using IPA.Config.Stores;
 using CustomSabersLite.Data;
+using IPA.Config.Stores.Attributes;
 
 [assembly: InternalsVisibleTo(GeneratedStore.AssemblyVisibilityTarget)]
 namespace CustomSabersLite.Configuration
@@ -20,6 +21,10 @@ namespace CustomSabersLite.Configuration
         public virtual bool DisableWhiteTrail { get; internal set; } = true;
 
         public virtual string PluginVer { get; internal set; } = string.Empty;
+
+        [Ignore] public virtual bool ForcefullyFoolish { get; internal set; } = false;
+
+        [Ignore] public virtual bool Fooled { get; internal set; } = false;
 
         // public virtual void OnReload() { }
 

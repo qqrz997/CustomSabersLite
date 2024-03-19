@@ -22,6 +22,8 @@
 
         <!--Toggle saber custom events-->
         <checkbox-setting text='Enable Saber Events' value='enable-custom-events' apply-on-change='true' hover-hint='Toggles saber events. For instance, an effect happening when you achieve a full combo' />
+
+        <checkbox-setting text='Feeling Foolish&#63;' value='forcefully-foolish' id='forcefully-foolish' apply-on-change='true' hover-hint='Lets you opt-in to date-specific features' active='false' />
         
       </vertical>
     </horizontal>

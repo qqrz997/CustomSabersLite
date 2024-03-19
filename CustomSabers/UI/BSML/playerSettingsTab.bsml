@@ -30,6 +30,8 @@
       <vertical child-control-height='false' child-expand-height='false' background='round-rect-panel' bg-color='#000000AA' pad='2' pad-bottom='1' pad-top='1' preferred-width='54' min-height='37.5' active='false' id='saber-settings-panel'>
         <!--Toggle saber custom events-->
         <checkbox-setting text='Enable Saber Events'  hover-hint='Toggles saber events. For instance, an effect happening when you achieve a full combo' apply-on-change='true' value='enable-custom-events'/>
+
+        <checkbox-setting text='Feeling Foolish&#63;' value='forcefully-foolish' id='forcefully-foolish' apply-on-change='true' hover-hint='Lets you opt-in to date-specific features' active='false' />
       </vertical>
 
       <!--Tab buttons-->

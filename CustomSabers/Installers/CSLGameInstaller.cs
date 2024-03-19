@@ -14,11 +14,11 @@ namespace CustomSabersLite.Installers
 
             Container.Bind<CustomTrailHandler>().AsSingle();
 
+            // Create the custom sabers
+            Container.BindInterfacesAndSelfTo<CSLSaberSet>().AsCached().NonLazy();
+
             if (config.CurrentlySelectedSaber != "Default")
             {
-                // Create the custom sabers
-                Container.Bind<CSLSaberSet>().FromNewComponentOnNewGameObject().AsSingle().NonLazy();
-
                 // This replaces the default sabers
                 Container.BindInstance(SaberModelRegistration.Create<CSLSaberModelController>(5));
             }
@@ -26,6 +26,8 @@ namespace CustomSabersLite.Installers
             {
                 Container.Bind<DefaultSaberSetter>().FromNewComponentOnNewGameObject().AsSingle().NonLazy();
             }
+
+            Container.BindInterfacesTo<ExtraSaberManager>().AsSingle();
         }
     }
 }
