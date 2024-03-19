@@ -50,20 +50,24 @@ namespace CustomSabersLite.Components
                 return true;
             }
 
-            customSaberInstance.Setup(gameSetupData.transformedBeatmapData);
+            transform.SetParent(parent, false);
 
-            customSaberInstance.transform.SetParent(saber.transform);
-            customSaberInstance.transform.position = saber.transform.position;
-            customSaberInstance.transform.rotation = saber.transform.rotation;
+            customSaberInstance.Setup(gameSetupData.transformedBeatmapData, saber.transform);
 
             Color saberColor = colorManager.ColorForSaberType(saber.saberType);
             customSaberInstance.SetColor(saberColor);
 
             SaberTrail defaultTrail = ReflectionUtil.GetField<SaberTrail, SaberModelController>(this, "_saberTrail");
 
-            transform.SetParent(parent, false);
+            // Returns false if a custom trail is created
+            bool defaultInit = trailHandler.CreateTrail(defaultTrail, saberColor, customSaberInstance.gameObject);
 
-            return trailHandler.CreateTrail(defaultTrail, saberColor, customSaberInstance.gameObject);
+            if (trailHandler.TrailInstance != null)
+            {
+                customTrailInstance = trailHandler.TrailInstance;
+            }
+
+            return defaultInit;
         }
 
         public void SetColor(Color color)

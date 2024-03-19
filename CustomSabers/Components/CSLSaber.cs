@@ -15,15 +15,20 @@ namespace CustomSabersLite.Components
 
         private IReadonlyBeatmapData beatmapData;
 
-        public void Setup(IReadonlyBeatmapData beatmapData)
+        public void Setup(IReadonlyBeatmapData beatmapData, Transform parent)
         {
             this.beatmapData = beatmapData;
+
+            transform.SetParent(parent);
+            transform.position = parent.position;
+            transform.rotation = parent.rotation;
         }
 
         public void Awake()
         {
             saberRenderers = gameObject.GetComponentsInChildren<Renderer>();
         }
+
         public void Start()
         {
             try
