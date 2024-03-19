@@ -1,12 +1,5 @@
-﻿using CustomSabersLite.Components;
-using CustomSabersLite.Configuration;
+﻿using CustomSabersLite.Configuration;
 using CustomSabersLite.Utilities;
-using IPA.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Zenject;
 
 namespace CustomSabersLite.Installers
@@ -27,6 +20,7 @@ namespace CustomSabersLite.Installers
             Container.BindInstance(logger).AsSingle();
 
             Container.Bind<PluginDirs>().AsSingle();
+            Container.Bind<TrailUtils>().AsSingle();
 
             Container.BindInstance(config);
 

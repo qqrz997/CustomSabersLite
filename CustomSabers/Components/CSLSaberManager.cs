@@ -1,4 +1,8 @@
-﻿using CustomSabersLite.Configuration;
+﻿/*
+ * THIS FILE IS OBSOLETE *
+                         */
+
+/*using CustomSabersLite.Configuration;
 using CustomSabersLite.Data;
 using CustomSabersLite.Utilities;
 using IPA.Utilities;
@@ -49,19 +53,13 @@ namespace CustomSabersLite.Components
         private float? lastNoteTime;
         private float previousScore;
 
-        public void Start()
+        public void Awake()
         {
-            Logger.Debug("Game scene loaded, initializing the CustomSaberManager");
-
-            /*GameObject go = GameObject.Find("VRGameCore");
-            transform.SetParent(go.transform);
-            go.AddComponent<CSLSaberManager>();*/
+            Logger.Debug("Game scene loaded, initializing the CustomSaberManager");#
         }
 
-        private void Awake()
+        private void Start()
         {
-            colorScheme = BS_Utils.Plugin.LevelData.GameplayCoreSceneSetupData.colorScheme;
-
             if (customSabersObject)
             {
                 Destroy(customSabersObject);
@@ -97,9 +95,6 @@ namespace CustomSabersLite.Components
                         rightSaberObject = customSabersObject.transform.Find("LeftSaber").gameObject;
                         LeftSaber = leftSaberObject.AddComponent<CSLSaber>();
                         RightSaber = rightSaberObject.AddComponent<CSLSaber>();
-
-                        LeftSaber.Init();
-                        RightSaber.Init();
                     }
 
                     StartCoroutine(WaitForSabers(customSaberData.SabersObject));
@@ -134,7 +129,7 @@ namespace CustomSabersLite.Components
 
                 if (config.TrailType == TrailType.None)
                 {
-                    CSLUtils.HideTrail(defaultTrail);
+                    defaultTrail.enabled = false;
                 }
                 else
                 {
@@ -213,7 +208,7 @@ namespace CustomSabersLite.Components
                         break;
 
                     case TrailType.None:
-                        CSLUtils.HideTrail(defaultTrail);
+                        defaultTrail.enabled = false;
                         break;
                 }
             }
@@ -240,7 +235,7 @@ namespace CustomSabersLite.Components
             }
             else
             {
-                trailHandler.CreateTrail(defaultTrail, saberColour, customSaber, customTrail);
+                // trailHandler.CreateTrail(defaultTrail, saberColour, customSaber, customTrail);
             }
         }
 
@@ -305,11 +300,12 @@ namespace CustomSabersLite.Components
 
             if (trailDuration == 0)
             {
-                CSLUtils.HideTrail(trail);
+                trail.enabled = false;
             }
             else
             {
                 ReflectionUtil.SetField<SaberTrail, float>(trail, "_trailDuration", trailDuration);
+                trail.enabled = true;
             }
         }
 
@@ -346,7 +342,6 @@ namespace CustomSabersLite.Components
 
             Logger.Debug("Adding events");
 
-            IReadonlyBeatmapData beatmapData = BS_Utils.Plugin.LevelData.GameplayCoreSceneSetupData.transformedBeatmapData;
 
             lastNoteTime = GetLastNoteTime(beatmapData);
 
@@ -561,3 +556,4 @@ namespace CustomSabersLite.Components
         #endregion
     }
 }
+*/

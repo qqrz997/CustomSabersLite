@@ -82,11 +82,6 @@ namespace CustomSabersLite.Utilities
             return defaultCoverImage;
         }
 
-        public static void HideTrail(SaberTrail trail)
-        {
-            trail.enabled = false;
-        }
-
         public static bool CheckMultiplayer()
         {
             // todo - multiplayer support
@@ -118,7 +113,7 @@ namespace CustomSabersLite.Utilities
             }
             catch (Exception ex)
             {
-                Logger.Error(ex.ToString());
+                Logger.Critical($"Couldn't load CustomSaber.dll\n{ex}");
                 return false;
             }
         }

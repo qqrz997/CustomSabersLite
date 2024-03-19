@@ -145,10 +145,7 @@ namespace CustomSabersLite.UI
         }
 
         [UIAction("#post-parse")]
-        public void PostParse()
-        {
-            SetupList();
-        }
+        public void PostParse() => SetupList();
 
         private void SetupList() // todo - smoother saber list refresh
         {
@@ -156,19 +153,22 @@ namespace CustomSabersLite.UI
 
             Logger.Debug("Showing list of selectable sabers");
 
-            for (int i = 0; i < assetLoader.SabersMetadata.Count; i++)
+            foreach (CustomSaberMetadata metadata in assetLoader.SabersMetadata)
             {
-                CustomSaberMetadata metadata = assetLoader.SabersMetadata[i];
-                
-                if (metadata.SaberFileName != null)
+                if (metadata.SaberFileName != null && metadata.SaberFileName != "Default")
                 {
-                    if (!File.Exists(Path.Combine(saberAssetPath, metadata.SaberFileName))) continue;
+                    if (!File.Exists(Path.Combine(saberAssetPath, metadata.SaberFileName)))
+                    {
+                        continue;
+                    }
                 }
 
-                Logger.Debug($"#{i+1} \"{metadata.SaberName}\"");
-
-                Sprite cover = null;
-                if (metadata.CoverImage != null)
+                Sprite cover;
+                if (metadata.SaberName == "Default")
+                {
+                    cover = CSLUtils.GetDefaultCoverImage();
+                }
+                else if (metadata.CoverImage != null)
                 {
                     Texture2D tex = new Texture2D(2, 2);
                     tex.LoadImage(metadata.CoverImage);
@@ -176,10 +176,8 @@ namespace CustomSabersLite.UI
                 }
                 else
                 {
-                    cover = nullCoverImage;
+                    cover = nullCoverImage ?? null;
                 }
-
-                if (metadata.SaberName == "Default") cover = CSLUtils.GetDefaultCoverImage(); 
 
                 var customCellInfo = new CustomListTableData.CustomCellInfo(metadata.SaberName, metadata.AuthorName, cover);
                 customListTableData.data.Add(customCellInfo);
@@ -187,13 +185,21 @@ namespace CustomSabersLite.UI
 
             customListTableData.tableView.ReloadData();
 
+            ScrollToSelectedCell();
+        }
+
+        protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
+        {
+            base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
+
+            ScrollToSelectedCell();
+        }
+
+        private void ScrollToSelectedCell()
+        {
             int selectedSaber = assetLoader.SelectedSaberIndex;
             customListTableData.tableView.SelectCellWithIdx(selectedSaber);
-
-            if (!customListTableData.tableView.visibleCells.Where(x => x.selected).Any())
-            {
-                customListTableData.tableView.ScrollToCellWithIdx(selectedSaber, TableView.ScrollPositionType.Beginning, true);
-            }
+            customListTableData.tableView.ScrollToCellWithIdx(selectedSaber, TableView.ScrollPositionType.Center, true);
         }
     }
 }

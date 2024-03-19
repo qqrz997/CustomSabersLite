@@ -1,11 +1,7 @@
 ﻿using CustomSabersLite.Components;
+using CustomSabersLite.Configuration;
 using CustomSabersLite.Utilities;
 using SiraUtil.Sabers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Zenject;
 
 namespace CustomSabersLite.Installers
@@ -14,11 +10,22 @@ namespace CustomSabersLite.Installers
     {
         public override void InstallBindings()
         {
-            Container.BindInstance(SaberModelRegistration.Create<CSLSaberModelController>(5)).AsSingle();
+            CSLConfig config = Container.Resolve<CSLConfig>();
 
-            Container.Bind<CustomTrailHandler>().AsSingle().NonLazy();
+            Container.Bind<CustomTrailHandler>().AsSingle();
 
-            Container.Bind<CSLSaberManager>().FromNewComponentOnNewGameObject().AsSingle().NonLazy();
+            if (config.CurrentlySelectedSaber != "Default")
+            {
+                // Create the custom sabers
+                Container.Bind<CSLSaberSet>().FromNewComponentOnNewGameObject().AsSingle().NonLazy();
+
+                // This replaces the default sabers
+                Container.BindInstance(SaberModelRegistration.Create<CSLSaberModelController>(5));
+            }
+            else
+            {
+                Container.Bind<DefaultSaberSetter>().FromNewComponentOnNewGameObject().AsSingle().NonLazy();
+            }
         }
     }
 }

@@ -167,15 +167,17 @@
     <Compile Include="Components\CSLSaber.cs" />
     <Compile Include="Components\CSLSaberManager.cs" />
     <Compile Include="Components\CSLSaberModelController.cs" />
+    <Compile Include="Components\CSLSaberSet.cs" />
     <Compile Include="Data\CustomSaberMetadata.cs" />
     <Compile Include="Data\TrailType.cs" />
     <Compile Include="Installers\CSLAppInstaller.cs" />
     <Compile Include="Installers\CSLGameInstaller.cs" />
     <Compile Include="Installers\CSLMenuInstaller.cs" />
     <Compile Include="Logger.cs" />
-    <Compile Include="Managers\CSLViewManager.cs" />
     <Compile Include="PluginDirs.cs" />
     <Compile Include="UI\CSLFlowCoordinator.cs" />
+    <Compile Include="UI\CSLUIBehaviour.cs" />
+    <Compile Include="UI\CSLViewManager.cs" />
     <Compile Include="UI\Views\GameplaySetupTab.cs" />
     <Compile Include="UI\Views\SaberListViewController.cs" />
     <Compile Include="Data\CustomSaberData.cs" />
@@ -189,8 +191,10 @@
     <Compile Include="Utilities\CSLUtils.cs" />
     <Compile Include="Components\CSLSaberTrail.cs" />
     <Compile Include="Components\TrailHandler.cs" />
+    <Compile Include="Utilities\DefaultSaberSetter.cs" />
     <Compile Include="Utilities\ImageLoading.cs" />
     <Compile Include="Utilities\MaterialHelpers.cs" />
+    <Compile Include="Utilities\TrailUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="manifest.json" />
@@ -220,6 +224,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\CustomSaber.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Managers\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

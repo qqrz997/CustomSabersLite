@@ -4,16 +4,21 @@ using IPA.Utilities;
 using System;
 using UnityEngine;
 using Zenject;
+using CustomSabersLite.Data;
 
 namespace CustomSabersLite.Utilities
 {
     internal class CustomTrailHandler
     {
         private readonly CSLConfig config;
+        private readonly TrailUtils trailUtils;
+        private readonly GameplayCoreSceneSetupData gameplaySetupData;
 
-        public CustomTrailHandler(CSLConfig config)
+        public CustomTrailHandler(CSLConfig config, TrailUtils trailUtils, GameplayCoreSceneSetupData gameplaySetupData)
         {
             this.config = config;
+            this.trailUtils = trailUtils;
+            this.gameplaySetupData = gameplaySetupData;
         }
 
         private CSLSaberTrail TrailInstance;
@@ -25,8 +30,35 @@ namespace CustomSabersLite.Utilities
         private SaberTrailRenderer defaultSaberTrailRenderer;
         private TrailElementCollection defaultTrailElementCollection;
 
-        public void CreateTrail(SaberTrail defaultTrail, Color saberTrailColor, GameObject customSaber, CustomTrail customTrail)
+        public bool CreateTrail(SaberTrail defaultTrail, Color saberTrailColor, GameObject customSaber)
         {
+            switch (config.TrailType)
+            {
+                case TrailType.Custom:
+                    return CreateCustomTrail(defaultTrail, saberTrailColor, customSaber);
+
+                case TrailType.Vanilla:
+                    SetupDefaultTrail(defaultTrail);
+                    return true;
+
+                case TrailType.None:
+                    defaultTrail.enabled = false;
+                    return true;
+
+                default: return true;
+            }
+        }
+
+        private bool CreateCustomTrail(SaberTrail defaultTrail, Color saberTrailColor, GameObject customSaber)
+        {
+            TryGetCustomTrail(customSaber, out CustomTrail customTrail);
+
+            if (customTrail == null)
+            {
+                Logger.Warn("No custom trails. Defaulting to existing saber trails.");
+                SetupDefaultTrail(defaultTrail);
+                return true;
+            }
 
             Logger.Debug($"Initializing custom trail to {defaultTrail.name}");
             TrailInstance = customSaber.gameObject.AddComponent<CSLSaberTrail>();
@@ -51,7 +83,7 @@ namespace CustomSabersLite.Utilities
 
             Color materialColor;
             MeshRenderer newMeshRenderer = defaultMeshRenderer;
-            float trailIntensity = BS_Utils.Plugin.LevelData.GameplayCoreSceneSetupData.playerSpecificSettings.saberTrailIntensity;
+            float trailIntensity = gameplaySetupData.playerSpecificSettings.saberTrailIntensity;
 
             // a later version should do this in a more elegant way if i can figure out a way to
             // Swap material
@@ -70,7 +102,7 @@ namespace CustomSabersLite.Utilities
             }
 
             newMeshRenderer.material.color = materialColor;
-            
+
             // Adjusting the trail's meshrenderer before adding it to our trail
             ReflectionUtil.SetField(defaultSaberTrailRenderer, "_meshRenderer", newMeshRenderer);
 
@@ -83,28 +115,30 @@ namespace CustomSabersLite.Utilities
             TrailInstance.TrailRenderer = defaultSaberTrailRenderer;
             TrailInstance.TrailElementCollection = defaultTrailElementCollection;
             TrailInstance.colorType = customTrail.colorType;
-            if (config.OverrideTrailDuration)
-            {
-                // CSLUtils.Instance.SetTrailDuration(TrailInstance); // Has to be done at the end
-                float trailDuration = 0.4f;
-                if (config.OverrideTrailDuration)
-                {
-                    trailDuration = config.TrailDuration / 100f * trailDuration;
-                }
+            trailUtils.SetTrailDuration(TrailInstance);
+            trailUtils.SetWhiteTrailDuration(TrailInstance);
 
-                if (trailDuration == 0)
-                {
-                    CSLUtils.HideTrail(TrailInstance);
-                }
-                else
-                {
-                    ReflectionUtil.SetField<SaberTrail, float>(TrailInstance, "_trailDuration", trailDuration);
-                }
-            }
-            if (config.DisableWhiteTrail)
+            return false;
+        }
+
+        private CustomTrail TryGetCustomTrail(GameObject customSaber, out CustomTrail customTrail)
+        {
+            try
             {
-                ReflectionUtil.SetField<SaberTrail, float>(TrailInstance, "_whiteSectionMaxDuration", 0f);
+                customTrail = customSaber.GetComponent<CustomTrail>();
+                Logger.Debug("Successfully got CustomTrail from custom saber.");
             }
+            catch
+            {
+                customTrail = null;
+            }
+            return customTrail;
+        }
+
+        private void SetupDefaultTrail(SaberTrail defaultTrail)
+        {
+            trailUtils.SetTrailDuration(defaultTrail);
+            trailUtils.SetWhiteTrailDuration(defaultTrail);
         }
 
         private void SetClampTexture(Material mat)

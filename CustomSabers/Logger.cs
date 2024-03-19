@@ -25,5 +25,10 @@ namespace CustomSabersLite
         {
             Log.Error(message);
         }
+
+        internal static void Critical(string message)
+        {
+            Log.Critical(message);
+        }
     }
 }

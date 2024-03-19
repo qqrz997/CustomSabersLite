@@ -52,6 +52,18 @@ namespace CustomSabersLite.Utilities
             set { ReflectionUtil.SetField<SaberTrail, TrailElementCollection>(this, "_trailElementCollection", value); }
         }
 
+        public Transform TrailTop
+        {
+            set => customTrailTopTransform = value;
+            get => customTrailTopTransform;
+        }
+
+        public Transform TrailBottom
+        {
+            set => customTrailBottomTransform = value;
+            get => customTrailBottomTransform;
+        }
+
         private Transform customTrailTopTransform;
 
         private Transform customTrailBottomTransform;

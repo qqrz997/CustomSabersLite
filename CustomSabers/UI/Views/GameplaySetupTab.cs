@@ -14,7 +14,6 @@ using CustomSabersLite.Utilities;
 using System.IO;
 using HMUI;
 using System.Text.RegularExpressions;
-using Logger = IPA.Logging.Logger;
 
 namespace CustomSabersLite.UI
 {
@@ -24,12 +23,16 @@ namespace CustomSabersLite.UI
         private readonly CSLConfig config;
         private readonly CSLAssetLoader assetLoader;
 
-        private GameplaySetupTab(PluginDirs pluginDirs, CSLConfig config, CSLAssetLoader assetLoader)
+        public GameplaySetupTab(PluginDirs pluginDirs, CSLConfig config, CSLAssetLoader assetLoader)
         {
             this.pluginDirs = pluginDirs;
             this.config = config;
             this.assetLoader = assetLoader;
         }
+
+        public static GameplaySetupTab Instance { get; set; }
+
+        public GameObject Root;
 
         private string resourceName => "CustomSabersLite.UI.BSML.playerSettingsTab.bsml";
         private bool parsed;
@@ -38,6 +41,8 @@ namespace CustomSabersLite.UI
 
         public void Initialize()
         {
+            Instance = this;
+
             saberAssetPath = pluginDirs.CustomSabers.FullName;
 
             Logger.Debug("Creating tab");
@@ -111,12 +116,11 @@ namespace CustomSabersLite.UI
         public CustomListTableData saberList;
 
         [UIAction("select-saber")]
-        public void Select(TableView t, int row)
+        public void Select(TableView _, int row)
         {
+            Logger.Debug($"saber selected at row {row}");
             assetLoader.SelectedSaberIndex = row;
             config.CurrentlySelectedSaber = assetLoader.SabersMetadata[row].SaberFileName;
-
-            t.SelectCellWithIdx(row);
         }
 
         #region tabs
@@ -148,7 +152,7 @@ namespace CustomSabersLite.UI
                 trailSettingsPanel.gameObject.SetActive(true);
             }
         }
-        
+
         [UIAction("show-saber-settings")]
         public void ShowSaberSettings()
         {
@@ -166,6 +170,8 @@ namespace CustomSabersLite.UI
         public void PostParse()
         {
             parsed = true;
+            Root = saberList.gameObject;
+
             SetComponentSettings();
             SetupList();
         }
@@ -197,14 +203,17 @@ namespace CustomSabersLite.UI
         private void SetupList()
         {
             saberList.data.Clear();
-            for (int i = 0; i < assetLoader.SabersMetadata.Count; i++) 
+
+            foreach (CustomSaberMetadata metadata in assetLoader.SabersMetadata)
             {
-                CustomSaberMetadata metadata = assetLoader.SabersMetadata[i];
                 string saberName = metadata.SaberName;
 
-                if (metadata.SaberFileName != null)
+                if (metadata.SaberFileName != null && metadata.SaberFileName != "Default")
                 {
-                    if (!File.Exists(Path.Combine(saberAssetPath, metadata.SaberFileName))) continue;
+                    if (!File.Exists(Path.Combine(saberAssetPath, metadata.SaberFileName)))
+                    {
+                        continue;
+                    }
                 }
 
                 // Remove TMPro rich text tags
@@ -223,14 +232,21 @@ namespace CustomSabersLite.UI
             }
 
             saberList.tableView.ReloadData();
+
+            ScrollToSelectedCell();
+        }
+
+        public void TabWasActivated()
+        {
             
+            ScrollToSelectedCell();
+        }
+
+        private void ScrollToSelectedCell()
+        {
             int selectedSaber = assetLoader.SelectedSaberIndex;
             saberList.tableView.SelectCellWithIdx(selectedSaber);
-
-            if (!saberList.tableView.visibleCells.Where(x => x.selected).Any())
-            {
-                saberList.tableView.ScrollToCellWithIdx(selectedSaber, TableView.ScrollPositionType.Beginning, true);
-            }
+            saberList.tableView.ScrollToCellWithIdx(selectedSaber, TableView.ScrollPositionType.Center, false);
         }
     }
 }

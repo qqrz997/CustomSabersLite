@@ -19,7 +19,7 @@ namespace CustomSabersLite.Utilities
         private readonly PluginDirs pluginDirs;
         private readonly CSLConfig config;
 
-        private CSLAssetLoader(PluginDirs pluginDirs, CSLConfig config)
+        public CSLAssetLoader(PluginDirs pluginDirs, CSLConfig config)
         {
             this.pluginDirs = pluginDirs;
             this.config = config;
@@ -62,10 +62,7 @@ namespace CustomSabersLite.Utilities
             Load();
         }
 
-        public void Dispose()
-        {
-            Clear();
-        }
+        public void Dispose() => Clear();
 
         internal async Task LoadAsync()
         {
@@ -209,7 +206,7 @@ namespace CustomSabersLite.Utilities
 
         private void UpdateCache(Dictionary<string, CustomSaberMetadata> fileMetadata)
         {
-            CustomSaberMetadata defaultSabers = new CustomSaberMetadata("Default", "Beat Games");
+            CustomSaberMetadata defaultSabers = new CustomSaberMetadata("Default", "Beat Games", "Default");
             SabersMetadata.Add(defaultSabers);
 
             foreach (CustomSaberData saber in loadedSaberData)
