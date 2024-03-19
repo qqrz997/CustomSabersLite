@@ -52,8 +52,8 @@ namespace CustomSabersLite.Components
             {
                 GameObject sabersObject = Instantiate(customSaberData.SabersObject);
 
-                GameObject leftSaberObject = sabersObject.transform.Find("RightSaber").gameObject;
-                GameObject rightSaberObject = sabersObject.transform.Find("LeftSaber").gameObject;
+                GameObject leftSaberObject = sabersObject.transform.Find("LeftSaber").gameObject;
+                GameObject rightSaberObject = sabersObject.transform.Find("RightSaber").gameObject;
 
                 LeftSaber = leftSaberObject.AddComponent<CSLSaber>();
                 RightSaber = rightSaberObject.AddComponent<CSLSaber>();
