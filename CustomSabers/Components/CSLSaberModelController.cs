@@ -1,7 +1,6 @@
 ﻿using CustomSabersLite.Utilities;
 using SiraUtil.Interfaces;
 using UnityEngine;
-using CustomSabersLite.Configuration;
 using Zenject;
 using IPA.Utilities;
 

@@ -1,9 +1,5 @@
-﻿using CustomSaber;
-using CustomSabersLite.Data;
-using IPA.Config.Data;
-using IPA.Utilities;
+﻿using IPA.Utilities;
 using UnityEngine;
-using static CloudsMeshGenerator;
 using ReflectionUtil = IPA.Utilities.ReflectionUtil;
 
 namespace CustomSabersLite.Utilities
