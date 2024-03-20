@@ -1,5 +1,8 @@
 changelog
 
+0.7.1
+- Updated for beat saber v1.35.0
+
 0.7.0
 - Renamed the assembly to CustomSabersLite from CustomSaber
 - Removed BS Utils dependency and added SiraUtil dependency
