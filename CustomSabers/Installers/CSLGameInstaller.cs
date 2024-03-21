@@ -13,6 +13,7 @@ namespace CustomSabersLite.Installers
             CSLConfig config = Container.Resolve<CSLConfig>();
 
             Container.Bind<CustomTrailHandler>().AsSingle();
+            Container.BindInterfacesAndSelfTo<EventManagerManager>().AsSingle();
 
             // Create the custom sabers
             Container.BindInterfacesAndSelfTo<CSLSaberSet>().AsCached().NonLazy();

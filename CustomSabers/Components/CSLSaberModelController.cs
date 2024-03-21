@@ -11,14 +11,17 @@ namespace CustomSabersLite.Components
         private CustomTrailHandler trailHandler;
         private ColorManager colorManager;
         private GameplayCoreSceneSetupData gameSetupData;
-        [InjectOptional] private CSLSaberSet saberSet;
+        private CSLSaberSet saberSet;
+        private EventManagerManager eventManagerManager;
 
         [Inject]
-        public void Construct(CustomTrailHandler trailHandler, ColorManager colorManager, GameplayCoreSceneSetupData gameSetupData)
+        public void Construct(CustomTrailHandler trailHandler, ColorManager colorManager, GameplayCoreSceneSetupData gameSetupData, CSLSaberSet saberSet, EventManagerManager eventManagerManager)
         {
             this.trailHandler = trailHandler;
             this.colorManager = colorManager;
             this.gameSetupData = gameSetupData;
+            this.saberSet = saberSet;
+            this.eventManagerManager = eventManagerManager;
         }
 
         private Color? color;
@@ -51,12 +54,12 @@ namespace CustomSabersLite.Components
 
             transform.SetParent(parent, false);
 
-            customSaberInstance.Setup(gameSetupData.transformedBeatmapData, saber.transform);
-            customSaberInstance.Controller = this;
+            customSaberInstance.Setup(saber.transform);
+
+            eventManagerManager.InitializeEventManager(customSaberInstance.EventManager);
 
             Color saberColor = colorManager.ColorForSaberType(saber.saberType);
-            customSaberInstance.SetColor(saberColor);
-
+            
             SaberTrail defaultTrail = ReflectionUtil.GetField<SaberTrail, SaberModelController>(this, "_saberTrail");
 
             // Returns false if a custom trail is created
@@ -66,6 +69,8 @@ namespace CustomSabersLite.Components
             {
                 customTrailInstance = trailHandler.TrailInstance;
             }
+
+            SetColor(saberColor);
 
             return defaultInit;
         }

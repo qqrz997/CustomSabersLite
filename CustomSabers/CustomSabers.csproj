@@ -164,6 +164,7 @@
     <Compile Include="Components\CSLSaber.cs" />
     <Compile Include="Components\CSLSaberModelController.cs" />
     <Compile Include="Components\CSLSaberSet.cs" />
+    <Compile Include="Components\EventManagerManager.cs" />
     <Compile Include="Components\ExtraSaberManager.cs" />
     <Compile Include="Data\CustomSaberMetadata.cs" />
     <Compile Include="Data\TrailType.cs" />
