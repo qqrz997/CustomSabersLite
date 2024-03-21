@@ -29,5 +29,4 @@ You can also adjust settings by clicking the Mods tab at the top of the gameplay
 - Try to add trail intensity to settings
 - Look into missing shaders for shader repair
 - Look into HMD only sabers compatibility
-- Make sabers appear in multiplayer
 - Independent trail system
