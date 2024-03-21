@@ -82,17 +82,6 @@ namespace CustomSabersLite.Utilities
             return defaultCoverImage;
         }
 
-        public static bool CheckMultiplayer()
-        {
-            // todo - multiplayer support
-            if (GameObject.Find("MultiplayerController"))
-            {
-                Logger.Warn("Multiplayer is currently not supported for custom sabers.");
-                return true;
-            }
-            return false;
-        }
-
         public static async Task<bool> LoadCustomSaberAssembly()
         {
             try

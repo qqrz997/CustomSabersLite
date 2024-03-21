@@ -49,11 +49,6 @@ namespace CustomSabersLite.Components
                 return true;
             }
 
-            if (CSLUtils.CheckMultiplayer())
-            {
-                return true;
-            }
-
             transform.SetParent(parent, false);
 
             customSaberInstance.Setup(gameSetupData.transformedBeatmapData, saber.transform);

@@ -29,11 +29,6 @@ namespace CustomSabersLite.Utilities
         {
             yield return new WaitUntil(() => Resources.FindObjectsOfTypeAll<Saber>().Any());
 
-            if (CSLUtils.CheckMultiplayer())
-            {
-                yield break;
-            }
-
             SaberTrail leftTrail = saberManager.leftSaber.gameObject.GetComponentInChildren<SaberTrail>();
             SaberTrail rightTrail = saberManager.rightSaber.gameObject.GetComponentInChildren<SaberTrail>();
 
