@@ -23,17 +23,14 @@ namespace CustomSabersLite.Components
         public void Awake()
         {
             GetColorableMaterialsFromSaber();
-        }
 
-        public void Start()
-        {
             try
             {
                 EventManager = gameObject.GetComponent<EventManager>();
             }
             catch
             {
-                EventManager = null;
+                EventManager = gameObject.AddComponent<EventManager>();
             }
         }
 

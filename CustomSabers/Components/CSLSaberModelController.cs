@@ -44,7 +44,9 @@ namespace CustomSabersLite.Components
 
         private bool CSLSaberInit(Transform parent, Saber saber)
         {
-            customSaberInstance = saberSet.CustomSaberForSaberType(saber.saberType);
+            SaberType saberType = saber.saberType;
+
+            customSaberInstance = saberSet.CustomSaberForSaberType(saberType);
 
             if (customSaberInstance == null)
             {
@@ -56,9 +58,9 @@ namespace CustomSabersLite.Components
 
             customSaberInstance.Setup(saber.transform);
 
-            eventManagerManager.InitializeEventManager(customSaberInstance.EventManager);
+            eventManagerManager.InitializeEventManager(customSaberInstance.EventManager, saberType);
 
-            Color saberColor = colorManager.ColorForSaberType(saber.saberType);
+            Color saberColor = colorManager.ColorForSaberType(saberType);
             
             SaberTrail defaultTrail = ReflectionUtil.GetField<SaberTrail, SaberModelController>(this, "_saberTrail");
 

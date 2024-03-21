@@ -58,6 +58,10 @@ namespace CustomSabersLite.Components
 
         public void AddEvents()
         {
+            if (eventManager?.OnLevelStart == null)
+            {
+                return;
+            }
 
             Logger.Debug("Adding events");
 
