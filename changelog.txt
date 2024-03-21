@@ -1,5 +1,9 @@
 changelog
 
+0.7.3
+- Fixed note cut saber event firing for both sabers no matter which note was cut
+- Tweaks and optimizations
+
 0.7.2
 - Re-enabled the mod in multiplayer
 
