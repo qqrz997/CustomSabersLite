@@ -9,8 +9,8 @@ namespace CustomSabersLite.Components
 {
     internal class CSLSaber : MonoBehaviour
     {
+        private List<Material> colorableMaterials = new List<Material>();
 
-        private IEnumerable<Renderer> saberRenderers;
         public EventManager EventManager;
 
         public void Setup(Transform parent)
@@ -22,7 +22,7 @@ namespace CustomSabersLite.Components
 
         public void Awake()
         {
-            saberRenderers = gameObject.GetComponentsInChildren<Renderer>();
+            GetColorableMaterialsFromSaber();
         }
 
         public void Start()
@@ -37,30 +37,39 @@ namespace CustomSabersLite.Components
             }
         }
 
+        public void SetColor(Color color)
+        {
+            foreach (Material mat in colorableMaterials)
+            {
+                mat.SetColor("_Color", color);
+            }
         }
 
+        private void GetColorableMaterialsFromSaber()
         {
+            IEnumerable<Renderer> saberRenderers = gameObject.GetComponentsInChildren<Renderer>();
+
             foreach (Renderer renderer in saberRenderers)
             {
                 if (renderer == null) continue;
 
-                foreach (Material rendererMaterial in renderer.materials)
+                foreach (Material material in renderer.materials)
                 {
-                    if (rendererMaterial == null) continue;
+                    if (material == null) continue;
 
-                    if (rendererMaterial.HasProperty("_Color"))
+                    if (material.HasProperty("_Color"))
                     {
-                        if (rendererMaterial.HasProperty("_CustomColors"))
+                        if (material.HasProperty("_CustomColors"))
                         {
-                            if (rendererMaterial.GetFloat("_CustomColors") > 0)
+                            if (material.GetFloat("_CustomColors") > 0)
                             {
-                                rendererMaterial.SetColor("_Color", colour);
+                                colorableMaterials.Add(material);
                             }
                         }
-                        else if (rendererMaterial.HasProperty("_Glow") && rendererMaterial.GetFloat("_Glow") > 0
-                            || rendererMaterial.HasProperty("_Bloom") && rendererMaterial.GetFloat("_Bloom") > 0)
+                        else if (material.HasProperty("_Glow")  && material.GetFloat("_Glow") > 0
+                              || material.HasProperty("_Bloom") && material.GetFloat("_Bloom") > 0)
                         {
-                            rendererMaterial.SetColor("_Color", colour);
+                            colorableMaterials.Add(material);
                         }
                     }
                 }

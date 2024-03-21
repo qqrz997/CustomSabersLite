@@ -99,27 +99,9 @@ namespace CustomSabersLite.Utilities
 
             MeshRenderer renderer = ReflectionUtil.GetField<MeshRenderer, SaberTrailRenderer>(TrailRenderer, "_meshRenderer");
 
-            if (renderer == null) return;
-
             foreach (Material rendererMaterial in renderer.materials)
             {
-                if (rendererMaterial == null) continue;
-
-                if (rendererMaterial.HasProperty("_Color"))
-                {
-                    if (rendererMaterial.HasProperty("_CustomColors"))
-                    {
-                        if (rendererMaterial.GetFloat("_CustomColors") > 0)
-                        {
-                            rendererMaterial.SetColor("_Color", color);
-                        }
-                    }
-                    else if (rendererMaterial.HasProperty("_Glow") && rendererMaterial.GetFloat("_Glow") > 0
-                        || rendererMaterial.HasProperty("_Bloom") && rendererMaterial.GetFloat("_Bloom") > 0)
-                    {
-                        rendererMaterial.SetColor("_Color", color);
-                    }
-                }
+                rendererMaterial.SetColor("_Color", color);
             }
 
             TrailRenderer.SetField("_meshRenderer", renderer);
