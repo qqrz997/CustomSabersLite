@@ -1,6 +1,8 @@
 > [!NOTE]
 > Some sabers have shaders that are compiled for the old unity version used prior to Beat Saber 1.29.4, and may not render properly at all. However, a wide range of sabers are still completely functional and it is up to the saber creators to update the shaders they used if they are broken.
 
+To read more about migrating sabers to the newer versions of Beat Saber, read [this wiki page](https://bsmg.wiki/models/shader-migration.html).
+
 # Custom Sabers Lite
 CustomSabersLite is a minimal-feature custom sabers mod, which aims to provide a user-friendly experience without overwhelming players with too many settings and menus. People who were used to the original CustomSabers may find this mod preferable over the alternatives.
 
@@ -16,7 +18,7 @@ Credit to the original [Custom Sabers](https://github.com/Kylemc1413/CustomSaber
 
 Place the contents of the unzipped folder from the latest [release](https://github.com/qqrz997/CustomSabersLite/releases/latest) into your Beat Saber installation folder. For help with installing mods join the [Beat Saber Modding Group](https://discord.gg/beatsabermods) discord server.
 
-[For Beat Saber v1.34.2](https://github.com/qqrz997/CustomSabersLite/releases/tag/v0.7.0)
+For Beat Saber v1.34.2, download [this release](https://github.com/qqrz997/CustomSabersLite/releases/tag/v0.7.0).
 
 - After launching Beat Saber with the mod successfully installed, a `CustomSabers` folder will be created in your Beat Saber game folder. Saber files should be placed here.
 
