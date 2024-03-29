@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using Zenject;
 
 namespace CustomSabersLite.UI
@@ -14,25 +8,29 @@ namespace CustomSabersLite.UI
     {
         private GameplaySetupViewController gameplaySetupViewController;
         private GameplaySetupTab customSabersTab;
+        private SaberSettingsViewController saberSettingsViewController;
 
         [Inject]
-        public void Construct(GameplaySetupViewController gameplaySetupViewController, GameplaySetupTab customSabersTab)
+        public void Construct(GameplaySetupViewController gameplaySetupViewController, GameplaySetupTab customSabersTab, SaberSettingsViewController saberSettingsViewController)
         {
             this.gameplaySetupViewController = gameplaySetupViewController;
             this.customSabersTab = customSabersTab;
+            this.saberSettingsViewController = saberSettingsViewController;
         }
 
         public void Awake()
         {
-            gameplaySetupViewController.didActivateEvent += ParentViewControllerDidActivate;
+            gameplaySetupViewController.didActivateEvent += GameplaySetupActivated;
+            saberSettingsViewController.didActivateEvent += SaberSettingsActivated;
         }
 
         public void OnDestroy()
         {
-            gameplaySetupViewController.didActivateEvent -= ParentViewControllerDidActivate;
+            gameplaySetupViewController.didActivateEvent -= GameplaySetupActivated;
+            saberSettingsViewController.didActivateEvent -= SaberSettingsActivated;
         }
 
-        private void ParentViewControllerDidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
+        private void GameplaySetupActivated(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
         {
             StartCoroutine(WaitForSabersTabEnabled());
         }
@@ -41,7 +39,12 @@ namespace CustomSabersLite.UI
         {
             yield return new WaitUntil(() => { return customSabersTab.Root.activeInHierarchy; });
 
-            customSabersTab.TabWasActivated();
+            customSabersTab.Activated();
+        }
+
+        private void SaberSettingsActivated(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
+        {
+            saberSettingsViewController.Activated();
         }
     }
 }

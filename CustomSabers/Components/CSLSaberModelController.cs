@@ -3,6 +3,7 @@ using SiraUtil.Interfaces;
 using UnityEngine;
 using Zenject;
 using IPA.Utilities;
+using CustomSabersLite.Configuration;
 
 namespace CustomSabersLite.Components
 {
@@ -10,18 +11,18 @@ namespace CustomSabersLite.Components
     {
         private CustomTrailHandler trailHandler;
         private ColorManager colorManager;
-        private GameplayCoreSceneSetupData gameSetupData;
         private CSLSaberSet saberSet;
         private EventManagerManager eventManagerManager;
+        private CSLConfig config;
 
         [Inject]
-        public void Construct(CustomTrailHandler trailHandler, ColorManager colorManager, GameplayCoreSceneSetupData gameSetupData, CSLSaberSet saberSet, EventManagerManager eventManagerManager)
+        public void Construct(CustomTrailHandler trailHandler, ColorManager colorManager, CSLSaberSet saberSet, EventManagerManager eventManagerManager, CSLConfig config)
         {
             this.trailHandler = trailHandler;
             this.colorManager = colorManager;
-            this.gameSetupData = gameSetupData;
             this.saberSet = saberSet;
             this.eventManagerManager = eventManagerManager;
+            this.config = config;
         }
 
         private Color? color;
@@ -60,8 +61,24 @@ namespace CustomSabersLite.Components
 
             eventManagerManager.InitializeEventManager(customSaberInstance.EventManager, saberType);
 
-            Color saberColor = colorManager.ColorForSaberType(saberType);
-            
+            Color saberColor;
+
+            if (config.EnableCustomColorScheme)
+            {
+                if (saberType == SaberType.SaberA)
+                {
+                    saberColor = config.LeftSaberColor;
+                }
+                else
+                {
+                    saberColor = config.RightSaberColor;
+                }
+            }
+            else
+            {
+                saberColor = colorManager.ColorForSaberType(saberType);
+            }
+
             SaberTrail defaultTrail = ReflectionUtil.GetField<SaberTrail, SaberModelController>(this, "_saberTrail");
 
             // Returns false if a custom trail is created

@@ -46,10 +46,6 @@ namespace CustomSabersLite.Utilities
                     SetupDefaultTrail(defaultTrail);
                     return true;
 
-                case TrailType.None:
-                    defaultTrail.enabled = false;
-                    return true;
-
                 default: return true;
             }
         }
@@ -143,14 +139,6 @@ namespace CustomSabersLite.Utilities
         {
             trailUtils.SetTrailDuration(defaultTrail);
             trailUtils.SetWhiteTrailDuration(defaultTrail);
-        }
-
-        private void SetClampTexture(Material mat)
-        {
-            if(mat.TryGetMainTexture(out Texture texture))
-            {
-                texture.wrapMode = TextureWrapMode.Clamp;
-            }
         }
     }
 }

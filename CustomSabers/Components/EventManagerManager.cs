@@ -43,7 +43,7 @@ namespace CustomSabersLite.Components
             this.eventManager = eventManager;
             this.saberType = saberType;
 
-            if (!config.CustomEventsEnabled)
+            if (!config.EnableCustomEvents)
             {
                 return;
             }

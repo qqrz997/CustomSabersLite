@@ -14,10 +14,11 @@ using CustomSabersLite.Utilities;
 using System.IO;
 using HMUI;
 using System.Text.RegularExpressions;
+using System.ComponentModel;
 
 namespace CustomSabersLite.UI
 {
-    internal class GameplaySetupTab : IInitializable, IDisposable
+    internal class GameplaySetupTab : IInitializable, IDisposable, INotifyPropertyChanged, ISharedSaberSettings
     {
         private readonly PluginDirs pluginDirs;
         private readonly CSLConfig config;
@@ -30,19 +31,16 @@ namespace CustomSabersLite.UI
             this.assetLoader = assetLoader;
         }
 
-        public static GameplaySetupTab Instance { get; set; }
-
         public GameObject Root;
 
-        private string resourceName => "CustomSabersLite.UI.BSML.playerSettingsTab.bsml";
-        private bool parsed;
+        public event PropertyChangedEventHandler PropertyChanged;
 
+        private string resourceName => "CustomSabersLite.UI.BSML.gameplaySetup.bsml";
+        private bool parsed;
         private string saberAssetPath;
 
         public void Initialize()
         {
-            Instance = this;
-
             saberAssetPath = pluginDirs.CustomSabers.FullName;
 
             Logger.Debug("Creating tab");
@@ -75,31 +73,54 @@ namespace CustomSabersLite.UI
         }
 
         [UIValue("trail-duration")]
-        public int TrailDurationMultiplier
+        public int TrailDuration
         {
             get => config.TrailDuration;
             set => config.TrailDuration = value;
         }
 
         [UIValue("trail-type")]
-        public string TrailType
+        public string trailType
         {
             get => config.TrailType.ToString();
             set => config.TrailType = Enum.TryParse(value, out TrailType trailType) ? trailType : config.TrailType;
         }
 
+        public TrailType TrailType { get; set; } // todo - this is temporary
+
         [UIValue("trail-type-list")]
-        public List<object> trailType = Enum.GetNames(typeof(TrailType)).ToList<object>();
+        public List<object> trailTypeList = Enum.GetNames(typeof(TrailType)).ToList<object>();
 
         #endregion
 
         #region saber settings
 
         [UIValue("enable-custom-events")]
-        public bool CustomEventsEnabled
+        public bool EnableCustomEvents
         {
-            get => config.CustomEventsEnabled;
-            set => config.CustomEventsEnabled = value;
+            get => config.EnableCustomEvents;
+            set => config.EnableCustomEvents = value;
+        }
+
+        [UIValue("enable-custom-color-scheme")]
+        public bool EnableCustomColorScheme
+        {
+            get => config.EnableCustomColorScheme;
+            set => config.EnableCustomColorScheme = value;
+        }
+
+        [UIValue("left-saber-color")]
+        public Color LeftSaberColor
+        {
+            get => config.LeftSaberColor;
+            set => config.LeftSaberColor = value;
+        }
+
+        [UIValue("right-saber-color")]
+        public Color RightSaberColor
+        {
+            get => config.RightSaberColor;
+            set => config.RightSaberColor = value;
         }
 
         [UIValue("forcefully-foolish")]
@@ -139,18 +160,19 @@ namespace CustomSabersLite.UI
         TextMeshProUGUI settingsTitleText;
 
         [UIComponent("trail-settings-panel")]
-        Transform trailSettingsPanel;
+        RectTransform trailSettingsPanel;
 
         [UIComponent("saber-settings-panel")]
-        Transform saberSettingsPanel;
+        RectTransform saberSettingsPanel;
 
         private enum ActiveSettingsTab
         {
+            None,
             Trail,
             Saber
         }
 
-        private ActiveSettingsTab activeSettingsTab = ActiveSettingsTab.Trail;
+        private ActiveSettingsTab activeSettingsTab = ActiveSettingsTab.None;
 
         [UIAction("show-trail-settings")]
         public void ShowTrailSettings()
@@ -247,14 +269,29 @@ namespace CustomSabersLite.UI
             ScrollToSelectedCell();
         }
 
-        public void TabWasActivated()
+        private bool firstActivation = true;
+
+        public void Activated()
         {
+            if (firstActivation)
+            {
+                ShowTrailSettings();
+            }
+
             ScrollToSelectedCell();
+
+            foreach (string name in SharedProperties.Names)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(trailType)));
 
             if (config.Fooled)
             {
                 foolishSetting.gameObject.SetActive(true);
             }
+
+            firstActivation = false;
         }
 
         private void ScrollToSelectedCell()

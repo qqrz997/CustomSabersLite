@@ -175,6 +175,8 @@
     <Compile Include="PluginDirs.cs" />
     <Compile Include="UI\CSLFlowCoordinator.cs" />
     <Compile Include="UI\CSLViewManager.cs" />
+    <Compile Include="UI\ISharedSaberSettings.cs" />
+    <Compile Include="UI\SharedProperties.cs" />
     <Compile Include="UI\Views\GameplaySetupTab.cs" />
     <Compile Include="UI\Views\SaberListViewController.cs" />
     <Compile Include="Data\CustomSaberData.cs" />
@@ -190,7 +192,6 @@
     <Compile Include="Components\TrailHandler.cs" />
     <Compile Include="Utilities\DefaultSaberSetter.cs" />
     <Compile Include="Utilities\ImageLoading.cs" />
-    <Compile Include="Utilities\MaterialHelpers.cs" />
     <Compile Include="Utilities\TrailUtils.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -200,7 +201,7 @@
     <None Include="Directory.Build.props" Condition="Exists('Directory.Build.props')" />
     <None Include="CustomSabers.csproj.user" Condition="Exists('CustomSabers.csproj.user')" />
     <EmbeddedResource Include="UI\BSML\saberSettings.bsml" />
-    <EmbeddedResource Include="UI\BSML\playerSettingsTab.bsml" />
+    <EmbeddedResource Include="UI\BSML\gameplaySetup.bsml" />
     <None Include="UI\BSML\test.bsml" />
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,6 @@
 ﻿using CustomSabersLite.Configuration;
 using IPA.Utilities;
+using UnityEngine;
 using Zenject;
 
 namespace CustomSabersLite.Utilities
@@ -13,21 +14,31 @@ namespace CustomSabersLite.Utilities
             this.config = config;
         }
 
-        public void SetTrailDuration(SaberTrail trail, float trailDuration = 0.4f)
+        public void SetTrailDuration(SaberTrail trail, bool isDefaultSaber = false, float trailDuration = 0.4f)
         {
             if (config.OverrideTrailDuration)
             {
                 trailDuration = config.TrailDuration / 100f * trailDuration;
             }
 
-            if (trailDuration == 0)
+            if (trailDuration.Equals(0f))
             {
-                trail.enabled = false;
+                if (isDefaultSaber)
+                {
+                    ReflectionUtil.SetField<SaberTrail, Color>(trail, "_color", new Color(0f, 0f, 0f, 0f));
+                }
+                else
+                {
+                    trail.enabled = false;
+                }
             }
             else
             {
                 ReflectionUtil.SetField<SaberTrail, float>(trail, "_trailDuration", trailDuration);
-                trail.enabled = true;
+                if (!isDefaultSaber)
+                {
+                    trail.enabled = true;
+                }
             }
         }
 

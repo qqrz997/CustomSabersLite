@@ -10,10 +10,14 @@ using CustomSabersLite.Data;
 using UnityEngine;
 using TMPro;
 using Zenject;
+using System.ComponentModel;
+using IPA.Config.Data;
 
 namespace CustomSabersLite.UI
 {
-    internal class SaberSettingsViewController : BSMLResourceViewController
+    [HotReload(RelativePathToLayout = "../BSML/saberSettings.bsml")]
+    [ViewDefinition("CustomSabersLite.UI.BSML.saberSettings.bsml")]
+    internal class SaberSettingsViewController : BSMLAutomaticViewController, INotifyPropertyChanged, ISharedSaberSettings
     {
         private CSLConfig config;
 
@@ -22,10 +26,6 @@ namespace CustomSabersLite.UI
         {
             this.config = config;
         }
-
-        public override string ResourceName => "CustomSabersLite.UI.BSML.saberSettings.bsml";
-
-        public static SaberSettingsViewController Instance;
 
         private bool parsed;
         
@@ -66,27 +66,50 @@ namespace CustomSabersLite.UI
         }
 
         [UIValue("trail-duration")]
-        public int TrailDurationMultiplier
+        public int TrailDuration
         {
             get => config.TrailDuration;
             set => config.TrailDuration = value;
         }
 
         [UIValue("trail-type")]
-        public string TrailType
+        public string trailType
         {
             get => config.TrailType.ToString();
             set => config.TrailType = Enum.TryParse(value, out TrailType trailType) ? trailType : config.TrailType;
         }
 
+        public TrailType TrailType { get; set; } // todo - this is temporary
+
         [UIValue("trail-type-list")]
-        public List<object> trailType = Enum.GetNames(typeof(TrailType)).ToList<object>();
+        public List<object> trailTypeList = Enum.GetNames(typeof(TrailType)).ToList<object>();
 
         [UIValue("enable-custom-events")]
-        public bool CustomEventsEnabled
+        public bool EnableCustomEvents
         {
-            get => config.CustomEventsEnabled;
-            set => config.CustomEventsEnabled = value;
+            get => config.EnableCustomEvents;
+            set => config.EnableCustomEvents = value;
+        }
+
+        [UIValue("enable-custom-color-scheme")]
+        public bool EnableCustomColorScheme
+        {
+            get => config.EnableCustomColorScheme;
+            set => config.EnableCustomColorScheme = value;
+        }
+
+        [UIValue("left-saber-color")]
+        public Color LeftSaberColor
+        {
+            get => config.LeftSaberColor;
+            set => config.LeftSaberColor = value;
+        }
+
+        [UIValue("right-saber-color")]
+        public Color RightSaberColor
+        {
+            get => config.RightSaberColor;
+            set => config.RightSaberColor = value;
         }
 
         [UIValue("forcefully-foolish")]
@@ -99,13 +122,22 @@ namespace CustomSabersLite.UI
         [UIAction("#post-parse")]
         private void PostParse()
         {
+            parsed = true;
+            SetTrailDurationInteractable(OverrideTrailDuration);
+        }
+
+        public void Activated()
+        {
+            foreach (string name in SharedProperties.Names)
+            {
+                NotifyPropertyChanged(name);
+            }
+            NotifyPropertyChanged(trailType); // todo - this is temporary
+
             if (config.Fooled)
             {
                 foolishSetting.gameObject.SetActive(true);
             }
-
-            parsed = true;
-            SetTrailDurationInteractable(OverrideTrailDuration);
         }
     }
 }

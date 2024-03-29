@@ -18,17 +18,17 @@ namespace CustomSabersLite.UI.Views
     [ViewDefinition("CustomSabersLite.UI.BSML.test.bsml")]
     internal class TestViewController : BSMLAutomaticViewController
     {
-        /*[UIValue("trail-type-list")]
+        [UIValue("trail-type-list")]
         public List<object> trailType = Enum.GetNames(typeof(TrailType)).ToList<object>();
 
-        [UIComponent("saber-list")]
-        public CustomListTableData saberList;
+        /*[UIComponent("saber-list")]
+        public CustomListTableData saberList;*/
 
         [UIAction("#post-parse")]
         public void PostParse()
         {
-            saberList.data.Clear();
-            for (int i = 0; i < CustomSaberAssetLoader.SabersMetadata.Count; i++)
+            /*saberList.data.Clear();
+            for (int i = 0; i < SabersMetadata.Count; i++)
             {
                 CustomSaberMetadata metadata = CustomSaberAssetLoader.SabersMetadata[i];
                 string saberName = metadata.SaberName;
@@ -61,7 +61,7 @@ namespace CustomSabersLite.UI.Views
             if (!saberList.tableView.visibleCells.Where(x => x.selected).Any())
             {
                 saberList.tableView.ScrollToCellWithIdx(selectedSaber, TableView.ScrollPositionType.Beginning, true);
-            }
-        }*/
+            }*/
+        }
     }
 }

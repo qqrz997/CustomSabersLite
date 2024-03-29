@@ -1,4 +1,5 @@
 ﻿using CustomSabersLite.Configuration;
+using CustomSabersLite.Data;
 using System.Collections;
 using System.Linq;
 using UnityEngine;
@@ -38,7 +39,14 @@ namespace CustomSabersLite.Utilities
 
         private void SetupTrail(SaberTrail trail)
         {
-            trailUtils.SetTrailDuration(trail);
+            if (config.TrailType == TrailType.None)
+            {
+                trailUtils.SetTrailDuration(trail, true, 0f);
+            }
+            else
+            {
+                trailUtils.SetTrailDuration(trail, true);
+            }
             trailUtils.SetWhiteTrailDuration(trail);
         }
     }
