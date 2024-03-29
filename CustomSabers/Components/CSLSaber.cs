@@ -18,10 +18,13 @@ namespace CustomSabersLite.Components
             transform.SetParent(parent);
             transform.position = parent.position;
             transform.rotation = parent.rotation;
+            gameObject.SetActive(true);
         }
 
         public void Awake()
         {
+            gameObject.SetActive(false);
+
             GetColorableMaterialsFromSaber();
 
             try
