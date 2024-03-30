@@ -62,16 +62,16 @@
     <!--Settings container end-->
 
     <!--Saber list container-->
-    <vertical spacing='2'>
-      <horizontal child-control-height='false' preferred-width='54'>
+    <vertical child-control-height='false' spacing='2'>
+      <horizontal preferred-width='54'>
         <page-button event-click='saber-list#PageUp' direction='Up' />
       </horizontal>
 
-      <horizontal child-control-height='false' background='round-rect-panel' bg-color='#000000AA' pad='1' preferred-width='54'>
+      <horizontal background='round-rect-panel' bg-color='#000000AA' pad='1' preferred-width='54'>
         <list list-style='Simple' visible-cells='5' stick-scrolling='false' select-cell='select-saber' id='saber-list'/>
       </horizontal>
 
-      <horizontal child-control-height='false' preferred-width='54'>
+      <horizontal preferred-width='54'>
         <page-button event-click='saber-list#PageDown' direction='Down' />
       </horizontal>
     </vertical>

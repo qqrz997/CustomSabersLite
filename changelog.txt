@@ -1,5 +1,8 @@
 changelog
 
+0.7.5
+- Fix for BSML 1.9.2
+
 0.7.4
 - Fixed some compatibility issues when changing settings for default sabers
 

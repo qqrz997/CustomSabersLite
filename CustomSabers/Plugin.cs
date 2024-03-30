@@ -13,7 +13,7 @@ namespace CustomSabersLite
     [Plugin(RuntimeOptions.SingleStartInit)]
     internal class Plugin
     {
-        private const string version = "0.7.4";
+        private const string version = "0.7.5";
 
         public static string Version { get { return version; } }
 
