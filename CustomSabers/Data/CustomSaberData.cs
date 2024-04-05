@@ -1,17 +1,10 @@
-﻿using CustomSabersLite.Utilities;
-using System.IO;
-using UnityEngine;
-using AssetBundleLoadingTools.Utilities;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using UnityEngine;
 
 namespace CustomSabersLite.Data
 {
     internal class CustomSaberData
     {
         public string FileName { get; set; }
-
-        public AssetBundle AssetBundle { get; set; }
 
         public GameObject SabersObject { get; set; }
 
@@ -23,7 +16,7 @@ namespace CustomSabersLite.Data
         {
             FileName = fileName;
 
-            if (FileName == "DefaultSabers")
+            if (FileName == "Default")
             {
                 Descriptor = new SaberDescriptor
                 {
@@ -36,14 +29,8 @@ namespace CustomSabersLite.Data
 
         public void Destroy()
         {
-            if (AssetBundle != null)
-            {
-                AssetBundle.Unload(true);
-            }
-            else
-            {
-                UnityEngine.Object.Destroy(Descriptor);
-            }
+            Object.Destroy(SabersObject);
+            Object.Destroy(Descriptor);
         }
     }
 }

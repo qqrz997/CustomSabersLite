@@ -24,17 +24,21 @@ namespace CustomSabersLite.Components
 
         public void Initialize()
         {
-            string selectedSaber = config.CurrentlySelectedSaber;
-            if (selectedSaber == "Default" || selectedSaber == null)
+            string selectedSaber = config.CurrentlySelectedSaber; // assetLoader.SelectedSaber.FileName > previously selected saber
+
+            if (selectedSaber != assetLoader.SelectedSaber?.FileName)
             {
-                assetLoader.SelectedSaber = new CustomSaberData("DefaultSabers");
-            }
-            else
-            {
-                if (selectedSaber != assetLoader.SelectedSaber?.FileName)
+                // The saber was changed so load the new one
+                assetLoader.SelectedSaber?.Destroy();
+
+                if (selectedSaber == "Default" || selectedSaber == null)
                 {
-                    // The saber was changed so load the new one
-                    assetLoader.SelectedSaber?.Destroy();
+                    // Use default sabers
+                    assetLoader.SelectedSaber = new CustomSaberData("Default");
+                }
+                else
+                {
+                    // Use custom sabers
                     assetLoader.SelectedSaber = assetLoader.LoadSaberWithRepair(selectedSaber);
                 }
             }
@@ -48,7 +52,7 @@ namespace CustomSabersLite.Components
                 return;
             }
 
-            if (customSaberData.FileName != "DefaultSabers")
+            if (customSaberData.FileName != "Default")
             {
                 GameObject sabersObject = GameObject.Instantiate(customSaberData.SabersObject);
 

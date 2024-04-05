@@ -75,7 +75,7 @@ namespace CustomSabersLite.Utilities
 
             IsLoaded = true;
 
-            UpdateCache(fileMetadata);
+            UpdateCache(fileMetadata, loadedSaberData);
 
             if (config.CurrentlySelectedSaber != null)
             {
@@ -105,7 +105,7 @@ namespace CustomSabersLite.Utilities
 
             IsLoaded = true;
 
-            UpdateCache(fileMetadata);
+            UpdateCache(fileMetadata, loadedSaberData);
 
             if (config.CurrentlySelectedSaber != null)
             {
@@ -133,24 +133,20 @@ namespace CustomSabersLite.Utilities
 
         internal void Clear()
         {
-            for (int i = 0; i < loadedSaberData.Count; i++)
-            {
-                loadedSaberData[i].Destroy();
-                loadedSaberData[i] = null;
-            }
+            SelectedSaber?.Destroy();
+            SelectedSaber = null;
 
-            if (SelectedSaber != null)
-            {
-                SelectedSaber.Destroy();
-                SelectedSaber = null;
-            }
             sabersToLoad.Clear();
             sabersToLoad = new List<string>();
+
             loadedSaberData.Clear();
             loadedSaberData = new List<CustomSaberData>();
+
             SabersMetadata.Clear();
             SabersMetadata = new List<CustomSaberMetadata>();
+
             CustomSaberFiles = Enumerable.Empty<string>();
+
             SaberMetadataFiles = Enumerable.Empty<string>();
         }
 
@@ -204,14 +200,14 @@ namespace CustomSabersLite.Utilities
             return fileMetadata;
         }
 
-        private void UpdateCache(Dictionary<string, CustomSaberMetadata> fileMetadata)
+        private void UpdateCache(Dictionary<string, CustomSaberMetadata> fileMetadata, IList<CustomSaberData> loadedSaberData)
         {
             CustomSaberMetadata defaultSabers = new CustomSaberMetadata("Default", "Beat Games", "Default");
             SabersMetadata.Add(defaultSabers);
 
             foreach (CustomSaberData saber in loadedSaberData)
             {
-                if (saber.FileName == "DefaultSabers") continue;
+                if (saber.FileName == "Default") continue;
 
                 byte[] coverImage = null;
                 if (saber.Descriptor.CoverImage != null)
@@ -375,7 +371,6 @@ namespace CustomSabersLite.Utilities
         private async Task<CustomSaberData> LoadSaberFromAssetAsync(string fileName)
         {
             CustomSaberData newSaberData;
-            AssetBundle bundle = null;
             GameObject sabers = null;
             SaberDescriptor descriptor;
             string filePath = Path.Combine(saberAssetPath, fileName);
@@ -388,10 +383,12 @@ namespace CustomSabersLite.Utilities
                     {
                         Logger.Warn($"{fileName} no longer exists, switching to default sabers");
                         config.CurrentlySelectedSaber = "Default";
-                        return new CustomSaberData("DefaultSabers");
+                        return new CustomSaberData("Default");
                     }
-                    bundle = await AssetBundleExtensions.LoadFromFileAsync(filePath);
+
+                    AssetBundle bundle = await AssetBundleExtensions.LoadFromFileAsync(filePath);
                     sabers = await AssetBundleExtensions.LoadAssetAsync<GameObject>(bundle, "_CustomSaber");
+                    bundle.UnloadAsync(false);
 
                     descriptor = sabers.GetComponent<SaberDescriptor>();
                     descriptor.CoverImage = descriptor.CoverImage ?? null;
@@ -406,19 +403,18 @@ namespace CustomSabersLite.Utilities
                         AuthorName = fileName
                     };
 
-                    fileName = "DefaultSabers";
+                    fileName = "Default";
                 }
 
                 newSaberData = new CustomSaberData(fileName)
                 {
-                    AssetBundle = bundle,
                     SabersObject = sabers,
                     Descriptor = descriptor
                 };
             }
             else
             {
-                newSaberData = new CustomSaberData("DefaultSabers");
+                newSaberData = new CustomSaberData("Default");
             }
             return newSaberData;
         }
@@ -426,7 +422,6 @@ namespace CustomSabersLite.Utilities
         public CustomSaberData LoadSaberFromAsset(string fileName)
         {
             CustomSaberData newSaberData;
-            AssetBundle bundle = null;
             GameObject sabers = null;
             SaberDescriptor descriptor;
             string filePath = Path.Combine(saberAssetPath, fileName);
@@ -439,10 +434,12 @@ namespace CustomSabersLite.Utilities
                     {
                         Logger.Warn($"{fileName} no longer exists, switching to default sabers");
                         config.CurrentlySelectedSaber = "Default";
-                        return new CustomSaberData("DefaultSabers");
+                        return new CustomSaberData("Default");
                     }
-                    bundle = AssetBundle.LoadFromFile(filePath);
+
+                    AssetBundle bundle = AssetBundle.LoadFromFile(filePath);
                     sabers = bundle.LoadAsset<GameObject>("_CustomSaber");
+                    bundle.Unload(false);
 
                     descriptor = sabers.GetComponent<SaberDescriptor>();
                     descriptor.CoverImage = descriptor.CoverImage ?? null;
@@ -457,19 +454,18 @@ namespace CustomSabersLite.Utilities
                         AuthorName = fileName
                     };
 
-                    fileName = "DefaultSabers";
+                    fileName = "Default";
                 }
 
                 newSaberData = new CustomSaberData(fileName)
                 {
-                    AssetBundle = bundle,
                     SabersObject = sabers,
                     Descriptor = descriptor
                 };
             }
             else
             {
-                newSaberData = new CustomSaberData("DefaultSabers");
+                newSaberData = new CustomSaberData("Default");
             }
             return newSaberData;
         }
@@ -478,7 +474,7 @@ namespace CustomSabersLite.Utilities
         {
             CustomSaberData saber = LoadSaberFromAsset(fileName);
 
-            if (saber.FileName != "DefaultSabers") saber = FixSaberShaders(saber);
+            if (saber.FileName != "Default") saber = FixSaberShaders(saber);
 
             return saber;
         }
