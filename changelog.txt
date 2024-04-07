@@ -1,5 +1,10 @@
 changelog
 
+0.8.0
+- Added the ability to change saber colors seperately from the selected color scheme
+- Fixed default trail settings when using default trails with custom sabers
+- Small UI tweaks
+
 0.7.6
 - Fixed custom sabers not loading when switching from default sabers to another saber
 

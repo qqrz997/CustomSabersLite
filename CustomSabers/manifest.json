@@ -3,7 +3,7 @@
   "id": "CustomSabersLite",
   "name": "CustomSabersLite",
   "author": "qqrz997",
-  "version": "0.7.6",
+  "version": "0.8.0",
   "description": "A plugin to replace default sabers with custom sabers.",
   "gameVersion": "1.35.0",
   "dependsOn": {
