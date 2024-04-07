@@ -22,11 +22,11 @@ namespace CustomSabersLite.Configuration
 
         public virtual bool DisableWhiteTrail { get; set; } = true;
 
-        [Ignore] public virtual bool EnableCustomColorScheme { get; set; } = false; // not yet implemented
+        public virtual bool EnableCustomColorScheme { get; set; } = false; // not yet implemented
 
-        [Ignore] public virtual Color LeftSaberColor { get; set; } = new Color(0.157f, 0.557f, 0.824f, 1f); // not yet implemented
+        public virtual Color LeftSaberColor { get; set; } = new Color(0.784f, 0.078f, 0.078f, 1f); // not yet implemented 
 
-        [Ignore] public virtual Color RightSaberColor { get; set; } = new Color(0.784f, 0.078f, 0.078f, 1f); // not yet implemented
+        public virtual Color RightSaberColor { get; set; } = new Color(0.157f, 0.557f, 0.824f, 1f); // not yet implemented
 
         public virtual string PluginVer { get; set; } = string.Empty;
 

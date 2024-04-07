@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.ViewControllers;
@@ -8,18 +7,17 @@ using CustomSabersLite.Data;
 using CustomSabersLite.Utilities;
 using CustomSabersLite.Configuration;
 using UnityEngine;
-using UnityEngine.UIElements;
 using System.IO;
-using BeatSaberMarkupLanguage.Components.Settings;
 using UnityEngine.UI;
 using TMPro;
 using System.Diagnostics;
-using BeatSaberMarkupLanguage.TypeHandlers;
 using Zenject;
 
 namespace CustomSabersLite.UI
 {
-    internal class SaberListViewController : BSMLResourceViewController
+    [HotReload(RelativePathToLayout = "../BSML/saberList.bsml")]
+    [ViewDefinition("CustomSabersLite.UI.BSML.saberList.bsml")]
+    internal class SaberListViewController : BSMLAutomaticViewController
     {
         private PluginDirs pluginDirs;
         private CSLConfig config;
@@ -42,8 +40,6 @@ namespace CustomSabersLite.UI
             saberAssetPath = pluginDirs.CustomSabers.FullName;
             deletedSabersPath = pluginDirs.DeletedSabers.FullName;
         }
-
-        public override string ResourceName => "CustomSabersLite.UI.BSML.saberList.bsml";
 
         private static readonly Sprite nullCoverImage = CSLUtils.GetNullCoverImage();
 

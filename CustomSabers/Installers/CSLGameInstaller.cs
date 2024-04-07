@@ -23,11 +23,10 @@ namespace CustomSabersLite.Installers
                 // This replaces the default sabers
                 Container.BindInstance(SaberModelRegistration.Create<CSLSaberModelController>(5));
             }
-            else
-            {
-                Container.Bind<DefaultSaberSetter>().FromNewComponentOnNewGameObject().AsSingle().NonLazy();
-            }
 
+            Container.Bind<DefaultSaberSetter>().FromNewComponentOnNewGameObject().AsSingle().NonLazy();
+
+            // Aprilfools
             Container.BindInterfacesTo<ExtraSaberManager>().AsSingle();
         }
     }

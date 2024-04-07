@@ -29,7 +29,7 @@
 
 
       <!--Custom color scheme-->
-      <horizontal horizontal-fit='Unconstrained' active='false'> <!--not yet implemented-->
+      <horizontal horizontal-fit='Unconstrained'> <!--not yet implemented-->
         <!--Toggle custom color scheme-->
         <horizontal horizontal-fit='Unconstrained' preferred-width='46'>
           <checkbox-setting text='Saber Color Scheme' value='enable-custom-color-scheme' apply-on-change='true' hover-hint='Change your saber colors seperately from the color of the notes'/>

@@ -5,6 +5,7 @@ using System;
 using UnityEngine;
 using Zenject;
 using CustomSabersLite.Data;
+using CustomSabersLite.Utilities.Extensions;
 
 namespace CustomSabersLite.Utilities
 {
@@ -96,8 +97,7 @@ namespace CustomSabersLite.Utilities
                     break;
 
                 default:
-                    materialColor = saberTrailColor;
-                    materialColor.a = trailIntensity;
+                    materialColor = saberTrailColor.ColorWithAlpha(trailIntensity);
                     break;
             }
 
