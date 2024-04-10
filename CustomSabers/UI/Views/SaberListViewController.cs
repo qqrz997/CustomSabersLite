@@ -12,6 +12,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Diagnostics;
 using Zenject;
+using System.Collections;
 
 namespace CustomSabersLite.UI
 {
@@ -147,7 +148,7 @@ namespace CustomSabersLite.UI
         {
             customListTableData.data.Clear();
 
-            Logger.Debug("Showing list of selectable sabers");
+            Logger.Info("Showing list of selectable sabers");
 
             foreach (CustomSaberMetadata metadata in assetLoader.SabersMetadata)
             {
@@ -179,20 +180,25 @@ namespace CustomSabersLite.UI
                 customListTableData.data.Add(customCellInfo);
             }
 
+            Logger.Info("Finished setting up saber list");
+
             customListTableData.tableView.ReloadData();
 
-            ScrollToSelectedCell();
+            StartCoroutine(ScrollToSelectedCell());
         }
 
         protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
         {
             base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
-
-            ScrollToSelectedCell();
+            Logger.Info("Viewcontroller activated");
+            // StartCoroutine(ScrollToSelectedCell());
         }
 
-        private void ScrollToSelectedCell()
+        private IEnumerator ScrollToSelectedCell()
         {
+            yield return new WaitUntil(() => customListTableData.gameObject.activeInHierarchy);
+            yield return new WaitForEndOfFrame();
+            Logger.Info("Saber list active");
             int selectedSaber = assetLoader.SelectedSaberIndex;
             customListTableData.tableView.SelectCellWithIdx(selectedSaber);
             customListTableData.tableView.ScrollToCellWithIdx(selectedSaber, TableView.ScrollPositionType.Center, true);

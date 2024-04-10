@@ -15,6 +15,7 @@ using System.IO;
 using HMUI;
 using System.Text.RegularExpressions;
 using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace CustomSabersLite.UI
 {
@@ -265,8 +266,6 @@ namespace CustomSabersLite.UI
             }
 
             saberList.tableView.ReloadData();
-
-            ScrollToSelectedCell();
         }
 
         private bool firstActivation = true;
@@ -276,9 +275,8 @@ namespace CustomSabersLite.UI
             if (firstActivation)
             {
                 ShowTrailSettings();
+                firstActivation = false;
             }
-
-            ScrollToSelectedCell();
 
             foreach (string name in SharedProperties.Names)
             {
@@ -291,14 +289,19 @@ namespace CustomSabersLite.UI
                 foolishSetting.gameObject.SetActive(true);
             }
 
-            firstActivation = false;
+            Task.Run(() => ScrollToSelectedCell());
         }
 
-        private void ScrollToSelectedCell()
+        private async void ScrollToSelectedCell()
         {
+            while (!saberList.gameObject.activeInHierarchy)
+            {
+                await Task.Delay(25);
+            }
+            await Task.Delay(100);
             int selectedSaber = assetLoader.SelectedSaberIndex;
             saberList.tableView.SelectCellWithIdx(selectedSaber);
-            saberList.tableView.ScrollToCellWithIdx(selectedSaber, TableView.ScrollPositionType.Center, false);
+            saberList.tableView.ScrollToCellWithIdx(selectedSaber, TableView.ScrollPositionType.Center, true);
         }
     }
 }
