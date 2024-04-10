@@ -1,5 +1,8 @@
 changelog
 
+0.8.1
+- Added a toggle to disable the mod during gameplay
+
 0.8.0
 - Added the ability to change saber colors seperately from the selected color scheme
 - Fixed default trail settings when using default trails with custom sabers
