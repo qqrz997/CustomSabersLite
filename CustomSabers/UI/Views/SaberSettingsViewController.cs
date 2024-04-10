@@ -38,6 +38,13 @@ namespace CustomSabersLite.UI
         [UIComponent("forcefully-foolish")]
         private Transform foolishSetting;
 
+        [UIValue("enabled")]
+        public bool Enabled
+        {
+            get => config.Enabled; 
+            set => config.Enabled = value;
+        }
+
         [UIValue("disable-white-trail")]
         public bool DisableWhiteTrail
         {

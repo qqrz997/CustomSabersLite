@@ -10,6 +10,8 @@ namespace CustomSabersLite.Configuration
 {
     internal class CSLConfig : ISharedSaberSettings
     {
+        public virtual bool Enabled { get; set; } = true;
+
         public virtual string CurrentlySelectedSaber { get; set; } = "Default";
 
         public virtual TrailType TrailType { get; set; } = TrailType.Custom;
@@ -22,11 +24,11 @@ namespace CustomSabersLite.Configuration
 
         public virtual bool DisableWhiteTrail { get; set; } = true;
 
-        public virtual bool EnableCustomColorScheme { get; set; } = false; // not yet implemented
+        public virtual bool EnableCustomColorScheme { get; set; } = false;
 
-        public virtual Color LeftSaberColor { get; set; } = new Color(0.784f, 0.078f, 0.078f, 1f); // not yet implemented 
+        public virtual Color LeftSaberColor { get; set; } = new Color(0.784f, 0.078f, 0.078f, 1f);
 
-        public virtual Color RightSaberColor { get; set; } = new Color(0.157f, 0.557f, 0.824f, 1f); // not yet implemented
+        public virtual Color RightSaberColor { get; set; } = new Color(0.157f, 0.557f, 0.824f, 1f);
 
         public virtual string PluginVer { get; set; } = string.Empty;
 

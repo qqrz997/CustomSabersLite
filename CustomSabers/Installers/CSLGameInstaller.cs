@@ -12,6 +12,12 @@ namespace CustomSabersLite.Installers
         {
             CSLConfig config = Container.Resolve<CSLConfig>();
 
+            if (!config.Enabled)
+            {
+                Logger.Debug("Custom Sabers is disabled - will not run");
+                return;
+            }
+
             Container.Bind<CustomTrailHandler>().AsSingle();
             Container.BindInterfacesAndSelfTo<EventManagerManager>().AsTransient();
 
