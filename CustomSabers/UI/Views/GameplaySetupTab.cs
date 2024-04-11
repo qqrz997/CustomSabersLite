@@ -234,7 +234,7 @@ namespace CustomSabersLite.UI
             trailDurationRect.sizeDelta = new Vector2(50, trailDurationRect.sizeDelta.y);
         }
 
-        private void SetupList()
+        public void SetupList()
         {
             saberList.data.Clear();
 

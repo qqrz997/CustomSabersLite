@@ -27,7 +27,7 @@ namespace CustomSabersLite.Installers
             if (config.CurrentlySelectedSaber != "Default")
             {
                 // This replaces the default sabers
-                Container.BindInstance(SaberModelRegistration.Create<CSLSaberModelController>(5));
+                Container.BindInstance(SaberModelRegistration.Create<CSLSaberModelController>(5)).AsSingle().Lazy();
             }
 
             Container.Bind<DefaultSaberSetter>().FromNewComponentOnNewGameObject().AsSingle().NonLazy();

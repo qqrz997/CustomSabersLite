@@ -39,6 +39,12 @@ namespace CustomSabersLite.Components
 
         public bool PreInit(Transform parent, Saber saber)
         {
+            if (config.CurrentlySelectedSaber == "Default")
+            {
+                Logger.Error("Somehow, the default saber is selected, but we don't know why");
+                return true;
+            }
+
             // Do you want the original Init to run?
             return CSLSaberInit(parent, saber);
         }

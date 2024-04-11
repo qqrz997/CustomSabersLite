@@ -23,13 +23,15 @@ namespace CustomSabersLite.UI
         private PluginDirs pluginDirs;
         private CSLConfig config;
         private CSLAssetLoader assetLoader;
+        private GameplaySetupTab customSabersTab;
 
         [Inject]
-        public void Construct(PluginDirs pluginDirs, CSLConfig config, CSLAssetLoader assetLoader)
+        public void Construct(PluginDirs pluginDirs, CSLConfig config, CSLAssetLoader assetLoader, GameplaySetupTab customSabersTab)
         {
             this.pluginDirs = pluginDirs;
             this.config = config;
             this.assetLoader = assetLoader;
+            this.customSabersTab = customSabersTab;
             Init();
         }
 
@@ -137,6 +139,7 @@ namespace CustomSabersLite.UI
             reloadButtonSelectable.interactable = false;
             await assetLoader.ReloadAsync();
             SetupList();
+            customSabersTab.SetupList();
             Select(customListTableData.tableView, assetLoader.SelectedSaberIndex);
             reloadButtonSelectable.interactable = true;
         }
@@ -148,7 +151,7 @@ namespace CustomSabersLite.UI
         {
             customListTableData.data.Clear();
 
-            Logger.Info("Showing list of selectable sabers");
+            Logger.Debug("Showing list of selectable sabers");
 
             foreach (CustomSaberMetadata metadata in assetLoader.SabersMetadata)
             {
@@ -180,8 +183,6 @@ namespace CustomSabersLite.UI
                 customListTableData.data.Add(customCellInfo);
             }
 
-            Logger.Info("Finished setting up saber list");
-
             customListTableData.tableView.ReloadData();
 
             StartCoroutine(ScrollToSelectedCell());
@@ -190,15 +191,13 @@ namespace CustomSabersLite.UI
         protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
         {
             base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
-            Logger.Info("Viewcontroller activated");
-            // StartCoroutine(ScrollToSelectedCell());
+            StartCoroutine(ScrollToSelectedCell());
         }
 
         private IEnumerator ScrollToSelectedCell()
         {
             yield return new WaitUntil(() => customListTableData.gameObject.activeInHierarchy);
             yield return new WaitForEndOfFrame();
-            Logger.Info("Saber list active");
             int selectedSaber = assetLoader.SelectedSaberIndex;
             customListTableData.tableView.SelectCellWithIdx(selectedSaber);
             customListTableData.tableView.ScrollToCellWithIdx(selectedSaber, TableView.ScrollPositionType.Center, true);
