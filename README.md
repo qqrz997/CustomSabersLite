@@ -29,7 +29,7 @@ You can also adjust settings by clicking the Mods tab at the top of the gameplay
 
 ### Todo
 - Try to add trail intensity to settings
-- Add a setting to toggle the mod
 - Look into HMD only sabers compatibility
 - Add a setting to adjust width of trail - dimension of trail mesh parallel to saber blade
+- Check if a saber file was changed and reload it to update the cache
 - Independent trail system
