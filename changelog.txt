@@ -1,10 +1,12 @@
 changelog
 
+0.8.2
+- Fixed sabers not loading if any sabers were in subfolders of the CustomSabers folder
+
 0.8.1
 - Added a toggle to disable the mod during gameplay
 - Fixed saber list in gamplay setup not refreshing
 - Fixed saber list not scrolling to the selected saber correctly
-
 
 0.8.0
 - Added the ability to change saber colors seperately from the selected color scheme
