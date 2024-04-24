@@ -4,7 +4,7 @@ namespace CustomSabersLite.Data
 {
     internal class CustomSaberData
     {
-        public string FileName { get; set; }
+        public string FilePath { get; set; }
 
         public GameObject SabersObject { get; set; }
 
@@ -14,9 +14,9 @@ namespace CustomSabersLite.Data
 
         public CustomSaberData(string fileName)
         {
-            FileName = fileName;
+            FilePath = fileName;
 
-            if (FileName == "Default")
+            if (FilePath == "Default")
             {
                 Descriptor = new SaberDescriptor
                 {

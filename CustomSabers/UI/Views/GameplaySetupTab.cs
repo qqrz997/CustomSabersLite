@@ -153,7 +153,7 @@ namespace CustomSabersLite.UI
         {
             Logger.Debug($"saber selected at row {row}");
             assetLoader.SelectedSaberIndex = row;
-            config.CurrentlySelectedSaber = assetLoader.SabersMetadata[row].SaberFileName;
+            config.CurrentlySelectedSaber = assetLoader.SabersMetadata[row].RelativePath;
         }
 
         #region tabs
@@ -242,9 +242,9 @@ namespace CustomSabersLite.UI
             {
                 string saberName = metadata.SaberName;
 
-                if (metadata.SaberFileName != null && metadata.SaberFileName != "Default")
+                if (metadata.RelativePath != null && metadata.RelativePath != "Default")
                 {
-                    if (!File.Exists(Path.Combine(saberAssetPath, metadata.SaberFileName)))
+                    if (!File.Exists(Path.Combine(saberAssetPath, metadata.RelativePath)))
                     {
                         continue;
                     }

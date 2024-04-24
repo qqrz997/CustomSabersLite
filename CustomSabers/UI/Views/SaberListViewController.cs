@@ -63,7 +63,7 @@ namespace CustomSabersLite.UI
         {
             Logger.Debug($"saber selected at row {row}");
             assetLoader.SelectedSaberIndex = row;
-            config.CurrentlySelectedSaber = assetLoader.SabersMetadata[row].SaberFileName;
+            config.CurrentlySelectedSaber = assetLoader.SabersMetadata[row].RelativePath;
 
             // currently loading saber on game load, probably should do it on saber select instead
             // that can be used for saber previewing
@@ -155,9 +155,9 @@ namespace CustomSabersLite.UI
 
             foreach (CustomSaberMetadata metadata in assetLoader.SabersMetadata)
             {
-                if (metadata.SaberFileName != null && metadata.SaberFileName != "Default")
+                if (metadata.RelativePath != null && metadata.RelativePath != "Default")
                 {
-                    if (!File.Exists(Path.Combine(saberAssetPath, metadata.SaberFileName)))
+                    if (!File.Exists(Path.Combine(saberAssetPath, metadata.RelativePath)))
                     {
                         continue;
                     }

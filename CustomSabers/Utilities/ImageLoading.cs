@@ -7,11 +7,9 @@ namespace CustomSabersLite.Utilities
 {
     internal class ImageLoading
     {
-        public static Sprite LoadSpriteFromResources(string resourcePath, float pixelsPerUnit = 100.0f)
-        {
-            return LoadSpriteRaw(LoadFromResource(resourcePath), pixelsPerUnit);
-        }
-
+        /// <summary>
+        /// Duplicates a texture to get around unreadable assets
+        /// </summary>
         public static Texture2D DuplicateTexture(Texture2D source)
         {
             if (source == null) return null;
@@ -25,6 +23,11 @@ namespace CustomSabersLite.Utilities
             RenderTexture.active = previous;
             RenderTexture.ReleaseTemporary(renderTex);
             return readableText;
+        }
+
+        public static Sprite LoadSpriteFromResources(string resourcePath, float pixelsPerUnit = 100.0f)
+        {
+            return LoadSpriteRaw(ResourceLoading.LoadFromResourceAsync(resourcePath).Result, pixelsPerUnit);
         }
 
         public static Sprite LoadSpriteRaw(byte[] image, float pixelsPerUnit = 100.0f)
@@ -53,19 +56,6 @@ namespace CustomSabersLite.Utilities
                 return Sprite.Create(spriteTexture, new Rect(0, 0, spriteTexture.width, spriteTexture.height), new Vector2(0, 0), pixelsPerUnit);
             }
             return null;
-        }
-
-        public static byte[] LoadFromResource(string resourcePath)
-        {
-            return GetResource(Assembly.GetCallingAssembly(), resourcePath);
-        }
-
-        public static byte[] GetResource(Assembly assembly, string resourcePath)
-        {
-            Stream stream = assembly.GetManifestResourceStream(resourcePath);
-            byte[] data = new byte[stream.Length];
-            stream.Read(data, 0, (int)stream.Length);
-            return data;
         }
     }
 }

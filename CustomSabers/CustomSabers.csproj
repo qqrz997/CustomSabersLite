@@ -198,6 +198,7 @@
     <Compile Include="Utilities\DefaultSaberSetter.cs" />
     <Compile Include="Utilities\Extensions\ColorExtensions.cs" />
     <Compile Include="Utilities\ImageLoading.cs" />
+    <Compile Include="Utilities\ResourceLoading.cs" />
     <Compile Include="Utilities\TrailUtils.cs" />
   </ItemGroup>
   <ItemGroup>

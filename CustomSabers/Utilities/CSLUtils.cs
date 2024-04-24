@@ -3,23 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using UnityEngine;
-using CustomSabersLite.Configuration;
-using IPA.Utilities;
 using System.Reflection;
 using System.Threading.Tasks;
-using Zenject;
 
 namespace CustomSabersLite.Utilities
 {
     internal class CSLUtils
     {
-        public static IEnumerable<string> GetFileNames(string path, IEnumerable<string> filters, SearchOption searchOption, bool returnShortPath = false)
+        public static IEnumerable<string> GetFilePaths(string path, IEnumerable<string> fileExtensions, SearchOption searchOption = SearchOption.AllDirectories, bool returnShortPath = false)
         {
             IList<string> filePaths = new List<string>();
 
-            foreach (string filter in filters)
+            foreach (string extension in fileExtensions)
             {
-                IEnumerable<string> files = Directory.GetFiles(path, filter, searchOption);
+                IEnumerable<string> files = Directory.EnumerateFiles(path, "*.*", searchOption).Where(s => extension.Contains(Path.GetExtension(s).TrimEnd('.').ToLowerInvariant()));
 
                 if (returnShortPath)
                 {
@@ -86,17 +83,9 @@ namespace CustomSabersLite.Utilities
         {
             try
             {
-                Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("CustomSabersLite.Resources.CustomSaber.dll");
-                
-                if (stream == null)
-                {
-                    return false;
-                }
+                byte[] customSaberAssembly = await ResourceLoading.LoadFromResourceAsync("CustomSabersLite.Resources.CustomSaber.dll");
 
-                byte[] result = new byte[stream.Length];
-                await stream.ReadAsync(result, 0, result.Length);
-
-                Assembly.Load(result);
+                Assembly.Load(customSaberAssembly);
 
                 return true;
             }

@@ -26,7 +26,7 @@ namespace CustomSabersLite.Components
         {
             string selectedSaber = config.CurrentlySelectedSaber; // assetLoader.SelectedSaber.FileName > previously selected saber
 
-            if (selectedSaber != assetLoader.SelectedSaber?.FileName)
+            if (selectedSaber != assetLoader.SelectedSaber?.FilePath)
             {
                 // The saber was changed so load the new one
                 assetLoader.SelectedSaber?.Destroy();
@@ -52,7 +52,7 @@ namespace CustomSabersLite.Components
                 return;
             }
 
-            if (customSaberData.FileName != "Default")
+            if (customSaberData.FilePath != "Default")
             {
                 GameObject sabersObject = GameObject.Instantiate(customSaberData.SabersObject);
 

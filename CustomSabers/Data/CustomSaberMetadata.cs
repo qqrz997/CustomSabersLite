@@ -13,17 +13,17 @@ namespace CustomSabersLite.Data
 
         public string AuthorName;
 
-        public string SaberFileName;
+        public string RelativePath;
 
         public bool MissingShaders; // todo - flag
 
         public byte[] CoverImage;
 
-        public CustomSaberMetadata(string saberName,  string authorName, string saberFileName = null, bool missingShaders = false, byte[] coverImage = null)
+        public CustomSaberMetadata(string saberName,  string authorName, string relativePath = null, bool missingShaders = false, byte[] coverImage = null)
         {
             SaberName = saberName;
             AuthorName = authorName;
-            SaberFileName = saberFileName;
+            RelativePath = relativePath;
             MissingShaders = missingShaders;
             CoverImage = coverImage;
         }

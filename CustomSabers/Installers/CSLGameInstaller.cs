@@ -22,12 +22,12 @@ namespace CustomSabersLite.Installers
             Container.BindInterfacesAndSelfTo<EventManagerManager>().AsTransient();
 
             // Create the custom sabers
-            Container.BindInterfacesAndSelfTo<CSLSaberSet>().AsCached().NonLazy();
+            Container.BindInterfacesAndSelfTo<CSLSaberSet>().AsCached();
 
             if (config.CurrentlySelectedSaber != "Default")
             {
                 // This replaces the default sabers
-                Container.BindInstance(SaberModelRegistration.Create<CSLSaberModelController>(5)).AsSingle().Lazy();
+                Container.BindInstance(SaberModelRegistration.Create<CSLSaberModelController>(5)).AsSingle();
             }
 
             Container.Bind<DefaultSaberSetter>().FromNewComponentOnNewGameObject().AsSingle().NonLazy();

@@ -85,7 +85,7 @@ namespace CustomSabersLite.Utilities
 
                 for (int i = 0; i < SabersMetadata.Count(); i++)
                 {
-                    if (SabersMetadata[i].SaberFileName == config.CurrentlySelectedSaber)
+                    if (SabersMetadata[i].RelativePath == config.CurrentlySelectedSaber)
                     {
                         SelectedSaberIndex = i;
                         break;
@@ -115,7 +115,7 @@ namespace CustomSabersLite.Utilities
 
                 for (int i = 0; i < SabersMetadata.Count(); i++)
                 {
-                    if (SabersMetadata[i].SaberFileName == config.CurrentlySelectedSaber)
+                    if (SabersMetadata[i].RelativePath == config.CurrentlySelectedSaber)
                     {
                         SelectedSaberIndex = i;
                         break;
@@ -150,20 +150,32 @@ namespace CustomSabersLite.Utilities
             SaberMetadataFiles = Enumerable.Empty<string>();
         }
 
-        private IEnumerable<string> GetSaberFiles(bool returnShortPath = false)
+        private IEnumerable<string> GetSaberFiles(bool returnShortPath)
         {
-            IEnumerable<string> saberExt = new List<string> { "*.saber" };
-            IEnumerable<string> saberFiles = CSLUtils.GetFileNames(saberAssetPath, saberExt, SearchOption.AllDirectories, returnShortPath);
+            IEnumerable<string> saberExt = new List<string> { ".saber" };
+            IEnumerable<string> saberFiles =
+                CSLUtils.GetFilePaths(
+                    saberAssetPath,
+                    saberExt,
+                    searchOption: SearchOption.AllDirectories,
+                    returnShortPath
+                );
             Logger.Info($"{saberFiles.Count()} external sabers found");
             return saberFiles;
         }
 
-        private IEnumerable<string> GetMetadataFiles(bool returnShortPath = false)
+        private IEnumerable<string> GetMetadataFiles(bool returnShortPath)
         {
-            IEnumerable<string> metaExt = new List<string> { "*.meta" };
-            IEnumerable<string> saberMetadataFiles = CSLUtils.GetFileNames(cachePath, metaExt, SearchOption.AllDirectories, returnShortPath);
-            Logger.Info($"{saberMetadataFiles.Count()} metadata files found");
-            return saberMetadataFiles;
+            IEnumerable<string> metaExt = new List<string> { ".meta" };
+            IEnumerable<string> metadataFiles = 
+                CSLUtils.GetFilePaths(
+                    cachePath, 
+                    metaExt, 
+                    searchOption: SearchOption.TopDirectoryOnly, 
+                    returnShortPath
+                );
+            Logger.Info($"{metadataFiles.Count()} metadata files found");
+            return metadataFiles;
         }
 
         private Dictionary<string, CustomSaberMetadata> GetMetadataFromFiles()
@@ -179,7 +191,7 @@ namespace CustomSabersLite.Utilities
             {
                 string json = File.ReadAllText(filePath);
                 CustomSaberMetadata metadata = JsonConvert.DeserializeObject<CustomSaberMetadata>(json);
-                string saberFileName = metadata.SaberFileName;
+                string saberFileName = metadata.RelativePath;
                 string saberPath = Path.Combine(saberAssetPath, saberFileName);
                 if (File.Exists(saberPath))
                 {
@@ -207,7 +219,7 @@ namespace CustomSabersLite.Utilities
 
             foreach (CustomSaberData saber in loadedSaberData)
             {
-                if (saber.FileName == "Default") continue;
+                if (saber.FilePath == "Default") continue;
 
                 byte[] coverImage = null;
                 if (saber.Descriptor.CoverImage != null)
@@ -223,19 +235,24 @@ namespace CustomSabersLite.Utilities
                     }
                 }
 
+                Logger.Info($"Loaded saber file path {saber.FilePath}");
+
                 CustomSaberMetadata metadata = new CustomSaberMetadata(
                     saber.Descriptor.SaberName,
                     saber.Descriptor.AuthorName,
-                    saber.FileName,
+                    saber.FilePath,
                     saber.MissingShaders,
                     coverImage);
 
+                string metaFileName = Path.GetFileNameWithoutExtension(saber.FilePath) + ".meta";
+
                 // Cache data for each loaded saber
-                string metaFilePath = Path.Combine(cachePath, saber.FileName + ".meta");
+                string metaFilePath = Path.Combine(cachePath, metaFileName);
 
                 if (!File.Exists(metaFilePath))
                 {
                     string json = JsonConvert.SerializeObject(metadata);
+                    Logger.Info($"Writing metadata to {metaFilePath}");
                     File.WriteAllText(metaFilePath, json);
                     fileMetadata.Add(metaFilePath, metadata);
                 }
@@ -243,10 +260,7 @@ namespace CustomSabersLite.Utilities
                 saber.Destroy();
             }
 
-            foreach (CustomSaberMetadata customMetadata in fileMetadata.Values)
-            {
-                SabersMetadata.Add(customMetadata);
-            }
+            SabersMetadata.AddRange(fileMetadata.Values);
         }
 
         internal void ClearCache()
@@ -303,7 +317,7 @@ namespace CustomSabersLite.Utilities
 
         private static CustomSaberData FixSaberShaders(CustomSaberData saber)
         {
-            Logger.Debug($"Repairing shaders for {saber.FileName}");
+            Logger.Debug($"Repairing shaders for {saber.FilePath}");
             try
             {
                 List<Material> materials = ShaderRepair.GetMaterialsFromGameObjectRenderers(saber.SabersObject);
@@ -330,7 +344,7 @@ namespace CustomSabersLite.Utilities
             }
             catch (Exception ex)
             {
-                Logger.Warn($"Problem encountered when repairing shaders for {saber.FileName}");
+                Logger.Warn($"Problem encountered when repairing shaders for {saber.FilePath}");
                 Logger.Error(ex.ToString());
             }
             return saber;
@@ -353,7 +367,7 @@ namespace CustomSabersLite.Utilities
                 var replacementInfo = await ShaderRepair.FixShadersOnMaterialsAsync(materials);
                 if (!replacementInfo.AllShadersReplaced)
                 {
-                    Logger.Warn($"Missing shader replacement data for {saber.FileName}:");
+                    Logger.Warn($"Missing shader replacement data for {saber.FilePath}:");
                     foreach (var shaderName in replacementInfo.MissingShaderNames)
                     {
                         Logger.Warn($"\t- {shaderName}");
@@ -362,7 +376,7 @@ namespace CustomSabersLite.Utilities
             }
             catch (Exception ex)
             {
-                Logger.Warn($"Problem encountered when repairing shaders for {saber.FileName}");
+                Logger.Warn($"Problem encountered when repairing shaders for {saber.FilePath}");
                 Logger.Error(ex.ToString());
             }
             return saber;
@@ -474,7 +488,7 @@ namespace CustomSabersLite.Utilities
         {
             CustomSaberData saber = LoadSaberFromAsset(fileName);
 
-            if (saber.FileName != "Default") saber = FixSaberShaders(saber);
+            if (saber.FilePath != "Default") saber = FixSaberShaders(saber);
 
             return saber;
         }

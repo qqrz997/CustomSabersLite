@@ -105,15 +105,8 @@ namespace CustomSabersLite.Components
             this.color = color;
 
             // set the color of the saber here!!!!
-            if (customSaberInstance != null)
-            {
-                customSaberInstance.SetColor(color);
-            }
-
-            if (customTrailInstance != null)
-            {
-                customTrailInstance.SetColor(color);
-            }
+            customSaberInstance?.SetColor(color);
+            customTrailInstance?.SetColor(color);
         }
     }
 }
