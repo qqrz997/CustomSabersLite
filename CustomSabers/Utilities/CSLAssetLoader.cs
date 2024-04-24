@@ -235,8 +235,6 @@ namespace CustomSabersLite.Utilities
                     }
                 }
 
-                Logger.Info($"Loaded saber file path {saber.FilePath}");
-
                 CustomSaberMetadata metadata = new CustomSaberMetadata(
                     saber.Descriptor.SaberName,
                     saber.Descriptor.AuthorName,
@@ -252,7 +250,6 @@ namespace CustomSabersLite.Utilities
                 if (!File.Exists(metaFilePath))
                 {
                     string json = JsonConvert.SerializeObject(metadata);
-                    Logger.Info($"Writing metadata to {metaFilePath}");
                     File.WriteAllText(metaFilePath, json);
                     fileMetadata.Add(metaFilePath, metadata);
                 }
