@@ -5,6 +5,7 @@ using BeatSaberMarkupLanguage.ViewControllers;
 using HMUI;
 using CustomSabersLite.Data;
 using CustomSabersLite.Utilities;
+using CustomSabersLite.Utilities.AssetBundles;
 using CustomSabersLite.Configuration;
 using UnityEngine;
 using System.IO;

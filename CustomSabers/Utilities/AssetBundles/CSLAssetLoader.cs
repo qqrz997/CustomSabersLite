@@ -12,8 +12,11 @@ using System.Diagnostics;
 using CustomSaber;
 using Zenject;
 
-namespace CustomSabersLite.Utilities
+namespace CustomSabersLite.Utilities.AssetBundles
 {
+    /// <summary>
+    /// Handles loading and storing .saber files - is planned to be split up
+    /// </summary>
     internal class CSLAssetLoader : IInitializable, IDisposable
     {
         private readonly PluginDirs pluginDirs;

@@ -191,7 +191,10 @@
     <Compile Include="UI\Views\SaberSettingsViewController.cs" />
     <Compile Include="UI\CSLMenuButton.cs" />
     <Compile Include="UI\Views\TestViewController.cs" />
-    <Compile Include="Utilities\CSLAssetLoader.cs" />
+    <Compile Include="Utilities\AssetBundles\BundleLoader.cs" />
+    <Compile Include="Utilities\AssetBundles\CSLAssetLoader.cs" />
+    <Compile Include="Utilities\AssetBundles\CustomSaberLoader.cs" />
+    <Compile Include="Utilities\AssetBundles\IBundleLoader.cs" />
     <Compile Include="Utilities\CSLUtils.cs" />
     <Compile Include="Components\CSLSaberTrail.cs" />
     <Compile Include="Components\TrailHandler.cs" />

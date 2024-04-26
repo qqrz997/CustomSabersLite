@@ -10,7 +10,7 @@ using System.Linq;
 using TMPro;
 using Zenject;
 using BeatSaberMarkupLanguage.Components;
-using CustomSabersLite.Utilities;
+using CustomSabersLite.Utilities.AssetBundles;
 using System.IO;
 using HMUI;
 using System.Text.RegularExpressions;

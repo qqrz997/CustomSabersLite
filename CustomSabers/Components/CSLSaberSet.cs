@@ -1,6 +1,6 @@
 ﻿using CustomSabersLite.Configuration;
 using CustomSabersLite.Data;
-using CustomSabersLite.Utilities;
+using CustomSabersLite.Utilities.AssetBundles;
 using UnityEngine;
 using Zenject;
 
