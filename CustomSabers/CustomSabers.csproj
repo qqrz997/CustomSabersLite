@@ -180,8 +180,7 @@
     <Compile Include="PluginDirs.cs" />
     <Compile Include="UI\CSLFlowCoordinator.cs" />
     <Compile Include="UI\CSLViewManager.cs" />
-    <Compile Include="UI\ISharedSaberSettings.cs" />
-    <Compile Include="UI\SharedProperties.cs" />
+    <Compile Include="Configuration\SharedSaberSettings.cs" />
     <Compile Include="UI\Views\GameplaySetupTab.cs" />
     <Compile Include="UI\Views\SaberListViewController.cs" />
     <Compile Include="Data\CustomSaberData.cs" />
@@ -203,6 +202,7 @@
     <Compile Include="Utilities\ImageLoading.cs" />
     <Compile Include="Utilities\ResourceLoading.cs" />
     <Compile Include="Utilities\TrailUtils.cs" />
+    <Compile Include="Utilities\UI\BSMLHelpers.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="manifest.json" />

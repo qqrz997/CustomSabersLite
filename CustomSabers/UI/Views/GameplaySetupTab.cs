@@ -16,10 +16,11 @@ using HMUI;
 using System.Text.RegularExpressions;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using CustomSabersLite.Utilities.UI;
 
 namespace CustomSabersLite.UI
 {
-    internal class GameplaySetupTab : IInitializable, IDisposable, INotifyPropertyChanged, ISharedSaberSettings
+    internal class GameplaySetupTab : IInitializable, IDisposable, INotifyPropertyChanged
     {
         private readonly PluginDirs pluginDirs;
         private readonly CSLConfig config;
@@ -36,7 +37,7 @@ namespace CustomSabersLite.UI
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private string resourceName => "CustomSabersLite.UI.BSML.gameplaySetup.bsml";
+        private readonly string resourceName = "CustomSabersLite.UI.BSML.gameplaySetup.bsml";
         private bool parsed;
         private string saberAssetPath;
 
@@ -69,7 +70,7 @@ namespace CustomSabersLite.UI
             set
             {
                 config.OverrideTrailDuration = value;
-                SetTrailDurationInteractable(value);
+                BSMLHelpers.SetSliderInteractable(trailDurationInteractable, value);
             }
         }
 
@@ -80,14 +81,30 @@ namespace CustomSabersLite.UI
             set => config.TrailDuration = value;
         }
 
+        [UIValue("override-trail-width")]
+        public bool OverrideTrailWidth
+        {
+            get => config.OverrideTrailWidth;
+            set
+            {
+                config.OverrideTrailWidth = value;
+                BSMLHelpers.SetSliderInteractable(trailWidthInteractable, value);
+            }
+        }
+
+        [UIValue("trail-width")]
+        public int TrailWidth
+        {
+            get => config.TrailWidth;
+            set => config.TrailWidth = value;
+        }
+
         [UIValue("trail-type")]
-        public string trailType
+        public string TrailType
         {
             get => config.TrailType.ToString();
             set => config.TrailType = Enum.TryParse(value, out TrailType trailType) ? trailType : config.TrailType;
         }
-
-        public TrailType TrailType { get; set; } // todo - this is temporary
 
         [UIValue("trail-type-list")]
         public List<object> trailTypeList = Enum.GetNames(typeof(TrailType)).ToList<object>();
@@ -138,6 +155,12 @@ namespace CustomSabersLite.UI
 
         [UIComponent("trail-duration")]
         private TextMeshProUGUI trailDurationText;
+
+        [UIComponent("trail-width")]
+        private GenericInteractableSetting trailWidthInteractable;
+
+        [UIComponent("trail-width")]
+        private TextMeshProUGUI trailWidthText;
 
         [UIComponent("forcefully-foolish")]
         private Transform foolishSetting;
@@ -206,22 +229,8 @@ namespace CustomSabersLite.UI
             parsed = true;
             Root = saberList.gameObject;
 
-            SetComponentSettings();
-            SetupList();
-        }
-
-        private void SetTrailDurationInteractable(bool value)
-        {
-            if (parsed)
-            {
-                trailDurationText.color = new Color(1f, 1f, 1f, value ? 1f : 0.5f);
-                trailDurationInteractable.interactable = OverrideTrailDuration;
-            }
-        }
-
-        private void SetComponentSettings()
-        {
-            SetTrailDurationInteractable(OverrideTrailDuration);
+            BSMLHelpers.SetSliderInteractable(trailDurationInteractable, OverrideTrailDuration);
+            BSMLHelpers.SetSliderInteractable(trailWidthInteractable, OverrideTrailWidth);
 
             // Saber Trail Type list setting 
             RectTransform trailTypePickerRect = trailTypeRT.gameObject.transform.Find("ValuePicker").GetComponent<RectTransform>();
@@ -229,9 +238,13 @@ namespace CustomSabersLite.UI
             trailTypePickerRect.sizeDelta = new Vector2(30, trailTypePickerRect.sizeDelta.y);
             trailTypeTextRect.sizeDelta = new Vector2(0, trailTypeTextRect.sizeDelta.y);
 
-            // Trail Duration slider setting
+            // Trail duration and width slider setting
             RectTransform trailDurationRect = trailDurationText.transform.parent.transform.Find("BSMLSlider").GetComponent<RectTransform>();
+            RectTransform trailWidthRect = trailWidthText.transform.parent.transform.Find("BSMLSlider").GetComponent<RectTransform>();
             trailDurationRect.sizeDelta = new Vector2(50, trailDurationRect.sizeDelta.y);
+            trailWidthRect.sizeDelta = new Vector2(50, trailWidthRect.sizeDelta.y);
+
+            SetupList();
         }
 
         public void SetupList()
@@ -278,11 +291,10 @@ namespace CustomSabersLite.UI
                 firstActivation = false;
             }
 
-            foreach (string name in SharedProperties.Names)
+            foreach (string name in SharedSaberSettings.PropertyNames)
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
             }
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(trailType)));
 
             if (config.Fooled)
             {

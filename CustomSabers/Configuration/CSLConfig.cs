@@ -8,7 +8,7 @@ using CustomSabersLite.UI;
 [assembly: InternalsVisibleTo(GeneratedStore.AssemblyVisibilityTarget)]
 namespace CustomSabersLite.Configuration
 {
-    internal class CSLConfig : ISharedSaberSettings
+    internal class CSLConfig
     {
         public virtual bool Enabled { get; set; } = true;
 
@@ -21,6 +21,10 @@ namespace CustomSabersLite.Configuration
         public virtual bool OverrideTrailDuration { get; set; } = false;
 
         public virtual int TrailDuration { get; set; } = 100;
+
+        public virtual bool OverrideTrailWidth { get; set; } = false;
+
+        public virtual int TrailWidth { get; set; } = 100;
 
         public virtual bool DisableWhiteTrail { get; set; } = true;
 

@@ -22,12 +22,7 @@ namespace CustomSabersLite.Utilities
             this.gameplaySetupData = gameplaySetupData;
         }
 
-        public CSLSaberTrail TrailInstance
-        {
-            get => trailInstance ?? null;
-        }
-
-        private CSLSaberTrail trailInstance;
+        public CSLSaberTrail Trail { get; private set; }
 
         private SaberTrailRenderer defaultTrailRendererPrefab;
         private MeshRenderer defaultMeshRenderer;
@@ -55,7 +50,7 @@ namespace CustomSabersLite.Utilities
         {
             TryGetCustomTrail(customSaber, out CustomTrail customTrail);
 
-            if (customTrail == null)
+            if (customTrail is null)
             {
                 Logger.Warn("No custom trails. Defaulting to existing saber trails.");
                 SetupDefaultTrail(defaultTrail);
@@ -63,7 +58,7 @@ namespace CustomSabersLite.Utilities
             }
 
             Logger.Debug($"Initializing custom trail to {defaultTrail.name}");
-            trailInstance = customSaber.gameObject.AddComponent<CSLSaberTrail>();
+            Trail = customSaber.gameObject.AddComponent<CSLSaberTrail>();
 
             try
             {
@@ -81,8 +76,17 @@ namespace CustomSabersLite.Utilities
             }
 
             // We will setup the trail values here
-            trailInstance.Setup(customTrail.PointEnd, customTrail.PointStart);
-            
+            if (config.OverrideTrailWidth)
+            {
+                Vector3 trailTop = customTrail.PointEnd.localPosition;
+                Vector3 trailBottom = customTrail.PointStart.localPosition;
+                float distance = Vector3.Distance(trailTop, trailBottom);
+                float width =  distance > 0 ? config.TrailWidth / 100f / distance : 1f;
+                
+                customTrail.PointStart.localPosition = Vector3.LerpUnclamped(trailTop, trailBottom, width);
+            }
+            Trail.Setup(customTrail.PointEnd, customTrail.PointStart);
+
             Color materialColor;
             MeshRenderer newMeshRenderer = defaultMeshRenderer;
             float trailIntensity = gameplaySetupData.playerSpecificSettings.saberTrailIntensity;
@@ -107,16 +111,16 @@ namespace CustomSabersLite.Utilities
             ReflectionUtil.SetField(defaultSaberTrailRenderer, "_meshRenderer", newMeshRenderer);
 
             // Variables are null so set them
-            trailInstance.TrailRendererPrefab = defaultTrailRendererPrefab;
-            trailInstance.SamplingFrequency = defaultSamplingFrequency;
-            trailInstance.Granularity = defaultGranularity;
-            trailInstance.Color = saberTrailColor;
-            trailInstance.MovementData = trailInstance.CustomTrailMovementData;
-            trailInstance.TrailRenderer = defaultSaberTrailRenderer;
-            trailInstance.TrailElementCollection = defaultTrailElementCollection;
-            trailInstance.colorType = customTrail.colorType;
-            trailUtils.SetTrailDuration(trailInstance);
-            trailUtils.SetWhiteTrailDuration(trailInstance);
+            Trail.TrailRendererPrefab = defaultTrailRendererPrefab;
+            Trail.SamplingFrequency = defaultSamplingFrequency;
+            Trail.Granularity = defaultGranularity;
+            Trail.Color = saberTrailColor;
+            Trail.MovementData = Trail.CustomTrailMovementData;
+            Trail.TrailRenderer = defaultSaberTrailRenderer;
+            Trail.TrailElementCollection = defaultTrailElementCollection;
+            Trail.colorType = customTrail.colorType;
+            trailUtils.SetTrailDuration(Trail);
+            trailUtils.SetWhiteTrailDuration(Trail);
 
             return false;
         }

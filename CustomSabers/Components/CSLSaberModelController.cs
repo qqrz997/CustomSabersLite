@@ -90,9 +90,9 @@ namespace CustomSabersLite.Components
             // Returns false if a custom trail is created
             bool defaultInit = trailHandler.CreateTrail(defaultTrail, saberColor, customSaberInstance.gameObject);
 
-            if (trailHandler.TrailInstance != null)
+            if (trailHandler.Trail != null)
             {
-                customTrailInstance = trailHandler.TrailInstance;
+                customTrailInstance = trailHandler.Trail;
             }
 
             SetColor(saberColor);

@@ -1,7 +1,6 @@
 ﻿using CustomSabersLite.Configuration;
 using IPA.Utilities;
 using UnityEngine;
-using Zenject;
 
 namespace CustomSabersLite.Utilities
 {

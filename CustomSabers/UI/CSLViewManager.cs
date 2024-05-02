@@ -37,7 +37,7 @@ namespace CustomSabersLite.UI
 
         private IEnumerator WaitForSabersTabEnabled()
         {
-            yield return new WaitUntil(() => { return customSabersTab.Root.activeInHierarchy; });
+            yield return new WaitUntil(() => customSabersTab.Root.activeInHierarchy);
 
             customSabersTab.Activated();
         }

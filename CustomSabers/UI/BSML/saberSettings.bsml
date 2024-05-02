@@ -23,6 +23,12 @@
       <!--Trail duration as a multiplier to SaberTail _trailDuration from 0% to 100%-->
       <slider-setting text='Trail Length' value='trail-duration' id='trail-duration' interactable='true' min='0' max='100' increment='1' integer-only='true' show-buttons='true' apply-on-change='true' bind-value='true' hover-hint='Tune the duration/length of sabers&apos; trails' />
 
+      <!--Toggle trail width overriding-->
+      <checkbox-setting text='Override Trail Width' value='override-trail-width' apply-on-change='true' bind-value='true' hover-hint='Allows you to set the width of trails' />
+
+      <!--Trail width 0 = top of trail, 100 = standard unit-->
+      <slider-setting text='Trail Width' value='trail-width' id='trail-width' interactable='true' min='0' max='100' increment='1' integer-only='true' show-buttons='true' apply-on-change='true' bind-value='true' hover-hint='Tune the width of sabers&apos; trails' />
+
       <!--Trail type (custom, vanilla, none)-->
       <list-setting text='Saber Trail Type' value='trail-type' options='trail-type-list' apply-on-change='true' bind-value='true' hover-hint='Select the type of trail you want to use' />
     </vertical>
