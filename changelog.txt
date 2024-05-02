@@ -1,5 +1,8 @@
 changelog
 
+0.8.3
+- Added a setting to adjust the width of custom trails
+
 0.8.2
 - Fixed sabers not loading if any sabers were in subfolders of the CustomSabers folder
 
