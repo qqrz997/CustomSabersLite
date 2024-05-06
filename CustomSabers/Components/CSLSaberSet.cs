@@ -38,7 +38,7 @@ namespace CustomSabersLite.Components
         private CSLSaber GetSaberInstance(SaberType saberType)
         {
             // Check if sabers are loaded or have changed
-            if (!sabers || config.CurrentlySelectedSaber != assetLoader.SelectedSaber.FilePath)
+            if (LeftSaber == null || RightSaber == null || config.CurrentlySelectedSaber != assetLoader.SelectedSaber.FilePath)
             {
                 LoadSabers();
             }
@@ -92,6 +92,9 @@ namespace CustomSabersLite.Components
                 GameObject.Destroy(sabers);
                 GameObject.Destroy(LeftSaber);
                 GameObject.Destroy(RightSaber);
+                sabers = null;
+                LeftSaber = null;
+                RightSaber = null;
             }
         }
     }
