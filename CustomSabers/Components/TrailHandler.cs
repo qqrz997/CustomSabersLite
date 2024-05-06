@@ -78,12 +78,12 @@ namespace CustomSabersLite.Utilities
             // We will setup the trail values here
             if (config.OverrideTrailWidth)
             {
-                Vector3 trailTop = customTrail.PointEnd.localPosition;
-                Vector3 trailBottom = customTrail.PointStart.localPosition;
+                Vector3 trailTop = customTrail.PointEnd.position;
+                Vector3 trailBottom = customTrail.PointStart.position;
                 float distance = Vector3.Distance(trailTop, trailBottom);
-                float width =  distance > 0 ? config.TrailWidth / 100f / distance : 1f;
-                
-                customTrail.PointStart.localPosition = Vector3.LerpUnclamped(trailTop, trailBottom, width);
+                float width = distance > 0 ? config.TrailWidth / 100f / distance : 1f;
+
+                customTrail.PointStart.position = Vector3.LerpUnclamped(trailTop, trailBottom, width);
             }
             Trail.Setup(customTrail.PointEnd, customTrail.PointStart);
 
