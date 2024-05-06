@@ -4,6 +4,7 @@ changelog
 - Added a custom saber preview to the main menu
 - Decreased load times by not loading the saber at the start of a map
 - Fixed trail width setting linking to trail duration toggle
+- Fixed trail width setting using local scale instead of world scale
 
 0.8.3
 - Added a setting to adjust the width of custom trails
