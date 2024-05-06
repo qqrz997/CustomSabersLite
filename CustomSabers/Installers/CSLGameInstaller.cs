@@ -21,9 +21,6 @@ namespace CustomSabersLite.Installers
             Container.Bind<CustomTrailHandler>().AsSingle();
             Container.BindInterfacesAndSelfTo<EventManagerManager>().AsTransient();
 
-            // Create the custom sabers
-            Container.BindInterfacesAndSelfTo<CSLSaberSet>().AsCached();
-
             if (config.CurrentlySelectedSaber != "Default")
             {
                 // This replaces the default sabers

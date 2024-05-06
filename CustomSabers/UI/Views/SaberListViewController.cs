@@ -14,8 +14,9 @@ using TMPro;
 using System.Diagnostics;
 using Zenject;
 using System.Collections;
+using CustomSabersLite.UI.Managers;
 
-namespace CustomSabersLite.UI
+namespace CustomSabersLite.UI.Views
 {
     [HotReload(RelativePathToLayout = "../BSML/saberList.bsml")]
     [ViewDefinition("CustomSabersLite.UI.BSML.saberList.bsml")]
@@ -24,14 +25,16 @@ namespace CustomSabersLite.UI
         private PluginDirs pluginDirs;
         private CSLConfig config;
         private CSLAssetLoader assetLoader;
+        private SaberPreviewManager previewManager;
         private GameplaySetupTab customSabersTab;
 
         [Inject]
-        public void Construct(PluginDirs pluginDirs, CSLConfig config, CSLAssetLoader assetLoader, GameplaySetupTab customSabersTab)
+        public void Construct(PluginDirs pluginDirs, CSLConfig config, CSLAssetLoader assetLoader, SaberPreviewManager previewManager, GameplaySetupTab customSabersTab)
         {
             this.pluginDirs = pluginDirs;
             this.config = config;
             this.assetLoader = assetLoader;
+            this.previewManager = previewManager;
             this.customSabersTab = customSabersTab;
             Init();
         }
@@ -50,6 +53,12 @@ namespace CustomSabersLite.UI
         [UIComponent("saber-list")]
         public CustomListTableData customListTableData;
 
+        [UIComponent("left-preview-saber")]
+        public Transform leftSaberParent;
+        
+        [UIComponent("right-preview-saber")]
+        public Transform rightSaberParent;
+
         [UIComponent("reload-button")]
         public Selectable reloadButtonSelectable;
 
@@ -65,9 +74,7 @@ namespace CustomSabersLite.UI
             Logger.Debug($"saber selected at row {row}");
             assetLoader.SelectedSaberIndex = row;
             config.CurrentlySelectedSaber = assetLoader.SabersMetadata[row].RelativePath;
-
-            // currently loading saber on game load, probably should do it on saber select instead
-            // that can be used for saber previewing
+            previewManager.GeneratePreview(leftSaberParent, rightSaberParent);
         }
 
         [UIAction("open-in-explorer")]
@@ -129,7 +136,7 @@ namespace CustomSabersLite.UI
                 catch (Exception ex)
                 {
                     Logger.Error("Problem encountered when trying to delete selected saber");
-                    Logger.Error(ex.ToString());
+                    Logger.Error(ex.Message);
                 }
             }
         }
@@ -185,8 +192,6 @@ namespace CustomSabersLite.UI
             }
 
             customListTableData.tableView.ReloadData();
-
-            StartCoroutine(ScrollToSelectedCell());
         }
 
         protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
@@ -202,6 +207,7 @@ namespace CustomSabersLite.UI
             int selectedSaber = assetLoader.SelectedSaberIndex;
             customListTableData.tableView.SelectCellWithIdx(selectedSaber);
             customListTableData.tableView.ScrollToCellWithIdx(selectedSaber, TableView.ScrollPositionType.Center, true);
+            Select(customListTableData.tableView, assetLoader.SelectedSaberIndex);
         }
     }
 }

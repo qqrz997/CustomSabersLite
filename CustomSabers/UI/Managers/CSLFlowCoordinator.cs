@@ -1,11 +1,9 @@
 ﻿using HMUI;
 using System;
-using BeatSaberMarkupLanguage;
-using BeatSaberMarkupLanguage.Animations;
 using CustomSabersLite.UI.Views;
 using Zenject;
 
-namespace CustomSabersLite.UI
+namespace CustomSabersLite.UI.Managers
 {
     internal class CSLFlowCoordinator : FlowCoordinator
     {
@@ -40,7 +38,7 @@ namespace CustomSabersLite.UI
             catch (Exception ex)
             {
                 Logger.Error("CSLFlowCoordinator.DidActivate");
-                Logger.Error(ex.ToString());
+                Logger.Error(ex.Message);
             }
         }
 

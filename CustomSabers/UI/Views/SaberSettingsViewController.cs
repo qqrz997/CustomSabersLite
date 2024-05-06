@@ -12,7 +12,7 @@ using Zenject;
 using System.ComponentModel;
 using CustomSabersLite.Utilities.UI;
 
-namespace CustomSabersLite.UI
+namespace CustomSabersLite.UI.Views
 {
     [HotReload(RelativePathToLayout = "../BSML/saberSettings.bsml")]
     [ViewDefinition("CustomSabersLite.UI.BSML.saberSettings.bsml")]
@@ -64,7 +64,7 @@ namespace CustomSabersLite.UI
             set
             {
                 config.OverrideTrailDuration = value;
-                if (parsed) BSMLHelpers.SetSliderInteractable(trailWidthInteractable, value, trailWidthText);
+                if (parsed) BSMLHelpers.SetSliderInteractable(trailDurationInteractable, value, trailDurationText);
             }
         }
 

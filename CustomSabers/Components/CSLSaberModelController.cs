@@ -4,6 +4,7 @@ using UnityEngine;
 using Zenject;
 using IPA.Utilities;
 using CustomSabersLite.Configuration;
+using CustomSabersLite.Components.Interfaces;
 
 namespace CustomSabersLite.Components
 {
@@ -11,12 +12,12 @@ namespace CustomSabersLite.Components
     {
         private CustomTrailHandler trailHandler;
         private ColorManager colorManager;
-        private CSLSaberSet saberSet;
+        private ISaberSet saberSet;
         private EventManagerManager eventManagerManager;
         private CSLConfig config;
 
         [Inject]
-        public void Construct(CustomTrailHandler trailHandler, ColorManager colorManager, CSLSaberSet saberSet, EventManagerManager eventManagerManager, CSLConfig config)
+        public void Construct(CustomTrailHandler trailHandler, ColorManager colorManager, ISaberSet saberSet, EventManagerManager eventManagerManager, CSLConfig config)
         {
             this.trailHandler = trailHandler;
             this.colorManager = colorManager;
@@ -51,8 +52,9 @@ namespace CustomSabersLite.Components
 
         private bool CSLSaberInit(Transform parent, Saber saber)
         {
-            SaberType saberType = saber.saberType;
+            // saberSet.LoadSabers();
 
+            SaberType saberType = saber.saberType;
             customSaberInstance = saberSet.CustomSaberForSaberType(saberType);
 
             if (customSaberInstance == null)

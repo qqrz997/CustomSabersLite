@@ -171,6 +171,7 @@
     <Compile Include="Components\CSLSaberSet.cs" />
     <Compile Include="Components\EventManagerManager.cs" />
     <Compile Include="Components\ExtraSaberManager.cs" />
+    <Compile Include="Components\Interfaces\ISaberSet.cs" />
     <Compile Include="Data\CustomSaberMetadata.cs" />
     <Compile Include="Data\TrailType.cs" />
     <Compile Include="Installers\CSLAppInstaller.cs" />
@@ -178,8 +179,9 @@
     <Compile Include="Installers\CSLMenuInstaller.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="PluginDirs.cs" />
-    <Compile Include="UI\CSLFlowCoordinator.cs" />
-    <Compile Include="UI\CSLViewManager.cs" />
+    <Compile Include="UI\Managers\CSLFlowCoordinator.cs" />
+    <Compile Include="UI\Managers\SaberPreviewManager.cs" />
+    <Compile Include="UI\Managers\ViewControllerManager.cs" />
     <Compile Include="Configuration\SharedSaberSettings.cs" />
     <Compile Include="UI\Views\GameplaySetupTab.cs" />
     <Compile Include="UI\Views\SaberListViewController.cs" />
@@ -188,7 +190,7 @@
     <Compile Include="Configuration\CSLConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\Views\SaberSettingsViewController.cs" />
-    <Compile Include="UI\CSLMenuButton.cs" />
+    <Compile Include="UI\Managers\MenuButtonManager.cs" />
     <Compile Include="UI\Views\TestViewController.cs" />
     <Compile Include="Utilities\AssetBundles\BundleLoader.cs" />
     <Compile Include="Utilities\AssetBundles\CSLAssetLoader.cs" />

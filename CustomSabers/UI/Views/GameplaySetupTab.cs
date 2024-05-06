@@ -18,7 +18,7 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using CustomSabersLite.Utilities.UI;
 
-namespace CustomSabersLite.UI
+namespace CustomSabersLite.UI.Views
 {
     internal class GameplaySetupTab : IInitializable, IDisposable, INotifyPropertyChanged
     {

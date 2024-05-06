@@ -1,4 +1,4 @@
-﻿using CustomSabersLite.UI;
+﻿using CustomSabersLite.UI.Managers;
 using CustomSabersLite.UI.Views;
 using Zenject;
 
@@ -17,8 +17,9 @@ namespace CustomSabersLite.Installers
             Container.BindInterfacesAndSelfTo<GameplaySetupTab>().AsSingle();
 
             //UI managers
-            Container.Bind<CSLViewManager>().FromNewComponentOnNewGameObject().AsSingle().NonLazy();
-            Container.BindInterfacesTo<CSLMenuButton>().AsSingle();
+            Container.Bind<ViewControllerManager>().FromNewComponentOnNewGameObject().AsSingle().NonLazy();
+            Container.BindInterfacesTo<MenuButtonManager>().AsSingle();
+            Container.Bind<SaberPreviewManager>().AsSingle();
         }
     }
 }

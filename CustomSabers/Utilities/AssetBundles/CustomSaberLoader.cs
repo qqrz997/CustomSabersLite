@@ -33,11 +33,6 @@ namespace CustomSabersLite.Utilities.AssetBundles
         /// <param name="saberFileName">Path to the .saber file</param>
         public async Task<GameObject> LoadCustomSaberAsync(string saberFileName)
         {
-            Stopwatch sw = Stopwatch.StartNew();
-
-            Logger.Info($"Trying to load saber\n" +
-                        $"{saberFileName}");
-
             if (!Path.HasExtension(saberFileName))
             {
                 // might remove this
@@ -66,9 +61,6 @@ namespace CustomSabersLite.Utilities.AssetBundles
             }
 
             SaberDescriptor descriptor = sabers.GetComponent<SaberDescriptor>();
-
-            sw.Stop();
-            Logger.Info($"Loaded saber {descriptor?.SaberName ?? saberFileName} in {sw.ElapsedMilliseconds}ms");
 
             List<Material> materials = ShaderRepair.GetMaterialsFromGameObjectRenderers(sabers);
             foreach (Material trailMaterial in sabers.GetComponentsInChildren<CustomTrail>().Select(t => t.TrailMaterial))

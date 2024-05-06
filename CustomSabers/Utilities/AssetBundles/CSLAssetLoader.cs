@@ -234,7 +234,7 @@ namespace CustomSabersLite.Utilities.AssetBundles
                     catch (Exception ex)
                     {
                         Logger.Error("Problem encountered when reading stored image");
-                        Logger.Error(ex.ToString());
+                        Logger.Error(ex.Message);
                     }
                 }
 
@@ -345,7 +345,7 @@ namespace CustomSabersLite.Utilities.AssetBundles
             catch (Exception ex)
             {
                 Logger.Warn($"Problem encountered when repairing shaders for {saber.FilePath}");
-                Logger.Error(ex.ToString());
+                Logger.Error(ex.Message);
             }
             return saber;
         }
@@ -377,7 +377,7 @@ namespace CustomSabersLite.Utilities.AssetBundles
             catch (Exception ex)
             {
                 Logger.Warn($"Problem encountered when repairing shaders for {saber.FilePath}");
-                Logger.Error(ex.ToString());
+                Logger.Error(ex.Message);
             }
             return saber;
         }

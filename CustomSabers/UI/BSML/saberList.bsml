@@ -18,12 +18,14 @@
       </horizontal>
     </vertical>
 
+    <!-- saber preview -->
     <vertical preferred-width='50'>
       <horizontal horizontal-fit='PreferredSize' background='panel-top' preferred-width='35' preferred-height='7'>
         <text text='Saber Preview' align='Capline' font-size='6'/>
       </horizontal>
-      <horizontal preferred-height='60'>
-        <text text='Coming Soon&#8482;' align ='Center'/>
+      <horizontal preferred-height='65'>
+        <horizontal id='left-preview-saber'/>
+        <horizontal id='right-preview-saber'/>
       </horizontal>
     </vertical>
 

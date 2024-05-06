@@ -2,19 +2,19 @@
 using System;
 using Zenject;
 using UnityEngine;
-using CustomSabersLite.Utilities;
 using CustomSabersLite.Configuration;
+using CustomSabersLite.Components.Interfaces;
 
 namespace CustomSabersLite.Components
 {
     internal class ExtraSaberManager : IInitializable, IDisposable
     {
         private readonly CSLConfig config;
-        private readonly CSLSaberSet saberSet;
+        private readonly ISaberSet saberSet;
         private readonly SaberManager saberManager;
         private readonly ScoreController scoreController;
 
-        public ExtraSaberManager(ScoreController scoreController, CSLSaberSet saberSet, CSLConfig config, SaberManager saberManager)
+        public ExtraSaberManager(ScoreController scoreController, ISaberSet saberSet, CSLConfig config, SaberManager saberManager)
         {
             this.scoreController = scoreController;
             this.saberSet = saberSet;
@@ -54,8 +54,8 @@ namespace CustomSabersLite.Components
 
             if (config.CurrentlySelectedSaber != "Default")
             {
-                leftSaber = saberSet.LeftSaber;
-                rightSaber = saberSet.RightSaber;
+                leftSaber = saberSet.CustomSaberForSaberType(SaberType.SaberA);
+                rightSaber = saberSet.CustomSaberForSaberType(SaberType.SaberB);
 
                 AddCustomEvents();
             }

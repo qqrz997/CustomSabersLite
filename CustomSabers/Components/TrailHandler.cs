@@ -141,7 +141,7 @@ namespace CustomSabersLite.Utilities
 
         private void SetupDefaultTrail(SaberTrail defaultTrail)
         {
-            trailUtils.SetTrailDuration(defaultTrail);
+            trailUtils.SetTrailDuration(defaultTrail, isDefaultSaber: true);
             trailUtils.SetWhiteTrailDuration(defaultTrail);
         }
     }

@@ -55,7 +55,7 @@ namespace CustomSabersLite.Utilities
                 }
                 catch (Exception ex) 
                 {
-                    Logger.Error(ex.ToString());
+                    Logger.Error(ex.Message);
                 }
             }
             return nullCoverImage;
@@ -73,7 +73,7 @@ namespace CustomSabersLite.Utilities
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error(ex.ToString());
+                    Logger.Error(ex.Message);
                 }
             }
             return defaultCoverImage;

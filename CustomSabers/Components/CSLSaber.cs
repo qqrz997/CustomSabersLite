@@ -13,18 +13,17 @@ namespace CustomSabersLite.Components
 
         public EventManager EventManager;
 
-        public void Setup(Transform parent)
+        public void Setup(Transform parent, bool worldPositionStays = false)
         {
-            transform.SetParent(parent);
+            transform.SetParent(parent, worldPositionStays);
             transform.position = parent.position;
             transform.rotation = parent.rotation;
             gameObject.SetActive(true);
         }
 
-        public void Awake()
+        void Awake()
         {
             gameObject.SetActive(false);
-
             GetColorableMaterialsFromSaber();
 
             try
@@ -34,6 +33,14 @@ namespace CustomSabersLite.Components
             catch
             {
                 EventManager = gameObject.AddComponent<EventManager>();
+            }
+        }
+
+        void OnDestroy()
+        {
+            if (EventManager)
+            {
+                Destroy(EventManager);
             }
         }
 
