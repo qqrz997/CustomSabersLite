@@ -5,10 +5,10 @@
   "author": "qqrz997",
   "version": "0.9.1",
   "description": "A plugin to replace default sabers with custom sabers.",
-  "gameVersion": "1.35.0",
+  "gameVersion": "1.36.2",
   "dependsOn": {
     "BSIPA": "^4.3.3",
-    "BeatSaberMarkupLanguage": "^1.10.3",
+    "BeatSaberMarkupLanguage": "^1.11.0",
     "AssetBundleLoadingTools": "^1.1.4",
     "SiraUtil": "^3.1.8"
   }
