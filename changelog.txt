@@ -1,5 +1,8 @@
 changelog
 
+0.9.1
+- Fixed saber color scheme settings not updating in their respective settings menus
+
 0.9.0
 - Added a custom saber preview to the main menu
 - Decreased load times by not loading the saber at the start of a map

@@ -13,7 +13,7 @@ namespace CustomSabersLite
     [Plugin(RuntimeOptions.SingleStartInit)]
     internal class Plugin
     {
-        public static string Version => "0.9.0";
+        public static string Version => "0.9.1";
 
         [Init]
         public async void Init(IPALogger logger, Config config, Zenjector zenjector)
