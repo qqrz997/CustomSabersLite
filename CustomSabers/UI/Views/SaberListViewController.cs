@@ -26,16 +26,16 @@ namespace CustomSabersLite.UI.Views
         private CSLConfig config;
         private CSLAssetLoader assetLoader;
         private SaberPreviewManager previewManager;
-        private GameplaySetupTab customSabersTab;
+        private GameplaySetupTab gameplaySetupTab;
 
         [Inject]
-        public void Construct(PluginDirs pluginDirs, CSLConfig config, CSLAssetLoader assetLoader, SaberPreviewManager previewManager, GameplaySetupTab customSabersTab)
+        public void Construct(PluginDirs pluginDirs, CSLConfig config, CSLAssetLoader assetLoader, SaberPreviewManager previewManager, GameplaySetupTab gameplaySetupTab)
         {
             this.pluginDirs = pluginDirs;
             this.config = config;
             this.assetLoader = assetLoader;
             this.previewManager = previewManager;
-            this.customSabersTab = customSabersTab;
+            this.gameplaySetupTab = gameplaySetupTab;
             Init();
         }
 
@@ -147,7 +147,7 @@ namespace CustomSabersLite.UI.Views
             reloadButtonSelectable.interactable = false;
             await assetLoader.ReloadAsync();
             SetupList();
-            customSabersTab.SetupList();
+            gameplaySetupTab.SetupList();
             Select(customListTableData.tableView, assetLoader.SelectedSaberIndex);
             reloadButtonSelectable.interactable = true;
         }
