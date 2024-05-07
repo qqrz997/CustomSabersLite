@@ -39,11 +39,11 @@
         <checkbox-setting text='Disable White Trail' hover-hint='Toggles the initial white part of trails' apply-on-change='true' bind-value='true' value='disable-white-trail'/>
 
         <!--Toggle color scheme-->
-        <checkbox-setting text='Saber Color Scheme' value='enable-custom-color-scheme' apply-on-change='true' hover-hint='Change your saber colors seperately from the color of the notes' active='true'/>
+        <checkbox-setting text='Saber Color Scheme' value='enable-custom-color-scheme' apply-on-change='true' hover-hint='Change your saber colors seperately from the color of the notes' bind-value='true' active='true'/>
         
         <!--Color scheme-->
-        <color-setting text='Left' apply-on-change='true' value='left-saber-color' word-wrapping='false' active='true'/>
-        <color-setting text='Right' apply-on-change='true' value='right-saber-color' word-wrapping='false' active='true'/>
+        <color-setting text='Left' apply-on-change='true' value='left-saber-color' word-wrapping='false' bind-value='true' active='true'/>
+        <color-setting text='Right' apply-on-change='true' value='right-saber-color' word-wrapping='false' bind-value='true' active='true'/>
 
         <checkbox-setting text='Feeling Foolish&#63;' value='forcefully-foolish' id='forcefully-foolish' apply-on-change='true' bind-value='true' hover-hint='Lets you opt-in to date-specific features' active='false' />
       </vertical>

@@ -41,14 +41,14 @@
       <horizontal horizontal-fit='Unconstrained'> <!--not yet implemented-->
         <!--Toggle custom color scheme-->
         <horizontal horizontal-fit='Unconstrained' preferred-width='46'>
-          <checkbox-setting text='Saber Color Scheme' value='enable-custom-color-scheme' apply-on-change='true' hover-hint='Change your saber colors seperately from the color of the notes'/>
+          <checkbox-setting text='Saber Color Scheme' value='enable-custom-color-scheme' apply-on-change='true' hover-hint='Change your saber colors seperately from the color of the notes' bind-value='true'/>
         </horizontal>
 
         <horizontal horizontal-fit='PreferredSize' preferred-width='14'>
-          <color-setting text='' apply-on-change='true' value='left-saber-color' word-wrapping='false'/>
+          <color-setting text='' apply-on-change='true' value='left-saber-color' word-wrapping='false' bind-value='true'/>
         </horizontal>
         <horizontal horizontal-fit='PreferredSize' preferred-width='14'>
-          <color-setting text='' apply-on-change='true' value='right-saber-color' word-wrapping='false'/>
+          <color-setting text='' apply-on-change='true' value='right-saber-color' word-wrapping='false' bind-value='true'/>
         </horizontal>
       </horizontal>
 
