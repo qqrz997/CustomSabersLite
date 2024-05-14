@@ -12,25 +12,30 @@ namespace CustomSabersLite.Data
 
         public bool MissingShaders;
 
-        public CustomSaberData(string fileName)
+        public CustomSaberData(string relativePath = null, GameObject sabersObject = null, SaberDescriptor descriptor = null)
         {
-            FilePath = fileName;
+            FilePath = relativePath;
+            SabersObject = sabersObject;
+            Descriptor = descriptor;
+        }
 
-            if (FilePath == "Default")
+        public CustomSaberData ForDefaultSabers()
+        {
+            return new CustomSaberData()
             {
+                FilePath = "Default",
                 Descriptor = new SaberDescriptor
                 {
                     SaberName = "Default",
-                    AuthorName = "Beat Games",
-                    Description = "Default Sabers",
-                };
-            }
+                    AuthorName = "Beat Games"
+                }
+            };
         }
 
         public void Destroy()
         {
-            Object.Destroy(SabersObject);
             Object.Destroy(Descriptor);
+            Object.Destroy(SabersObject);
         }
     }
 }

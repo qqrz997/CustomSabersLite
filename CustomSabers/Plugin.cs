@@ -7,7 +7,6 @@ using CustomSabersLite.Utilities;
 using SiraUtil.Zenject;
 using CustomSabersLite.Installers;
 
-
 namespace CustomSabersLite
 {
     [Plugin(RuntimeOptions.SingleStartInit)]
@@ -18,11 +17,10 @@ namespace CustomSabersLite
         [Init]
         public async void Init(IPALogger logger, Config config, Zenjector zenjector)
         {
-            Logger.Log = logger;
-            
+            Logger pluginLogger = new Logger(logger);
             CSLConfig pluginConfig = config.Generated<CSLConfig>();
 
-            if (!await CSLUtils.LoadCustomSaberAssembly())
+            if (!await CustomSaberUtils.LoadCustomSaberAssembly())
             {
                 return;
             }

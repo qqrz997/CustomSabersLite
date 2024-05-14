@@ -172,7 +172,9 @@
     <Compile Include="Components\EventManagerManager.cs" />
     <Compile Include="Components\ExtraSaberManager.cs" />
     <Compile Include="Components\Interfaces\ISaberSet.cs" />
+    <Compile Include="Components\LevelSaberManager.cs" />
     <Compile Include="Data\CustomSaberMetadata.cs" />
+    <Compile Include="Data\SaberInstanceManager.cs" />
     <Compile Include="Data\TrailType.cs" />
     <Compile Include="Installers\CSLAppInstaller.cs" />
     <Compile Include="Installers\CSLGameInstaller.cs" />
@@ -196,12 +198,16 @@
     <Compile Include="Utilities\AssetBundles\CSLAssetLoader.cs" />
     <Compile Include="Utilities\AssetBundles\CustomSaberLoader.cs" />
     <Compile Include="Utilities\AssetBundles\IBundleLoader.cs" />
-    <Compile Include="Utilities\CSLUtils.cs" />
+    <Compile Include="Utilities\AssetBundles\ICustomSaberLoader.cs" />
+    <Compile Include="Utilities\CustomSaberUtils.cs" />
     <Compile Include="Components\CSLSaberTrail.cs" />
     <Compile Include="Components\TrailHandler.cs" />
     <Compile Include="Utilities\DefaultSaberSetter.cs" />
     <Compile Include="Utilities\Extensions\ColorExtensions.cs" />
+    <Compile Include="Utilities\Extensions\GameObjectExtensions.cs" />
+    <Compile Include="Utilities\FileUtils.cs" />
     <Compile Include="Utilities\ImageLoading.cs" />
+    <Compile Include="Utilities\ImageUtils.cs" />
     <Compile Include="Utilities\ResourceLoading.cs" />
     <Compile Include="Utilities\TrailUtils.cs" />
     <Compile Include="Utilities\UI\BSMLHelpers.cs" />
@@ -235,8 +241,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\CustomSaber.dll" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Managers\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

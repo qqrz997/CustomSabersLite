@@ -1,5 +1,6 @@
 ﻿using CustomSabersLite.Components;
 using CustomSabersLite.Configuration;
+using CustomSabersLite.Managers;
 using CustomSabersLite.Utilities;
 using CustomSabersLite.Utilities.AssetBundles;
 using Zenject;
@@ -30,6 +31,7 @@ namespace CustomSabersLite.Installers
             Container.BindInterfacesTo<BundleLoader>().AsSingle();
             Container.BindInterfacesTo<CustomSaberLoader>().AsSingle();
 
+            Container.BindInterfacesAndSelfTo<SaberInstanceManager>().AsSingle();
             Container.BindInterfacesTo<CSLSaberSet>().AsSingle();
         }
     }

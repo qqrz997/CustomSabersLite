@@ -15,7 +15,7 @@ namespace CustomSabersLite.Utilities.AssetBundles
                 return null;
             }
 
-            AssetBundle bundle = await AssetBundleExtensions.LoadFromMemoryAsync(await File.ReadAllBytesAsync(path));
+            AssetBundle bundle = await AssetBundleExtensions.LoadFromFileAsync(path);
 
             if (bundle is null)
             {

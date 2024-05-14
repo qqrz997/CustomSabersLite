@@ -48,16 +48,8 @@ namespace CustomSabersLite.UI.Views
             deletedSabersPath = pluginDirs.DeletedSabers.FullName;
         }
 
-        private static readonly Sprite nullCoverImage = CSLUtils.GetNullCoverImage();
-
         [UIComponent("saber-list")]
         public CustomListTableData customListTableData;
-
-        [UIComponent("left-preview-saber")]
-        public Transform leftSaberParent;
-        
-        [UIComponent("right-preview-saber")]
-        public Transform rightSaberParent;
 
         [UIComponent("reload-button")]
         public Selectable reloadButtonSelectable;
@@ -69,12 +61,12 @@ namespace CustomSabersLite.UI.Views
         public TextMeshProUGUI deleteSaberModalText;
 
         [UIAction("select-saber")]
-        public void Select(TableView _, int row)
+        public async void Select(TableView _, int row)
         {
             Logger.Debug($"saber selected at row {row}");
             assetLoader.SelectedSaberIndex = row;
             config.CurrentlySelectedSaber = assetLoader.SabersMetadata[row].RelativePath;
-            previewManager.GeneratePreview(leftSaberParent, rightSaberParent);
+            await previewManager.GeneratePreview();
         }
 
         [UIAction("open-in-explorer")]
@@ -119,14 +111,12 @@ namespace CustomSabersLite.UI.Views
                     if (File.Exists(currentSaberPath))
                     {
                         Logger.Debug($"Moving {currentSaberPath}\nto {deletedSabersPath}");
-
                         File.Move(currentSaberPath, destinationPath);
 
                         assetLoader.SabersMetadata.RemoveAt(assetLoader.SelectedSaberIndex);
-
-                        Select(customListTableData.tableView, assetLoader.SelectedSaberIndex - 1);
-
                         SetupList();
+                        assetLoader.SelectedSaberIndex--;
+                        StartCoroutine(ScrollToSelectedCell());
                     }
                     else
                     {
@@ -153,7 +143,11 @@ namespace CustomSabersLite.UI.Views
         }
 
         [UIAction("#post-parse")]
-        public void PostParse() => SetupList();
+        public async void PostParse()
+        {
+            await previewManager.GeneratePreview();
+            SetupList();
+        }
 
         private void SetupList() // todo - smoother saber list refresh
         {
@@ -174,7 +168,7 @@ namespace CustomSabersLite.UI.Views
                 Sprite cover;
                 if (metadata.SaberName == "Default")
                 {
-                    cover = CSLUtils.GetDefaultCoverImage();
+                    cover = ImageUtils.defaultCoverImage;
                 }
                 else if (metadata.CoverImage != null)
                 {
@@ -184,7 +178,7 @@ namespace CustomSabersLite.UI.Views
                 }
                 else
                 {
-                    cover = nullCoverImage ?? null;
+                    cover = ImageUtils.nullCoverImage;
                 }
 
                 var customCellInfo = new CustomListTableData.CustomCellInfo(metadata.SaberName, metadata.AuthorName, cover);

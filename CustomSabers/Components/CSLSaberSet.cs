@@ -1,101 +1,70 @@
 ﻿using CustomSabersLite.Components.Interfaces;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Data;
+using CustomSabersLite.Managers;
 using CustomSabersLite.Utilities.AssetBundles;
-using System;
+using CustomSabersLite.Utilities.Extensions;
+using System.Threading.Tasks;
 using UnityEngine;
 using Zenject;
 
 namespace CustomSabersLite.Components
 {
-    internal class CSLSaberSet : ISaberSet, IInitializable, IDisposable
+    internal class CSLSaberSet : ISaberSet, IInitializable
     {
         private readonly CSLConfig config;
-        private readonly CSLAssetLoader assetLoader;
+        private readonly ICustomSaberLoader saberLoader;
+        private readonly SaberInstanceManager saberInstanceManager;
 
-        public CSLSaberSet(CSLConfig config, CSLAssetLoader assetLoader)
+        public CSLSaberSet(CSLConfig config, CSLAssetLoader assetLoader, ICustomSaberLoader saberLoader, SaberInstanceManager saberInstanceManager)
         {
             this.config = config;
-            this.assetLoader = assetLoader;
+            this.saberLoader = saberLoader;
+            this.saberInstanceManager = saberInstanceManager;
         }
 
-        private GameObject sabers = null;
         private CSLSaber LeftSaber = null;
         private CSLSaber RightSaber = null;
 
-        public void Initialize()
+        public async void Initialize() => await SetSabers(config.CurrentlySelectedSaber);
+
+        public CSLSaber CustomSaberForSaberType(SaberType saberType) =>
+            saberType == SaberType.SaberA ? LeftSaber : RightSaber;
+
+        public void SetSabers(GameObject sabersObject)
         {
-            CreateCustomSaberInstance(assetLoader.SelectedSaber);
+            LeftSaber = FromSabersObject(sabersObject, "LeftSaber");
+            RightSaber = FromSabersObject(sabersObject, "RightSaber");
         }
 
-        public void Dispose() => DestroySabers();
-
-        public CSLSaber CustomSaberForSaberType(SaberType saberType)
+        public async Task SetSabers(string saberPath)
         {
-            return GetSaberInstance(saberType);
-        }
-
-        private CSLSaber GetSaberInstance(SaberType saberType)
-        {
-            // Check if sabers are loaded or have changed
-            if (LeftSaber == null || RightSaber == null || config.CurrentlySelectedSaber != assetLoader.SelectedSaber.FilePath)
+            if (saberPath == "Default")
             {
-                LoadSabers();
-            }
-            if (saberType == SaberType.SaberA)
-                return LeftSaber;
-            else
-                return RightSaber;
-        }
-
-        private void LoadSabers()
-        {
-            DestroySabers();
-            Logger.Debug("Sabers loading..."); // assetLoader.SelectedSaber > previously selected saber
-
-            if (config.CurrentlySelectedSaber == "Default" || config.CurrentlySelectedSaber == null)
-            {
-                // Use default sabers
-                assetLoader.SelectedSaber = new CustomSaberData("Default");
-            }
-            else
-            {
-                // Use custom sabers
-                assetLoader.SelectedSaber = assetLoader.LoadSaberWithRepair(config.CurrentlySelectedSaber);
-                CreateCustomSaberInstance(assetLoader.SelectedSaber);
-            }
-        }
-
-        private void CreateCustomSaberInstance(CustomSaberData customSaberData)
-        {
-            Logger.Debug("Setting custom saber instance...");
-            if (customSaberData is null)
-            {
-                Logger.Critical("The data for the current selected saber is missing");
-                // Saber instance not being set will break the mod - load a fallback saber?
+                Logger.Info("Found default sabers on trying to create saberset instance");
                 return;
             }
 
-            if (customSaberData.FilePath != "Default")
+            if (!saberInstanceManager.TryGetSaber(saberPath, out CustomSaberData saber))
             {
-                sabers = GameObject.Instantiate(customSaberData.SabersObject);
-                LeftSaber = sabers.transform.Find("LeftSaber").gameObject.AddComponent<CSLSaber>();
-                RightSaber = sabers.transform.Find("RightSaber").gameObject.AddComponent<CSLSaber>();
+                Logger.Info("Selected saber isn't loaded, attempting to load... " + saberPath);
+                saber = await saberLoader.LoadCustomSaberAsync(saberPath);
+                Logger.Info(saber.Descriptor.SaberName + " has been loaded");
+                if (saber.FilePath == "Default")
+                {
+                    return;
+                }
+                saberInstanceManager.AddSaber(saber);
             }
+            else
+            {
+                Logger.Info("Found instance of " + saber.Descriptor.SaberName);
+            }
+
+            SetSabers(saber.SabersObject);
         }
 
-        private void DestroySabers()
-        {
-            if (sabers)
-            {
-                assetLoader.SelectedSaber?.Destroy();
-                GameObject.Destroy(sabers);
-                GameObject.Destroy(LeftSaber);
-                GameObject.Destroy(RightSaber);
-                sabers = null;
-                LeftSaber = null;
-                RightSaber = null;
-            }
-        }
+        private CSLSaber FromSabersObject(GameObject sabersObject, string saberName) =>
+            sabersObject.transform.Find(saberName)?.gameObject.TryGetComponentOrDefault<CSLSaber>();
     }
 }

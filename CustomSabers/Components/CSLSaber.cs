@@ -1,15 +1,12 @@
 ﻿using CustomSaber;
-using IPA.Utilities;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace CustomSabersLite.Components
 {
     internal class CSLSaber : MonoBehaviour
     {
-        private List<Material> colorableMaterials = new List<Material>();
+        private readonly List<Material> colorableMaterials = new List<Material>();
 
         public EventManager EventManager;
 
@@ -18,12 +15,10 @@ namespace CustomSabersLite.Components
             transform.SetParent(parent, worldPositionStays);
             transform.position = parent.position;
             transform.rotation = parent.rotation;
-            gameObject.SetActive(true);
         }
 
         void Awake()
         {
-            gameObject.SetActive(false);
             GetColorableMaterialsFromSaber();
 
             try

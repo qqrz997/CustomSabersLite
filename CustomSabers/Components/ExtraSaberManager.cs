@@ -31,7 +31,7 @@ namespace CustomSabersLite.Components
         private Transform defaultLeftSaber => saberManager.leftSaber.transform.Find(defaultSaberObjectName);
         private Transform defaultRightSaber => saberManager.rightSaber.transform.Find(defaultSaberObjectName); 
 
-        public void Initialize()
+        public async void Initialize()
         {
             beatmapObjectManager = ReflectionUtil.GetField<BeatmapObjectManager, ScoreController>(scoreController, "_beatmapObjectManager");
 

@@ -5,6 +5,7 @@ using Zenject;
 using IPA.Utilities;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Components.Interfaces;
+using System.Linq;
 
 namespace CustomSabersLite.Components
 {
@@ -15,18 +16,21 @@ namespace CustomSabersLite.Components
         private ISaberSet saberSet;
         private EventManagerManager eventManagerManager;
         private CSLConfig config;
+        private LevelSaberManager levelSaberManager;
 
         [Inject]
-        public void Construct(CustomTrailHandler trailHandler, ColorManager colorManager, ISaberSet saberSet, EventManagerManager eventManagerManager, CSLConfig config)
+        public void Construct(CustomTrailHandler trailHandler, ColorManager colorManager, ISaberSet saberSet, EventManagerManager eventManagerManager, CSLConfig config, LevelSaberManager levelSaberManager)
         {
             this.trailHandler = trailHandler;
             this.colorManager = colorManager;
             this.saberSet = saberSet;
             this.eventManagerManager = eventManagerManager;
             this.config = config;
+            this.levelSaberManager = levelSaberManager;
         }
 
         private Color? color;
+        private bool defaultInit = true;
 
         public CSLSaber customSaberInstance;
 
@@ -40,57 +44,34 @@ namespace CustomSabersLite.Components
 
         public bool PreInit(Transform parent, Saber saber)
         {
-            if (config.CurrentlySelectedSaber == "Default")
-            {
-                Logger.Error("Somehow, the default saber is selected, but we don't know why");
-                return true;
-            }
-
-            // Do you want the original Init to run?
-            return CSLSaberInit(parent, saber);
+            CSLSaberInit(parent, saber);
+            return defaultInit;
         }
 
-        private bool CSLSaberInit(Transform parent, Saber saber)
+        private async void CSLSaberInit(Transform parent, Saber saber)
         {
-            // saberSet.LoadSabers();
+            await levelSaberManager.SaberSetupTask;
 
             SaberType saberType = saber.saberType;
             customSaberInstance = saberSet.CustomSaberForSaberType(saberType);
 
-            if (customSaberInstance == null)
+            if (customSaberInstance is null)
             {
                 Logger.Error("Something went wrong when getting the custom saber instance");
-                return true;
+                return;
             }
 
             transform.SetParent(parent, false);
 
             customSaberInstance.Setup(saber.transform);
-
             eventManagerManager.InitializeEventManager(customSaberInstance.EventManager, saberType);
 
-            Color saberColor;
+            Color saberColor = config.EnableCustomColorScheme
+                ? saberType == SaberType.SaberA ? config.LeftSaberColor : config.RightSaberColor
+                : colorManager.ColorForSaberType(saberType); // don't judge me
+            SaberTrail defaultTrail = this.GetField<SaberTrail, SaberModelController>("_saberTrail");
 
-            if (config.EnableCustomColorScheme)
-            {
-                if (saberType == SaberType.SaberA)
-                {
-                    saberColor = config.LeftSaberColor;
-                }
-                else
-                {
-                    saberColor = config.RightSaberColor;
-                }
-            }
-            else
-            {
-                saberColor = colorManager.ColorForSaberType(saberType);
-            }
-
-            SaberTrail defaultTrail = ReflectionUtil.GetField<SaberTrail, SaberModelController>(this, "_saberTrail");
-
-            // Returns false if a custom trail is created
-            bool defaultInit = trailHandler.CreateTrail(defaultTrail, saberColor, customSaberInstance.gameObject);
+            defaultInit = trailHandler.CreateTrail(defaultTrail, saberColor, customSaberInstance.gameObject); // returns false if a custom trail is created
 
             if (trailHandler.Trail != null)
             {
@@ -98,8 +79,6 @@ namespace CustomSabersLite.Components
             }
 
             SetColor(saberColor);
-
-            return defaultInit;
         }
 
         public void SetColor(Color color)
