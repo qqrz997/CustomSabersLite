@@ -21,7 +21,7 @@ namespace CustomSabersLite.Components
         private readonly IReadonlyBeatmapData beatmapData;
         private readonly CSLConfig config;
 
-        public EventManagerManager(BeatmapObjectManager beatmapObjectManager, GameEnergyCounter gameEnergyCounter, ObstacleSaberSparkleEffectManager obstacleCollisionManager, RelativeScoreAndImmediateRankCounter relativeScoreCounter, IScoreController scoreController, IComboController comboController, IReadonlyBeatmapData beatmapData, CSLConfig config)
+        public EventManagerManager(BeatmapObjectManager beatmapObjectManager, GameEnergyCounter gameEnergyCounter, [InjectOptional] ObstacleSaberSparkleEffectManager obstacleCollisionManager, RelativeScoreAndImmediateRankCounter relativeScoreCounter, IScoreController scoreController, IComboController comboController, IReadonlyBeatmapData beatmapData, CSLConfig config)
         {
             this.beatmapObjectManager = beatmapObjectManager;
             this.gameEnergyCounter = gameEnergyCounter;

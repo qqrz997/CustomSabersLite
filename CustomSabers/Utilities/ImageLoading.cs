@@ -5,11 +5,8 @@ namespace CustomSabersLite.Utilities
 {
     internal class ImageLoading
     {
-        public static Sprite LoadSpriteFromResources(string resourcePath, float pixelsPerUnit = 100.0f)
-        {
-            Logger.Info("Loading sprite");
-            return LoadSpriteRaw(ResourceLoading.LoadFromResourceAsync(resourcePath).Result, pixelsPerUnit);
-        }
+        public static Sprite LoadSpriteFromResources(string resourcePath, float pixelsPerUnit = 100.0f) =>
+            LoadSpriteRaw(ResourceLoading.LoadFromResourceAsync(resourcePath).Result, pixelsPerUnit);
 
         public static Sprite LoadSpriteRaw(byte[] image, float pixelsPerUnit = 100.0f)
         {

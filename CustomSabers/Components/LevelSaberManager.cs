@@ -1,5 +1,7 @@
 ﻿using CustomSabersLite.Components.Interfaces;
 using CustomSabersLite.Configuration;
+using CustomSabersLite.Managers;
+using CustomSabersLite.Utilities.AssetBundles;
 using System.Threading.Tasks;
 
 namespace CustomSabersLite.Components
@@ -8,11 +10,15 @@ namespace CustomSabersLite.Components
     {
         private readonly CSLConfig config;
         private readonly ISaberSet saberSet;
+        private readonly SaberInstanceManager saberInstanceManager;
+        private readonly ICustomSaberLoader saberLoader;
 
-        public LevelSaberManager(CSLConfig config, ISaberSet saberSet)
+        public LevelSaberManager(CSLConfig config, ISaberSet saberSet, SaberInstanceManager saberInstanceManager, ICustomSaberLoader saberLoader)
         {
             this.config = config;
             this.saberSet = saberSet;
+            this.saberInstanceManager = saberInstanceManager;
+            this.saberLoader = saberLoader;
             Initialize();
         }
 
@@ -24,7 +30,7 @@ namespace CustomSabersLite.Components
             await SaberSetupTask;
         }
 
-        private async Task CreatLevelSaberInstance() => 
-            await saberSet.SetSabers(config.CurrentlySelectedSaber);
+        private async Task CreatLevelSaberInstance() =>
+            await saberSet.InstantiateSabers(config.CurrentlySelectedSaber);
     }
 }
