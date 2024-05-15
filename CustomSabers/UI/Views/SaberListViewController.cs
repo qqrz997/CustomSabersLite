@@ -115,6 +115,7 @@ namespace CustomSabersLite.UI.Views
 
                         assetLoader.SabersMetadata.RemoveAt(assetLoader.SelectedSaberIndex);
                         SetupList();
+                        gameplaySetupTab.SetupList();
                         assetLoader.SelectedSaberIndex--;
                         StartCoroutine(ScrollToSelectedCell());
                     }

@@ -15,8 +15,8 @@ using System.IO;
 using HMUI;
 using System.Text.RegularExpressions;
 using System.ComponentModel;
-using System.Threading.Tasks;
 using CustomSabersLite.Utilities.UI;
+using System.Collections;
 
 namespace CustomSabersLite.UI.Views
 {
@@ -25,12 +25,14 @@ namespace CustomSabersLite.UI.Views
         private readonly PluginDirs pluginDirs;
         private readonly CSLConfig config;
         private readonly CSLAssetLoader assetLoader;
+        private readonly ICoroutineStarter coroutineStarter;
 
-        public GameplaySetupTab(PluginDirs pluginDirs, CSLConfig config, CSLAssetLoader assetLoader)
+        public GameplaySetupTab(PluginDirs pluginDirs, CSLConfig config, CSLAssetLoader assetLoader, ICoroutineStarter coroutineStarter)
         {
             this.pluginDirs = pluginDirs;
             this.config = config;
             this.assetLoader = assetLoader;
+            this.coroutineStarter = coroutineStarter;
         }
 
         public GameObject Root;
@@ -301,16 +303,13 @@ namespace CustomSabersLite.UI.Views
                 foolishSetting.gameObject.SetActive(true);
             }
 
-            Task.Run(() => ScrollToSelectedCell());
+            coroutineStarter.StartCoroutine(ScrollToSelectedCell());
         }
 
-        private async void ScrollToSelectedCell()
+        private IEnumerator ScrollToSelectedCell()
         {
-            while (!saberList.gameObject.activeInHierarchy)
-            {
-                await Task.Delay(25);
-            }
-            await Task.Delay(100);
+            yield return new WaitUntil(() => saberList.gameObject.activeInHierarchy);
+            yield return new WaitForEndOfFrame();
             int selectedSaber = assetLoader.SelectedSaberIndex;
             saberList.tableView.SelectCellWithIdx(selectedSaber);
             saberList.tableView.ScrollToCellWithIdx(selectedSaber, TableView.ScrollPositionType.Center, true);

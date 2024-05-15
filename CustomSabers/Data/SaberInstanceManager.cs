@@ -27,9 +27,6 @@ namespace CustomSabersLite.Managers
             }
         }
 
-        public CustomSaberData GetSaber(string saberPath) => 
-            saberInstances[saberPath];
-
         public bool HasSaber(string saberPath) => 
             saberInstances.ContainsKey(saberPath);
 
