@@ -26,30 +26,42 @@ namespace CustomSabersLite.Components
         private CSLSaber LeftSaber = null;
         private CSLSaber RightSaber = null;
 
-        public async void Initialize() => 
+        public async void Initialize() =>
             await SetSabers(config.CurrentlySelectedSaber);
 
         public CSLSaber CustomSaberForSaberType(SaberType saberType) =>
             saberType == SaberType.SaberA ? LeftSaber : RightSaber;
 
+        public async Task SetSabers(string saberPath)
+        {
+            if (saberPath == "Default") return;
+            SetSabers(await GetSaberObject(saberPath));
+        }
+
+        public async Task InstantiateSabers(string saberPath)
+        {
+            if (saberPath == "Default") return;
+            SetSabers(GameObject.Instantiate(await GetSaberObject(saberPath)));
+        }
+
+        public async Task<GameObject> GetSaberObject(string saberPath)
+        {
+            if (!saberInstanceManager.TryGetSaber(saberPath, out CustomSaberData saber))
+            {
+                saber = await saberLoader.LoadCustomSaberAsync(saberPath);
+                if (saber.FilePath == "Default")
+                {
+                    return new GameObject("Invalid Saber");
+                }
+                saberInstanceManager.AddSaber(saber);
+            }
+            return saber.SabersObject;
+        }
+
         private void SetSabers(GameObject sabersObject)
         {
             LeftSaber = FromSabersObject(sabersObject, "LeftSaber");
             RightSaber = FromSabersObject(sabersObject, "RightSaber");
-        }
-
-        public async Task SetSabers(string saberPath)
-        {
-            if (saberPath == "Default") return;
-
-            if (!saberInstanceManager.TryGetSaber(saberPath, out CustomSaberData saber))
-            {
-                saber = await saberLoader.LoadCustomSaberAsync(saberPath);
-                if (saber.FilePath == "Default") return;
-                saberInstanceManager.AddSaber(saber);
-            }
-
-            SetSabers(saber.SabersObject);
         }
 
         private CSLSaber FromSabersObject(GameObject sabersObject, string saberName) =>

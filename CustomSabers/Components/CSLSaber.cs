@@ -1,4 +1,5 @@
 ﻿using CustomSaber;
+using CustomSabersLite.Utilities.Extensions;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -20,15 +21,7 @@ namespace CustomSabersLite.Components
         void Awake()
         {
             GetColorableMaterialsFromSaber();
-
-            try
-            {
-                EventManager = gameObject.GetComponent<EventManager>();
-            }
-            catch
-            {
-                EventManager = gameObject.AddComponent<EventManager>();
-            }
+            EventManager = gameObject.TryGetComponentOrDefault<EventManager>();
         }
 
         void OnDestroy()

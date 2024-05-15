@@ -5,7 +5,6 @@ using Zenject;
 using IPA.Utilities;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Components.Interfaces;
-using System.Linq;
 
 namespace CustomSabersLite.Components
 {
