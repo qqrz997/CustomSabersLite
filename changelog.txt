@@ -1,5 +1,9 @@
 changelog
 
+0.9.2
+- The game no longer freezes when loading the saber preview
+- Various cleanup
+
 0.9.1
 - Fixed saber color scheme settings not updating in their respective settings menus
 
