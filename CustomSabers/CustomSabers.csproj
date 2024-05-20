@@ -179,6 +179,7 @@
     <Compile Include="Components\Interfaces\ISaberSet.cs" />
     <Compile Include="Components\LevelSaberManager.cs" />
     <Compile Include="Data\CustomSaberMetadata.cs" />
+    <Compile Include="Data\MaterialProperties.cs" />
     <Compile Include="Data\SaberInstanceManager.cs" />
     <Compile Include="Data\TrailType.cs" />
     <Compile Include="Installers\CSLAppInstaller.cs" />

@@ -1,4 +1,5 @@
-﻿using IPA.Utilities;
+﻿using CustomSabersLite.Data;
+using IPA.Utilities;
 using UnityEngine;
 using ReflectionUtil = IPA.Utilities.ReflectionUtil;
 
@@ -101,7 +102,7 @@ namespace CustomSabersLite.Utilities
 
             foreach (Material rendererMaterial in renderer.materials)
             {
-                rendererMaterial.SetColor("_Color", color);
+                rendererMaterial.SetColor(MaterialProperties.Color, color);
             }
 
             TrailRenderer.SetField("_meshRenderer", renderer);
