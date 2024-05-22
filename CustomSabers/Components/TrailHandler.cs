@@ -1,11 +1,7 @@
 ﻿using CustomSabersLite.Configuration;
 using CustomSaber;
-using IPA.Utilities;
-using System;
 using UnityEngine;
-using Zenject;
 using CustomSabersLite.Data;
-using CustomSabersLite.Utilities.Extensions;
 
 namespace CustomSabersLite.Utilities
 {
@@ -48,7 +44,7 @@ namespace CustomSabersLite.Utilities
 
         private bool CreateCustomTrail(SaberTrail defaultTrail, Color saberTrailColor, GameObject customSaber)
         {
-            TryGetCustomTrail(customSaber, out CustomTrail customTrail);
+            CustomTrail customTrail = customSaber.GetComponent<CustomTrail>();
 
             if (customTrail is null)
             {
@@ -60,20 +56,12 @@ namespace CustomSabersLite.Utilities
             Logger.Debug($"Initializing custom trail to {defaultTrail.name}");
             Trail = customSaber.gameObject.AddComponent<CSLSaberTrail>();
 
-            try
-            {
-                defaultTrailRendererPrefab = ReflectionUtil.GetField<SaberTrailRenderer, SaberTrail>(defaultTrail, "_trailRendererPrefab");
-                defaultSaberTrailRenderer = ReflectionUtil.GetField<SaberTrailRenderer, SaberTrail>(defaultTrail, "_trailRenderer");
-                defaultMeshRenderer = ReflectionUtil.GetField<MeshRenderer, SaberTrailRenderer>(defaultSaberTrailRenderer, "_meshRenderer");
-                defaultSamplingFrequency = ReflectionUtil.GetField<int, SaberTrail>(defaultTrail, "_samplingFrequency");
-                defaultGranularity = ReflectionUtil.GetField<int, SaberTrail>(defaultTrail, "_granularity");
-                defaultTrailElementCollection = ReflectionUtil.GetField<TrailElementCollection, SaberTrail>(defaultTrail, "_trailElementCollection");
-            }
-            catch (Exception ex)
-            {
-                Logger.Error($"Problem encountered when getting fields from the default trail\n{ex}");
-                return true;
-            }
+            defaultTrailRendererPrefab = defaultTrail._trailRendererPrefab;
+            defaultSaberTrailRenderer = defaultTrail._trailRenderer;
+            defaultMeshRenderer = defaultSaberTrailRenderer._meshRenderer;
+            defaultSamplingFrequency = defaultTrail._samplingFrequency;
+            defaultGranularity = defaultTrail._granularity;
+            defaultTrailElementCollection = defaultTrail._trailElementCollection;
 
             // We will setup the trail values here
             if (config.OverrideTrailWidth)
@@ -108,35 +96,20 @@ namespace CustomSabersLite.Utilities
             newMeshRenderer.material.color = materialColor;
 
             // Adjusting the trail's meshrenderer before adding it to our trail
-            ReflectionUtil.SetField(defaultSaberTrailRenderer, "_meshRenderer", newMeshRenderer);
+            defaultSaberTrailRenderer._meshRenderer = newMeshRenderer;
 
             // Variables are null so set them
-            Trail.TrailRendererPrefab = defaultTrailRendererPrefab;
-            Trail.SamplingFrequency = defaultSamplingFrequency;
-            Trail.Granularity = defaultGranularity;
-            Trail.Color = saberTrailColor;
-            Trail.MovementData = Trail.CustomTrailMovementData;
-            Trail.TrailRenderer = defaultSaberTrailRenderer;
-            Trail.TrailElementCollection = defaultTrailElementCollection;
-            Trail.colorType = customTrail.colorType;
+            Trail._trailRendererPrefab = defaultTrailRendererPrefab;
+            Trail._samplingFrequency = defaultSamplingFrequency;
+            Trail._granularity = defaultGranularity;
+            Trail._color = saberTrailColor;
+            Trail._movementData = Trail.CustomTrailMovementData;
+            Trail._trailRenderer = defaultSaberTrailRenderer;
+            Trail._trailElementCollection = defaultTrailElementCollection;
             trailUtils.SetTrailDuration(Trail);
             trailUtils.SetWhiteTrailDuration(Trail);
 
             return false;
-        }
-
-        private CustomTrail TryGetCustomTrail(GameObject customSaber, out CustomTrail customTrail)
-        {
-            try
-            {
-                customTrail = customSaber.GetComponent<CustomTrail>();
-                Logger.Debug("Successfully got CustomTrail from custom saber.");
-            }
-            catch
-            {
-                customTrail = null;
-            }
-            return customTrail;
         }
 
         private void SetupDefaultTrail(SaberTrail defaultTrail)

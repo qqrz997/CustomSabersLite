@@ -2,7 +2,6 @@
 using SiraUtil.Interfaces;
 using UnityEngine;
 using Zenject;
-using IPA.Utilities;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Components.Interfaces;
 
@@ -68,7 +67,7 @@ namespace CustomSabersLite.Components
             Color saberColor = config.EnableCustomColorScheme
                 ? saberType == SaberType.SaberA ? config.LeftSaberColor : config.RightSaberColor
                 : colorManager.ColorForSaberType(saberType); // don't judge me
-            SaberTrail defaultTrail = this.GetField<SaberTrail, SaberModelController>("_saberTrail");
+            SaberTrail defaultTrail = this._saberTrail;
 
             defaultInit = trailHandler.CreateTrail(defaultTrail, saberColor, customSaberInstance.gameObject); // returns false if a custom trail is created
 

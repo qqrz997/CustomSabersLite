@@ -31,9 +31,9 @@ namespace CustomSabersLite.Components
         private Transform defaultLeftSaber => saberManager.leftSaber.transform.Find(defaultSaberObjectName);
         private Transform defaultRightSaber => saberManager.rightSaber.transform.Find(defaultSaberObjectName); 
 
-        public async void Initialize()
+        public void Initialize()
         {
-            beatmapObjectManager = ReflectionUtil.GetField<BeatmapObjectManager, ScoreController>(scoreController, "_beatmapObjectManager");
+            beatmapObjectManager = scoreController._beatmapObjectManager;
 
             DateTime time = Utils.CanUseDateTimeNowSafely ? DateTime.Now : DateTime.UtcNow;
 

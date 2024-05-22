@@ -1,12 +1,11 @@
 ﻿using CustomSabersLite.Configuration;
-using IPA.Utilities;
 using UnityEngine;
 
 namespace CustomSabersLite.Utilities
 {
     internal class TrailUtils
     {
-        CSLConfig config;
+        private readonly CSLConfig config;
 
         public TrailUtils(CSLConfig config)
         {
@@ -24,7 +23,7 @@ namespace CustomSabersLite.Utilities
             {
                 if (isDefaultSaber)
                 {
-                    ReflectionUtil.SetField<SaberTrail, Color>(trail, "_color", new Color(0f, 0f, 0f, 0f));
+                    trail._color = Color.clear;
                 }
                 else
                 {
@@ -33,7 +32,7 @@ namespace CustomSabersLite.Utilities
             }
             else
             {
-                ReflectionUtil.SetField<SaberTrail, float>(trail, "_trailDuration", trailDuration);
+                trail._trailDuration = trailDuration;
                 if (!isDefaultSaber)
                 {
                     trail.enabled = true;
@@ -41,13 +40,7 @@ namespace CustomSabersLite.Utilities
             }
         }
 
-        public void SetWhiteTrailDuration(SaberTrail trail, float whiteSectionMaxDuration = 0.03f)
-        {
-            if (config.DisableWhiteTrail)
-            {
-                whiteSectionMaxDuration = 0f;
-            }
-            ReflectionUtil.SetField<SaberTrail, float>(trail, "_whiteSectionMaxDuration", whiteSectionMaxDuration);
-        }
+        public void SetWhiteTrailDuration(SaberTrail trail, float whiteSectionMaxDuration = 0.03f) => 
+            trail._whiteSectionMaxDuration = config.DisableWhiteTrail ? 0f : whiteSectionMaxDuration;
     }
 }
