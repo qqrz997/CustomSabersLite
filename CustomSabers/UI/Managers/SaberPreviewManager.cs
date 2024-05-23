@@ -30,7 +30,7 @@ namespace CustomSabersLite.UI.Managers
         {
             SetPreviewActive(false);
 
-            if (config.CurrentlySelectedSaber == "Default") return;
+            if (config.CurrentlySelectedSaber is null) return;
 
             await saberSet.SetSabers(config.CurrentlySelectedSaber);
             CSLSaber leftSaber = saberSet.CustomSaberForSaberType(SaberType.SaberA);

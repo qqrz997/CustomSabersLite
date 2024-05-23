@@ -154,36 +154,24 @@ namespace CustomSabersLite.UI.Views
         {
             customListTableData.data.Clear();
 
-            Logger.Debug("Showing list of selectable sabers");
-
             foreach (CustomSaberMetadata metadata in assetLoader.SabersMetadata)
             {
-                if (metadata.RelativePath != null && metadata.RelativePath != "Default")
+                if (metadata.SaberName == "Default")
+                {
+                    customListTableData.data.Add(new CustomListTableData.CustomCellInfo(metadata.SaberName, metadata.AuthorName, ImageUtils.defaultCoverImage));
+                }
+                else 
                 {
                     if (!File.Exists(Path.Combine(saberAssetPath, metadata.RelativePath)))
                     {
                         continue;
                     }
+                    customListTableData.data.Add(new CustomListTableData.CustomCellInfo(
+                        metadata.SaberName,
+                        metadata.AuthorName,
+                        metadata.CoverImage is null ? ImageUtils.nullCoverImage : ImageUtils.LoadImage(metadata.CoverImage)
+                    ));
                 }
-
-                Sprite cover;
-                if (metadata.SaberName == "Default")
-                {
-                    cover = ImageUtils.defaultCoverImage;
-                }
-                else if (metadata.CoverImage != null)
-                {
-                    Texture2D tex = new Texture2D(2, 2);
-                    tex.LoadImage(metadata.CoverImage);
-                    cover = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100.0f);
-                }
-                else
-                {
-                    cover = ImageUtils.nullCoverImage;
-                }
-
-                var customCellInfo = new CustomListTableData.CustomCellInfo(metadata.SaberName, metadata.AuthorName, cover);
-                customListTableData.data.Add(customCellInfo);
             }
 
             customListTableData.tableView.ReloadData();

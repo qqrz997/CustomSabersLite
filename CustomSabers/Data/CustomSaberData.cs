@@ -4,13 +4,11 @@ namespace CustomSabersLite.Data
 {
     internal class CustomSaberData
     {
-        public string FilePath { get; set; }
+        public string FilePath; 
+        public GameObject SabersObject;
+        public SaberDescriptor Descriptor;
 
-        public GameObject SabersObject { get; set; }
-
-        public SaberDescriptor Descriptor { get; set; }
-
-        public bool MissingShaders;
+        public bool MissingShaders; // not yet implemented
 
         public CustomSaberData(string relativePath = null, GameObject sabersObject = null, SaberDescriptor descriptor = null)
         {

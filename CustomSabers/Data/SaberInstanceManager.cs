@@ -1,5 +1,4 @@
-﻿using CustomSabersLite.Configuration;
-using CustomSabersLite.Data;
+﻿using CustomSabersLite.Data;
 using System.Collections.Generic;
 using Zenject;
 
@@ -7,13 +6,6 @@ namespace CustomSabersLite.Managers
 {
     internal class SaberInstanceManager : IInitializable
     {
-        private readonly CSLConfig config;
-
-        public SaberInstanceManager(CSLConfig config)
-        {
-            this.config = config;
-        }
-
         private readonly Dictionary<string, CustomSaberData> saberInstances = new Dictionary<string, CustomSaberData>();
 
         public void Initialize() => 

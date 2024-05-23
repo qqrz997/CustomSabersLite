@@ -17,6 +17,7 @@ using System.Text.RegularExpressions;
 using System.ComponentModel;
 using CustomSabersLite.Utilities.UI;
 using System.Collections;
+using CustomSabersLite.Utilities;
 
 namespace CustomSabersLite.UI.Views
 {
@@ -257,27 +258,27 @@ namespace CustomSabersLite.UI.Views
             {
                 string saberName = metadata.SaberName;
 
-                if (metadata.RelativePath != null && metadata.RelativePath != "Default")
+                if (saberName != "Default")
                 {
                     if (!File.Exists(Path.Combine(saberAssetPath, metadata.RelativePath)))
                     {
                         continue;
                     }
+
+                    // Remove TMPro rich text tags
+                    Regex regex = new Regex(@"<[^>]*>");
+                    if (regex.IsMatch(saberName))
+                    {
+                        saberName = regex.Replace(saberName, string.Empty).Trim();
+                    }
+
+                    int maxLength = 21;
+                    saberName = saberName.Length <= maxLength 
+                        ? saberName 
+                        : saberName.Substring(0, maxLength - 1).Trim() + "...";
                 }
 
-                // Remove TMPro rich text tags
-                Regex regex = new Regex(@"<[^>]*>");
-                if (regex.IsMatch(saberName))
-                {
-                    saberName = regex.Replace(saberName, string.Empty);
-                    saberName.Trim();
-                }
-
-                int maxLength = 21;
-                saberName = saberName.Length <= maxLength ? saberName : saberName.Substring(0, maxLength - 1).Trim() + "...";
-
-                var customCellInfo = new CustomListTableData.CustomCellInfo(saberName);
-                saberList.data.Add(customCellInfo);
+                saberList.data.Add(new CustomListTableData.CustomCellInfo(saberName));
             }
 
             saberList.tableView.ReloadData();

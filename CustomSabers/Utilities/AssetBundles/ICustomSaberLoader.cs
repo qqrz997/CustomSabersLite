@@ -5,6 +5,6 @@ namespace CustomSabersLite.Utilities.AssetBundles
 {
     internal interface ICustomSaberLoader
     {
-        Task<CustomSaberData> LoadCustomSaberAsync(string saberFileName);
+        Task<CustomSaberData> LoadCustomSaberAsync(string relativePath);
     }
 }

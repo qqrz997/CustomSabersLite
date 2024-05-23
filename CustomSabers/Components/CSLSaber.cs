@@ -10,7 +10,7 @@ namespace CustomSabersLite.Components
     {
         private readonly List<Material> colorableMaterials = new List<Material>();
 
-        public EventManager EventManager;
+        public EventManager EventManager { get; private set; }
 
         public void Setup(Transform parent, bool worldPositionStays = false)
         {

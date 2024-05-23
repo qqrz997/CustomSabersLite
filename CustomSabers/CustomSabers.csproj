@@ -101,6 +101,7 @@
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="Main, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <Publicize>True</Publicize>
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Main.dll</HintPath>
     </Reference>
@@ -179,6 +180,7 @@
     <Compile Include="Components\Interfaces\ISaberSet.cs" />
     <Compile Include="Components\LevelSaberManager.cs" />
     <Compile Include="Data\CustomSaberMetadata.cs" />
+    <Compile Include="Data\FileExts.cs" />
     <Compile Include="Data\MaterialProperties.cs" />
     <Compile Include="Data\SaberInstanceManager.cs" />
     <Compile Include="Data\TrailType.cs" />
@@ -215,6 +217,7 @@
     <Compile Include="Utilities\ImageLoading.cs" />
     <Compile Include="Utilities\ImageUtils.cs" />
     <Compile Include="Utilities\ResourceLoading.cs" />
+    <Compile Include="Utilities\ShaderRepairUtils.cs" />
     <Compile Include="Utilities\TrailUtils.cs" />
     <Compile Include="Utilities\UI\BSMLHelpers.cs" />
   </ItemGroup>
@@ -231,6 +234,11 @@
   <ItemGroup>
     <PackageReference Include="BeatSaberModdingTools.Tasks">
       <Version>2.0.0-beta1</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild">
+      <Version>0.4.1</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>

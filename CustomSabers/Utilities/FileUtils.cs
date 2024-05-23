@@ -6,37 +6,46 @@ namespace CustomSabersLite.Utilities
 {
     internal class FileUtils
     {
-        public static IEnumerable<string> GetFilePaths(string path, IEnumerable<string> fileExtensions, SearchOption searchOption = SearchOption.AllDirectories, bool returnShortPath = false)
+        public static List<string> GetFilePaths(string path, IEnumerable<string> fileExtensions, SearchOption searchOption = SearchOption.AllDirectories, bool returnShortPath = false)
         {
-            IList<string> filePaths = new List<string>();
+            List<string> filePaths = new List<string>();
 
             foreach (string extension in fileExtensions)
             {
-                IEnumerable<string> files = Directory.EnumerateFiles(path, "*.*", searchOption).Where(s => extension.Contains(Path.GetExtension(s).TrimEnd('.').ToLowerInvariant()));
-
-                if (returnShortPath)
+                string[] files = Directory.GetFiles(path, "*"+extension, searchOption);
+                    
+                if (!returnShortPath)
                 {
-                    foreach (string file in files)
-                    {
-                        string filePath = file.Replace(path, "");
-                        if (filePath.Length > 0 && filePath.StartsWith(@"\"))
-                        {
-                            filePath = filePath.Substring(1, filePath.Length - 1);
-                        }
-
-                        if (!string.IsNullOrWhiteSpace(filePath) && !filePaths.Contains(filePath))
-                        {
-                            filePaths.Add(filePath);
-                        }
-                    }
+                    filePaths.AddRange(files.ToList());
                 }
                 else
                 {
-                    filePaths = filePaths.Union(files).ToList();
+                    filePaths.AddRange(GetSubPaths(files, path));
                 }
             }
 
-            return filePaths.Distinct();
+            return filePaths;
+        }
+
+        private static List<string> GetSubPaths(IEnumerable<string> fullPaths, string trimPath)
+        {
+            List<string> subPaths = new List<string>();
+
+            foreach (string file in fullPaths)
+            {
+                string filePath = file.Replace(trimPath, "");
+                if (filePath.Length > 0 && filePath.StartsWith(@"\"))
+                {
+                    filePath = filePath.Substring(1, filePath.Length - 1);
+                }
+
+                if (!string.IsNullOrWhiteSpace(filePath) && !fullPaths.Contains(filePath))
+                {
+                    subPaths.Add(filePath);
+                }
+            }
+
+            return subPaths;
         }
     }
 }
