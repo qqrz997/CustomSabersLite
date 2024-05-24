@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace CustomSabersLite.Utilities.AssetBundles
@@ -10,6 +11,7 @@ namespace CustomSabersLite.Utilities.AssetBundles
         /// </summary>
         /// <param name="path">Absolute path to the bundle on disk</param>
         Task<AssetBundle> LoadBundleAsync(string path);
+        Task<AssetBundle> LoadBundleAsync(Stream stream);
 
         /// <summary>
         /// Loads an asset from an <see cref="AssetBundle"/> using AssetBundleLoadingTools

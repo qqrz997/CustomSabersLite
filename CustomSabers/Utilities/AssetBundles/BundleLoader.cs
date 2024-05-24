@@ -7,28 +7,30 @@ namespace CustomSabersLite.Utilities.AssetBundles
 {
     internal class BundleLoader : IBundleLoader
     {
-        public async Task<AssetBundle> LoadBundleAsync(string path)
+        public async Task<AssetBundle> LoadBundleAsync(string path) =>
+            await AssetBundleExtensions.LoadFromFileAsync(path);
+
+        public async Task<AssetBundle> LoadBundleAsync(Stream stream)
         {
-            if (!File.Exists(path))
+            AssetBundle bundle;
+
+            if (stream.CanRead && stream.CanSeek)
             {
-                Logger.Error($"Cannot load bundle. Provided path doesn't lead to a file. Provided file name: {Path.Combine(Directory.GetParent(path).Name, Path.GetFileName(path))}");
-                return null;
+                bundle = await AssetBundleExtensions.LoadFromStreamAsync(stream);
             }
-
-            AssetBundle bundle = await AssetBundleExtensions.LoadFromFileAsync(path);
-
-            if (bundle is null)
+            else
             {
-                Logger.Error($"Couldn't load bundle from {path}");
-                return null;
+                using (MemoryStream memoryStream = new MemoryStream())
+                {
+                    await stream.CopyToAsync(memoryStream);
+                    bundle = await AssetBundleExtensions.LoadFromStreamAsync(memoryStream);
+                }
             }
 
             return bundle;
         }
 
-        public async Task<T> LoadAssetAsync<T>(AssetBundle bundle, string assetPath) where T : Object
-        {
-            return await AssetBundleExtensions.LoadAssetAsync<T>(bundle, assetPath);
-        }
+        public async Task<T> LoadAssetAsync<T>(AssetBundle bundle, string assetPath) where T : Object =>
+            await AssetBundleExtensions.LoadAssetAsync<T>(bundle, assetPath);
     }
 }

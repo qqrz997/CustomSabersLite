@@ -14,12 +14,14 @@ namespace CustomSabersLite.Components
     {
         private readonly CSLConfig config;
         private readonly ICustomSaberLoader saberLoader;
+        private readonly IWhackerLoader whackerLoader;
         private readonly SaberInstanceManager saberInstanceManager;
 
-        public CSLSaberSet(CSLConfig config, CSLAssetLoader assetLoader, ICustomSaberLoader saberLoader, SaberInstanceManager saberInstanceManager)
+        public CSLSaberSet(CSLConfig config, ICustomSaberLoader saberLoader, IWhackerLoader whackerLoader, SaberInstanceManager saberInstanceManager)
         {
             this.config = config;
             this.saberLoader = saberLoader;
+            this.whackerLoader = whackerLoader;
             this.saberInstanceManager = saberInstanceManager;
         }
 
@@ -48,10 +50,13 @@ namespace CustomSabersLite.Components
         {
             if (!saberInstanceManager.TryGetSaber(saberPath, out CustomSaberData saber))
             {
-                saber = await saberLoader.LoadCustomSaberAsync(saberPath);
-                if (saber.FilePath == "Default")
+                switch (saber.Type)
                 {
-                    return new GameObject("Invalid Saber");
+                    case CustomSaberType.Saber:
+                        saber = await saberLoader.LoadCustomSaberAsync(saberPath); break;
+
+                    case CustomSaberType.Whacker:
+                        saber = await whackerLoader.LoadWhackerAsync(saberPath); break;
                 }
                 saberInstanceManager.AddSaber(saber);
             }

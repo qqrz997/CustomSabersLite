@@ -9,7 +9,7 @@ namespace CustomSabersLite.Managers
         private readonly Dictionary<string, CustomSaberData> saberInstances = new Dictionary<string, CustomSaberData>();
 
         public void Initialize() => 
-            AddSaber(new CustomSaberData().ForDefaultSabers());
+            AddSaber(CustomSaberData.ForDefaultSabers());
 
         public void AddSaber(CustomSaberData saberData)
         {

@@ -117,6 +117,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression.FileSystem, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
@@ -180,10 +181,13 @@
     <Compile Include="Components\Interfaces\ISaberSet.cs" />
     <Compile Include="Components\LevelSaberManager.cs" />
     <Compile Include="Data\CustomSaberMetadata.cs" />
+    <Compile Include="Data\CustomSaberType.cs" />
     <Compile Include="Data\FileExts.cs" />
     <Compile Include="Data\MaterialProperties.cs" />
     <Compile Include="Data\SaberInstanceManager.cs" />
     <Compile Include="Data\TrailType.cs" />
+    <Compile Include="Data\WhackerObject.cs" />
+    <Compile Include="Data\WhackerTrail.cs" />
     <Compile Include="Installers\CSLAppInstaller.cs" />
     <Compile Include="Installers\CSLGameInstaller.cs" />
     <Compile Include="Installers\CSLMenuInstaller.cs" />
@@ -207,6 +211,8 @@
     <Compile Include="Utilities\AssetBundles\CustomSaberLoader.cs" />
     <Compile Include="Utilities\AssetBundles\IBundleLoader.cs" />
     <Compile Include="Utilities\AssetBundles\ICustomSaberLoader.cs" />
+    <Compile Include="Utilities\AssetBundles\IWhackerLoader.cs" />
+    <Compile Include="Utilities\AssetBundles\WhackerLoader.cs" />
     <Compile Include="Utilities\CustomSaberUtils.cs" />
     <Compile Include="Components\CSLSaberTrail.cs" />
     <Compile Include="Components\TrailHandler.cs" />

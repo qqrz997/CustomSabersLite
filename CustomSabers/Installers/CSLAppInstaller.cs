@@ -30,6 +30,7 @@ namespace CustomSabersLite.Installers
             Container.BindInterfacesAndSelfTo<CSLAssetLoader>().AsSingle();
             Container.BindInterfacesTo<BundleLoader>().AsSingle();
             Container.BindInterfacesTo<CustomSaberLoader>().AsSingle();
+            Container.BindInterfacesTo<WhackerLoader>().AsSingle();
 
             Container.BindInterfacesAndSelfTo<SaberInstanceManager>().AsSingle();
             Container.BindInterfacesTo<CSLSaberSet>().AsSingle();
