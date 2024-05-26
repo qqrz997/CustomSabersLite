@@ -3,18 +3,17 @@ using System;
 using Zenject;
 using UnityEngine;
 using CustomSabersLite.Configuration;
-using CustomSabersLite.Components.Interfaces;
 
 namespace CustomSabersLite.Components
 {
     internal class ExtraSaberManager : IInitializable, IDisposable
     {
         private readonly CSLConfig config;
-        private readonly ISaberSet saberSet;
+        private readonly CSLSaberSet saberSet;
         private readonly SaberManager saberManager;
         private readonly ScoreController scoreController;
 
-        public ExtraSaberManager(ScoreController scoreController, ISaberSet saberSet, CSLConfig config, SaberManager saberManager)
+        public ExtraSaberManager(ScoreController scoreController, CSLSaberSet saberSet, CSLConfig config, SaberManager saberManager)
         {
             this.scoreController = scoreController;
             this.saberSet = saberSet;

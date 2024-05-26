@@ -178,7 +178,6 @@
     <Compile Include="Components\CSLSaberSet.cs" />
     <Compile Include="Components\EventManagerManager.cs" />
     <Compile Include="Components\ExtraSaberManager.cs" />
-    <Compile Include="Components\Interfaces\ISaberSet.cs" />
     <Compile Include="Components\LevelSaberManager.cs" />
     <Compile Include="Data\CustomSaberMetadata.cs" />
     <Compile Include="Data\CustomSaberType.cs" />
@@ -209,9 +208,6 @@
     <Compile Include="Utilities\AssetBundles\BundleLoader.cs" />
     <Compile Include="Utilities\AssetBundles\CSLAssetLoader.cs" />
     <Compile Include="Utilities\AssetBundles\CustomSaberLoader.cs" />
-    <Compile Include="Utilities\AssetBundles\IBundleLoader.cs" />
-    <Compile Include="Utilities\AssetBundles\ICustomSaberLoader.cs" />
-    <Compile Include="Utilities\AssetBundles\IWhackerLoader.cs" />
     <Compile Include="Utilities\AssetBundles\WhackerLoader.cs" />
     <Compile Include="Utilities\CustomSaberUtils.cs" />
     <Compile Include="Components\CSLSaberTrail.cs" />

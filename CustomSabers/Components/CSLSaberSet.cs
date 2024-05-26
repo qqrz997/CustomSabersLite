@@ -1,4 +1,3 @@
-﻿using CustomSabersLite.Components.Interfaces;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Data;
 using CustomSabersLite.Managers;
@@ -10,14 +9,14 @@ using Zenject;
 
 namespace CustomSabersLite.Components
 {
-    internal class CSLSaberSet : ISaberSet, IInitializable
+    internal class CSLSaberSet : IInitializable
     {
         private readonly CSLConfig config;
-        private readonly ICustomSaberLoader saberLoader;
-        private readonly IWhackerLoader whackerLoader;
+        private readonly WhackerLoader whackerLoader;
+        private readonly CustomSaberLoader saberLoader;
         private readonly SaberInstanceManager saberInstanceManager;
 
-        public CSLSaberSet(CSLConfig config, ICustomSaberLoader saberLoader, IWhackerLoader whackerLoader, SaberInstanceManager saberInstanceManager)
+        public CSLSaberSet(CSLConfig config, SaberInstanceManager saberInstanceManager, WhackerLoader whackerLoader, CustomSaberLoader saberLoader)
         {
             this.config = config;
             this.saberLoader = saberLoader;

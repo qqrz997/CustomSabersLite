@@ -8,12 +8,12 @@ namespace CustomSabersLite.Utilities.AssetBundles
     /// <summary>
     /// Class for loading .saber files
     /// </summary>
-    internal class CustomSaberLoader : ICustomSaberLoader
+    internal class CustomSaberLoader
     {
-        private readonly IBundleLoader bundleLoader;
+        private readonly BundleLoader bundleLoader;
         private readonly string sabersPath;
 
-        public CustomSaberLoader(PluginDirs dirs, IBundleLoader bundleLoader)
+        public CustomSaberLoader(PluginDirs dirs, BundleLoader bundleLoader)
         {
             this.bundleLoader = bundleLoader;
             sabersPath = dirs.CustomSabers.FullName;

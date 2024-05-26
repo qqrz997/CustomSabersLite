@@ -1,5 +1,4 @@
-﻿using CustomSabersLite.Components.Interfaces;
-using CustomSabersLite.Configuration;
+﻿using CustomSabersLite.Configuration;
 using System.Threading.Tasks;
 
 namespace CustomSabersLite.Components
@@ -7,9 +6,9 @@ namespace CustomSabersLite.Components
     internal class LevelSaberManager
     {
         private readonly CSLConfig config;
-        private readonly ISaberSet saberSet;
+        private readonly CSLSaberSet saberSet;
 
-        public LevelSaberManager(CSLConfig config, ISaberSet saberSet)
+        public LevelSaberManager(CSLConfig config, CSLSaberSet saberSet)
         {
             this.config = config;
             this.saberSet = saberSet;

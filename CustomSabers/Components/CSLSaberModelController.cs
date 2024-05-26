@@ -3,7 +3,6 @@ using SiraUtil.Interfaces;
 using UnityEngine;
 using Zenject;
 using CustomSabersLite.Configuration;
-using CustomSabersLite.Components.Interfaces;
 
 namespace CustomSabersLite.Components
 {
@@ -11,13 +10,13 @@ namespace CustomSabersLite.Components
     {
         private CustomTrailHandler trailHandler;
         private ColorManager colorManager;
-        private ISaberSet saberSet;
+        private CSLSaberSet saberSet;
         private EventManagerManager eventManagerManager;
         private CSLConfig config;
         private LevelSaberManager levelSaberManager;
 
         [Inject]
-        public void Construct(CustomTrailHandler trailHandler, ColorManager colorManager, ISaberSet saberSet, EventManagerManager eventManagerManager, CSLConfig config, LevelSaberManager levelSaberManager)
+        public void Construct(CustomTrailHandler trailHandler, ColorManager colorManager, CSLSaberSet saberSet, EventManagerManager eventManagerManager, CSLConfig config, LevelSaberManager levelSaberManager)
         {
             this.trailHandler = trailHandler;
             this.colorManager = colorManager;

@@ -12,12 +12,12 @@ namespace CustomSabersLite.Utilities.AssetBundles
     /// <summary>
     /// Class for loading .whacker files
     /// </summary>
-    internal class WhackerLoader : IWhackerLoader
+    internal class WhackerLoader
     {
-        private readonly IBundleLoader bundleLoader;
+        private readonly BundleLoader bundleLoader;
         private readonly string sabersPath;
 
-        public WhackerLoader(PluginDirs pluginDirs, IBundleLoader bundleLoader)
+        public WhackerLoader(PluginDirs pluginDirs, BundleLoader bundleLoader)
         {
             this.bundleLoader = bundleLoader;
             sabersPath = pluginDirs.CustomSabers.FullName;

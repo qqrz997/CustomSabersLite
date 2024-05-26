@@ -1,5 +1,4 @@
 ﻿using CustomSabersLite.Components;
-using CustomSabersLite.Components.Interfaces;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Utilities.Extensions;
 using System.Threading.Tasks;
@@ -9,10 +8,10 @@ namespace CustomSabersLite.UI.Managers
 {
     internal class SaberPreviewManager
     {
-        private readonly ISaberSet saberSet;
+        private readonly CSLSaberSet saberSet;
         private readonly CSLConfig config;
 
-        public SaberPreviewManager(ISaberSet saberSet, CSLConfig config)
+        public SaberPreviewManager(CSLSaberSet saberSet, CSLConfig config)
         {
             this.saberSet = saberSet;
             this.config = config;

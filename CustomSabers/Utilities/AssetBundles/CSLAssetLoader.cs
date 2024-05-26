@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Data;
 using UnityEngine;
-using System.Diagnostics;
 using Zenject;
 
 namespace CustomSabersLite.Utilities.AssetBundles
@@ -15,14 +14,14 @@ namespace CustomSabersLite.Utilities.AssetBundles
     internal class CSLAssetLoader : IInitializable, IDisposable
     {
         private readonly CSLConfig config;
-        private readonly ICustomSaberLoader customSaberLoader;
-        private readonly IWhackerLoader whackerLoader;
+        private readonly CustomSaberLoader customSaberLoader;
+        private readonly WhackerLoader whackerLoader;
 
         private readonly string sabersPath;
         private readonly string cachePath;
         private readonly string deletedSabersPath;
 
-        public CSLAssetLoader(PluginDirs pluginDirs, CSLConfig config, ICustomSaberLoader customSaberLoader, IWhackerLoader whackerLoader)
+        public CSLAssetLoader(PluginDirs pluginDirs, CSLConfig config, CustomSaberLoader customSaberLoader, WhackerLoader whackerLoader)
         {
             this.config = config;
             this.customSaberLoader = customSaberLoader;

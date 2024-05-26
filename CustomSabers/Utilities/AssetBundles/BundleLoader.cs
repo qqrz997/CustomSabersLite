@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace CustomSabersLite.Utilities.AssetBundles
 {
-    internal class BundleLoader : IBundleLoader
+    internal class BundleLoader
     {
         public async Task<AssetBundle> LoadBundleAsync(string path) =>
             await AssetBundleExtensions.LoadFromFileAsync(path);
