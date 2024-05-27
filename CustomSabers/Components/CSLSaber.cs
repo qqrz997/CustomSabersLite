@@ -12,11 +12,14 @@ namespace CustomSabersLite.Components
 
         public EventManager EventManager { get; private set; }
 
-        public void Setup(Transform parent, bool worldPositionStays = false)
+        public CustomSaberType Type { get; private set; }
+
+        public void Setup(Transform parent, CustomSaberType type, bool worldPositionStays = false)
         {
             transform.SetParent(parent, worldPositionStays);
             transform.position = parent.position;
             transform.rotation = parent.rotation;
+            Type = type;
         }
 
         void Awake()
