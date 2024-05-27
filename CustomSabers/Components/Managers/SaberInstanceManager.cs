@@ -1,18 +1,19 @@
 ﻿using CustomSabersLite.Data;
 using System.Collections.Generic;
-using Zenject;
 
-namespace CustomSabersLite.Managers
+namespace CustomSabersLite.Components.Managers
 {
-    internal class SaberInstanceManager : IInitializable
+    internal class SaberInstanceManager
     {
         private readonly Dictionary<string, CustomSaberData> saberInstances = new Dictionary<string, CustomSaberData>();
 
-        public void Initialize() => 
-            AddSaber(CustomSaberData.ForDefaultSabers());
-
         public void AddSaber(CustomSaberData saberData)
         {
+            if (saberData.FilePath is null)
+            {
+                return;
+            }
+
             if (!HasSaber(saberData.FilePath))
             {
                 saberInstances.Add(saberData.FilePath, saberData);

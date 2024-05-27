@@ -1,5 +1,4 @@
-﻿using CustomSaber;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace CustomSabersLite.Data
 {

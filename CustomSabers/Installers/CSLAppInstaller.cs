@@ -1,7 +1,5 @@
-﻿using CustomSabersLite.Components;
+﻿using CustomSabersLite.Components.Managers;
 using CustomSabersLite.Configuration;
-using CustomSabersLite.Managers;
-using CustomSabersLite.Utilities;
 using CustomSabersLite.Utilities.AssetBundles;
 using Zenject;
 
@@ -23,17 +21,16 @@ namespace CustomSabersLite.Installers
             Container.BindInstance(logger).AsSingle();
 
             Container.Bind<PluginDirs>().AsSingle();
-            Container.Bind<TrailUtils>().AsSingle();
 
             Container.BindInstance(config);
 
-            Container.BindInterfacesAndSelfTo<CSLAssetLoader>().AsSingle();
+            Container.BindInterfacesAndSelfTo<CacheManager>().AsSingle();
             Container.Bind<BundleLoader>().AsSingle();
             Container.Bind<CustomSaberLoader>().AsSingle();
             Container.Bind<WhackerLoader>().AsSingle();
 
-            Container.BindInterfacesAndSelfTo<SaberInstanceManager>().AsSingle();
-            Container.BindInterfacesAndSelfTo<CSLSaberSet>().AsSingle();
+            Container.Bind<SaberInstanceManager>().AsSingle();
+            Container.Bind<LiteSaberSet>().AsSingle();
         }
     }
 }

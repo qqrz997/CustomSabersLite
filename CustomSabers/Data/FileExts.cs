@@ -2,9 +2,9 @@
 {
     internal class FileExts
     {
-        public static string Saber => ".saber";
-        public static string Whacker => ".whacker";
+        public const string Saber = ".saber";
+        public const string Whacker = ".whacker";
 
-        public static string Metadata => ".meta";
+        public const string Metadata = ".meta";
     }
 }

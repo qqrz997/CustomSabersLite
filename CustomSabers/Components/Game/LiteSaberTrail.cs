@@ -1,21 +1,18 @@
 ﻿using CustomSabersLite.Data;
 using UnityEngine;
 
-namespace CustomSabersLite.Utilities
+namespace CustomSabersLite.Components.Game
 {
-    internal class CSLSaberTrail : SaberTrail
+    internal class LiteSaberTrail : SaberTrail
     {
         private Transform customTrailTopTransform;
         private Transform customTrailBottomTransform;
 
-        private Vector3 customTrailTopPos;
-        private Vector3 customTrailBottomPos;
-
-        public SaberMovementData CustomTrailMovementData { get; } = new SaberMovementData();
+        private readonly SaberMovementData customTrailMovementData = new SaberMovementData();
 
         void Awake()
         {
-            // i'm stupid and i don't know why i need this but i do so yer
+            _movementData = customTrailMovementData;
         }
 
         public void Setup(Transform topTransform, Transform bottomTransform)
@@ -36,9 +33,7 @@ namespace CustomSabersLite.Utilities
         {
             if (gameObject.activeInHierarchy)
             {
-                customTrailTopPos = customTrailTopTransform.position;
-                customTrailBottomPos = customTrailBottomTransform.position;
-                CustomTrailMovementData.AddNewData(customTrailTopPos, customTrailBottomPos, TimeHelper.time);
+                customTrailMovementData.AddNewData(customTrailTopTransform.position, customTrailBottomTransform.position, TimeHelper.time);
             }
         }
 

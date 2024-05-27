@@ -173,17 +173,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Components\CSLSaber.cs" />
-    <Compile Include="Components\CSLSaberModelController.cs" />
-    <Compile Include="Components\CSLSaberSet.cs" />
-    <Compile Include="Components\EventManagerManager.cs" />
-    <Compile Include="Components\ExtraSaberManager.cs" />
-    <Compile Include="Components\LevelSaberManager.cs" />
+    <Compile Include="Components\Game\LiteSaber.cs" />
+    <Compile Include="Components\Game\LiteSaberModelController.cs" />
+    <Compile Include="Components\Managers\LiteSaberSet.cs" />
+    <Compile Include="Components\Game\EventManagerManager.cs" />
+    <Compile Include="Components\Game\ExtraSaberManager.cs" />
+    <Compile Include="Components\Game\LevelSaberManager.cs" />
     <Compile Include="Data\CustomSaberMetadata.cs" />
     <Compile Include="Data\CustomSaberType.cs" />
+    <Compile Include="Data\CustomTrailData.cs" />
     <Compile Include="Data\FileExts.cs" />
     <Compile Include="Data\MaterialProperties.cs" />
-    <Compile Include="Data\SaberInstanceManager.cs" />
+    <Compile Include="Components\Managers\SaberInstanceManager.cs" />
     <Compile Include="Data\TrailType.cs" />
     <Compile Include="Data\WhackerObject.cs" />
     <Compile Include="Data\WhackerTrail.cs" />
@@ -206,13 +207,13 @@
     <Compile Include="UI\Managers\MenuButtonManager.cs" />
     <Compile Include="UI\Views\TestViewController.cs" />
     <Compile Include="Utilities\AssetBundles\BundleLoader.cs" />
-    <Compile Include="Utilities\AssetBundles\CSLAssetLoader.cs" />
+    <Compile Include="Utilities\AssetBundles\CacheManager.cs" />
     <Compile Include="Utilities\AssetBundles\CustomSaberLoader.cs" />
     <Compile Include="Utilities\AssetBundles\WhackerLoader.cs" />
     <Compile Include="Utilities\CustomSaberUtils.cs" />
-    <Compile Include="Components\CSLSaberTrail.cs" />
-    <Compile Include="Components\TrailHandler.cs" />
-    <Compile Include="Utilities\DefaultSaberSetter.cs" />
+    <Compile Include="Components\Game\LiteSaberTrail.cs" />
+    <Compile Include="Components\Game\TrailManager.cs" />
+    <Compile Include="Components\Game\DefaultSaberSetter.cs" />
     <Compile Include="Utilities\Extensions\ColorExtensions.cs" />
     <Compile Include="Utilities\Extensions\GameObjectExtensions.cs" />
     <Compile Include="Utilities\FileUtils.cs" />
@@ -257,6 +258,8 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\CustomSaber.dll" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Managers\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

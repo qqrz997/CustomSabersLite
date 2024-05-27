@@ -24,16 +24,16 @@ namespace CustomSabersLite.UI.Views
     {
         private PluginDirs pluginDirs;
         private CSLConfig config;
-        private CSLAssetLoader assetLoader;
+        private CacheManager cacheManager;
         private SaberPreviewManager previewManager;
         private GameplaySetupTab gameplaySetupTab;
 
         [Inject]
-        public void Construct(PluginDirs pluginDirs, CSLConfig config, CSLAssetLoader assetLoader, SaberPreviewManager previewManager, GameplaySetupTab gameplaySetupTab)
+        public void Construct(PluginDirs pluginDirs, CSLConfig config, CacheManager cacheManager, SaberPreviewManager previewManager, GameplaySetupTab gameplaySetupTab)
         {
             this.pluginDirs = pluginDirs;
             this.config = config;
-            this.assetLoader = assetLoader;
+            this.cacheManager = cacheManager;
             this.previewManager = previewManager;
             this.gameplaySetupTab = gameplaySetupTab;
             Init();
@@ -64,8 +64,8 @@ namespace CustomSabersLite.UI.Views
         public async void Select(TableView _, int row)
         {
             Logger.Debug($"saber selected at row {row}");
-            assetLoader.SelectedSaberIndex = row;
-            config.CurrentlySelectedSaber = assetLoader.SabersMetadata[row].RelativePath;
+            cacheManager.SelectedSaberIndex = row;
+            config.CurrentlySelectedSaber = cacheManager.SabersMetadata[row].RelativePath;
             await previewManager.GeneratePreview();
         }
 
@@ -78,7 +78,7 @@ namespace CustomSabersLite.UI.Views
         [UIAction("show-delete-saber-modal")]
         public void ShowDeleteSaberModal()
         {
-            if (config.CurrentlySelectedSaber == "Default")
+            if (config.CurrentlySelectedSaber == null)
             {
                 Logger.Warn("You can't delete the default sabers! >:(");
                 return;
@@ -100,7 +100,7 @@ namespace CustomSabersLite.UI.Views
             HideDeleteSaberModal();
 
             string selectedSaber = config.CurrentlySelectedSaber;
-            if (selectedSaber != "Default")
+            if (selectedSaber != null)
             {
                 string currentSaberPath = Path.Combine(saberAssetPath, selectedSaber);
                 string destinationPath = Path.Combine(deletedSabersPath, selectedSaber);
@@ -113,10 +113,10 @@ namespace CustomSabersLite.UI.Views
                         Logger.Debug($"Moving {currentSaberPath}\nto {deletedSabersPath}");
                         File.Move(currentSaberPath, destinationPath);
 
-                        assetLoader.SabersMetadata.RemoveAt(assetLoader.SelectedSaberIndex);
+                        cacheManager.SabersMetadata.RemoveAt(cacheManager.SelectedSaberIndex);
                         SetupList();
                         gameplaySetupTab.SetupList();
-                        assetLoader.SelectedSaberIndex--;
+                        cacheManager.SelectedSaberIndex--;
                         StartCoroutine(ScrollToSelectedCell());
                     }
                     else
@@ -136,17 +136,16 @@ namespace CustomSabersLite.UI.Views
         public async void ReloadSabers()
         {
             reloadButtonSelectable.interactable = false;
-            await assetLoader.ReloadAsync();
+            await cacheManager.ReloadAsync();
             SetupList();
             gameplaySetupTab.SetupList();
-            Select(customListTableData.tableView, assetLoader.SelectedSaberIndex);
+            Select(customListTableData.tableView, cacheManager.SelectedSaberIndex);
             reloadButtonSelectable.interactable = true;
         }
 
         [UIAction("#post-parse")]
         public async void PostParse()
         {
-            await previewManager.GeneratePreview();
             SetupList();
         }
 
@@ -154,18 +153,18 @@ namespace CustomSabersLite.UI.Views
         {
             customListTableData.data.Clear();
 
-            foreach (CustomSaberMetadata metadata in assetLoader.SabersMetadata)
+            foreach (CustomSaberMetadata metadata in cacheManager.SabersMetadata)
             {
-                if (metadata.SaberName == "Default")
+                if (metadata.RelativePath == null)
                 {
                     customListTableData.data.Add(new CustomListTableData.CustomCellInfo(metadata.SaberName, metadata.AuthorName, ImageUtils.defaultCoverImage));
                 }
-                else 
+                else if (!File.Exists(Path.Combine(saberAssetPath, metadata.RelativePath)))
                 {
-                    if (!File.Exists(Path.Combine(saberAssetPath, metadata.RelativePath)))
-                    {
-                        continue;
-                    }
+                    continue;
+                }
+                else
+                {
                     customListTableData.data.Add(new CustomListTableData.CustomCellInfo(
                         metadata.SaberName,
                         metadata.AuthorName,
@@ -187,10 +186,10 @@ namespace CustomSabersLite.UI.Views
         {
             yield return new WaitUntil(() => customListTableData.gameObject.activeInHierarchy);
             yield return new WaitForEndOfFrame();
-            int selectedSaber = assetLoader.SelectedSaberIndex;
+            int selectedSaber = cacheManager.SelectedSaberIndex;
             customListTableData.tableView.SelectCellWithIdx(selectedSaber);
             customListTableData.tableView.ScrollToCellWithIdx(selectedSaber, TableView.ScrollPositionType.Center, true);
-            Select(customListTableData.tableView, assetLoader.SelectedSaberIndex);
+            Select(customListTableData.tableView, cacheManager.SelectedSaberIndex);
         }
     }
 }

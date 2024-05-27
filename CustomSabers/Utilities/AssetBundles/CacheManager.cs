@@ -11,7 +11,7 @@ using Zenject;
 
 namespace CustomSabersLite.Utilities.AssetBundles
 {
-    internal class CSLAssetLoader : IInitializable, IDisposable
+    internal class CacheManager : IInitializable, IDisposable
     {
         private readonly CSLConfig config;
         private readonly CustomSaberLoader customSaberLoader;
@@ -21,7 +21,9 @@ namespace CustomSabersLite.Utilities.AssetBundles
         private readonly string cachePath;
         private readonly string deletedSabersPath;
 
-        public CSLAssetLoader(PluginDirs pluginDirs, CSLConfig config, CustomSaberLoader customSaberLoader, WhackerLoader whackerLoader)
+        public Task CacheInitialization { get; private set; }
+
+        public CacheManager(PluginDirs pluginDirs, CSLConfig config, CustomSaberLoader customSaberLoader, WhackerLoader whackerLoader)
         {
             this.config = config;
             this.customSaberLoader = customSaberLoader;
@@ -30,9 +32,11 @@ namespace CustomSabersLite.Utilities.AssetBundles
             sabersPath = pluginDirs.CustomSabers.FullName;
             cachePath = pluginDirs.Cache.FullName;
             deletedSabersPath = pluginDirs.DeletedSabers.FullName;
+
+            CacheInitialization = LoadAsync();
         }
 
-        public int SelectedSaberIndex { get; internal set; } = 0; // used by UI to get position on the saber list 
+        public int SelectedSaberIndex { get; set; } = 0; // used by UI to get position on the saber list 
 
         public List<CustomSaberMetadata> SabersMetadata { get; private set; } = new List<CustomSaberMetadata>();
 
@@ -41,8 +45,6 @@ namespace CustomSabersLite.Utilities.AssetBundles
 
         public async void Initialize()
         {
-            ClearCache();
-
             if (config.PluginVer != Plugin.Version)
             {
                 Logger.Debug("Mod version has changed! Clearing cache");
@@ -51,7 +53,7 @@ namespace CustomSabersLite.Utilities.AssetBundles
             }
 
             Logger.Debug("Starting the CustomSabersAssetLoader");
-            await LoadAsync();
+            await CacheInitialization;
         }
 
         private async Task LoadAsync()
@@ -71,15 +73,18 @@ namespace CustomSabersLite.Utilities.AssetBundles
 
             UpdateCache(fileMetadata, loadedSaberData);
 
-            if (config.CurrentlySelectedSaber != null)
+            if (config.CurrentlySelectedSaber == null)
             {
-                for (int i = 0; i < SabersMetadata.Count(); i++)
+                SelectedSaberIndex = 0;
+                return;
+            }
+
+            for (int i = 0; i < SabersMetadata.Count(); i++)
+            {
+                if (SabersMetadata[i].RelativePath == config.CurrentlySelectedSaber)
                 {
-                    if (SabersMetadata[i].RelativePath == config.CurrentlySelectedSaber)
-                    {
-                        SelectedSaberIndex = i;
-                        break;
-                    }
+                    SelectedSaberIndex = i;
+                    break;
                 }
             }
         }
@@ -87,7 +92,6 @@ namespace CustomSabersLite.Utilities.AssetBundles
         public async Task ReloadAsync()
         {
             Logger.Debug("Reloading the CustomSaberAssetLoader");
-            SabersMetadata.Clear();
             await LoadAsync();
         }
 
@@ -107,11 +111,11 @@ namespace CustomSabersLite.Utilities.AssetBundles
             {
                 string json = File.ReadAllText(filePath);
                 CustomSaberMetadata metadata = JsonConvert.DeserializeObject<CustomSaberMetadata>(json);
-                string saberFileName = metadata.RelativePath;
-                string saberPath = Path.Combine(sabersPath, saberFileName);
+
+                string saberPath = Path.Combine(sabersPath, metadata.RelativePath);
                 if (File.Exists(saberPath))
                 {
-                    fileMetadata.Add(saberFileName, metadata);
+                    fileMetadata.Add(metadata.RelativePath, metadata);
                 }
             }
 
@@ -146,6 +150,7 @@ namespace CustomSabersLite.Utilities.AssetBundles
                 saber.Destroy();
             }
 
+            SabersMetadata.Clear();
             SabersMetadata.Add(new CustomSaberMetadata() { SaberName = "Default", AuthorName = "Beat Games" });
             SabersMetadata.AddRange(fileMetadata.Values);
         }

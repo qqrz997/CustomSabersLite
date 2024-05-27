@@ -17,7 +17,6 @@ using System.Text.RegularExpressions;
 using System.ComponentModel;
 using CustomSabersLite.Utilities.UI;
 using System.Collections;
-using CustomSabersLite.Utilities;
 
 namespace CustomSabersLite.UI.Views
 {
@@ -25,14 +24,14 @@ namespace CustomSabersLite.UI.Views
     {
         private readonly PluginDirs pluginDirs;
         private readonly CSLConfig config;
-        private readonly CSLAssetLoader assetLoader;
+        private readonly CacheManager cacheManager;
         private readonly ICoroutineStarter coroutineStarter;
 
-        public GameplaySetupTab(PluginDirs pluginDirs, CSLConfig config, CSLAssetLoader assetLoader, ICoroutineStarter coroutineStarter)
+        public GameplaySetupTab(PluginDirs pluginDirs, CSLConfig config, CacheManager cacheManager, ICoroutineStarter coroutineStarter)
         {
             this.pluginDirs = pluginDirs;
             this.config = config;
-            this.assetLoader = assetLoader;
+            this.cacheManager = cacheManager;
             this.coroutineStarter = coroutineStarter;
         }
 
@@ -178,8 +177,8 @@ namespace CustomSabersLite.UI.Views
         public void Select(TableView _, int row)
         {
             Logger.Debug($"saber selected at row {row}");
-            assetLoader.SelectedSaberIndex = row;
-            config.CurrentlySelectedSaber = assetLoader.SabersMetadata[row].RelativePath;
+            cacheManager.SelectedSaberIndex = row;
+            config.CurrentlySelectedSaber = cacheManager.SabersMetadata[row].RelativePath;
         }
 
         #region tabs
@@ -254,11 +253,11 @@ namespace CustomSabersLite.UI.Views
         {
             saberList.data.Clear();
 
-            foreach (CustomSaberMetadata metadata in assetLoader.SabersMetadata)
+            foreach (CustomSaberMetadata metadata in cacheManager.SabersMetadata)
             {
                 string saberName = metadata.SaberName;
 
-                if (saberName != "Default")
+                if (metadata.RelativePath != null)
                 {
                     if (!File.Exists(Path.Combine(saberAssetPath, metadata.RelativePath)))
                     {
@@ -311,7 +310,7 @@ namespace CustomSabersLite.UI.Views
         {
             yield return new WaitUntil(() => saberList.gameObject.activeInHierarchy);
             yield return new WaitForEndOfFrame();
-            int selectedSaber = assetLoader.SelectedSaberIndex;
+            int selectedSaber = cacheManager.SelectedSaberIndex;
             saberList.tableView.SelectCellWithIdx(selectedSaber);
             saberList.tableView.ScrollToCellWithIdx(selectedSaber, TableView.ScrollPositionType.Center, true);
         }

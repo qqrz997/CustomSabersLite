@@ -4,9 +4,9 @@ using CustomSabersLite.Utilities.Extensions;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace CustomSabersLite.Components
+namespace CustomSabersLite.Components.Game
 {
-    internal class CSLSaber : MonoBehaviour
+    internal class LiteSaber : MonoBehaviour
     {
         private readonly List<Material> colorableMaterials = new List<Material>();
 

@@ -40,22 +40,27 @@ namespace CustomSabersLite.Utilities
             }
             else
             {
-                if (!trail.IsDefault())
-                {
-                    trail.enabled = true;
-                }
-                else if (trail._color.a.Equals(0f))
-                {
-                    trail._color.a = 1f; // todo - test if the default trail color gets reset automatically
-                }
+                trail.Enable();
+            }
+        }
+
+        private static void Enable(this SaberTrail trail)
+        {
+            // Only disable/enable trails that inherit from SaberTrail
+            // If we disable/enable the default trail, there can be compatibility issues with other mods
+            // Instead, just make the default trail transparent
+            if (!trail.IsDefault())
+            {
+                trail.enabled = true;
+            }
+            else if (trail._color.a.Equals(0f))
+            {
+                trail._color.a = 1f; // todo - test if the default trail color gets reset automatically
             }
         }
 
         private static void Disable(this SaberTrail trail)
         {
-            // Only disable trails that inherit from SaberTrail
-            // If we disable the default trail, there can be compatibility issues with other mods
-            // Instead, just make the default trail transparent
             if (!trail.IsDefault())
             {
                 trail.enabled = false;

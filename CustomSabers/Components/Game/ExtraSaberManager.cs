@@ -3,17 +3,18 @@ using System;
 using Zenject;
 using UnityEngine;
 using CustomSabersLite.Configuration;
+using CustomSabersLite.Components.Managers;
 
-namespace CustomSabersLite.Components
+namespace CustomSabersLite.Components.Game
 {
     internal class ExtraSaberManager : IInitializable, IDisposable
     {
         private readonly CSLConfig config;
-        private readonly CSLSaberSet saberSet;
+        private readonly LiteSaberSet saberSet;
         private readonly SaberManager saberManager;
         private readonly ScoreController scoreController;
 
-        public ExtraSaberManager(ScoreController scoreController, CSLSaberSet saberSet, CSLConfig config, SaberManager saberManager)
+        public ExtraSaberManager(ScoreController scoreController, LiteSaberSet saberSet, CSLConfig config, SaberManager saberManager)
         {
             this.scoreController = scoreController;
             this.saberSet = saberSet;
@@ -23,8 +24,8 @@ namespace CustomSabersLite.Components
 
         private BeatmapObjectManager beatmapObjectManager;
 
-        private CSLSaber leftSaber;
-        private CSLSaber rightSaber;
+        private LiteSaber leftSaber;
+        private LiteSaber rightSaber;
 
         private readonly string defaultSaberObjectName = "BasicSaberModel(Clone)";
         private Transform defaultLeftSaber => saberManager.leftSaber.transform.Find(defaultSaberObjectName);
@@ -51,7 +52,7 @@ namespace CustomSabersLite.Components
                 config.Fooled = true;
             }
 
-            if (config.CurrentlySelectedSaber != "Default")
+            if (config.CurrentlySelectedSaber != null)
             {
                 leftSaber = saberSet.CustomSaberForSaberType(SaberType.SaberA);
                 rightSaber = saberSet.CustomSaberForSaberType(SaberType.SaberB);

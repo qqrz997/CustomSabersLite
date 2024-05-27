@@ -1,4 +1,5 @@
-﻿using CustomSabersLite.Components;
+﻿using CustomSabersLite.Components.Game;
+using CustomSabersLite.Components.Managers;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Utilities.Extensions;
 using System.Threading.Tasks;
@@ -8,10 +9,10 @@ namespace CustomSabersLite.UI.Managers
 {
     internal class SaberPreviewManager
     {
-        private readonly CSLSaberSet saberSet;
+        private readonly LiteSaberSet saberSet;
         private readonly CSLConfig config;
 
-        public SaberPreviewManager(CSLSaberSet saberSet, CSLConfig config)
+        public SaberPreviewManager(LiteSaberSet saberSet, CSLConfig config)
         {
             this.saberSet = saberSet;
             this.config = config;
@@ -31,9 +32,9 @@ namespace CustomSabersLite.UI.Managers
 
             if (config.CurrentlySelectedSaber is null) return;
 
-            await saberSet.SetSabers(config.CurrentlySelectedSaber);
-            CSLSaber leftSaber = saberSet.CustomSaberForSaberType(SaberType.SaberA);
-            CSLSaber rightSaber = saberSet.CustomSaberForSaberType(SaberType.SaberB);
+            await saberSet.SetSabersFromPath(config.CurrentlySelectedSaber);
+            LiteSaber leftSaber = saberSet.CustomSaberForSaberType(SaberType.SaberA);
+            LiteSaber rightSaber = saberSet.CustomSaberForSaberType(SaberType.SaberB);
             if (!leftSaber || !rightSaber) return;
 
             if (leftSaberObject != null) GameObject.Destroy(leftSaberObject);
@@ -58,7 +59,7 @@ namespace CustomSabersLite.UI.Managers
 
         private void SetupSaber(GameObject saberObject, SaberType saberType)
         {
-            CSLSaber saber = saberObject.TryGetComponentOrDefault<CSLSaber>();
+            LiteSaber saber = saberObject.TryGetComponentOrDefault<LiteSaber>();
             Color color = saberType == SaberType.SaberA ? new Color(0.784f, 0.078f, 0.078f, 1f) : new Color(0.157f, 0.557f, 0.824f, 1f);
             saber.SetColor(color);
         }

@@ -76,9 +76,11 @@ namespace CustomSabersLite.Utilities.AssetBundles
 
         private async Task<Sprite> GetCoverFromArchive(ZipArchiveEntry thumbEntry)
         {
-            MemoryStream memoryStream = new MemoryStream();
-            await thumbEntry.Open().CopyToAsync(memoryStream);
-            return ImageUtils.LoadImage(memoryStream.ToArray());
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                await thumbEntry.Open().CopyToAsync(memoryStream);
+                return ImageUtils.LoadImage(memoryStream.ToArray());
+            }
         }
     }
 }
