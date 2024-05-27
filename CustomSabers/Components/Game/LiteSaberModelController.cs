@@ -3,7 +3,6 @@ using UnityEngine;
 using Zenject;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Components.Managers;
-using System.Threading.Tasks;
 
 namespace CustomSabersLite.Components.Game
 {
@@ -27,7 +26,6 @@ namespace CustomSabersLite.Components.Game
             this.levelSaberManager = levelSaberManager;
         }
 
-        private bool defaultInit = true;
         private Color? color;
 
         public LiteSaber customSaberInstance;
@@ -39,8 +37,7 @@ namespace CustomSabersLite.Components.Game
         public bool PreInit(Transform parent, Saber saber)
         {
             CustomSaberInit(parent, saber);
-            _saberTrail.enabled = defaultInit; // It's safe to enable the default trail because SiraUtil is using our SaberModelController
-            return defaultInit;
+            return true;
         }
 
         private async void CustomSaberInit(Transform parent, Saber saber)
@@ -56,25 +53,16 @@ namespace CustomSabersLite.Components.Game
                 return;
             }
 
-            transform.SetParent(parent, false);
+            transform.SetParent(saber.transform.parent, false);
 
-            customSaberInstance.Setup(saber.transform, saberSet.Type);
+            customSaberInstance.Setup(transform, saberSet.Type);
             eventManagerManager.InitializeEventManager(customSaberInstance.EventManager, saberType);
 
             Color saberColor = config.EnableCustomColorScheme
                 ? CustomSchemeColorForSaberType(saberType)
                 : colorManager.ColorForSaberType(saberType);
 
-            customTrailInstances = trailManager.CreateTrail(_saberTrail, saberColor, customSaberInstance.gameObject, customSaberInstance.Type);
-
-            if (customTrailInstances != null)
-            {
-                defaultInit = false;
-            }
-            else
-            {
-                Logger.Warn("No custom trails. Defaulting to existing saber trails.");
-            }
+            customTrailInstances = trailManager.CreateTrail(saber, _saberTrail, saberColor, customSaberInstance);
 
             SetColor(saberColor);
         }

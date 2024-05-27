@@ -28,8 +28,10 @@ namespace CustomSabersLite.Installers
                 // This replaces the default sabers
                 Container.BindInstance(SaberModelRegistration.Create<LiteSaberModelController>(5)).AsSingle();
             }
-
-            Container.BindInterfacesTo<DefaultSaberSetter>().AsSingle();
+            else
+            {
+                Container.BindInterfacesTo<DefaultSaberSetter>().AsSingle();
+            }
 
             // Aprilfools
             Container.BindInterfacesTo<ExtraSaberManager>().AsSingle();

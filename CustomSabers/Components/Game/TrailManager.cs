@@ -7,7 +7,6 @@ using CustomSabersLite.Configuration;
 using CustomSabersLite.Utilities;
 using UnityEngine.UI;
 using Newtonsoft.Json;
-using BeatSaberMarkupLanguage;
 
 namespace CustomSabersLite.Components.Game
 {
@@ -34,11 +33,27 @@ namespace CustomSabersLite.Components.Game
         /// Sets up custom trails for a custom saber
         /// </summary>
         /// <returns>null if no trail is created</returns>
-        public LiteSaberTrail[] CreateTrail(SaberTrail defaultTrail, Color saberTrailColor, GameObject saberObject, CustomSaberType customSaberType)
+        public LiteSaberTrail[] CreateTrail(Saber defaultSaber, SaberTrail defaultTrail, Color saberTrailColor, LiteSaber customSaber)
         {
+            if (config.TrailType == TrailType.None)
+            {
+                return new LiteSaberTrail[] { };
+            }
+
+            GameObject saberObject = customSaber.gameObject;
+            defaultTrailRendererPrefab = defaultTrail._trailRendererPrefab;
+            defaultSamplingFrequency = defaultTrail._samplingFrequency;
+            defaultGranularity = defaultTrail._granularity;
+            defaultTrailElementCollection = defaultTrail._trailElementCollection;
+
+            if (config.TrailType == TrailType.Vanilla)
+            {
+                return SetupTrailUsingDefaultMaterial(saberObject, defaultSaber, saberTrailColor);
+            }
+
             CustomTrailData[] customTrailData = null;
 
-            switch (customSaberType)
+            switch (customSaber.Type)
             {
                 case CustomSaberType.Saber:
                     customTrailData = TrailsFromSaber(saberObject, saberTrailColor); break;
@@ -49,13 +64,8 @@ namespace CustomSabersLite.Components.Game
 
             if (customTrailData is null)
             {
-                return null;
+                return SetupTrailUsingDefaultMaterial(saberObject, defaultSaber, saberTrailColor);
             }
-
-            defaultTrailRendererPrefab = defaultTrail._trailRendererPrefab;
-            defaultSamplingFrequency = defaultTrail._samplingFrequency;
-            defaultGranularity = defaultTrail._granularity;
-            defaultTrailElementCollection = defaultTrail._trailElementCollection;
 
             List<LiteSaberTrail> trails = new List<LiteSaberTrail>();
 
@@ -66,6 +76,19 @@ namespace CustomSabersLite.Components.Game
             }
 
             return trails.ToArray();
+        }
+
+        private LiteSaberTrail[] SetupTrailUsingDefaultMaterial(GameObject saberObject, Saber defaultSaber, Color saberTrailColor) =>
+            new LiteSaberTrail[] { SetupTrail(saberObject, TrailFromDefaultSaber(defaultSaber, saberTrailColor)) };
+
+        private CustomTrailData TrailFromDefaultSaber(Saber defaultSaber, Color saberTrailColor)
+        {
+            // Make new transforms based on the default ones, because we cannot modify the default transforms
+            Transform trailTop = GameObject.Instantiate(new GameObject()).transform;
+            Transform trailBottom = GameObject.Instantiate(new GameObject()).transform;
+            trailTop.SetPositionAndRotation(defaultSaber._saberBladeTopTransform.position, Quaternion.identity);
+            trailBottom.SetPositionAndRotation(defaultSaber._saberBladeBottomTransform.position, Quaternion.identity);
+            return new CustomTrailData(trailTop, trailBottom, new Material(defaultTrailRendererPrefab._meshRenderer.material), saberTrailColor);
         }
 
         private CustomTrailData[] TrailsFromWhacker(GameObject saberObject, Color saberTrailColor)
@@ -144,7 +167,7 @@ namespace CustomSabersLite.Components.Game
             trail._samplingFrequency = defaultSamplingFrequency;
             trail._granularity = defaultGranularity;
             trail._color = customTrailData.TrailColor;
-            trail._trailRenderer = UnityEngine.Object.Instantiate(trail._trailRendererPrefab, Vector3.zero, Quaternion.identity);
+            trail._trailRenderer = GameObject.Instantiate(trail._trailRendererPrefab, Vector3.zero, Quaternion.identity);
             trail._trailRenderer._meshRenderer.material = customTrailData.TrailMaterial;
             trail._trailRenderer._meshRenderer.material.color = customTrailData.TrailColor.ColorWithAlpha(saberTrailIntensity);
             trail._trailElementCollection = defaultTrailElementCollection;

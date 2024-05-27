@@ -61,6 +61,7 @@ namespace CustomSabersLite.Utilities
 
         private static void Disable(this SaberTrail trail)
         {
+            trail.DisableWhiteTrail();
             if (!trail.IsDefault())
             {
                 trail.enabled = false;

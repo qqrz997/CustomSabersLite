@@ -1,7 +1,6 @@
 ﻿using BeatSaberMarkupLanguage.MenuButtons;
 using CustomSabersLite.Utilities.AssetBundles;
 using System;
-using System.Threading.Tasks;
 using Zenject;
 
 namespace CustomSabersLite.UI.Managers
