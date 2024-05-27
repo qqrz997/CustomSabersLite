@@ -186,8 +186,7 @@
     <Compile Include="Data\MaterialProperties.cs" />
     <Compile Include="Components\Managers\SaberInstanceManager.cs" />
     <Compile Include="Data\TrailType.cs" />
-    <Compile Include="Data\WhackerObject.cs" />
-    <Compile Include="Data\WhackerTrail.cs" />
+    <Compile Include="Data\WhackerData.cs" />
     <Compile Include="Installers\CSLAppInstaller.cs" />
     <Compile Include="Installers\CSLGameInstaller.cs" />
     <Compile Include="Installers\CSLMenuInstaller.cs" />

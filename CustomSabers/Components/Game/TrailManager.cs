@@ -5,6 +5,9 @@ using UnityEngine;
 using CustomSabersLite.Data;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Utilities;
+using UnityEngine.UI;
+using Newtonsoft.Json;
+using BeatSaberMarkupLanguage;
 
 namespace CustomSabersLite.Components.Game
 {
@@ -38,10 +41,10 @@ namespace CustomSabersLite.Components.Game
             switch (customSaberType)
             {
                 case CustomSaberType.Saber:
-                    customTrailData = TrailsFromSaber(saberTrailColor, saberObject); break;
+                    customTrailData = TrailsFromSaber(saberObject, saberTrailColor); break;
 
                 case CustomSaberType.Whacker:
-                    customTrailData = TrailsFromWhacker(); break;
+                    customTrailData = TrailsFromWhacker(saberObject, saberTrailColor); break;
             }
 
             if (customTrailData is null)
@@ -65,12 +68,36 @@ namespace CustomSabersLite.Components.Game
             return trails.ToArray();
         }
 
-        private CustomTrailData[] TrailsFromWhacker()
+        private CustomTrailData[] TrailsFromWhacker(GameObject saberObject, Color saberTrailColor)
         {
-            return null;
+            Text[] texts = saberObject.GetComponentsInChildren<Text>();
+            Dictionary<Text, WhackerTrail> trailDatas = new Dictionary<Text, WhackerTrail>();
+            Dictionary<Text, WhackerTrailTransform> transformDatas = new Dictionary<Text, WhackerTrailTransform>();
+            
+            foreach (Text trailDataText in texts.Where(t => t.text.Contains("\"trailColor\":")))
+            {
+                trailDatas.Add(trailDataText, JsonConvert.DeserializeObject<WhackerTrail>(trailDataText.text));
+            }
+            foreach (Text trailTransformText in texts.Where(t => t.text.Contains("\"isTop\":")))
+            {
+                transformDatas.Add(trailTransformText, JsonConvert.DeserializeObject<WhackerTrailTransform>(trailTransformText.text));
+            }
+
+            IList<CustomTrailData> customTrailData = new List<CustomTrailData>();
+
+            foreach (KeyValuePair<Text, WhackerTrail> trailData in trailDatas) 
+            {
+                Transform trailTop = transformDatas.Where(kvp => kvp.Value.trailId == trailData.Value.trailId && kvp.Value.isTop).FirstOrDefault().Key.transform;
+                Transform trailBottom = transformDatas.Where(kvp => kvp.Value.trailId == trailData.Value.trailId && !kvp.Value.isTop).FirstOrDefault().Key.transform;
+                Material trailMaterial = trailData.Key.GetComponent<MeshRenderer>().material;
+
+                customTrailData.Add(new CustomTrailData(trailTop, trailBottom, trailMaterial, saberTrailColor));
+            }
+
+            return customTrailData.ToArray();
         }
 
-        private CustomTrailData[] TrailsFromSaber(Color saberTrailColor, GameObject saberObject)
+        private CustomTrailData[] TrailsFromSaber(GameObject saberObject, Color saberTrailColor)
         {
             CustomTrail[] customTrails = saberObject.GetComponentsInChildren<CustomTrail>();
 

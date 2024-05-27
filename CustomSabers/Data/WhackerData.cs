@@ -1,4 +1,6 @@
-﻿namespace CustomSabersLite.Data
+﻿using UnityEngine;
+
+namespace CustomSabersLite.Data
 {
     internal struct WhackerObject
     {
@@ -19,5 +21,21 @@
     internal struct WhackerConfig
     {
         public bool hasTrail;
+    }
+
+    internal struct WhackerTrail
+    {
+        public int trailId;
+        public ColorType colorType;
+        public Color trailColor;
+        public Color multiplierColor;
+        public int length;
+        public float whiteStep;
+    }
+
+    internal struct WhackerTrailTransform
+    {
+        public int trailId;
+        public bool isTop;
     }
 }
