@@ -1,5 +1,13 @@
 changelog
 
+0.10.0
+- Added support for Qosmetics whacker files
+- Sabers with more than one trail now show additional trails
+- Custom trails now use their designated length when not overriding trail length
+- Sabers are loaded in the background on startup, reducing load times considerably
+- Fixed various errors pertaining to the saber preview
+- Minor optimizations
+
 0.9.2
 - The game no longer freezes when loading the saber preview
 - Various cleanup
