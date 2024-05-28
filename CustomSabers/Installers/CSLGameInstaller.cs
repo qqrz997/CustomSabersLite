@@ -1,6 +1,5 @@
-﻿using CustomSabersLite.Components;
+﻿using CustomSabersLite.Components.Game;
 using CustomSabersLite.Configuration;
-using CustomSabersLite.Utilities;
 using SiraUtil.Sabers;
 using Zenject;
 
@@ -18,17 +17,19 @@ namespace CustomSabersLite.Installers
                 return;
             }
 
-            Container.BindInterfacesAndSelfTo<LevelSaberManager>().AsSingle();
-            Container.Bind<CustomTrailHandler>().AsSingle();
+            Container.Bind<LevelSaberManager>().AsSingle();
+            Container.Bind<TrailManager>().AsTransient();
             Container.BindInterfacesAndSelfTo<EventManagerManager>().AsTransient();
 
-            if (config.CurrentlySelectedSaber != "Default")
+            if (config.CurrentlySelectedSaber != null)
             {
                 // This replaces the default sabers
-                Container.BindInstance(SaberModelRegistration.Create<CSLSaberModelController>(5)).AsSingle();
+                Container.BindInstance(SaberModelRegistration.Create<LiteSaberModelController>(5)).AsSingle();
             }
-
-            Container.Bind<DefaultSaberSetter>().FromNewComponentOnNewGameObject().AsSingle().NonLazy();
+            else
+            {
+                Container.BindInterfacesTo<DefaultSaberSetter>().AsSingle();
+            }
 
             // Aprilfools
             Container.BindInterfacesTo<ExtraSaberManager>().AsSingle();

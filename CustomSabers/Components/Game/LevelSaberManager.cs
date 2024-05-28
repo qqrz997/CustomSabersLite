@@ -1,24 +1,18 @@
-﻿using CustomSabersLite.Components.Interfaces;
+﻿using CustomSabersLite.Components.Managers;
 using CustomSabersLite.Configuration;
-using CustomSabersLite.Managers;
-using CustomSabersLite.Utilities.AssetBundles;
 using System.Threading.Tasks;
 
-namespace CustomSabersLite.Components
+namespace CustomSabersLite.Components.Game
 {
     internal class LevelSaberManager
     {
         private readonly CSLConfig config;
-        private readonly ISaberSet saberSet;
-        private readonly SaberInstanceManager saberInstanceManager;
-        private readonly ICustomSaberLoader saberLoader;
+        private readonly LiteSaberSet saberSet;
 
-        public LevelSaberManager(CSLConfig config, ISaberSet saberSet, SaberInstanceManager saberInstanceManager, ICustomSaberLoader saberLoader)
+        public LevelSaberManager(CSLConfig config, LiteSaberSet saberSet)
         {
             this.config = config;
             this.saberSet = saberSet;
-            this.saberInstanceManager = saberInstanceManager;
-            this.saberLoader = saberLoader;
             Initialize();
         }
 

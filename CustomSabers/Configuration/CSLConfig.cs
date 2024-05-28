@@ -3,7 +3,6 @@ using IPA.Config.Stores;
 using CustomSabersLite.Data;
 using IPA.Config.Stores.Attributes;
 using UnityEngine;
-using CustomSabersLite.UI;
 
 [assembly: InternalsVisibleTo(GeneratedStore.AssemblyVisibilityTarget)]
 namespace CustomSabersLite.Configuration
@@ -12,7 +11,7 @@ namespace CustomSabersLite.Configuration
     {
         public virtual bool Enabled { get; set; } = true;
 
-        public virtual string CurrentlySelectedSaber { get; set; } = "Default";
+        public virtual string CurrentlySelectedSaber { get; set; } = null;
 
         public virtual TrailType TrailType { get; set; } = TrailType.Custom;
 

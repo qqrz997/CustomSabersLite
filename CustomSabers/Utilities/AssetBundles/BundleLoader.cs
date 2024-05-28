@@ -5,30 +5,29 @@ using UnityEngine;
 
 namespace CustomSabersLite.Utilities.AssetBundles
 {
-    internal class BundleLoader : IBundleLoader
+    /// <summary>
+    /// Uses AssetBundleExtensions to greatly simplify async <seealso cref="AssetBundle"/> loading
+    /// </summary>
+    internal class BundleLoader
     {
-        public async Task<AssetBundle> LoadBundleAsync(string path)
+        public async Task<AssetBundle> LoadBundleAsync(string path) =>
+            await AssetBundleExtensions.LoadFromFileAsync(path);
+
+        public async Task<AssetBundle> LoadBundleAsync(Stream stream) =>
+            stream.CanRead && stream.CanSeek
+            ? await AssetBundleExtensions.LoadFromStreamAsync(stream)
+            : await CopyStreamAndLoadBundle(stream);
+
+        private static async Task<AssetBundle> CopyStreamAndLoadBundle(Stream stream)
         {
-            if (!File.Exists(path))
+            using (MemoryStream memoryStream = new MemoryStream())
             {
-                Logger.Error($"Cannot load bundle. Provided path doesn't lead to a file. Provided file name: {Path.Combine(Directory.GetParent(path).Name, Path.GetFileName(path))}");
-                return null;
+                await stream.CopyToAsync(memoryStream);
+                return await AssetBundleExtensions.LoadFromStreamAsync(memoryStream);
             }
-
-            AssetBundle bundle = await AssetBundleExtensions.LoadFromFileAsync(path);
-
-            if (bundle is null)
-            {
-                Logger.Error($"Couldn't load bundle from {path}");
-                return null;
-            }
-
-            return bundle;
         }
 
-        public async Task<T> LoadAssetAsync<T>(AssetBundle bundle, string assetPath) where T : Object
-        {
-            return await AssetBundleExtensions.LoadAssetAsync<T>(bundle, assetPath);
-        }
+        public async Task<T> LoadAssetAsync<T>(AssetBundle bundle, string assetPath) where T : Object =>
+            await AssetBundleExtensions.LoadAssetAsync<T>(bundle, assetPath);
     }
 }

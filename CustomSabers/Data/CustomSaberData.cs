@@ -2,35 +2,28 @@
 
 namespace CustomSabersLite.Data
 {
+    /// <summary>
+    /// Class that declares the neccessary information to manage a custom saber instance
+    /// </summary>
     internal class CustomSaberData
     {
-        public string FilePath { get; set; }
+        public string FilePath { get; private set; }
+        public GameObject SabersObject { get; private set; }
+        public SaberDescriptor Descriptor { get; private set; }
+        public CustomSaberType Type { get; private set; }
 
-        public GameObject SabersObject { get; set; }
+        public bool MissingShaders; // not yet implemented
 
-        public SaberDescriptor Descriptor { get; set; }
-
-        public bool MissingShaders;
-
-        public CustomSaberData(string relativePath = null, GameObject sabersObject = null, SaberDescriptor descriptor = null)
+        public CustomSaberData(string relativePath, GameObject sabersObject, SaberDescriptor descriptor, CustomSaberType customSaberType)
         {
             FilePath = relativePath;
             SabersObject = sabersObject;
             Descriptor = descriptor;
+            Type = customSaberType;
         }
 
-        public CustomSaberData ForDefaultSabers()
-        {
-            return new CustomSaberData()
-            {
-                FilePath = "Default",
-                Descriptor = new SaberDescriptor
-                {
-                    SaberName = "Default",
-                    AuthorName = "Beat Games"
-                }
-            };
-        }
+        public static CustomSaberData ForDefaultSabers() =>
+            new CustomSaberData(null, null, new SaberDescriptor { SaberName = "Default", AuthorName = "Beat Games" }, CustomSaberType.Default);
 
         public void Destroy()
         {

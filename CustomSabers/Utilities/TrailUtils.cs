@@ -1,53 +1,90 @@
 ﻿using CustomSabersLite.Configuration;
-using IPA.Utilities;
-using UnityEngine;
+using CustomSabersLite.Data;
 
 namespace CustomSabersLite.Utilities
 {
-    internal class TrailUtils
+    internal static class TrailUtils
     {
-        CSLConfig config;
+        // Legacy trail duration in frames (i think)(i didn't actually check the original trail code lol)
+        public const int LegacyDuration = 36;
 
-        public TrailUtils(CSLConfig config)
+        // Default duration of the saber trail - measured in seconds
+        public const float DefaultDuration = 0.4f;
+
+        /// <summary>
+        /// Converts legacy trail length to trail duration in seconds used by <seealso cref="SaberTrail"/>
+        /// </summary>
+        public static float ConvertedDuration(int customTrailLength) =>
+            customTrailLength / (float)LegacyDuration * DefaultDuration;
+
+        /// <summary>
+        /// Uses the current <seealso cref="CSLConfig"/> to decide the <seealso cref="SaberTrail"/>'s length, whitestep, and visibility
+        /// </summary>
+        public static void ConfigureTrail(this SaberTrail trail, CSLConfig config)
         {
-            this.config = config;
-        }
-
-        public void SetTrailDuration(SaberTrail trail, bool isDefaultSaber = false, float trailDuration = 0.4f)
-        {
-            if (config.OverrideTrailDuration)
+            if (config.TrailType == TrailType.None)
             {
-                trailDuration = config.TrailDuration / 100f * trailDuration;
-            }
-
-            if (trailDuration.Equals(0f))
-            {
-                if (isDefaultSaber)
-                {
-                    ReflectionUtil.SetField<SaberTrail, Color>(trail, "_color", new Color(0f, 0f, 0f, 0f));
-                }
-                else
-                {
-                    trail.enabled = false;
-                }
+                trail.Disable();
             }
             else
             {
-                ReflectionUtil.SetField<SaberTrail, float>(trail, "_trailDuration", trailDuration);
-                if (!isDefaultSaber)
+                if (config.OverrideTrailDuration)
                 {
-                    trail.enabled = true;
+                    trail.SetTrailDuration(config.TrailDuration / 100f * DefaultDuration);
+                }
+                if (config.DisableWhiteTrail)
+                {
+                    trail.DisableWhiteTrail();
                 }
             }
         }
 
-        public void SetWhiteTrailDuration(SaberTrail trail, float whiteSectionMaxDuration = 0.03f)
+        private static void SetTrailDuration(this SaberTrail trail, float trailDuration)
         {
-            if (config.DisableWhiteTrail)
+            trail._trailDuration = trailDuration;
+
+            if (trailDuration.Equals(0f))
             {
-                whiteSectionMaxDuration = 0f;
+                trail.Disable();
             }
-            ReflectionUtil.SetField<SaberTrail, float>(trail, "_whiteSectionMaxDuration", whiteSectionMaxDuration);
+            else
+            {
+                trail.Enable();
+            }
         }
+
+        private static void Enable(this SaberTrail trail)
+        {
+            // Only disable/enable trails that inherit from SaberTrail
+            // If we disable/enable the default trail, there can be compatibility issues with other mods
+            // Instead, just make the default trail transparent
+            if (!trail.IsDefault())
+            {
+                trail.enabled = true;
+            }
+            else if (trail._color.a.Equals(0f))
+            {
+                trail._color.a = 1f; // todo - test if the default trail color gets reset automatically
+            }
+        }
+
+        private static void Disable(this SaberTrail trail)
+        {
+            trail.DisableWhiteTrail();
+            if (!trail.IsDefault())
+            {
+                trail.enabled = false;
+            }
+            else
+            {
+                trail._color.a = 0f;
+            }
+        }
+
+        private static bool IsDefault(this SaberTrail trail) =>
+            trail.GetType() == typeof(SaberTrail);
+
+        private static void DisableWhiteTrail(this SaberTrail trail) =>
+            trail._whiteSectionMaxDuration = 0f;
     }
 }
