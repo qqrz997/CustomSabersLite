@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using CustomSabersLite.Utilities;
+using UnityEngine;
 
 namespace CustomSabersLite.Data
 {
@@ -11,16 +12,18 @@ namespace CustomSabersLite.Data
 
         public Transform TrailTop { get; }
         public Transform TrailBottom { get; }
-        public Material TrailMaterial { get; }
-        public Color TrailColor { get; } // todo - find out what the CustomTrail colors and colortype actually mean. for now i will use the saber's color here
+        public Material Material { get; }
+        public Color Color { get; } // todo - find out what the CustomTrail colors and colortype actually mean. for now i will use the saber's color here
         // public Color TrailColorMultiplier { get; }  todo ^
+        public int Length { get; }
 
-        public CustomTrailData(Transform trailTop, Transform trailBottom, Material trailMaterial, Color trailColor)
+        public CustomTrailData(Transform trailTop, Transform trailBottom, Material trailMaterial, Color trailColor, int length = TrailUtils.LegacyDuration)
         {
             TrailTop = trailTop;
             TrailBottom = trailBottom;
-            TrailMaterial = trailMaterial;
-            TrailColor = trailColor;
+            Material = trailMaterial;
+            Color = trailColor;
+            Length = length;
         }
     }
 }

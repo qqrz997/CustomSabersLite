@@ -144,10 +144,7 @@ namespace CustomSabersLite.UI.Views
         }
 
         [UIAction("#post-parse")]
-        public async void PostParse()
-        {
-            SetupList();
-        }
+        public void PostParse() => SetupList();
 
         private void SetupList() // todo - smoother saber list refresh
         {

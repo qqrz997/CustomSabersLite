@@ -21,8 +21,6 @@ namespace CustomSabersLite.Installers
             Container.Bind<TrailManager>().AsTransient();
             Container.BindInterfacesAndSelfTo<EventManagerManager>().AsTransient();
 
-            Logger.Info($"Selected saber: {config.CurrentlySelectedSaber}");
-
             if (config.CurrentlySelectedSaber != null)
             {
                 // This replaces the default sabers

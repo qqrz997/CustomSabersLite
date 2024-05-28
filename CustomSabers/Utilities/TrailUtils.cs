@@ -5,8 +5,17 @@ namespace CustomSabersLite.Utilities
 {
     internal static class TrailUtils
     {
+        // Legacy trail duration in frames (i think)(i didn't actually check the original trail code lol)
+        public const int LegacyDuration = 36;
+
         // Default duration of the saber trail - measured in seconds
-        private const float DefaultDuration = 0.4f;
+        public const float DefaultDuration = 0.4f;
+
+        /// <summary>
+        /// Converts legacy trail length to trail duration in seconds used by <seealso cref="SaberTrail"/>
+        /// </summary>
+        public static float ConvertedDuration(int customTrailLength) =>
+            customTrailLength / (float)LegacyDuration * DefaultDuration;
 
         /// <summary>
         /// Uses the current <seealso cref="CSLConfig"/> to decide the <seealso cref="SaberTrail"/>'s length, whitestep, and visibility
