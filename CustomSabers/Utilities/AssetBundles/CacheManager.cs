@@ -45,11 +45,11 @@ namespace CustomSabersLite.Utilities.AssetBundles
 
         public async void Initialize()
         {
-            if (config.PluginVer != Plugin.Version)
+            if (config.PluginVer != Plugin.Version.ToString())
             {
                 Logger.Debug("Mod version has changed! Clearing cache");
                 ClearCache();
-                config.PluginVer = Plugin.Version;
+                config.PluginVer = Plugin.Version.ToString();
             }
 
             Logger.Debug("Starting the CustomSabersAssetLoader");

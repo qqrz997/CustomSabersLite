@@ -1,22 +1,25 @@
 ﻿using IPA;
-using IPALogger = IPA.Logging.Logger;
 using IPA.Config.Stores;
+using IPALogger = IPA.Logging.Logger;
 using Config = IPA.Config.Config;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Utilities;
-using SiraUtil.Zenject;
 using CustomSabersLite.Installers;
+using SiraUtil.Zenject;
+using IPA.Loader;
+using Hive.Versioning;
 
 namespace CustomSabersLite
 {
     [Plugin(RuntimeOptions.SingleStartInit)]
     internal class Plugin
     {
-        public static string Version => "0.9.2";
+        public static Version Version { get; private set; } = null;
 
         [Init]
-        public async void Init(IPALogger logger, Config config, Zenjector zenjector)
+        public async void Init(IPALogger logger, Config config, Zenjector zenjector, PluginMetadata pluginMetadata)
         {
+            Version = pluginMetadata.HVersion;
             Logger pluginLogger = new Logger(logger);
             CSLConfig pluginConfig = config.Generated<CSLConfig>();
 
