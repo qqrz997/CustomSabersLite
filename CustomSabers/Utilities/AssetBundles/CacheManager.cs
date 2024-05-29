@@ -40,8 +40,8 @@ namespace CustomSabersLite.Utilities.AssetBundles
 
         public List<CustomSaberMetadata> SabersMetadata { get; private set; } = new List<CustomSaberMetadata>();
 
-        private readonly List<string> metaExt = new List<string> { FileExts.Metadata };
-        private readonly List<string> saberExt = new List<string> { FileExts.Saber, FileExts.Whacker };
+        private readonly IEnumerable<string> metaExt = new List<string> { FileExts.Metadata };
+        private readonly IEnumerable<string> saberExt = new List<string> { FileExts.Saber, FileExts.Whacker };
 
         public async void Initialize()
         {
@@ -60,16 +60,8 @@ namespace CustomSabersLite.Utilities.AssetBundles
         {
             Dictionary<string, CustomSaberMetadata> fileMetadata = GetCachedMetadata();
 
-            List<string> sabersToLoad = new List<string>();
-            foreach (string saberFile in GetSaberFiles(true))
-            {
-                if (!fileMetadata.ContainsKey(saberFile))
-                {
-                    sabersToLoad.Add(saberFile);
-                }
-            }
-
-            List<CustomSaberData> loadedSaberData = await LoadCustomSabersAsync(sabersToLoad);
+            IEnumerable<string> sabersToLoad = GetSaberFiles(true).Where(f => !fileMetadata.ContainsKey(f));
+            IEnumerable<CustomSaberData> loadedSaberData = await LoadCustomSabersAsync(sabersToLoad);
 
             UpdateCache(fileMetadata, loadedSaberData);
 
@@ -95,25 +87,21 @@ namespace CustomSabersLite.Utilities.AssetBundles
             await LoadAsync();
         }
 
-        private List<string> GetSaberFiles(bool returnShortPath) =>
+        private IEnumerable<string> GetSaberFiles(bool returnShortPath) =>
             FileUtils.GetFilePaths(sabersPath, saberExt, searchOption: SearchOption.AllDirectories, returnShortPath);
 
-        private List<string> GetMetadataFiles(bool returnShortPath) =>
+        private IEnumerable<string> GetMetadataFiles(bool returnShortPath) =>
             FileUtils.GetFilePaths(cachePath, metaExt, searchOption: SearchOption.TopDirectoryOnly, returnShortPath);
 
         private Dictionary<string, CustomSaberMetadata> GetCachedMetadata()
         {
-            List<string> saberMetadataFiles = GetMetadataFiles(false);
-
             Dictionary<string, CustomSaberMetadata> fileMetadata = new Dictionary<string, CustomSaberMetadata>();
 
-            foreach (string filePath in saberMetadataFiles)
+            foreach (string metaFile in GetMetadataFiles(false))
             {
-                string json = File.ReadAllText(filePath);
-                CustomSaberMetadata metadata = JsonConvert.DeserializeObject<CustomSaberMetadata>(json);
+                CustomSaberMetadata metadata = JsonConvert.DeserializeObject<CustomSaberMetadata>(File.ReadAllText(metaFile));
 
-                string saberPath = Path.Combine(sabersPath, metadata.RelativePath);
-                if (File.Exists(saberPath))
+                if (File.Exists(Path.Combine(sabersPath, metadata.RelativePath)))
                 {
                     fileMetadata.Add(metadata.RelativePath, metadata);
                 }
@@ -122,7 +110,7 @@ namespace CustomSabersLite.Utilities.AssetBundles
             return fileMetadata;
         }
 
-        private void UpdateCache(Dictionary<string, CustomSaberMetadata> fileMetadata, List<CustomSaberData> loadedSaberData)
+        private void UpdateCache(Dictionary<string, CustomSaberMetadata> fileMetadata, IEnumerable<CustomSaberData> loadedSaberData)
         {
             foreach (CustomSaberData saber in loadedSaberData)
             {
@@ -132,7 +120,7 @@ namespace CustomSabersLite.Utilities.AssetBundles
                     AuthorName = saber.Descriptor.AuthorName,
                     RelativePath = saber.FilePath,
                     MissingShaders = saber.MissingShaders,
-                    CoverImage = saber.Descriptor.CoverImage == null ? null : ImageUtils.DuplicateTexture(saber.Descriptor.CoverImage.texture).EncodeToPNG(),
+                    CoverImage = saber.Descriptor.CoverImage?.texture.DuplicateTexture().EncodeToPNG(),
                 };
 
                 string metaFileName = Path.GetFileNameWithoutExtension(saber.FilePath) + ".meta";
@@ -140,12 +128,13 @@ namespace CustomSabersLite.Utilities.AssetBundles
                 // Cache data for each loaded saber
                 string metaFilePath = Path.Combine(cachePath, metaFileName);
 
-                if (!File.Exists(metaFilePath))
+                if (File.Exists(metaFilePath))
                 {
-                    string json = JsonConvert.SerializeObject(metadata);
-                    File.WriteAllText(metaFilePath, json);
-                    fileMetadata.Add(metaFilePath, metadata);
+                    File.Delete(metaFilePath);
                 }
+
+                File.WriteAllText(metaFilePath, JsonConvert.SerializeObject(metadata));
+                fileMetadata.Add(metaFilePath, metadata);
 
                 saber.Destroy();
             }
@@ -168,23 +157,28 @@ namespace CustomSabersLite.Utilities.AssetBundles
             }
         }
 
-        private async Task<List<CustomSaberData>> LoadCustomSabersAsync(IEnumerable<string> customSaberFiles)
+        private async Task<IEnumerable<CustomSaberData>> LoadCustomSabersAsync(IEnumerable<string> customSaberFiles)
         {
-            List<CustomSaberData> customSabers = new List<CustomSaberData>();
-
+            IList<CustomSaberData> customSabers = new List<CustomSaberData>();
             foreach (string file in customSaberFiles)
             {
-                switch (Path.GetExtension(file))
-                {
-                    case ".saber":
-                        customSabers.Add(await customSaberLoader.LoadCustomSaberAsync(file)); break;
-
-                    case ".whacker":
-                        customSabers.Add(await whackerLoader.LoadWhackerAsync(file)); break;
-                }
+                customSabers.Add(await LoadCustomSaberAsync(file));
             }
-
             return customSabers;
+        }
+
+        private async Task<CustomSaberData> LoadCustomSaberAsync(string file)
+        {
+            switch (Path.GetExtension(file))
+            {
+                case FileExts.Saber:
+                    return await customSaberLoader.LoadCustomSaberAsync(file);
+
+                case FileExts.Whacker:
+                    return await whackerLoader.LoadWhackerAsync(file);
+
+                default: return null;
+            }
         }
 
         public void Dispose() => SabersMetadata.Clear();
