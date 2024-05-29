@@ -15,6 +15,7 @@ using System.Diagnostics;
 using Zenject;
 using System.Collections;
 using CustomSabersLite.UI.Managers;
+using System.Threading;
 
 namespace CustomSabersLite.UI.Views
 {
@@ -54,13 +55,26 @@ namespace CustomSabersLite.UI.Views
         [UIComponent("delete-saber-modal-text")]
         public TextMeshProUGUI deleteSaberModalText;
 
+        private CancellationTokenSource tokenSource = null;
+
         [UIAction("select-saber")]
         public async void Select(TableView _, int row)
         {
+            tokenSource?.Cancel();
+
             Logger.Debug($"saber selected at row {row}");
+
+            tokenSource?.Dispose();
+            tokenSource = new CancellationTokenSource();
+
             cacheManager.SelectedSaberIndex = row;
             config.CurrentlySelectedSaber = cacheManager.SabersMetadata[row].RelativePath;
-            await previewManager.GeneratePreview();
+
+            try
+            {
+                await previewManager.GeneratePreview(tokenSource.Token);
+            }
+            catch (OperationCanceledException) { }
         }
 
         [UIAction("open-in-explorer")]
@@ -180,6 +194,7 @@ namespace CustomSabersLite.UI.Views
         protected override void DidDeactivate(bool removedFromHierarchy, bool screenSystemDisabling)
         {
             base.DidDeactivate(removedFromHierarchy, screenSystemDisabling);
+            tokenSource?.Cancel();
         }
     }
 }

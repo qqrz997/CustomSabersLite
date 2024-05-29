@@ -2,6 +2,7 @@
 using CustomSabersLite.Components.Managers;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Utilities.Extensions;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -26,13 +27,20 @@ namespace CustomSabersLite.UI.Managers
         private readonly Vector3 rightPreviewSaberPosition = new Vector3(1.25f, 1.0f, 4.05f);
         private readonly Quaternion previewRotation = Quaternion.Euler(270f, 100f, 0f);
 
-        public async Task GeneratePreview()
+        public async Task GeneratePreview(CancellationToken token)
         {
             SetPreviewActive(false);
 
-            if (config.CurrentlySelectedSaber is null) return;
+            if (string.IsNullOrWhiteSpace(config.CurrentlySelectedSaber)) return;
 
-            await saberSet.SetSabersFromPath(config.CurrentlySelectedSaber);
+            Task loadSabers = saberSet.SetSabersFromPath(config.CurrentlySelectedSaber);
+            while (!loadSabers.IsCompleted)
+            {
+                token.ThrowIfCancellationRequested();
+                await Task.Delay(100);
+            }
+            await loadSabers;
+
             LiteSaber leftSaber = saberSet.CustomSaberForSaberType(SaberType.SaberA);
             LiteSaber rightSaber = saberSet.CustomSaberForSaberType(SaberType.SaberB);
             if (!leftSaber || !rightSaber) return;
