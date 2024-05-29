@@ -37,7 +37,7 @@ namespace CustomSabersLite.Utilities.AssetBundles
 
             StreamReader jsonStream = new StreamReader(json.Open());
             WhackerObject whacker = (WhackerObject)new JsonSerializer().Deserialize(jsonStream, typeof(WhackerObject));
-            jsonStream.Close();
+            jsonStream.Dispose();
 
             ZipArchiveEntry bundleEntry = archive.GetEntry(whacker.pcFileName);
             ZipArchiveEntry thumbEntry = archive.GetEntry(whacker.descriptor.coverImage);
@@ -79,7 +79,7 @@ namespace CustomSabersLite.Utilities.AssetBundles
             using (MemoryStream memoryStream = new MemoryStream())
             {
                 await thumbEntry.Open().CopyToAsync(memoryStream);
-                return ImageUtils.LoadImage(memoryStream.ToArray());
+                return memoryStream.ToArray().LoadImage();
             }
         }
     }

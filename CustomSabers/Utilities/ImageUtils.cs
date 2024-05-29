@@ -2,7 +2,7 @@
 
 namespace CustomSabersLite.Utilities
 {
-    internal class ImageUtils
+    internal static class ImageUtils
     {
         public static readonly Sprite nullCoverImage = ImageLoading.LoadSpriteFromResources("CustomSabersLite.Resources.null-image.png");
         public static readonly Sprite defaultCoverImage = ImageLoading.LoadSpriteFromResources("CustomSabersLite.Resources.defaultsabers-image.png");
@@ -10,7 +10,7 @@ namespace CustomSabersLite.Utilities
         /// <summary>
         /// Duplicates a texture to get around unreadable assets
         /// </summary>
-        public static Texture2D DuplicateTexture(Texture2D source)
+        public static Texture2D DuplicateTexture(this Texture2D source)
         {
             if (source == null) return null;
             RenderTexture renderTex = RenderTexture.GetTemporary(source.width, source.height, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Default);
@@ -25,7 +25,10 @@ namespace CustomSabersLite.Utilities
             return readableText;
         }
 
-        public static Sprite LoadImage(byte[] imageData)
+        /// <summary>
+        /// Creates a <seealso cref="Sprite"/> from raw image data
+        /// </summary>
+        public static Sprite LoadImage(this byte[] imageData)
         {
             Texture2D tex = new Texture2D(2, 2);
             tex.LoadImage(imageData);

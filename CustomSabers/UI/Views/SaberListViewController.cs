@@ -22,28 +22,22 @@ namespace CustomSabersLite.UI.Views
     [ViewDefinition("CustomSabersLite.UI.BSML.saberList.bsml")]
     internal class SaberListViewController : BSMLAutomaticViewController
     {
-        private PluginDirs pluginDirs;
         private CSLConfig config;
         private CacheManager cacheManager;
         private SaberPreviewManager previewManager;
         private GameplaySetupTab gameplaySetupTab;
 
+        private string saberAssetPath;
+        private string deletedSabersPath;
+
         [Inject]
         public void Construct(PluginDirs pluginDirs, CSLConfig config, CacheManager cacheManager, SaberPreviewManager previewManager, GameplaySetupTab gameplaySetupTab)
         {
-            this.pluginDirs = pluginDirs;
             this.config = config;
             this.cacheManager = cacheManager;
             this.previewManager = previewManager;
             this.gameplaySetupTab = gameplaySetupTab;
-            Init();
-        }
 
-        private string saberAssetPath;
-        private string deletedSabersPath;
-
-        private void Init()
-        {
             saberAssetPath = pluginDirs.CustomSabers.FullName;
             deletedSabersPath = pluginDirs.DeletedSabers.FullName;
         }
@@ -70,10 +64,7 @@ namespace CustomSabersLite.UI.Views
         }
 
         [UIAction("open-in-explorer")]
-        public void OpenInExplorer()
-        {
-            Process.Start("explorer.exe", saberAssetPath);
-        }
+        public void OpenInExplorer() => Process.Start(saberAssetPath);
 
         [UIAction("show-delete-saber-modal")]
         public void ShowDeleteSaberModal()
@@ -89,10 +80,7 @@ namespace CustomSabersLite.UI.Views
         }
 
         [UIAction("hide-delete-saber-modal")]
-        public void HideDeleteSaberModal()
-        {
-            deleteSaberModal.Hide(true);
-        }
+        public void HideDeleteSaberModal() => deleteSaberModal.Hide(true);
 
         [UIAction("delete-selected-saber")]
         public void DeleteSelectedSaber()
@@ -165,18 +153,12 @@ namespace CustomSabersLite.UI.Views
                     customListTableData.data.Add(new CustomListTableData.CustomCellInfo(
                         metadata.SaberName,
                         metadata.AuthorName,
-                        metadata.CoverImage is null ? ImageUtils.nullCoverImage : ImageUtils.LoadImage(metadata.CoverImage)
+                        metadata.CoverImage is null ? ImageUtils.nullCoverImage : metadata.CoverImage.LoadImage()
                     ));
                 }
             }
 
             customListTableData.tableView.ReloadData();
-        }
-
-        protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
-        {
-            base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
-            StartCoroutine(ScrollToSelectedCell());
         }
 
         private IEnumerator ScrollToSelectedCell()
@@ -187,6 +169,17 @@ namespace CustomSabersLite.UI.Views
             customListTableData.tableView.SelectCellWithIdx(selectedSaber);
             customListTableData.tableView.ScrollToCellWithIdx(selectedSaber, TableView.ScrollPositionType.Center, true);
             Select(customListTableData.tableView, cacheManager.SelectedSaberIndex);
+        }
+
+        protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
+        {
+            base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
+            StartCoroutine(ScrollToSelectedCell());
+        }
+
+        protected override void DidDeactivate(bool removedFromHierarchy, bool screenSystemDisabling)
+        {
+            base.DidDeactivate(removedFromHierarchy, screenSystemDisabling);
         }
     }
 }

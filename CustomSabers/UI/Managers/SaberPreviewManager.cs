@@ -55,7 +55,8 @@ namespace CustomSabersLite.UI.Managers
             rightSaberObject?.SetActive(active);
         }
 
-        private void MoveSaber(GameObject saberObject, Vector3 overridePosition) => saberObject.transform.SetPositionAndRotation(overridePosition, previewRotation);
+        private void MoveSaber(GameObject saberObject, Vector3 overridePosition) => 
+            saberObject.transform.SetPositionAndRotation(overridePosition, previewRotation);
 
         private void SetupSaber(GameObject saberObject, SaberType saberType)
         {
