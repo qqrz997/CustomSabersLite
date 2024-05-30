@@ -1,5 +1,8 @@
 changelog
 
+0.10.2
+- Fixed saber model occasionally being off axis
+
 0.10.1
 - Saber preview should now be accurate when rapidly selecting new sabers
 - Potential fix for sabers not showing up when clicking refresh
