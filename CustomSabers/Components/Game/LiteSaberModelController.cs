@@ -43,9 +43,7 @@ namespace CustomSabersLite.Components.Game
         private async void CustomSaberInit(Transform parent, Saber saber)
         {
             await levelSaberManager.SaberSetupTask;
-
-            SaberType saberType = saber.saberType;
-            customSaberInstance = saberSet.CustomSaberForSaberType(saberType);
+            customSaberInstance = saberSet.CustomSaberForSaberType(saber.saberType);
 
             if (customSaberInstance is null)
             {
@@ -53,14 +51,14 @@ namespace CustomSabersLite.Components.Game
                 return;
             }
 
-            transform.SetParent(saber.transform.parent, false);
+            transform.SetParent(parent, false);
 
-            customSaberInstance.Setup(transform, saberSet.Type);
-            eventManagerManager.InitializeEventManager(customSaberInstance.EventManager, saberType);
+            customSaberInstance.Setup(parent, saberSet.Type);
+            eventManagerManager.InitializeEventManager(customSaberInstance.EventManager, saber.saberType);
 
             Color saberColor = config.EnableCustomColorScheme
-                ? CustomSchemeColorForSaberType(saberType)
-                : colorManager.ColorForSaberType(saberType);
+                ? CustomSchemeColorForSaberType(saber.saberType)
+                : colorManager.ColorForSaberType(saber.saberType);
 
             customTrailInstances = trailManager.CreateTrail(saber, _saberTrail, saberColor, customSaberInstance);
 
