@@ -6,5 +6,8 @@ namespace CustomSabersLite.Utilities.Extensions
     {
         public static T TryGetComponentOrDefault<T>(this GameObject obj) where T : MonoBehaviour => 
             obj.GetComponent<T>() ?? obj.AddComponent<T>();
+
+        public static void Destroy(this GameObject obj) =>
+            Object.Destroy(obj);
     }
 }

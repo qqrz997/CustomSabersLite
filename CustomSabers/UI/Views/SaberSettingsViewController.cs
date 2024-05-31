@@ -11,6 +11,7 @@ using TMPro;
 using Zenject;
 using System.ComponentModel;
 using CustomSabersLite.Utilities.UI;
+using CustomSabersLite.UI.Managers;
 
 namespace CustomSabersLite.UI.Views
 {
@@ -19,11 +20,13 @@ namespace CustomSabersLite.UI.Views
     internal class SaberSettingsViewController : BSMLAutomaticViewController, INotifyPropertyChanged
     {
         private CSLConfig config;
+        private SaberPreviewManager previewManager;
 
         [Inject]
-        public void Construct(CSLConfig config)
+        public void Construct(CSLConfig config, SaberPreviewManager previewManager)
         {
             this.config = config;
+            this.previewManager = previewManager;
         }
 
         private bool parsed;
@@ -114,21 +117,33 @@ namespace CustomSabersLite.UI.Views
         public bool EnableCustomColorScheme
         {
             get => config.EnableCustomColorScheme;
-            set => config.EnableCustomColorScheme = value;
+            set
+            {
+                config.EnableCustomColorScheme = value;
+                previewManager.SetColor();
+            }
         }
 
         [UIValue("left-saber-color")]
         public Color LeftSaberColor
         {
             get => config.LeftSaberColor;
-            set => config.LeftSaberColor = value;
+            set
+            {
+                config.LeftSaberColor = value;
+                previewManager.SetColor();
+            }
         }
 
         [UIValue("right-saber-color")]
         public Color RightSaberColor
         {
             get => config.RightSaberColor;
-            set => config.RightSaberColor = value;
+            set
+            {
+                config.RightSaberColor = value;
+                previewManager.SetColor();
+            }
         }
 
         [UIValue("forcefully-foolish")]

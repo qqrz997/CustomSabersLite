@@ -19,8 +19,8 @@ namespace CustomSabersLite.UI.Managers
             this.config = config;
         }
 
-        private GameObject leftSaberObject;
-        private GameObject rightSaberObject;
+        private LiteSaber leftSaber;
+        private LiteSaber rightSaber;
 
         // using these for now until i figure out how to get the actual physical position on the ui view
         private readonly Vector3 leftPreviewSaberPosition = new Vector3(0.56f, 1.0f, 4.2f);
@@ -30,10 +30,12 @@ namespace CustomSabersLite.UI.Managers
         public async Task GeneratePreview(CancellationToken token)
         {
             SetPreviewActive(false);
+            leftSaber?.gameObject.Destroy();
+            rightSaber?.gameObject.Destroy();
 
             if (string.IsNullOrWhiteSpace(config.CurrentlySelectedSaber)) return;
 
-            Task loadSabers = saberSet.SetSabersFromPath(config.CurrentlySelectedSaber);
+            Task loadSabers = saberSet.InstantiateSabers(config.CurrentlySelectedSaber);
             while (!loadSabers.IsCompleted)
             {
                 token.ThrowIfCancellationRequested();
@@ -41,36 +43,45 @@ namespace CustomSabersLite.UI.Managers
             }
             await loadSabers;
 
-            LiteSaber leftSaber = saberSet.CustomSaberForSaberType(SaberType.SaberA);
-            LiteSaber rightSaber = saberSet.CustomSaberForSaberType(SaberType.SaberB);
+            leftSaber = saberSet.CustomSaberForSaberType(SaberType.SaberA);
+            rightSaber = saberSet.CustomSaberForSaberType(SaberType.SaberB);
             if (!leftSaber || !rightSaber) return;
 
-            if (leftSaberObject != null) GameObject.Destroy(leftSaberObject);
-            leftSaberObject = GameObject.Instantiate(leftSaber.gameObject);
-            if (rightSaberObject != null) GameObject.Destroy(rightSaberObject);
-            rightSaberObject = GameObject.Instantiate(rightSaber.gameObject);
-            SetupSaber(leftSaberObject, SaberType.SaberA);
-            SetupSaber(rightSaberObject, SaberType.SaberB);
-            MoveSaber(leftSaberObject, leftPreviewSaberPosition);
-            MoveSaber(rightSaberObject, rightPreviewSaberPosition);
+            SetColor();
+
+
+            leftSaber.gameObject.transform.SetPositionAndRotation(leftPreviewSaberPosition, previewRotation);
+            rightSaber.gameObject.transform.SetPositionAndRotation(rightPreviewSaberPosition, previewRotation);
 
             SetPreviewActive(true);
         }
 
         public void SetPreviewActive(bool active)
         {
-            leftSaberObject?.SetActive(active);
-            rightSaberObject?.SetActive(active);
+            leftSaber?.gameObject.SetActive(active);
+            rightSaber?.gameObject.SetActive(active);
         }
 
-        private void MoveSaber(GameObject saberObject, Vector3 overridePosition) => 
-            saberObject.transform.SetPositionAndRotation(overridePosition, previewRotation);
+        // using these until i figure out how to use the current color scheme
+        Color defaultLeftColor = new Color(0.784f, 0.078f, 0.078f, 1f);
+        Color defaultRightColor = new Color(0.157f, 0.557f, 0.824f, 1f);
 
-        private void SetupSaber(GameObject saberObject, SaberType saberType)
+        public void SetColor()
         {
-            LiteSaber saber = saberObject.TryGetComponentOrDefault<LiteSaber>();
-            Color color = saberType == SaberType.SaberA ? new Color(0.784f, 0.078f, 0.078f, 1f) : new Color(0.157f, 0.557f, 0.824f, 1f);
-            saber.SetColor(color);
+            if (config.EnableCustomColorScheme)
+            {
+                SetColor(config.LeftSaberColor, config.RightSaberColor);
+            }
+            else
+            {
+                SetColor(defaultLeftColor, defaultRightColor);
+            }
+        }
+
+        private void SetColor(Color leftColor, Color rightColor)
+        {
+            leftSaber?.SetColor(leftColor);
+            rightSaber?.SetColor(rightColor);
         }
     }
 }
