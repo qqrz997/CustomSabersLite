@@ -12,11 +12,13 @@ namespace CustomSabersLite.UI.Managers
     {
         private readonly LiteSaberSet saberSet;
         private readonly CSLConfig config;
+        private readonly ColorSchemesSettings colorSchemesSettings;
 
-        public SaberPreviewManager(LiteSaberSet saberSet, CSLConfig config)
+        public SaberPreviewManager(LiteSaberSet saberSet, CSLConfig config, ColorSchemesSettings colorSchemesSettings)
         {
             this.saberSet = saberSet;
             this.config = config;
+            this.colorSchemesSettings = colorSchemesSettings;
         }
 
         private LiteSaber leftSaber;
@@ -62,10 +64,6 @@ namespace CustomSabersLite.UI.Managers
             rightSaber?.gameObject.SetActive(active);
         }
 
-        // using these until i figure out how to use the current color scheme
-        Color defaultLeftColor = new Color(0.784f, 0.078f, 0.078f, 1f);
-        Color defaultRightColor = new Color(0.157f, 0.557f, 0.824f, 1f);
-
         public void SetColor()
         {
             if (config.EnableCustomColorScheme)
@@ -74,7 +72,8 @@ namespace CustomSabersLite.UI.Managers
             }
             else
             {
-                SetColor(defaultLeftColor, defaultRightColor);
+                ColorScheme selectedColorScheme = colorSchemesSettings.GetSelectedColorScheme();
+                SetColor(selectedColorScheme.saberAColor, selectedColorScheme.saberBColor);
             }
         }
 
