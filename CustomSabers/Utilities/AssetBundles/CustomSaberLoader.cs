@@ -19,6 +19,11 @@ namespace CustomSabersLite.Utilities.AssetBundles
             sabersPath = dirs.CustomSabers.FullName;
         }
 
+        /// <summary>
+        /// Loads a custom saber from a .saber file
+        /// </summary>
+        /// <param name="relativePath">Path to the .saber file in the CustomSabers folder</param>
+        /// <returns><seealso cref="CustomSaberData.ForDefaultSabers"/> if a custom saber failed to load</returns>
         public async Task<CustomSaberData> LoadCustomSaberAsync(string relativePath)
         {
             string path = Path.Combine(sabersPath, relativePath);
@@ -47,9 +52,9 @@ namespace CustomSabersLite.Utilities.AssetBundles
             SaberDescriptor descriptor = saberPrefab.GetComponent<SaberDescriptor>();
             bundle.Unload(false);
 
-            await ShaderRepairUtils.RepairSaberShadersAsync(saberPrefab);
+            bool missingShaders = await ShaderRepairUtils.RepairSaberShadersAsync(saberPrefab);
 
-            return new CustomSaberData(relativePath, saberPrefab, descriptor, CustomSaberType.Saber);
+            return new CustomSaberData(relativePath, saberPrefab, descriptor, CustomSaberType.Saber) { MissingShaders = missingShaders };
         }
     }
 }
