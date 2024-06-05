@@ -10,15 +10,15 @@ namespace CustomSabersLite.UI.Managers
         private MainFlowCoordinator mainFlowCoordinator;
         private SaberListViewController saberList;
         private SaberSettingsViewController saberSettings;
-        private TestViewController test;
+        private SaberPreviewManager previewManager;
 
         [Inject]
-        public void Contruct(MainFlowCoordinator mainFlowCoordinator, SaberListViewController saberList, SaberSettingsViewController saberSettings, TestViewController test)
+        public void Contruct(MainFlowCoordinator mainFlowCoordinator, SaberListViewController saberList, SaberSettingsViewController saberSettings, SaberPreviewManager previewManager)
         {
             this.mainFlowCoordinator = mainFlowCoordinator;
             this.saberList = saberList;
             this.saberSettings = saberSettings;
-            this.test = test;
+            this.previewManager = previewManager;
         }
 
         protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
@@ -42,14 +42,10 @@ namespace CustomSabersLite.UI.Managers
             }
         }
 
-        protected override void DidDeactivate(bool removedFromHierarchy, bool screenSystemDisabling)
-        {
-            base.DidDeactivate(removedFromHierarchy, screenSystemDisabling);
-        }
-
         protected override void BackButtonWasPressed(ViewController topViewController)
         {
             mainFlowCoordinator.DismissFlowCoordinator(this);
+            previewManager.SetPreviewActive(false);
         }
     }
 }

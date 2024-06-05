@@ -41,10 +41,7 @@ namespace CustomSabersLite.Configuration
 
         // public virtual void OnReload() { }
 
-        public virtual void Changed()
-        {
-            Logger.Debug("Config changed");
-        }
+        // public virtual void Changed() { }
 
         // public virtual void CopyFrom(CustomSaberConfig other) { }
     }

@@ -11,7 +11,6 @@ namespace CustomSabersLite.Installers
             // View controllers
             Container.Bind<SaberListViewController>().FromNewComponentAsViewController().AsSingle();
             Container.Bind<SaberSettingsViewController>().FromNewComponentAsViewController().AsSingle();
-            Container.Bind<TestViewController>().FromNewComponentAsViewController().AsSingle();
             Container.Bind<CSLFlowCoordinator>().FromNewComponentOnNewGameObject().AsSingle();
 
             Container.BindInterfacesAndSelfTo<GameplaySetupTab>().AsSingle();
