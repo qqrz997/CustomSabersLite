@@ -23,10 +23,14 @@ namespace CustomSabersLite.Utilities.AssetBundles
             sabersPath = pluginDirs.CustomSabers.FullName;
         }
 
+        /// <summary>
+        /// Loads a custom saber from a .whacker file
+        /// </summary>
+        /// <param name="relativePath">Path to the .whacker file in the CustomSabers folder</param>
+        /// <returns><seealso cref="CustomSaberData.ForDefaultSabers"/> if a custom saber failed to load</returns>
         public async Task<CustomSaberData> LoadWhackerAsync(string relativePath)
         {
             string path = Path.Combine(sabersPath, relativePath);
-            
             if (!File.Exists(path))
             {
                 return CustomSaberData.ForDefaultSabers();
@@ -35,24 +39,20 @@ namespace CustomSabersLite.Utilities.AssetBundles
             ZipArchive archive = ZipFile.OpenRead(path);
             ZipArchiveEntry json = archive.Entries.Where(x => x.FullName.EndsWith(".json")).FirstOrDefault();
 
-            StreamReader jsonStream = new StreamReader(json.Open());
-            WhackerObject whacker = (WhackerObject)new JsonSerializer().Deserialize(jsonStream, typeof(WhackerObject));
-            jsonStream.Dispose();
+            Stream jsonStream = json.Open();
+            StreamReader jsonStreamReader = new StreamReader(jsonStream);
+            WhackerObject whacker = (WhackerObject)new JsonSerializer().Deserialize(jsonStreamReader, typeof(WhackerObject));
 
             ZipArchiveEntry bundleEntry = archive.GetEntry(whacker.pcFileName);
             ZipArchiveEntry thumbEntry = archive.GetEntry(whacker.descriptor.coverImage);
 
             Stream bundleStream = bundleEntry.Open();
             AssetBundle bundle = await bundleLoader.LoadBundleAsync(bundleStream);
-            bundleStream.Dispose();
-
             if (bundle is null)
             {
                 return CustomSaberData.ForDefaultSabers();
             }
-
             GameObject saberPrefab = await AssetBundleExtensions.LoadAssetAsync<GameObject>(bundle, "_Whacker");
-
             if (saberPrefab is null)
             {
                 bundle.Unload(true);
@@ -69,9 +69,14 @@ namespace CustomSabersLite.Utilities.AssetBundles
             };
             bundle.Unload(false);
 
-            await ShaderRepairUtils.RepairSaberShadersAsync(saberPrefab);
+            bool missingShaders = await ShaderRepairUtils.RepairSaberShadersAsync(saberPrefab);
 
-            return new CustomSaberData(relativePath, saberPrefab, descriptor, CustomSaberType.Whacker);
+            archive.Dispose();
+            jsonStream.Dispose();
+            jsonStreamReader.Dispose();
+            bundleStream.Dispose();
+            
+            return new CustomSaberData(relativePath, saberPrefab, descriptor, CustomSaberType.Whacker) { MissingShaders = missingShaders };
         }
 
         private async Task<Sprite> GetCoverFromArchive(ZipArchiveEntry thumbEntry)
