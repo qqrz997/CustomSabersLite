@@ -55,15 +55,14 @@ namespace CustomSabersLite.UI.Views
         [UIComponent("delete-saber-modal-text")]
         public TextMeshProUGUI deleteSaberModalText;
 
-        private CancellationTokenSource tokenSource = null;
+        private CancellationTokenSource tokenSource;
 
         [UIAction("select-saber")]
         public async void Select(TableView _, int row)
         {
-            tokenSource?.Cancel();
-
             Logger.Debug($"saber selected at row {row}");
 
+            tokenSource?.Cancel();
             tokenSource?.Dispose();
             tokenSource = new CancellationTokenSource();
 
@@ -195,6 +194,12 @@ namespace CustomSabersLite.UI.Views
         {
             base.DidDeactivate(removedFromHierarchy, screenSystemDisabling);
             tokenSource?.Cancel();
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            tokenSource?.Dispose();
         }
     }
 }

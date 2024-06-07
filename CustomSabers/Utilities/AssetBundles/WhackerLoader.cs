@@ -69,7 +69,7 @@ namespace CustomSabersLite.Utilities.AssetBundles
             };
             bundle.Unload(false);
 
-            bool missingShaders = await ShaderRepairUtils.RepairSaberShadersAsync(saberPrefab);
+            bool missingShaders = !await ShaderRepairUtils.RepairSaberShadersAsync(saberPrefab);
 
             archive.Dispose();
             jsonStream.Dispose();

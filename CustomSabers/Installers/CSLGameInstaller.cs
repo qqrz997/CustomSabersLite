@@ -17,8 +17,8 @@ namespace CustomSabersLite.Installers
                 return;
             }
 
-            Container.Bind<LevelSaberManager>().AsSingle();
             Container.Bind<TrailManager>().AsTransient();
+            Container.BindInterfacesAndSelfTo<LevelSaberManager>().AsSingle();
             Container.BindInterfacesAndSelfTo<EventManagerManager>().AsTransient();
 
             if (config.CurrentlySelectedSaber != null)

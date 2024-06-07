@@ -52,7 +52,7 @@ namespace CustomSabersLite.Utilities.AssetBundles
             SaberDescriptor descriptor = saberPrefab.GetComponent<SaberDescriptor>();
             bundle.Unload(false);
 
-            bool missingShaders = await ShaderRepairUtils.RepairSaberShadersAsync(saberPrefab);
+            bool missingShaders = !await ShaderRepairUtils.RepairSaberShadersAsync(saberPrefab);
 
             return new CustomSaberData(relativePath, saberPrefab, descriptor, CustomSaberType.Saber) { MissingShaders = missingShaders };
         }

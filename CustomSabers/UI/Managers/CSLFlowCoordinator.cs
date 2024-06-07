@@ -31,9 +31,7 @@ namespace CustomSabersLite.UI.Managers
                     showBackButton = true;
                 }
 
-                ProvideInitialViewControllers(saberList, saberSettings/*, test*/);
-
-                // ProvideInitialViewControllers(test);
+                ProvideInitialViewControllers(saberList, saberSettings);
             }
             catch (Exception ex)
             {

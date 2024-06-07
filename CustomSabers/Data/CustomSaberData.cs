@@ -8,16 +8,16 @@ namespace CustomSabersLite.Data
     internal class CustomSaberData
     {
         public string FilePath { get; private set; }
-        public GameObject SabersObject { get; private set; }
+        public GameObject SaberPrefab { get; private set; }
         public SaberDescriptor Descriptor { get; private set; }
         public CustomSaberType Type { get; private set; }
 
         public bool MissingShaders; // not yet implemented
 
-        public CustomSaberData(string relativePath, GameObject sabersObject, SaberDescriptor descriptor, CustomSaberType customSaberType)
+        public CustomSaberData(string relativePath, GameObject saberPrefab, SaberDescriptor descriptor, CustomSaberType customSaberType)
         {
             FilePath = relativePath;
-            SabersObject = sabersObject;
+            SaberPrefab = saberPrefab;
             Descriptor = descriptor;
             Type = customSaberType;
         }
@@ -28,7 +28,7 @@ namespace CustomSabersLite.Data
         public void Destroy()
         {
             Object.Destroy(Descriptor);
-            Object.Destroy(SabersObject);
+            Object.Destroy(SaberPrefab);
         }
     }
 }

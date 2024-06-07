@@ -1,9 +1,10 @@
 ﻿using CustomSabersLite.Data;
+using System;
 using System.Collections.Generic;
 
 namespace CustomSabersLite.Components.Managers
 {
-    internal class SaberInstanceManager
+    internal class SaberInstanceManager : IDisposable
     {
         private readonly Dictionary<string, CustomSaberData> saberInstances = new Dictionary<string, CustomSaberData>();
 
@@ -25,5 +26,13 @@ namespace CustomSabersLite.Components.Managers
 
         public bool TryGetSaber(string saberPath, out CustomSaberData saber) => 
             saberInstances.TryGetValue(saberPath, out saber);
+
+        public void Dispose()
+        {
+            foreach (CustomSaberData saberInstance in saberInstances.Values)
+            {
+                saberInstance.Destroy();
+            }
+        }
     }
 }

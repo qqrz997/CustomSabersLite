@@ -29,8 +29,8 @@ namespace CustomSabersLite.Installers
             Container.Bind<CustomSaberLoader>().AsSingle();
             Container.Bind<WhackerLoader>().AsSingle();
 
-            Container.Bind<SaberInstanceManager>().AsSingle();
-            Container.Bind<LiteSaberSet>().AsSingle();
+            Container.BindInterfacesAndSelfTo<SaberInstanceManager>().AsSingle();
+            Container.BindInterfacesAndSelfTo<LiteSaberSet>().AsSingle();
         }
     }
 }
