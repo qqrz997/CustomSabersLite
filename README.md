@@ -26,9 +26,3 @@ For Beat Saber v1.34.2, download [this release](https://github.com/qqrz997/Custo
 Settings are set in-game from the left panel in the Custom Sabers menu. This is accessed by clicking the Custom Sabers button on the left of the main menu.
 
 You can also adjust settings by clicking the Mods tab at the top of the gameplay settings menu to the left of the song list, then clicking the Custom Sabers tab.
-
-### Todo
-- Try to add trail intensity to settings
-- Look into HMD only sabers compatibility
-- Check if a saber file was changed and reload it to update the cache
-- Independent trail system
