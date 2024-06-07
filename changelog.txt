@@ -1,5 +1,10 @@
 changelog
 
+0.10.3
+- Updated for Beat Saber v1.37.0
+- Fixed an error caused when opening the saber menu after playing a level
+- Possible fix for whackers sometimes being unable to be deleted from the menu
+
 0.10.2
 - Fixed saber model occasionally being off axis
 
