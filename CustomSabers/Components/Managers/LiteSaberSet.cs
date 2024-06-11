@@ -10,15 +10,13 @@ namespace CustomSabersLite.Components.Managers
 {
     internal class LiteSaberSet : IDisposable
     {
-        private readonly WhackerLoader whackerLoader;
-        private readonly CustomSaberLoader saberLoader;
         private readonly SaberInstanceManager saberInstanceManager;
+        private readonly CustomSabersLoader customSabersLoader;
 
-        public LiteSaberSet(SaberInstanceManager saberInstanceManager, WhackerLoader whackerLoader, CustomSaberLoader saberLoader)
+        public LiteSaberSet(SaberInstanceManager saberInstanceManager, CustomSabersLoader customSabersLoader)
         {
-            this.saberLoader = saberLoader;
-            this.whackerLoader = whackerLoader;
             this.saberInstanceManager = saberInstanceManager;
+            this.customSabersLoader = customSabersLoader;
         }
 
         private LiteSaber LeftSaber = null;
@@ -42,20 +40,8 @@ namespace CustomSabersLite.Components.Managers
 
         public async Task<CustomSaberData> GetSaberData(string saberPath)
         {
-            if (!saberInstanceManager.TryGetSaber(saberPath, out CustomSaberData saber))
-            {
-                switch (Path.GetExtension(saberPath))
-                {
-                    case FileExts.Saber:
-                        saber = await saberLoader.LoadCustomSaberAsync(saberPath); break;
-
-                    case FileExts.Whacker:
-                        saber = await whackerLoader.LoadWhackerAsync(saberPath); break;
-                }
-                saberInstanceManager.AddSaber(saber);
-            }
-            Data = saber;
-            return saber;
+            Data = await customSabersLoader.GetSaberData(saberPath);
+            return Data;
         }
 
         public void Dispose() => DestroySabers();

@@ -14,8 +14,7 @@ namespace CustomSabersLite.Utilities.AssetBundles
     internal class CacheManager : IInitializable, IDisposable
     {
         private readonly CSLConfig config;
-        private readonly CustomSaberLoader customSaberLoader;
-        private readonly WhackerLoader whackerLoader;
+        private readonly CustomSabersLoader customSabersLoader;
 
         private readonly string sabersPath;
         private readonly string cachePath;
@@ -23,11 +22,10 @@ namespace CustomSabersLite.Utilities.AssetBundles
 
         public Task CacheInitialization { get; private set; }
 
-        public CacheManager(PluginDirs pluginDirs, CSLConfig config, CustomSaberLoader customSaberLoader, WhackerLoader whackerLoader)
+        public CacheManager(PluginDirs pluginDirs, CSLConfig config, CustomSabersLoader customSabersLoader)
         {
             this.config = config;
-            this.customSaberLoader = customSaberLoader;
-            this.whackerLoader = whackerLoader;
+            this.customSabersLoader = customSabersLoader;
 
             sabersPath = pluginDirs.CustomSabers.FullName;
             cachePath = pluginDirs.Cache.FullName;
@@ -61,7 +59,7 @@ namespace CustomSabersLite.Utilities.AssetBundles
             Dictionary<string, CustomSaberMetadata> fileMetadata = GetCachedMetadata();
 
             IEnumerable<string> sabersToLoad = GetSaberFiles(true).Where(f => !fileMetadata.ContainsKey(f));
-            IEnumerable<CustomSaberData> loadedSaberData = await LoadCustomSabersAsync(sabersToLoad);
+            IEnumerable<CustomSaberData> loadedSaberData = await customSabersLoader.LoadCustomSabersAsync(sabersToLoad);
 
             UpdateCache(fileMetadata, loadedSaberData);
 
@@ -161,30 +159,6 @@ namespace CustomSabersLite.Utilities.AssetBundles
                 if (File.Exists(destinationPath)) File.Delete(destinationPath);
 
                 File.Move(metaFilePath, destinationPath);
-            }
-        }
-
-        private async Task<IEnumerable<CustomSaberData>> LoadCustomSabersAsync(IEnumerable<string> customSaberFiles)
-        {
-            IList<CustomSaberData> customSabers = new List<CustomSaberData>();
-            foreach (string file in customSaberFiles)
-            {
-                customSabers.Add(await LoadCustomSaberAsync(file));
-            }
-            return customSabers;
-        }
-
-        private async Task<CustomSaberData> LoadCustomSaberAsync(string file)
-        {
-            switch (Path.GetExtension(file))
-            {
-                case FileExts.Saber:
-                    return await customSaberLoader.LoadCustomSaberAsync(file);
-
-                case FileExts.Whacker:
-                    return await whackerLoader.LoadWhackerAsync(file);
-
-                default: return null;
             }
         }
 

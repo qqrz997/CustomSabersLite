@@ -26,8 +26,9 @@ namespace CustomSabersLite.Installers
 
             Container.BindInterfacesAndSelfTo<CacheManager>().AsSingle();
             Container.Bind<BundleLoader>().AsSingle();
-            Container.Bind<CustomSaberLoader>().AsSingle();
+            Container.Bind<SaberLoader>().AsSingle();
             Container.Bind<WhackerLoader>().AsSingle();
+            Container.Bind<CustomSabersLoader>().AsSingle();
 
             Container.BindInterfacesAndSelfTo<SaberInstanceManager>().AsSingle();
             Container.BindInterfacesAndSelfTo<LiteSaberSet>().AsSingle();
