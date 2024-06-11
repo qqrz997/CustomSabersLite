@@ -18,12 +18,12 @@ namespace CustomSabersLite.Installers
             }
 
             Container.Bind<TrailManager>().AsTransient();
-            Container.BindInterfacesAndSelfTo<LevelSaberManager>().AsSingle();
             Container.BindInterfacesAndSelfTo<EventManagerManager>().AsTransient();
 
             if (config.CurrentlySelectedSaber != null)
             {
                 // This replaces the default sabers
+                Container.BindInterfacesAndSelfTo<LevelSaberManager>().AsSingle();
                 Container.BindInstance(SaberModelRegistration.Create<LiteSaberModelController>(5)).AsSingle();
             }
             else
