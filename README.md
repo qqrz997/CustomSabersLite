@@ -4,9 +4,9 @@
 To read more about migrating sabers to the newer versions of Beat Saber, read [this wiki page](https://bsmg.wiki/models/shader-migration.html).
 
 # Custom Sabers Lite
-CustomSabersLite is a minimal-feature custom sabers mod, which aims to provide a user-friendly experience without overwhelming players with too many settings and menus. People who were used to the original CustomSabers may find this mod preferable over the alternatives.
+CustomSabersLite is a minimal-feature custom sabers mod, which aims to provide a user-friendly experience without overwhelming players with too many settings and menus; people who were used to the original CustomSabers may find this mod preferable over the alternatives. This mod allows you to load .saber files from [ModelSaber](https://modelsaber.com/Sabers/?pc) and .whacker files from [Qosmetics](https://bsmg.wiki/models/custom-sabers.html#quest-sabers) and replace the default sabers with them.
 
-The mod is in an incomplete state, so not all planned features are implemented yet. I also aim to make this a helpful tool for saber makers, by providing various warnings to help makers identify problems with their sabers and ensure that their sabers function properly across different mods and versions in the future. 
+This mod is near to completion but I am still open to some feature suggestions, as long as they are possible to incorporate without adding too much complexity to the user experience. 
 
 Credit to the original [Custom Sabers](https://github.com/Kylemc1413/CustomSaberPlugin) mod and its contributors, which was the basis for this mod's creation.
 
@@ -14,7 +14,7 @@ Credit to the original [Custom Sabers](https://github.com/Kylemc1413/CustomSaber
 > [!IMPORTANT]
 > In addition to BSIPA, you must have [AssetBundleLoadingTools](https://github.com/nicoco007/AssetBundleLoadingTools), [SiraUtil](https://github.com/Auros/SiraUtil), and [BeatSaberMarkupLanguage](https://github.com/monkeymanboy/BeatSaberMarkupLanguage) installed for this mod to load. Install them using your mod manager i.e. [ModAssistant](https://bsmg.wiki/pc-modding.html#mod-assistant).
 
-### For Beat Saber v1.36.2
+### For Beat Saber v1.37.0
 
 Place the contents of the unzipped folder from the latest [release](https://github.com/qqrz997/CustomSabersLite/releases/latest) into your Beat Saber installation folder. For help with installing mods join the [Beat Saber Modding Group](https://discord.gg/beatsabermods) discord server.
 

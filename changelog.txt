@@ -1,7 +1,13 @@
 changelog
 
+0.10.4
+- Cached saber icons are now compressed
+- Fixed an error message when loading a level with default sabers
+- Fixed an bug when trying to load a saber with a huge file name, causing a path too long error - note - this means that said sabers are no longer loaded, one must consider changing the file name for the saber to load
+
 0.10.3
 - Updated for Beat Saber v1.37.0
+- Saber preview now shows your selected colour scheme
 - Fixed an error caused when opening the saber menu after playing a level
 - Possible fix for whackers sometimes being unable to be deleted from the menu
 
