@@ -128,14 +128,21 @@ namespace CustomSabersLite.Utilities.AssetBundles
                 // Cache data for each loaded saber
                 string metaFilePath = Path.Combine(cachePath, metaFileName);
 
-                if (File.Exists(metaFilePath))
+                try
                 {
-                    File.Delete(metaFilePath);
+                    if (File.Exists(metaFilePath))
+                    {
+                        File.Delete(metaFilePath);
+                    }
+                    File.WriteAllText(metaFilePath, JsonConvert.SerializeObject(metadata));
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error($"Problem encountered when trying to cache a saber's metadata\n{ex.Message}\n{ex}");
+                    continue;
                 }
 
-                File.WriteAllText(metaFilePath, JsonConvert.SerializeObject(metadata));
                 fileMetadata.Add(metaFilePath, metadata);
-
                 saber.Destroy();
             }
 
