@@ -26,6 +26,41 @@ namespace CustomSabersLite.Utilities
         }
 
         /// <summary>
+        /// Downscales a texture if it is bigger than the given width and height
+        /// </summary>
+        public static Texture2D Downscale(this Texture2D origTexture, int width, int height, FilterMode filterMode = FilterMode.Trilinear)
+        {
+            if (width * height > origTexture.width * origTexture.height)
+            {
+                return origTexture;
+            }
+
+            return origTexture.Rescale(width, height, filterMode);
+        }
+
+        /// <summary>
+        /// Rescales a texture
+        /// </summary>
+        private static Texture2D Rescale(this Texture2D origTexture, int width, int height, FilterMode filterMode)
+        {
+            Rect textureRect = new Rect(0, 0, width, height);
+
+            origTexture.filterMode = filterMode;
+            origTexture.Apply(true);
+            RenderTexture renderTexture = new RenderTexture(width, height, 32);
+            Graphics.SetRenderTarget(renderTexture);
+            GL.LoadPixelMatrix(0, 1, 1, 0);
+            GL.Clear(true, true, Color.clear);
+            Graphics.DrawTexture(new Rect(0, 0, 1, 1), origTexture);
+
+            origTexture.Reinitialize(width, height);
+            origTexture.ReadPixels(textureRect, 0, 0, true);
+            origTexture.Apply(true);
+
+            return origTexture;
+        }
+
+        /// <summary>
         /// Creates a <seealso cref="Sprite"/> from raw image data
         /// </summary>
         public static Sprite LoadImage(this byte[] imageData)

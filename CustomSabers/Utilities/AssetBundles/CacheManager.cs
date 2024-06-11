@@ -120,7 +120,7 @@ namespace CustomSabersLite.Utilities.AssetBundles
                     AuthorName = saber.Descriptor.AuthorName,
                     RelativePath = saber.FilePath,
                     MissingShaders = saber.MissingShaders,
-                    CoverImage = saber.Descriptor.CoverImage?.texture.DuplicateTexture().EncodeToPNG(),
+                    CoverImage = saber.Descriptor.CoverImage?.texture.DuplicateTexture().Downscale(128, 128).EncodeToPNG(),
                 };
 
                 string metaFileName = Path.GetFileNameWithoutExtension(saber.FilePath) + ".meta";
