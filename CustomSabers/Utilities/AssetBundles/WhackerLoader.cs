@@ -27,13 +27,13 @@ namespace CustomSabersLite.Utilities.AssetBundles
         /// Loads a custom saber from a .whacker file
         /// </summary>
         /// <param name="relativePath">Path to the .whacker file in the CustomSabers folder</param>
-        /// <returns><seealso cref="CustomSaberData.ForDefaultSabers"/> if a custom saber failed to load</returns>
+        /// <returns><seealso cref="CustomSaberData.Default"/> if a custom saber failed to load</returns>
         public async Task<CustomSaberData> LoadWhackerAsync(string relativePath)
         {
             string path = Path.Combine(sabersPath, relativePath);
             if (!File.Exists(path))
             {
-                return CustomSaberData.ForDefaultSabers();
+                return CustomSaberData.Default;
             }
 
             ZipArchive archive = ZipFile.OpenRead(path);
@@ -48,15 +48,15 @@ namespace CustomSabersLite.Utilities.AssetBundles
 
             Stream bundleStream = bundleEntry.Open();
             AssetBundle bundle = await bundleLoader.LoadBundleAsync(bundleStream);
-            if (bundle is null)
+            if (bundle == null)
             {
-                return CustomSaberData.ForDefaultSabers();
+                return CustomSaberData.Default;
             }
             GameObject saberPrefab = await AssetBundleExtensions.LoadAssetAsync<GameObject>(bundle, "_Whacker");
-            if (saberPrefab is null)
+            if (saberPrefab == null)
             {
                 bundle.Unload(true);
-                return CustomSaberData.ForDefaultSabers();
+                return CustomSaberData.Default;
             }
             saberPrefab.hideFlags = HideFlags.DontUnloadUnusedAsset;
 

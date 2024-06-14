@@ -41,7 +41,7 @@ namespace CustomSabersLite.Utilities.AssetBundles
         private readonly IEnumerable<string> metaExt = new List<string> { FileExts.Metadata };
         private readonly IEnumerable<string> saberExt = new List<string> { FileExts.Saber, FileExts.Whacker };
 
-        public async void Initialize()
+        public void Initialize()
         {
             if (config.PluginVer != Plugin.Version.ToString())
             {
@@ -51,7 +51,7 @@ namespace CustomSabersLite.Utilities.AssetBundles
             }
 
             Logger.Debug("Starting the CustomSabersAssetLoader");
-            await CacheInitialization;
+            Task.Run(LoadAsync);
         }
 
         private async Task LoadAsync()
@@ -98,6 +98,7 @@ namespace CustomSabersLite.Utilities.AssetBundles
             foreach (string metaFile in GetMetadataFiles(false))
             {
                 CustomSaberMetadata metadata = JsonConvert.DeserializeObject<CustomSaberMetadata>(File.ReadAllText(metaFile));
+                if (metadata.RelativePath is null) continue;
 
                 if (File.Exists(Path.Combine(sabersPath, metadata.RelativePath)))
                 {

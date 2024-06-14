@@ -22,7 +22,7 @@ namespace CustomSabersLite.Data
             Type = customSaberType;
         }
 
-        public static CustomSaberData ForDefaultSabers() =>
+        public static CustomSaberData Default =>
             new CustomSaberData(null, null, new SaberDescriptor { SaberName = "Default", AuthorName = "Beat Games" }, CustomSaberType.Default);
 
         public void Destroy()

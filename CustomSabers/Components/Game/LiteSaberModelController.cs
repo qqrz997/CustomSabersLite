@@ -45,7 +45,7 @@ namespace CustomSabersLite.Components.Game
             await levelSaberManager.SaberSetupTask;
             customSaberInstance = saberSet.CustomSaberForSaberType(saber.saberType);
 
-            if (customSaberInstance is null)
+            if (!customSaberInstance)
             {
                 Logger.Error("Something went wrong when getting the custom saber instance");
                 return;

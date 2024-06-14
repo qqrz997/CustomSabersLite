@@ -52,7 +52,7 @@ namespace CustomSabersLite.Utilities.AssetBundles
                 case FileExts.Whacker:
                     return await whackerLoader.LoadWhackerAsync(saberPath);
 
-                default: return CustomSaberData.ForDefaultSabers();
+                default: return CustomSaberData.Default;
             }
         }
     }

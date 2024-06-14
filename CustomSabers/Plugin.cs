@@ -11,6 +11,7 @@ using Hive.Versioning;
 
 namespace CustomSabersLite
 {
+    [NoEnableDisable]
     [Plugin(RuntimeOptions.SingleStartInit)]
     internal class Plugin
     {

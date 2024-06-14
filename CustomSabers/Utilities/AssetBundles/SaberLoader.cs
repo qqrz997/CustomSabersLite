@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using UnityEngine;
 using CustomSabersLite.Data;
+using System;
 
 namespace CustomSabersLite.Utilities.AssetBundles
 {
@@ -23,29 +24,29 @@ namespace CustomSabersLite.Utilities.AssetBundles
         /// Loads a custom saber from a .saber file
         /// </summary>
         /// <param name="relativePath">Path to the .saber file in the CustomSabers folder</param>
-        /// <returns><seealso cref="CustomSaberData.ForDefaultSabers"/> if a custom saber failed to load</returns>
+        /// <returns><seealso cref="CustomSaberData.Default"/> if a custom saber failed to load</returns>
         public async Task<CustomSaberData> LoadCustomSaberAsync(string relativePath)
         {
             string path = Path.Combine(sabersPath, relativePath);
 
             if (!File.Exists(path))
             {
-                return CustomSaberData.ForDefaultSabers();
+                return CustomSaberData.Default;
             }
 
             AssetBundle bundle = await bundleLoader.LoadBundleAsync(path);
 
-            if (bundle is null)
+            if (bundle == null)
             {
-                return CustomSaberData.ForDefaultSabers();
+                return CustomSaberData.Default;
             }
 
             GameObject saberPrefab = await bundleLoader.LoadAssetAsync<GameObject>(bundle, "_CustomSaber");
 
-            if (saberPrefab is null)
+            if (saberPrefab == null)
             {
                 bundle.Unload(true);
-                return CustomSaberData.ForDefaultSabers();
+                return CustomSaberData.Default;
             }
             saberPrefab.hideFlags = HideFlags.DontUnloadUnusedAsset;
 

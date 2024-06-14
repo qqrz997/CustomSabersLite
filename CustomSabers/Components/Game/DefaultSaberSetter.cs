@@ -40,7 +40,7 @@ namespace CustomSabersLite.Components.Game
         {
             SaberModelController saberModelController = saber.GetComponentInChildren<SaberModelController>();
             SaberTrail trail = saberModelController?.gameObject.GetComponent<SaberTrail>() ?? saber.GetComponentInChildren<SaberTrail>();
-            if (saberModelController is null || trail is null)
+            if (!saberModelController || !trail)
             {
                 return;
             }

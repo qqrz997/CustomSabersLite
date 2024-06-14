@@ -48,7 +48,7 @@ namespace CustomSabersLite.Components.Game
         {
             foreach (Renderer renderer in gameObject.GetComponentsInChildren<Renderer>(true))
             {
-                if (renderer is null) continue;
+                if (!renderer) continue;
 
                 Material[] materials = renderer.sharedMaterials;
                 int materialCount = materials.Length;
@@ -57,7 +57,7 @@ namespace CustomSabersLite.Components.Game
                 {
                     Material material = materials[i];
 
-                    if (material is null || !material.HasProperty(MaterialProperties.Color)) continue;
+                    if (!material || !material.HasProperty(MaterialProperties.Color)) continue;
 
                     if (material.HasProperty(MaterialProperties.CustomColors))
                     {
