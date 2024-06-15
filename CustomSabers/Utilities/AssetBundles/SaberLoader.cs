@@ -34,6 +34,8 @@ namespace CustomSabersLite.Utilities.AssetBundles
                 return CustomSaberData.Default;
             }
 
+            Logger.Debug($"Attempting to load saber file...\n\t- {path}");
+
             AssetBundle bundle = await bundleLoader.LoadBundleAsync(path);
 
             if (bundle == null)

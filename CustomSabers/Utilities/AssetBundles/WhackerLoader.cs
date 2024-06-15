@@ -36,6 +36,8 @@ namespace CustomSabersLite.Utilities.AssetBundles
                 return CustomSaberData.Default;
             }
 
+            Logger.Debug($"Attempting to load whacker file...\n\t- {path}");
+
             ZipArchive archive = ZipFile.OpenRead(path);
             ZipArchiveEntry json = archive.Entries.Where(x => x.FullName.EndsWith(".json")).FirstOrDefault();
 
