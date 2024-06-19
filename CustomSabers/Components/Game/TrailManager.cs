@@ -163,12 +163,11 @@ namespace CustomSabersLite.Components.Game
 
         private LiteSaberTrail InitTrail(CustomTrailData customTrailData, LiteSaberTrail trail)
         {
-            trail._trailRendererPrefab = defaultTrailRendererPrefab;
             trail._trailDuration = TrailUtils.ConvertedDuration(customTrailData.Length);
             trail._samplingFrequency = defaultSamplingFrequency;
             trail._granularity = defaultGranularity;
             trail._color = customTrailData.Color;
-            trail._trailRenderer = GameObject.Instantiate(trail._trailRendererPrefab, Vector3.zero, Quaternion.identity);
+            trail._trailRenderer = GameObject.Instantiate(defaultTrailRendererPrefab, Vector3.zero, Quaternion.identity);
             trail._trailRenderer._meshRenderer.material = customTrailData.Material;
             trail._trailRenderer._meshRenderer.material.color = customTrailData.Color.ColorWithAlpha(saberTrailIntensity);
             trail._trailElementCollection = defaultTrailElementCollection;
