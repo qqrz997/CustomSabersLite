@@ -37,11 +37,11 @@ namespace CustomSabersLite.Components.Game
 
         public bool PreInit(Transform parent, Saber saber)
         {
-            Task.Run(() => CustomSaberInit(parent, saber));
+            CustomSaberInit(parent, saber);
             return true;
         }
 
-        private async Task CustomSaberInit(Transform parent, Saber saber)
+        private async void CustomSaberInit(Transform parent, Saber saber)
         {
             await levelSaberManager.SaberSetupTask;
             customSaberInstance = saberSet.NewSaberForSaberType(saber.saberType);
