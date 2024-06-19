@@ -30,9 +30,6 @@ namespace CustomSabersLite.Installers
             {
                 Container.BindInterfacesTo<DefaultSaberSetter>().AsSingle();
             }
-
-            // Aprilfools
-            Container.BindInterfacesTo<ExtraSaberManager>().AsSingle();
         }
     }
 }
