@@ -44,16 +44,27 @@ namespace CustomSabersLite.Utilities.AssetBundles
 
         private async Task<CustomSaberData> LoadSaberDataAsync(string saberPath)
         {
+            CustomSaberData saberData = CustomSaberData.Default;
+
             switch (Path.GetExtension(saberPath))
             {
                 case FileExts.Saber:
-                    return await saberLoader.LoadCustomSaberAsync(saberPath);
+                    saberData = await saberLoader.LoadCustomSaberAsync(saberPath);
+                    break;
 
                 case FileExts.Whacker:
-                    return await whackerLoader.LoadWhackerAsync(saberPath);
+                    saberData = await whackerLoader.LoadWhackerAsync(saberPath);
+                    break;
 
-                default: return CustomSaberData.Default;
+                default: return saberData;
             }
+
+            if (saberData != null)
+            {
+                saberData.SaberPrefab.name += $" {saberData.Descriptor.SaberName}";
+            }
+
+            return saberData;
         }
     }
 }
