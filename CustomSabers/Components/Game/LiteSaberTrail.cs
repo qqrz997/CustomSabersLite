@@ -19,12 +19,8 @@ namespace CustomSabersLite.Components.Game
         {
             customTrailTopTransform = topTransform;
             customTrailBottomTransform = bottomTransform;
-
             customTrailTopTransform.name = "Custom Top";
             customTrailBottomTransform.name = "Custom Bottom";
-
-            customTrailTopTransform.SetParent(transform.parent.transform);
-            customTrailBottomTransform.SetParent(transform.parent.transform);
 
             gameObject.layer = 12;
         }

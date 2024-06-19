@@ -53,7 +53,7 @@ namespace CustomSabersLite.Components.Game
 
             transform.SetParent(parent, false);
 
-            customSaberInstance.Setup(parent, saberSet.Data.Type);
+            customSaberInstance.Setup(transform, saberSet.Data.Type);
             eventManagerManager.InitializeEventManager(customSaberInstance.EventManager, saber.saberType);
 
             Color saberColor = config.EnableCustomColorScheme
