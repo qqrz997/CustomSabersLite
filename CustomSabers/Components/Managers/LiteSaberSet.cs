@@ -1,14 +1,12 @@
 ﻿using CustomSabersLite.Components.Game;
 using CustomSabersLite.Data;
 using CustomSabersLite.Utilities.AssetBundles;
-using System;
-using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
 
 namespace CustomSabersLite.Components.Managers
 {
-    internal class LiteSaberSet : IDisposable
+    internal class LiteSaberSet
     {
         private readonly SaberInstanceManager saberInstanceManager;
         private readonly CustomSabersLoader customSabersLoader;
@@ -19,57 +17,28 @@ namespace CustomSabersLite.Components.Managers
             this.customSabersLoader = customSabersLoader;
         }
 
-        private LiteSaber LeftSaber = null;
-        private LiteSaber RightSaber = null;
+        private GameObject leftSaberPrefab = null;
+        private GameObject rightSaberPrefab = null;
 
         public CustomSaberData Data { get; private set; }
 
-        public LiteSaber CustomSaberForSaberType(SaberType saberType) =>
-            saberType == SaberType.SaberA ? LeftSaber : RightSaber;
+        public LiteSaber NewSaberForSaberType(SaberType saberType)
+        {
+            GameObject original = saberType == SaberType.SaberA ? leftSaberPrefab : rightSaberPrefab;
+            return original ? GameObject.Instantiate(original).AddComponent<LiteSaber>() : null;
+        }
 
         public async Task SetSabers(string saberPath)
         {
-            DestroySabers();
-
-            CustomSaberData customSaberData = await GetSaberData(saberPath);
-            if (customSaberData.SaberPrefab != null)
+            CustomSaberData saberData = await GetSaberData(saberPath);
+            if (saberData.SaberPrefab != null)
             {
-                SetSabersFromPrefab(customSaberData.SaberPrefab);
+                leftSaberPrefab = saberData.SaberPrefab.transform.Find("LeftSaber")?.gameObject;
+                rightSaberPrefab = saberData.SaberPrefab.transform.Find("RightSaber")?.gameObject;
             }
         }
 
-        public async Task<CustomSaberData> GetSaberData(string saberPath)
-        {
+        public async Task<CustomSaberData> GetSaberData(string saberPath) =>
             Data = await customSabersLoader.GetSaberData(saberPath);
-            return Data;
-        }
-
-        public void Dispose() => DestroySabers();
-
-        public void DestroySabers()
-        {
-            if (LeftSaber)
-            {
-                GameObject.Destroy(LeftSaber.gameObject);
-                LeftSaber = null;
-            }
-            if (RightSaber)
-            {
-                GameObject.Destroy(RightSaber.gameObject);
-                RightSaber = null;
-            }
-        }
-
-        private void SetSabersFromPrefab(GameObject saberPrefab)
-        {
-            LeftSaber = InstantiateSaber(SaberFromPrefab(saberPrefab, "LeftSaber"));
-            RightSaber = InstantiateSaber(SaberFromPrefab(saberPrefab, "RightSaber"));
-        }
-
-        private LiteSaber InstantiateSaber(GameObject original) =>
-            GameObject.Instantiate(original).AddComponent<LiteSaber>();
-
-        private GameObject SaberFromPrefab(GameObject saberPrefab, string saberName) =>
-            saberPrefab.transform.Find(saberName)?.gameObject;
     }
 }

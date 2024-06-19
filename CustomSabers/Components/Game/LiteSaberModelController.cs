@@ -3,6 +3,7 @@ using UnityEngine;
 using Zenject;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Components.Managers;
+using System.Threading.Tasks;
 
 namespace CustomSabersLite.Components.Game
 {
@@ -36,14 +37,14 @@ namespace CustomSabersLite.Components.Game
 
         public bool PreInit(Transform parent, Saber saber)
         {
-            CustomSaberInit(parent, saber);
+            Task.Run(() => CustomSaberInit(parent, saber));
             return true;
         }
 
-        private async void CustomSaberInit(Transform parent, Saber saber)
+        private async Task CustomSaberInit(Transform parent, Saber saber)
         {
             await levelSaberManager.SaberSetupTask;
-            customSaberInstance = saberSet.CustomSaberForSaberType(saber.saberType);
+            customSaberInstance = saberSet.NewSaberForSaberType(saber.saberType);
 
             if (!customSaberInstance)
             {

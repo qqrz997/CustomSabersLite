@@ -2,6 +2,7 @@
 using CustomSabersLite.Components.Managers;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Data;
+using CustomSabersLite.Utilities.Extensions;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -21,8 +22,8 @@ namespace CustomSabersLite.UI.Managers
             this.colorSchemesSettings = colorSchemesSettings;
         }
 
-        private LiteSaber LeftSaber => saberSet.CustomSaberForSaberType(SaberType.SaberA);
-        private LiteSaber RightSaber => saberSet.CustomSaberForSaberType(SaberType.SaberB);
+        private LiteSaber leftPreviewSaber = null;
+        private LiteSaber rightPreviewSaber = null;
 
         // using these for now until i figure out how to get the actual physical position on the ui view
         private readonly Vector3 leftPreviewSaberPosition = new Vector3(0.56f, 1.0f, 4.2f);
@@ -31,7 +32,16 @@ namespace CustomSabersLite.UI.Managers
 
         public async Task GeneratePreview(CancellationToken token)
         {
-            saberSet.DestroySabers();
+            if (leftPreviewSaber)
+            {
+                leftPreviewSaber.gameObject.Destroy();
+                leftPreviewSaber = null;
+            }
+            if (rightPreviewSaber)
+            {
+                rightPreviewSaber.gameObject.Destroy();
+                rightPreviewSaber = null;
+            }
 
             if (string.IsNullOrWhiteSpace(config.CurrentlySelectedSaber))
             {
@@ -42,8 +52,11 @@ namespace CustomSabersLite.UI.Managers
             token.ThrowIfCancellationRequested();
 
             await saberSet.SetSabers(config.CurrentlySelectedSaber);
-            
-            if (!LeftSaber || !RightSaber)
+
+            leftPreviewSaber = saberSet.NewSaberForSaberType(SaberType.SaberA);
+            rightPreviewSaber = saberSet.NewSaberForSaberType(SaberType.SaberB);
+
+            if (!leftPreviewSaber || !rightPreviewSaber)
             {
                 Logger.Warn("Something went wrong when setting the current saber");
                 return;
@@ -51,14 +64,14 @@ namespace CustomSabersLite.UI.Managers
 
             SetColor();
 
-            LeftSaber.gameObject.transform.SetPositionAndRotation(leftPreviewSaberPosition, previewRotation);
-            RightSaber.gameObject.transform.SetPositionAndRotation(rightPreviewSaberPosition, previewRotation);
+            leftPreviewSaber.gameObject.transform.SetPositionAndRotation(leftPreviewSaberPosition, previewRotation);
+            rightPreviewSaber.gameObject.transform.SetPositionAndRotation(rightPreviewSaberPosition, previewRotation);
         }
 
         public void SetPreviewActive(bool active)
         {
-            LeftSaber?.gameObject.SetActive(active);
-            RightSaber?.gameObject.SetActive(active);
+            leftPreviewSaber?.gameObject.SetActive(active);
+            rightPreviewSaber?.gameObject.SetActive(active);
         }
 
         public void SetColor()
@@ -76,8 +89,8 @@ namespace CustomSabersLite.UI.Managers
 
         private void SetColor(Color leftColor, Color rightColor)
         {
-            LeftSaber?.SetColor(leftColor);
-            RightSaber?.SetColor(rightColor);
+            leftPreviewSaber?.SetColor(leftColor);
+            rightPreviewSaber?.SetColor(rightColor);
         }
     }
 }

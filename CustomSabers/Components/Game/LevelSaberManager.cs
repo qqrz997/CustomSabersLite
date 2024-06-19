@@ -1,11 +1,10 @@
 ﻿using CustomSabersLite.Components.Managers;
 using CustomSabersLite.Configuration;
-using System;
 using System.Threading.Tasks;
 
 namespace CustomSabersLite.Components.Game
 {
-    internal class LevelSaberManager : IDisposable
+    internal class LevelSaberManager
     {
         private readonly CSLConfig config;
         private readonly LiteSaberSet saberSet;
@@ -28,11 +27,6 @@ namespace CustomSabersLite.Components.Game
         private async Task CreatLevelSaberInstance()
         {
             await saberSet.SetSabers(config.CurrentlySelectedSaber);
-        }
-
-        public void Dispose()
-        {
-            saberSet.Dispose();
         }
     }
 }
