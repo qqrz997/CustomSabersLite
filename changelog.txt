@@ -1,5 +1,8 @@
 changelog
 
+0.10.6
+- Fixed a mistake that was causing regular crashing
+
 0.10.5
 - Now compatible with TrickSaber
 - Fixed a very rare case where you wouldn't be able to use a certain saber anymore for the duration of the session
