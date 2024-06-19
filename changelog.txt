@@ -1,5 +1,10 @@
 changelog
 
+0.10.5
+- Now compatible with TrickSaber
+- Fixed a very rare case where you wouldn't be able to use a certain saber anymore for the duration of the session
+- Added some extra debugging to identify sabers that crash the game when they are loaded
+
 0.10.4
 - Cached saber icons are now compressed
 - Fixed an error message when loading a level with default sabers
