@@ -24,7 +24,8 @@ internal class CacheManager : IInitializable
 
     public CacheManager(PluginDirs pluginDirs, CSLConfig config, CustomSabersLoader customSabersLoader)
     {
-        (this.config, this.customSabersLoader) = (config, customSabersLoader);
+        this.config = config;
+        this.customSabersLoader = customSabersLoader;
 
         sabersPath = pluginDirs.CustomSabers.FullName;
         cachePath = pluginDirs.Cache.FullName;
@@ -121,7 +122,7 @@ internal class CacheManager : IInitializable
                 CoverImage = saber.Descriptor.CoverImage?.texture.DuplicateTexture().Downscale(128, 128).EncodeToPNG(),
             };
 
-            var metaFileName = Path.GetFileNameWithoutExtension(saber.FilePath) + ".meta";
+            var metaFileName = Path.GetFileNameWithoutExtension(saber.FilePath) + FileExts.Metadata;
 
             // Cache data for each loaded saber
             var metaFilePath = Path.Combine(cachePath, metaFileName);
@@ -156,9 +157,15 @@ internal class CacheManager : IInitializable
             var fileName = Path.GetFileName(metaFilePath);
             var destinationPath = Path.Combine(deletedSabersPath, fileName);
 
-            if (File.Exists(destinationPath)) File.Delete(destinationPath);
-
-            File.Move(metaFilePath, destinationPath);
+            try
+            {
+                if (File.Exists(destinationPath)) File.Delete(destinationPath);
+                File.Move(metaFilePath, destinationPath);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"Problem encountered when trying to clear {fileName} from cache\n{ex}");
+            }
         }
     }
 }

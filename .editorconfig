@@ -26,3 +26,6 @@ dotnet_diagnostic.IDE0028.severity = warning
 
 # IDE0290: Use primary constructor
 dotnet_diagnostic.IDE0290.severity = suggestion
+
+# IDE0160: Convert to block scoped namespace
+csharp_style_namespace_declarations = file_scoped
