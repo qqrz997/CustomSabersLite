@@ -3,35 +3,25 @@ using CustomSabersLite.Configuration;
 using CustomSabersLite.Utilities.AssetBundles;
 using Zenject;
 
-namespace CustomSabersLite.Installers
+namespace CustomSabersLite.Installers;
+
+internal class CSLAppInstaller(CSLConfig config) : Installer
 {
-    internal class CSLAppInstaller : Installer
+    private readonly CSLConfig config = config;
+
+    public override void InstallBindings()
     {
-        private readonly IPA.Logging.Logger logger;
-        private readonly CSLConfig config;
+        Container.Bind<PluginDirs>().AsSingle();
 
-        public CSLAppInstaller(IPA.Logging.Logger logger, CSLConfig config)
-        {
-            this.logger = logger;
-            this.config = config;
-        }
+        Container.BindInstance(config);
 
-        public override void InstallBindings()
-        {
-            Container.BindInstance(logger).AsSingle();
+        Container.BindInterfacesAndSelfTo<CacheManager>().AsSingle();
+        Container.Bind<BundleLoader>().AsSingle();
+        Container.Bind<SaberLoader>().AsSingle();
+        Container.Bind<WhackerLoader>().AsSingle();
+        Container.Bind<CustomSabersLoader>().AsSingle();
 
-            Container.Bind<PluginDirs>().AsSingle();
-
-            Container.BindInstance(config);
-
-            Container.BindInterfacesAndSelfTo<CacheManager>().AsSingle();
-            Container.Bind<BundleLoader>().AsSingle();
-            Container.Bind<SaberLoader>().AsSingle();
-            Container.Bind<WhackerLoader>().AsSingle();
-            Container.Bind<CustomSabersLoader>().AsSingle();
-
-            Container.BindInterfacesAndSelfTo<SaberInstanceManager>().AsSingle();
-            Container.BindInterfacesAndSelfTo<LiteSaberSet>().AsSingle();
-        }
+        Container.BindInterfacesAndSelfTo<SaberInstanceManager>().AsSingle();
+        Container.BindInterfacesAndSelfTo<LiteSaberSet>().AsSingle();
     }
 }

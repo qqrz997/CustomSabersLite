@@ -1,9 +1,8 @@
-﻿namespace CustomSabersLite.Data
+﻿namespace CustomSabersLite.Data;
+
+internal enum CustomSaberType
 {
-    internal enum CustomSaberType
-    {
-        Default,
-        Saber,
-        Whacker
-    }
+    Default,
+    Saber,
+    Whacker
 }

@@ -1,46 +1,42 @@
 ﻿using CustomSabersLite.Data;
 using UnityEngine;
 
-namespace CustomSabersLite.Components.Game
+namespace CustomSabersLite.Components.Game;
+
+internal class LiteSaberTrail : SaberTrail
 {
-    internal class LiteSaberTrail : SaberTrail
+    private Transform customTrailTopTransform;
+    private Transform customTrailBottomTransform;
+
+    private readonly SaberMovementData customTrailMovementData = new();
+
+    void Awake() => _movementData = customTrailMovementData;
+
+    public void Setup(Transform topTransform, Transform bottomTransform)
     {
-        private Transform customTrailTopTransform;
-        private Transform customTrailBottomTransform;
+        customTrailTopTransform = topTransform;
+        customTrailBottomTransform = bottomTransform;
+        customTrailTopTransform.name = "Custom Top";
+        customTrailBottomTransform.name = "Custom Bottom";
 
-        private readonly SaberMovementData customTrailMovementData = new SaberMovementData();
+        gameObject.layer = 12;
+    }
 
-        void Awake()
+    void Update()
+    {
+        if (gameObject.activeInHierarchy)
         {
-            _movementData = customTrailMovementData;
+            customTrailMovementData.AddNewData(customTrailTopTransform.position, customTrailBottomTransform.position, TimeHelper.time);
         }
+    }
 
-        public void Setup(Transform topTransform, Transform bottomTransform)
+    public void SetColor(Color color)
+    {
+        _color = color;
+
+        foreach (var rendererMaterial in _trailRenderer._meshRenderer.materials)
         {
-            customTrailTopTransform = topTransform;
-            customTrailBottomTransform = bottomTransform;
-            customTrailTopTransform.name = "Custom Top";
-            customTrailBottomTransform.name = "Custom Bottom";
-
-            gameObject.layer = 12;
-        }
-
-        void Update()
-        {
-            if (gameObject.activeInHierarchy)
-            {
-                customTrailMovementData.AddNewData(customTrailTopTransform.position, customTrailBottomTransform.position, TimeHelper.time);
-            }
-        }
-
-        public void SetColor(Color color)
-        {
-            _color = color;
-
-            foreach (Material rendererMaterial in _trailRenderer._meshRenderer.materials)
-            {
-                rendererMaterial.SetColor(MaterialProperties.Color, color);
-            }
+            rendererMaterial.SetColor(MaterialProperties.Color, color);
         }
     }
 }

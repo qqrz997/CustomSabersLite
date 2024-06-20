@@ -1,34 +1,25 @@
 ﻿using UnityEngine;
 
-namespace CustomSabersLite.Data
+namespace CustomSabersLite.Data;
+
+/// <summary>
+/// Class that declares the neccessary information to manage a custom saber instance
+/// </summary>
+internal class CustomSaberData(string relativePath, GameObject saberPrefab, SaberDescriptor descriptor, CustomSaberType customSaberType)
 {
-    /// <summary>
-    /// Class that declares the neccessary information to manage a custom saber instance
-    /// </summary>
-    internal class CustomSaberData
+    public string FilePath { get; private set; } = relativePath;
+    public GameObject SaberPrefab { get; private set; } = saberPrefab;
+    public SaberDescriptor Descriptor { get; private set; } = descriptor;
+    public CustomSaberType Type { get; private set; } = customSaberType;
+
+    public bool MissingShaders; // not yet implemented
+
+    public static CustomSaberData Default =>
+        new(null, null, new SaberDescriptor { SaberName = "Default", AuthorName = "Beat Games" }, CustomSaberType.Default);
+
+    public void Destroy()
     {
-        public string FilePath { get; private set; }
-        public GameObject SaberPrefab { get; private set; }
-        public SaberDescriptor Descriptor { get; private set; }
-        public CustomSaberType Type { get; private set; }
-
-        public bool MissingShaders; // not yet implemented
-
-        public CustomSaberData(string relativePath, GameObject saberPrefab, SaberDescriptor descriptor, CustomSaberType customSaberType)
-        {
-            FilePath = relativePath;
-            SaberPrefab = saberPrefab;
-            Descriptor = descriptor;
-            Type = customSaberType;
-        }
-
-        public static CustomSaberData Default =>
-            new CustomSaberData(null, null, new SaberDescriptor { SaberName = "Default", AuthorName = "Beat Games" }, CustomSaberType.Default);
-
-        public void Destroy()
-        {
-            Object.Destroy(Descriptor);
-            Object.Destroy(SaberPrefab);
-        }
+        Object.Destroy(Descriptor);
+        Object.Destroy(SaberPrefab);
     }
 }

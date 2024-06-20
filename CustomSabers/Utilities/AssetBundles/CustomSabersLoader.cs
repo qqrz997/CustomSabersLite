@@ -3,68 +3,53 @@ using CustomSabersLite.Data;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using System.Linq;
 
-namespace CustomSabersLite.Utilities.AssetBundles
+namespace CustomSabersLite.Utilities.AssetBundles;
+
+/// <summary>
+/// Class for loading different kinds of custom saber assets
+/// </summary>
+internal class CustomSabersLoader(SaberInstanceManager saberInstanceManager, SaberLoader saberLoader, WhackerLoader whackerLoader)
 {
-    /// <summary>
-    /// Class for loading different kinds of custom saber assets
-    /// </summary>
-    internal class CustomSabersLoader
+    private readonly SaberInstanceManager saberInstanceManager = saberInstanceManager;
+    private readonly SaberLoader saberLoader = saberLoader;
+    private readonly WhackerLoader whackerLoader = whackerLoader;
+
+    public async Task<CustomSaberData> GetSaberData(string saberPath)
     {
-        private readonly SaberInstanceManager saberInstanceManager;
-        private readonly SaberLoader saberLoader;
-        private readonly WhackerLoader whackerLoader;
-
-        public CustomSabersLoader(SaberInstanceManager saberInstanceManager, SaberLoader saberLoader, WhackerLoader whackerLoader)
+        if (!saberInstanceManager.TryGetSaber(saberPath, out var saberData))
         {
-            this.saberInstanceManager = saberInstanceManager;
-            this.saberLoader = saberLoader;
-            this.whackerLoader = whackerLoader;
+            saberData = await LoadSaberDataAsync(saberPath);
+            saberInstanceManager.AddSaber(saberData);
+        }
+        return saberData;
+    }
+
+    public async Task<List<CustomSaberData>> LoadCustomSabersAsync(IEnumerable<string> customSaberFiles)
+    {
+        List<CustomSaberData> customSabers = [];
+        foreach (var file in customSaberFiles)
+        {
+            customSabers.Add(await LoadSaberDataAsync(file));
+        }
+        return customSabers;
+    }
+
+    private async Task<CustomSaberData> LoadSaberDataAsync(string saberPath)
+    {
+        var saberData = Path.GetExtension(saberPath) switch
+        {
+            FileExts.Saber => await saberLoader.LoadCustomSaberAsync(saberPath),
+            FileExts.Whacker => await whackerLoader.LoadWhackerAsync(saberPath),
+            _ => CustomSaberData.Default
+        };
+
+        if (saberData != null)
+        {
+            saberData.SaberPrefab.name += $" {saberData.Descriptor.SaberName}";
         }
 
-        public async Task<CustomSaberData> GetSaberData(string saberPath)
-        {
-            if (!saberInstanceManager.TryGetSaber(saberPath, out CustomSaberData saber))
-            {
-                saber = await LoadSaberDataAsync(saberPath);
-                saberInstanceManager.AddSaber(saber);
-            }
-            return saber;
-        }
-
-        public async Task<IEnumerable<CustomSaberData>> LoadCustomSabersAsync(IEnumerable<string> customSaberFiles)
-        {
-            IList<CustomSaberData> customSabers = new List<CustomSaberData>();
-            foreach (string file in customSaberFiles)
-            {
-                customSabers.Add(await LoadSaberDataAsync(file));
-            }
-            return customSabers;
-        }
-
-        private async Task<CustomSaberData> LoadSaberDataAsync(string saberPath)
-        {
-            CustomSaberData saberData = CustomSaberData.Default;
-
-            switch (Path.GetExtension(saberPath))
-            {
-                case FileExts.Saber:
-                    saberData = await saberLoader.LoadCustomSaberAsync(saberPath);
-                    break;
-
-                case FileExts.Whacker:
-                    saberData = await whackerLoader.LoadWhackerAsync(saberPath);
-                    break;
-
-                default: return saberData;
-            }
-
-            if (saberData != null)
-            {
-                saberData.SaberPrefab.name += $" {saberData.Descriptor.SaberName}";
-            }
-
-            return saberData;
-        }
+        return saberData;
     }
 }

@@ -1,36 +1,22 @@
 ﻿using System;
 using System.Reflection;
 using System.Threading.Tasks;
-using UnityEngine;
 
-namespace CustomSabersLite.Utilities
+namespace CustomSabersLite.Utilities;
+
+internal static class CustomSaberUtils
 {
-    internal static class CustomSaberUtils
+    public static async Task<bool> LoadCustomSaberAssembly()
     {
-        public static async Task<bool> LoadCustomSaberAssembly()
+        try
         {
-            try
-            {
-                Assembly.Load(await ResourceLoading.LoadFromResourceAsync("CustomSabersLite.Resources.CustomSaber.dll"));
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Logger.Critical($"Couldn't load CustomSaber.dll\n{ex}");
-                return false;
-            }
+            Assembly.Load(await ResourceLoading.LoadFromResourceAsync("CustomSabersLite.Resources.CustomSaber.dll"));
+            return true;
         }
-
-        public static SaberDescriptor New(this SaberDescriptor descriptor, string saberName, string authorName, string description = null, Sprite coverImage = null)
+        catch (Exception ex)
         {
-            descriptor = new SaberDescriptor
-            {
-                SaberName = saberName,
-                AuthorName = authorName,
-                Description = description,
-                CoverImage = coverImage
-            };
-            return descriptor;
+            Logger.Critical($"Couldn't load CustomSaber.dll\n{ex}");
+            return false;
         }
     }
 }

@@ -4,82 +4,80 @@ using CustomSabersLite.Utilities.Extensions;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace CustomSabersLite.Components.Game
+namespace CustomSabersLite.Components.Game;
+
+internal class LiteSaber : MonoBehaviour
 {
-    internal class LiteSaber : MonoBehaviour
+    private readonly List<Material> colorableMaterials = [];
+
+    public EventManager EventManager { get; private set; }
+
+    public CustomSaberType Type { get; private set; }
+
+    public void Setup(Transform parent, CustomSaberType type, bool worldPositionStays = false)
     {
-        private readonly List<Material> colorableMaterials = new List<Material>();
+        transform.SetParent(parent, worldPositionStays);
+        transform.position = parent.position;
+        transform.rotation = parent.rotation;
+        Type = type;
+    }
 
-        public EventManager EventManager { get; private set; }
+    void Awake()
+    {
+        GetColorableMaterialsFromSaber();
+        EventManager = gameObject.TryGetComponentOrDefault<EventManager>();
+    }
 
-        public CustomSaberType Type { get; private set; }
-
-        public void Setup(Transform parent, CustomSaberType type, bool worldPositionStays = false)
+    void OnDestroy()
+    {
+        if (EventManager)
         {
-            transform.SetParent(parent, worldPositionStays);
-            transform.position = parent.position;
-            transform.rotation = parent.rotation;
-            Type = type;
+            Destroy(EventManager);
         }
+    }
 
-        void Awake()
+    public void SetColor(Color color)
+    {
+        foreach (var mat in colorableMaterials)
         {
-            GetColorableMaterialsFromSaber();
-            EventManager = gameObject.TryGetComponentOrDefault<EventManager>();
+            mat.SetColor(MaterialProperties.Color, color);
         }
+    }
 
-        void OnDestroy()
+    private void GetColorableMaterialsFromSaber()
+    {
+        foreach (var renderer in gameObject.GetComponentsInChildren<Renderer>(true))
         {
-            if (EventManager)
+            if (!renderer) continue;
+
+            var materials = renderer.sharedMaterials;
+
+            for (var i = 0; i < materials.Length; i++) 
             {
-                Destroy(EventManager);
-            }
-        }
+                var material = materials[i];
 
-        public void SetColor(Color color)
-        {
-            foreach (Material mat in colorableMaterials)
-            {
-                mat.SetColor(MaterialProperties.Color, color);
-            }
-        }
+                if (!material || !material.HasProperty(MaterialProperties.Color)) continue;
 
-        private void GetColorableMaterialsFromSaber()
-        {
-            foreach (Renderer renderer in gameObject.GetComponentsInChildren<Renderer>(true))
-            {
-                if (!renderer) continue;
-
-                Material[] materials = renderer.sharedMaterials;
-                int materialCount = materials.Length;
-
-                for (int i = 0; i < materialCount; i++) 
+                if (material.HasProperty(MaterialProperties.CustomColors))
                 {
-                    Material material = materials[i];
-
-                    if (!material || !material.HasProperty(MaterialProperties.Color)) continue;
-
-                    if (material.HasProperty(MaterialProperties.CustomColors))
-                    {
-                        if (material.GetFloat(MaterialProperties.CustomColors) > 0) AddColorableMaterial(renderer, materials, i);
-                    }
-                    else if (material.HasProperty(MaterialProperties.Glow))
-                    {
-                        if (material.GetFloat(MaterialProperties.Glow) > 0) AddColorableMaterial(renderer, materials, i);
-                    }
-                    else if (material.HasProperty(MaterialProperties.Bloom))
-                    {
-                        if (material.GetFloat(MaterialProperties.Bloom) > 0) AddColorableMaterial(renderer, materials, i);
-                    }
+                    if (material.GetFloat(MaterialProperties.CustomColors) > 0) AddColorableMaterial(renderer, materials, i);
+                }
+                else if (material.HasProperty(MaterialProperties.Glow))
+                {
+                    if (material.GetFloat(MaterialProperties.Glow) > 0) AddColorableMaterial(renderer, materials, i);
+                }
+                else if (material.HasProperty(MaterialProperties.Bloom))
+                {
+                    if (material.GetFloat(MaterialProperties.Bloom) > 0) AddColorableMaterial(renderer, materials, i);
                 }
             }
         }
+    }
 
-        private void AddColorableMaterial(Renderer renderer, Material[] materials, int index)
-        {
-            materials[index] = new Material(materials[index]);
-            renderer.sharedMaterials = materials;
-            colorableMaterials.Add(materials[index]);
-        }
+    private void AddColorableMaterial(Renderer renderer, Material[] materials, int index)
+    {
+        materials[index] = new(materials[index]);
+        renderer.sharedMaterials = materials;
+        colorableMaterials.Add(materials[index]);
     }
 }
