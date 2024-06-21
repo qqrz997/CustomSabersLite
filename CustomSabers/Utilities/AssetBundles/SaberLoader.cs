@@ -13,6 +13,8 @@ internal class SaberLoader(PluginDirs dirs, BundleLoader bundleLoader)
     private readonly BundleLoader bundleLoader = bundleLoader;
     private readonly string sabersPath = dirs.CustomSabers.FullName;
 
+    private const CustomSaberType Type = CustomSaberType.Saber;
+
     /// <summary>
     /// Loads a custom saber from a .saber file
     /// </summary>
@@ -50,6 +52,8 @@ internal class SaberLoader(PluginDirs dirs, BundleLoader bundleLoader)
 
         var missingShaders = !await ShaderRepairUtils.RepairSaberShadersAsync(saberPrefab);
 
-        return new CustomSaberData(relativePath, saberPrefab, descriptor, CustomSaberType.Saber) { MissingShaders = missingShaders };
+        var trails = CustomTrailUtils.GetTrailFromCustomSaber(Type, saberPrefab);
+
+        return new CustomSaberData(relativePath, saberPrefab, descriptor, Type, trails) { MissingShaders = missingShaders };
     }
 }

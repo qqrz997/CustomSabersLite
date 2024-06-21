@@ -17,6 +17,8 @@ internal class WhackerLoader(PluginDirs pluginDirs, BundleLoader bundleLoader)
     private readonly BundleLoader bundleLoader = bundleLoader;
     private readonly string sabersPath = pluginDirs.CustomSabers.FullName;
 
+    private const CustomSaberType Type = CustomSaberType.Whacker;
+
     /// <summary>
     /// Loads a custom saber from a .whacker file
     /// </summary>
@@ -66,8 +68,10 @@ internal class WhackerLoader(PluginDirs pluginDirs, BundleLoader bundleLoader)
         bundle.Unload(false);
 
         var missingShaders = !await ShaderRepairUtils.RepairSaberShadersAsync(saberPrefab);
-        
-        return new CustomSaberData(relativePath, saberPrefab, descriptor, CustomSaberType.Whacker) { MissingShaders = missingShaders };
+
+        var trails = CustomTrailUtils.GetTrailFromCustomSaber(Type, saberPrefab);
+
+        return new CustomSaberData(relativePath, saberPrefab, descriptor, Type, trails) { MissingShaders = missingShaders };
     }
 
     private async Task<Sprite> GetCoverFromArchive(ZipArchiveEntry thumbEntry)

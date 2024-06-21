@@ -26,7 +26,7 @@ internal struct WhackerConfig
 internal struct WhackerTrail
 {
     public int trailId;
-    public ColorType colorType;
+    public CustomSaber.ColorType colorType;
     public Color trailColor;
     public Color multiplierColor;
     public int length;

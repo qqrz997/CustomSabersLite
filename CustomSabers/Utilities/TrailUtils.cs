@@ -14,7 +14,7 @@ internal static class TrailUtils
     /// <summary>
     /// Converts legacy trail length to trail duration in seconds used by <seealso cref="SaberTrail"/>
     /// </summary>
-    public static float ConvertedDuration(int customTrailLength) =>
+    public static float ConvertLegacyLength(int customTrailLength) =>
         customTrailLength / (float)LegacyDuration * DefaultDuration;
 
     /// <summary>

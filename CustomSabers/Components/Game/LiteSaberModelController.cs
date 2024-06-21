@@ -61,7 +61,7 @@ internal class LiteSaberModelController : SaberModelController, IColorable, IPre
             ? CustomSchemeColorForSaberType(saber.saberType)
             : colorManager.ColorForSaberType(saber.saberType);
 
-        customTrailInstances = trailManager.CreateTrail(saber, _saberTrail, saberColor, customSaberInstance);
+        customTrailInstances = trailManager.CreateTrail(saber, _saberTrail, saberColor, customSaberInstance, saberSet.Data.Trails);
 
         SetColor(saberColor);
     }

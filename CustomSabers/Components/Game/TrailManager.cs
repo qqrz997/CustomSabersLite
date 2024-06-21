@@ -1,18 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using CustomSaber;
 using UnityEngine;
 using CustomSabersLite.Data;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Utilities;
-using UnityEngine.UI;
-using Newtonsoft.Json;
 
 namespace CustomSabersLite.Components.Game;
-
-/// <summary>
-/// Manages an instance of a <seealso cref="LiteSaberTrail"/>
-/// </summary>
 internal class TrailManager(CSLConfig config, GameplayCoreSceneSetupData gameplaySetupData)
 {
     private readonly CSLConfig config = config;
@@ -26,8 +18,8 @@ internal class TrailManager(CSLConfig config, GameplayCoreSceneSetupData gamepla
     /// <summary>
     /// Sets up custom trails for a custom saber
     /// </summary>
-    /// <returns>null if no trail is created</returns>
-    public LiteSaberTrail[] CreateTrail(Saber defaultSaber, SaberTrail defaultTrail, Color saberTrailColor, LiteSaber customSaber)
+    /// <returns>if no suitable trail is created, a custom trail using the default trail material is created instead</returns>
+    public LiteSaberTrail[] CreateTrail(Saber defaultSaber, SaberTrail defaultTrail, Color saberTrailColor, LiteSaber customSaber, CustomTrailData[] customTrailData)
     {
         if (config.TrailType == TrailType.None)
         {
@@ -40,13 +32,7 @@ internal class TrailManager(CSLConfig config, GameplayCoreSceneSetupData gamepla
         defaultGranularity = defaultTrail._granularity;
         defaultTrailElementCollection = defaultTrail._trailElementCollection;
 
-        if (config.TrailType == TrailType.Vanilla)
-        {
-            return [SetupTrailUsingDefaultMaterial(saberObject, defaultSaber, saberTrailColor)];
-        }
-        var customTrailData = CustomTrailUtils.GetTrailFromCustomSaber(saberTrailColor, customSaber.Type, saberObject);
-
-        if (customTrailData is null)
+        if (config.TrailType == TrailType.Vanilla || customTrailData is null)
         {
             return [SetupTrailUsingDefaultMaterial(saberObject, defaultSaber, saberTrailColor)];
         }
@@ -72,7 +58,7 @@ internal class TrailManager(CSLConfig config, GameplayCoreSceneSetupData gamepla
         var trailBottom = GameObject.Instantiate(new GameObject()).transform;
         trailTop.SetPositionAndRotation(defaultSaber._saberBladeTopTransform.position, Quaternion.identity);
         trailBottom.SetPositionAndRotation(defaultSaber._saberBladeBottomTransform.position, Quaternion.identity);
-        return new CustomTrailData(trailTop, trailBottom, new Material(defaultTrailRendererPrefab._meshRenderer.material), saberTrailColor);
+        return new CustomTrailData(trailTop, trailBottom, new Material(defaultTrailRendererPrefab._meshRenderer.material), CustomSaber.ColorType.CustomColor, saberTrailColor, Color.white, TrailUtils.DefaultDuration);
     }
 
     private LiteSaberTrail SetupTrail(GameObject saberObject, CustomTrailData customTrailData)
@@ -81,12 +67,12 @@ internal class TrailManager(CSLConfig config, GameplayCoreSceneSetupData gamepla
 
         if (config.OverrideTrailWidth)
         {
-            var trailTop = customTrailData.TrailTop.position;
-            var trailBottom = customTrailData.TrailBottom.position;
+            var trailTop = customTrailData.Top.position;
+            var trailBottom = customTrailData.Bottom.position;
             var distance = Vector3.Distance(trailTop, trailBottom);
             var width = distance > 0 ? config.TrailWidth / 100f / distance : 1f;
 
-            customTrailData.TrailBottom.position = Vector3.LerpUnclamped(trailTop, trailBottom, width);
+            customTrailData.Bottom.position = Vector3.LerpUnclamped(trailTop, trailBottom, width);
         }
         return InitTrail(customTrailData, trail);
     }
@@ -97,18 +83,18 @@ internal class TrailManager(CSLConfig config, GameplayCoreSceneSetupData gamepla
         return InitTrail(customTrailData, trail);
     }
 
-    private LiteSaberTrail InitTrail(CustomTrailData customTrailData, LiteSaberTrail trail)
+    private LiteSaberTrail InitTrail(CustomTrailData trailData, LiteSaberTrail trail)
     {
-        trail._trailDuration = TrailUtils.ConvertedDuration(customTrailData.Length);
+        trail._trailDuration = trailData.Length;
         trail._samplingFrequency = defaultSamplingFrequency;
         trail._granularity = defaultGranularity;
-        trail._color = customTrailData.Color;
+        trail._color = trailData.Color;
         trail._trailRenderer = GameObject.Instantiate(defaultTrailRendererPrefab, Vector3.zero, Quaternion.identity);
-        trail._trailRenderer._meshRenderer.material = customTrailData.Material;
-        trail._trailRenderer._meshRenderer.material.color = customTrailData.Color.ColorWithAlpha(saberTrailIntensity);
+        trail._trailRenderer._meshRenderer.material = trailData.Material;
+        trail._trailRenderer._meshRenderer.material.color = trailData.Color.ColorWithAlpha(saberTrailIntensity);
         trail._trailElementCollection = defaultTrailElementCollection;
 
-        trail.Setup(customTrailData.TrailTop, customTrailData.TrailBottom);
+        trail.Setup(trailData.Top, trailData.Bottom);
         trail.ConfigureTrail(config);
 
         return trail;
