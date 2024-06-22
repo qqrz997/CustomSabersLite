@@ -7,10 +7,9 @@ using UnityEngine;
 
 namespace CustomSabersLite.Components.Managers;
 
-internal class LiteSaberSet(CustomSabersLoader customSabersLoader, CSLConfig config)
+internal class LiteSaberSet(CustomSabersLoader customSabersLoader)
 {
     private readonly CustomSabersLoader customSabersLoader = customSabersLoader;
-    private readonly CSLConfig config = config;
 
     private GameObject leftSaberPrefab = null;
     private GameObject rightSaberPrefab = null;
@@ -23,14 +22,11 @@ internal class LiteSaberSet(CustomSabersLoader customSabersLoader, CSLConfig con
         return original ? GameObject.Instantiate(original).AddComponent<LiteSaber>() : null;
     }
 
-    public async Task SetSabers(string saberPath = null)
+    public async Task SetSabers(string saberPath)
     {
-        var saberData = await GetSaberData(saberPath ?? config.CurrentlySelectedSaber);
-        if (saberData.SaberPrefab != null)
-        {
-            leftSaberPrefab = saberData.SaberPrefab.transform.Find("LeftSaber")?.gameObject;
-            rightSaberPrefab = saberData.SaberPrefab.transform.Find("RightSaber")?.gameObject;
-        }
+        var saberData = await GetSaberData(saberPath);
+        leftSaberPrefab = saberData.LeftSaberPrefab;
+        rightSaberPrefab = saberData.RightSaberPrefab;
     }
 
     public async Task<CustomSaberData> GetSaberData(string saberPath) =>
