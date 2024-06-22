@@ -48,6 +48,7 @@ internal class SaberLoader(PluginDirs dirs, BundleLoader bundleLoader)
         saberPrefab.hideFlags = HideFlags.DontUnloadUnusedAsset;
 
         var descriptor = saberPrefab.GetComponent<SaberDescriptor>();
+        saberPrefab.name += $" {descriptor.SaberName}";
         bundle.Unload(false);
 
         var missingShaders = !await ShaderRepairUtils.RepairSaberShadersAsync(saberPrefab);

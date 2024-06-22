@@ -33,23 +33,13 @@ internal class CustomSabersLoader(SaberInstanceManager saberInstanceManager, Sab
         {
             customSabers.Add(await LoadSaberDataAsync(file));
         }
-        return customSabers;
+        return customSabers; // todo - isn't there a LINQ function for this?
     }
 
-    private async Task<CustomSaberData> LoadSaberDataAsync(string saberPath)
+    private async Task<CustomSaberData> LoadSaberDataAsync(string saberPath) => Path.GetExtension(saberPath) switch
     {
-        var saberData = Path.GetExtension(saberPath) switch
-        {
-            FileExts.Saber => await saberLoader.LoadCustomSaberAsync(saberPath),
-            FileExts.Whacker => await whackerLoader.LoadWhackerAsync(saberPath),
-            _ => CustomSaberData.Default
-        };
-
-        if (saberData != null)
-        {
-            saberData.SaberPrefab.name += $" {saberData.Descriptor.SaberName}";
-        }
-
-        return saberData;
-    }
+        FileExts.Saber => await saberLoader.LoadCustomSaberAsync(saberPath),
+        FileExts.Whacker => await whackerLoader.LoadWhackerAsync(saberPath),
+        _ => CustomSaberData.Default
+    };
 }

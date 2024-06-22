@@ -22,30 +22,33 @@ internal class CustomTrailUtils
     private static CustomTrailData[] TrailsFromSaber(GameObject saberObject)
     {
         var customTrails = saberObject.GetComponentsInChildren<CustomTrail>();
-
-        Logger.Info($"Found {customTrails?.Length ?? 0} trails on the saber");
-        return customTrails.Length > 0 ? customTrails
-            .Select(ct => 
-            {
-                if (!ct.PointEnd || !ct.PointStart)
-                {
-                    // todo - make a way to skip a trail (keep a reference to the invalid trail component?)
-                    ct.PointEnd = new GameObject("Invalid Trail").transform;
-                    ct.PointStart = new GameObject("Invalid Trail").transform;
-                }
-
-                return new CustomTrailData(
-                    ct.PointEnd,
-                    ct.PointStart,
-                    ct.TrailMaterial,
-                    ct.colorType,
-                    ct.TrailColor,
-                    ct.MultiplierColor,
-                    ConvertLegacyLength(ct.Length));
-            })
-            .ToArray()
-            : null;
+        if (customTrails.Length == 0)
+        {
+            return null;
+        }
+        foreach (var invalidTrail in customTrails.Where(ct => !IsTrailValid(ct)))
+        {
+            Logger.Warn("!! WARNING !!\n" +
+                "-------------\n" +
+                $"{saberObject.name} has a CustomTrail that is invalid;\n" +
+                "if you are the creator of this saber please fix this!\n" +
+                $"Invalid trail is on object: {invalidTrail.gameObject.name}\n" +
+                "-------------");
+        }
+        return customTrails
+            .Where(ct => IsTrailValid(ct))
+            .Select(ct => new CustomTrailData(
+                ct.PointEnd,
+                ct.PointStart,
+                ct.TrailMaterial,
+                ct.colorType,
+                ct.TrailColor,
+                ct.MultiplierColor,
+                ConvertLegacyLength(ct.Length)))
+            .ToArray();
     }
+
+    private static bool IsTrailValid(CustomTrail ct) => ct.PointEnd && ct.PointStart;
 
     /*
     private static CustomTrailData[] TrailsFromSaber(GameObject saberObject) => saberObject.GetComponentsInChildren<CustomTrail>() switch
