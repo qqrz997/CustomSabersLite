@@ -23,15 +23,26 @@ internal class CustomTrailUtils
     {
         var customTrails = saberObject.GetComponentsInChildren<CustomTrail>();
 
+        Logger.Info($"Found {customTrails?.Length ?? 0} trails on the saber");
         return customTrails.Length > 0 ? customTrails
-            .Select(ct => new CustomTrailData(
-                ct.PointEnd,
-                ct.PointStart,
-                ct.TrailMaterial,
-                ct.colorType,
-                ct.TrailColor,
-                ct.MultiplierColor,
-                ConvertLegacyLength(ct.Length)))
+            .Select(ct => 
+            {
+                if (!ct.PointEnd || !ct.PointStart)
+                {
+                    // todo - make a way to skip a trail (keep a reference to the invalid trail component?)
+                    ct.PointEnd = new GameObject("Invalid Trail").transform;
+                    ct.PointStart = new GameObject("Invalid Trail").transform;
+                }
+
+                return new CustomTrailData(
+                    ct.PointEnd,
+                    ct.PointStart,
+                    ct.TrailMaterial,
+                    ct.colorType,
+                    ct.TrailColor,
+                    ct.MultiplierColor,
+                    ConvertLegacyLength(ct.Length));
+            })
             .ToArray()
             : null;
     }
