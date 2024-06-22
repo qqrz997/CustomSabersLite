@@ -50,6 +50,7 @@ internal class PreviewTrails
             new(top.x, top.y + length, top.z),
             new(bottom.x, bottom.y + length, bottom.z),
         ];
+        leftMesh.mesh.RecalculateBounds();
 
         rightMesh.mesh.vertices = [
             bottom,
@@ -57,6 +58,7 @@ internal class PreviewTrails
             new(top.x, top.y + length, top.z),
             new(bottom.x, bottom.y + length, bottom.z),
         ];
+        rightMesh.mesh.RecalculateBounds();
 
         UpdateColor(leftColor, rightColor);
     }
