@@ -10,9 +10,6 @@ internal class PreviewSabers
     private LiteSaber leftSaber;
     private LiteSaber rightSaber;
 
-    private const string leftSaberName = "Left Preview LiteSaber";
-    private const string rightSaberName = "Right Preview LiteSaber";
-
     public void SetSabers(LiteSaberSet saberSet)
     {
         leftSaber?.gameObject.DestroyImmediate();
@@ -22,12 +19,15 @@ internal class PreviewSabers
         rightSaber = saberSet.NewSaberForSaberType(SaberType.SaberB);
     }
 
-    public void Init(Vector3 leftPosition, Vector3 rightPosition, Quaternion rotation)
+    public void Init(Vector3 leftPosition, Vector3 rightPosition, Quaternion leftRotation, Quaternion rightRotation)
     {
-        leftSaber?.transform.SetPositionAndRotation(leftPosition, rotation);
-        rightSaber?.transform.SetPositionAndRotation(rightPosition, rotation);
-        leftSaber.gameObject.name = leftSaberName;
-        rightSaber.gameObject.name = rightSaberName;
+        if (leftSaber && rightSaber)
+        {
+            leftSaber.transform.SetPositionAndRotation(leftPosition, leftRotation);
+            rightSaber.transform.SetPositionAndRotation(rightPosition, rightRotation);
+            leftSaber.gameObject.name = "Preview Saber Left";
+            rightSaber.gameObject.name = "Preview Saber Right";
+        }
     }
 
     public void SetColor(Color left, Color right)

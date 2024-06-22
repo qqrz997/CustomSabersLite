@@ -21,7 +21,8 @@ internal class SaberPreviewManager
     //private readonly Vector3 rightPreviewSaberPosition = new(1.25f, 1.0f, 4.05f); 
     private readonly Vector3 leftPreviewSaberPosition = new(0.72f, 1.0f, 4.1f);
     private readonly Vector3 rightPreviewSaberPosition = new(1.06f, 1.0f, 4.02f);
-    private readonly Quaternion previewRotation = Quaternion.Euler(270f, 103.25f, 0f);
+    private readonly Quaternion leftPreviewRotation = Quaternion.Euler(270f, 103.25f, 0f);
+    private readonly Quaternion rightPreviewRotation = Quaternion.Euler(270f, 283.25f, 0f);
 
     public SaberPreviewManager(LiteSaberSet saberSet, CSLConfig config, ColorSchemesSettings colorSchemesSettings)
     {
@@ -31,7 +32,7 @@ internal class SaberPreviewManager
 
         previewSabers = new();
         previewTrails = new();
-        previewTrails.SetPosition(leftPreviewSaberPosition, rightPreviewSaberPosition, previewRotation);
+        previewTrails.SetPosition(leftPreviewSaberPosition, rightPreviewSaberPosition, leftPreviewRotation, rightPreviewRotation);
     }
 
     public async Task GeneratePreview(CancellationToken token)
@@ -43,10 +44,9 @@ internal class SaberPreviewManager
             return;
         }
 
-        await saberSet.GetSaberData(config.CurrentlySelectedSaber);
+        await saberSet.SetSabers(config.CurrentlySelectedSaber);
         token.ThrowIfCancellationRequested();
 
-        await saberSet.SetSabers(config.CurrentlySelectedSaber);
 
         previewSabers.SetSabers(saberSet);
 
@@ -56,33 +56,10 @@ internal class SaberPreviewManager
             return;
         }
 
-        previewSabers.Init(leftPreviewSaberPosition, rightPreviewSaberPosition, previewRotation);
+        previewSabers.Init(leftPreviewSaberPosition, rightPreviewSaberPosition, leftPreviewRotation, rightPreviewRotation);
 
-        var trails = saberSet.Data.Trails;
-        if (trails.Length > 0)
-        {
-            var trail = trails[0];
-            previewTrails.SwapMaterial(trail);
-
-            var duration = !config.OverrideTrailDuration ? trail.Length
-                : 0.4f * config.TrailDuration / 100f;
-
-            var bottom = config.OverrideTrailWidth ? GetCustomWidthBottom(trail) :
-                trail.Bottom.localPosition;
-
-            Vector3 GetCustomWidthBottom(CustomTrailData trail)
-            {
-                var trailTop = trail.Top.localPosition;
-                var trailBottom = trail.Bottom.localPosition;
-                var distance = Vector3.Distance(trailTop, trailBottom);
-                var width = distance > 0 ? config.TrailWidth / 100f / distance : 1f;
-                return Vector3.LerpUnclamped(trailTop, trailBottom, width);
-            }
-
-            previewTrails.SetScale(bottom, trail.Top.localPosition, duration * 1.4f);
-        }
-
-        SetColor();
+        UpdateTrailScale();
+        UpdateColor();
         SetPreviewActive(true);
     }
 
@@ -92,13 +69,43 @@ internal class SaberPreviewManager
         previewTrails.SetActive(active);
     }
 
-    public void SetColor()
+    public void UpdateTrailScale()
+    {
+        var trails = saberSet.Data?.Trails;
+        if (trails == null || trails.Length == 0)
+        {
+            previewTrails.Clear();
+            return;
+        }
+
+        var trail = trails[0];
+        previewTrails.SwapMaterial(trail);
+
+        var duration = !config.OverrideTrailDuration ? trail.Length
+            : 0.4f * config.TrailDuration / 100f;
+
+        var bottom = config.OverrideTrailWidth ? GetCustomWidthBottom(trail) :
+            trail.Bottom.localPosition;
+
+        previewTrails.UpdateVertices(bottom, trail.Top.localPosition, duration * 1.4f);
+    }
+
+    private Vector3 GetCustomWidthBottom(CustomTrailData trail)
+    {
+        var trailTop = trail.Top.localPosition;
+        var trailBottom = trail.Bottom.localPosition;
+        var distance = Vector3.Distance(trailTop, trailBottom);
+        var width = distance > 0 ? config.TrailWidth / 100f / distance : 1f;
+        return Vector3.LerpUnclamped(trailTop, trailBottom, width);
+    }
+
+    public void UpdateColor()
     {
         var selectedColorScheme = colorSchemesSettings.GetSelectedColorScheme();
         (var colorLeft, var colorRight) = 
             config.EnableCustomColorScheme ? (config.LeftSaberColor, config.RightSaberColor) 
             : (selectedColorScheme.saberAColor, selectedColorScheme.saberBColor);
         previewSabers?.SetColor(colorLeft, colorRight);
-        previewTrails?.SetColor(colorLeft, colorRight);
+        previewTrails?.UpdateColor(colorLeft, colorRight);
     }
 }

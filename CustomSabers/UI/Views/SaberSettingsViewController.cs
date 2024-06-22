@@ -67,6 +67,7 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController, INotif
         set
         {
             config.OverrideTrailDuration = value;
+            previewManager.UpdateTrailScale();
             if (parsed) BSMLHelpers.SetSliderInteractable(trailDurationInteractable, value, trailDurationText);
         }
     }
@@ -78,6 +79,7 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController, INotif
         set
         {
             config.OverrideTrailWidth = value;
+            previewManager.UpdateTrailScale();
             if (parsed) BSMLHelpers.SetSliderInteractable(trailWidthInteractable, value, trailWidthText);
         }
     }
@@ -86,14 +88,22 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController, INotif
     public int TrailDuration
     {
         get => config.TrailDuration;
-        set => config.TrailDuration = value;
+        set
+        {
+            config.TrailDuration = value;
+            previewManager.UpdateTrailScale();
+        }
     }
 
     [UIValue("trail-width")]
     public int TrailWidth
     {
         get => config.TrailWidth;
-        set => config.TrailWidth = value;
+        set
+        {
+            config.TrailWidth = value;
+            previewManager.UpdateTrailScale();
+        }
     }
 
     [UIValue("trail-type")]
@@ -120,7 +130,7 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController, INotif
         set
         {
             config.EnableCustomColorScheme = value;
-            previewManager.SetColor();
+            previewManager.UpdateColor();
         }
     }
 
@@ -131,7 +141,7 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController, INotif
         set
         {
             config.LeftSaberColor = value;
-            previewManager.SetColor();
+            previewManager.UpdateColor();
         }
     }
 
@@ -142,7 +152,7 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController, INotif
         set
         {
             config.RightSaberColor = value;
-            previewManager.SetColor();
+            previewManager.UpdateColor();
         }
     }
 
