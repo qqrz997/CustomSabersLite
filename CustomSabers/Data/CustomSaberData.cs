@@ -9,9 +9,9 @@ internal class CustomSaberData(string relativePath, GameObject saberPrefab, Sabe
 {
     public string FilePath { get; } = relativePath;
 
-    public SaberPrefab Left { get; } = new(saberPrefab, SaberType.SaberA);
+    private SaberPrefab Left { get; } = new(saberPrefab, SaberType.SaberA);
 
-    public SaberPrefab Right { get; } = new(saberPrefab, SaberType.SaberB);
+    private SaberPrefab Right { get; } = new(saberPrefab, SaberType.SaberB);
 
     public SaberDescriptor Descriptor { get; } = descriptor;
 
@@ -23,6 +23,9 @@ internal class CustomSaberData(string relativePath, GameObject saberPrefab, Sabe
 
     public static CustomSaberData Default =>
         new(null, null, new SaberDescriptor { SaberName = "Default", AuthorName = "Beat Games" }, CustomSaberType.Default);
+
+    public GameObject GetPrefab(SaberType type) =>
+        type == SaberType.SaberA ? Left.Prefab : Right.Prefab;
 
     public void Destroy()
     {
