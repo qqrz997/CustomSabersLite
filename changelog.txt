@@ -1,5 +1,8 @@
 changelog
 
+0.11.0
+- Added sabers' custom trails to the saber preview
+
 0.10.6
 - Fixed a mistake that was causing regular crashing
 
