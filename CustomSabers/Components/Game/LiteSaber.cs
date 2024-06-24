@@ -15,12 +15,13 @@ internal class LiteSaber : MonoBehaviour
 
     public CustomSaberType Type { get; private set; }
 
-    public void Setup(Transform parent, CustomSaberType type, bool worldPositionStays = false)
+    public void Init(CustomSaberType type) => Type = type;
+
+    public void SetParent(Transform parent, bool worldPositionStays = false)
     {
         transform.SetParent(parent, worldPositionStays);
         transform.position = parent.position;
         transform.rotation = parent.rotation;
-        Type = type;
     }
 
     public CustomTrailData[] GetTrailsFromInstance() =>

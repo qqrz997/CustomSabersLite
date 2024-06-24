@@ -56,101 +56,108 @@ internal class PreviewTrails
         currentRightTrail = rightTrail;
     }
 
+    public void SetActive(bool active)
+    {
+        leftTrail.SetActive(active);
+        rightTrail.SetActive(active);
+    }
+
     public void UpdateTrails(CSLConfig config)
     {
-        var maybeTrail = currentLeftTrail;
-        if (maybeTrail == null)
+        if (currentLeftTrail != null)
         {
-            Clear();
-            return;
+            (var bottom, var top, var length) = CalculateTrailDimensions(currentLeftTrail.Value, config);
+            leftMesh.mesh.vertices = CreateUpdatedVertices(bottom, top, length);
+            leftMesh.mesh.RecalculateBounds();
+
+            if (currentLeftTrail.Value.Material) leftMeshRenderer.material = currentLeftTrail.Value.Material;
         }
-        var trail = maybeTrail.Value;
+        else
+        {
+            leftMesh.mesh.vertices = new Vector3[uvs.Length];
+        }
 
-        SwapMaterial(trail);
+        if (currentRightTrail != null)
+        {
+            (var bottom, var top, var length) = CalculateTrailDimensions(currentRightTrail.Value, config);
+            rightMesh.mesh.vertices = CreateUpdatedVertices(bottom, top, length);
+            rightMesh.mesh.RecalculateBounds();
 
-        var duration = !config.OverrideTrailDuration ? trail.Length
+            if (currentRightTrail.Value.Material) rightMeshRenderer.material = currentRightTrail.Value.Material;
+        }
+        else
+        {
+            rightMesh.mesh.vertices = new Vector3[uvs.Length];
+        }
+
+        UpdateColor(leftColor, rightColor);
+    }
+
+    public void UpdateColor(Color left, Color right)
+    {
+        // todo - https://discord.com/channels/441805394323439646/443146108420620318/1254622303984291932
+        if (currentLeftTrail != null)
+        {
+            if (currentLeftTrail.Value.ColorType == CustomSaber.ColorType.CustomColor)
+            {
+                leftColor = currentLeftTrail.Value.Color;
+                leftMesh.mesh.colors = [leftColor, leftColor, leftColor, leftColor];
+            }
+            else
+            {
+                leftColor = left;
+                foreach (var rendererMaterial in leftMeshRenderer.materials)
+                    rendererMaterial.SetColor(MaterialProperties.Color, leftColor);
+                leftMesh.mesh.colors = [leftColor, leftColor, leftColor, leftColor];
+            }
+        }
+
+        if (currentRightTrail != null)
+        {
+            if (currentRightTrail.Value.ColorType == CustomSaber.ColorType.CustomColor)
+            {
+                rightColor = currentRightTrail.Value.Color;
+                rightMesh.mesh.colors = [rightColor, rightColor, rightColor, rightColor];
+            }
+            else
+            {
+                rightColor = right;
+                foreach (var rendererMaterial in rightMeshRenderer.materials)
+                    rendererMaterial.SetColor(MaterialProperties.Color, rightColor);
+                rightMesh.mesh.colors = [rightColor, rightColor, rightColor, rightColor];
+            }
+        }
+    }
+
+    private (Vector3 bottom, Vector3 top, float Length) CalculateTrailDimensions(CustomTrailData trailData, CSLConfig config)
+    {
+        var duration = !config.OverrideTrailDuration ? trailData.Length
             : 0.4f * config.TrailDuration / 100f;
 
         Vector3 bottom;
         if (config.OverrideTrailWidth)
         {
-            var trailTop = trail.Top.localPosition;
-            var trailBottom = trail.Bottom.localPosition;
+            var trailTop = trailData.Top.localPosition;
+            var trailBottom = trailData.Bottom.localPosition;
             var distance = Vector3.Distance(trailTop, trailBottom);
             var width = distance > 0 ? config.TrailWidth / 100f / distance : 1f;
             bottom = Vector3.LerpUnclamped(trailTop, trailBottom, width);
         }
         else
         {
-            bottom = trail.Bottom.localPosition;
+            bottom = trailData.Bottom.localPosition;
         }
 
-        UpdateVertices(bottom, trail.Top.localPosition, duration * 1.4f);
+        return (bottom, trailData.Top.localPosition, duration * 1.4f);
     }
 
-    private void UpdateVertices(Vector3 bottom, Vector3 top, float length)
-    {
-        leftMesh.mesh.vertices = [
-            bottom,
-            top,
-            new(top.x, top.y + length, top.z),
-            new(bottom.x, bottom.y + length, bottom.z),
-        ];
-        leftMesh.mesh.RecalculateBounds();
-
-        rightMesh.mesh.vertices = [
-            bottom,
-            top,
-            new(top.x, top.y + length, top.z),
-            new(bottom.x, bottom.y + length, bottom.z),
-        ];
-        rightMesh.mesh.RecalculateBounds();
-
-        UpdateColor(leftColor, rightColor);
-    }
-
-    private void Clear()
-    {
-        leftMesh.mesh.vertices = new Vector3[uvs.Length];
-        rightMesh.mesh.vertices = new Vector3[uvs.Length];
-    }
-
-    private void SwapMaterial(CustomTrailData trailData)
-    {
-        if (trailData.Material)
-        {
-            leftMeshRenderer.material = new(trailData.Material);
-            rightMeshRenderer.material = new(trailData.Material);
-            currentLeftTrail = trailData;
-        }
-    }
-
-    public void UpdateColor(Color left, Color right)
-    {
-        if (currentLeftTrail == null)
-        {
-            return;
-        }
-        var trail = currentLeftTrail.Value;
-        if (trail.ColorType == CustomSaber.ColorType.CustomColor) return;
-
-        leftColor = left;
-        rightColor = right;
-
-        foreach (var rendererMaterial in leftMeshRenderer.materials)
-            rendererMaterial.SetColor(MaterialProperties.Color, left);
-        foreach (var rendererMaterial in rightMeshRenderer.materials)
-            rendererMaterial.SetColor(MaterialProperties.Color, right);
-
-        leftMesh.mesh.colors = [ left, left, left, left ];
-        rightMesh.mesh.colors = [ right, right, right, right ];
-    }
-
-    public void SetActive(bool active)
-    {
-        leftTrail.SetActive(active);
-        rightTrail.SetActive(active);
-    }
+    private Vector3[] CreateUpdatedVertices(Vector3 bottom, Vector3 top, float length) =>
+    [
+        bottom,
+        top,
+        new(top.x, top.y + length, top.z),
+        new(bottom.x, bottom.y + length, bottom.z),
+    ];
 
     private Mesh CreateTrailMesh() => new()
     {

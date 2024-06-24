@@ -52,8 +52,8 @@ internal class SaberPreviewManager
         previewSabers.SetSabers(leftSaber, rightSaber);
         previewSabers.Init(leftPreviewSaberPosition, rightPreviewSaberPosition, leftPreviewRotation, rightPreviewRotation);
 
-        var leftTrail = leftSaber.GetTrailsFromInstance()[0];
-        var rightTrail = rightSaber.GetTrailsFromInstance()[0];
+        var leftTrail = leftSaber.GetTrailsFromInstance()?[0];
+        var rightTrail = rightSaber.GetTrailsFromInstance()?[0];
 
         previewTrails.SetTrails(leftTrail, rightTrail);
 
@@ -68,13 +68,7 @@ internal class SaberPreviewManager
         previewTrails.SetActive(active);
     }
 
-    public void UpdateTrailScale()
-    {
-        
-
-    }
-
-    
+    public void UpdateTrailScale() => previewTrails.UpdateTrails(config);
 
     public void UpdateColor()
     {

@@ -18,7 +18,10 @@ internal class LiteSaberSet(CustomSabersLoader customSabersLoader)
     public LiteSaber NewSaberForSaberType(SaberType saberType)
     {
         var original = saberType == SaberType.SaberA ? leftSaberPrefab : rightSaberPrefab;
-        return original ? GameObject.Instantiate(original).AddComponent<LiteSaber>() : null;
+        if (!original) return null;
+        var newSaber = GameObject.Instantiate(original).AddComponent<LiteSaber>();
+        newSaber.Init(currentSaberData.Type);
+        return newSaber;
     }
 
     public async Task SetSabers(string saberPath)
@@ -27,7 +30,4 @@ internal class LiteSaberSet(CustomSabersLoader customSabersLoader)
         leftSaberPrefab = currentSaberData.Left.Prefab;
         rightSaberPrefab = currentSaberData.Right.Prefab;
     }
-
-    public CustomSaberType GetCurrentCustomSaberType() =>
-        currentSaberData?.Type ?? CustomSaberType.Default;
 }
