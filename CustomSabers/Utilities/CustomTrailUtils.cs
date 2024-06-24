@@ -12,7 +12,7 @@ namespace CustomSabersLite.Utilities;
 
 internal class CustomTrailUtils
 {
-    public static CustomTrailData[] GetTrailFromCustomSaber(CustomSaberType customSaberType, GameObject saberObject) => customSaberType switch
+    public static CustomTrailData[] GetTrailFromCustomSaber(GameObject saberObject, CustomSaberType customSaberType) => customSaberType switch
     {
         CustomSaberType.Saber => TrailsFromSaber(saberObject),
         CustomSaberType.Whacker => TrailsFromWhacker(saberObject),
@@ -36,7 +36,7 @@ internal class CustomTrailUtils
                 "-------------");
         }
         return customTrails
-            .Where(ct => IsTrailValid(ct))
+            .Where(IsTrailValid)
             .Select(ct => new CustomTrailData(
                 ct.PointEnd,
                 ct.PointStart,

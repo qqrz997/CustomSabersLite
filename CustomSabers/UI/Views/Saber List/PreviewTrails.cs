@@ -1,4 +1,5 @@
-﻿using CustomSabersLite.Data;
+﻿using CustomSabersLite.Configuration;
+using CustomSabersLite.Data;
 using UnityEngine;
 
 namespace CustomSabersLite.UI.Managers;
@@ -27,7 +28,8 @@ internal class PreviewTrails
             2, 1, 0,
             0, 3, 2 ];
 
-    private CustomTrailData currentTrail;
+    private CustomTrailData? currentLeftTrail;
+    private CustomTrailData? currentRightTrail;
 
     public PreviewTrails()
     {
@@ -42,7 +44,51 @@ internal class PreviewTrails
         SetActive(false);
     }
 
-    public void UpdateVertices(Vector3 bottom, Vector3 top, float length)
+    public void SetPosition(Vector3 leftPosition, Vector3 rightPosition, Quaternion leftRotation, Quaternion rightRotation)
+    {
+        leftTrail.transform.SetPositionAndRotation(leftPosition, leftRotation);
+        rightTrail.transform.SetPositionAndRotation(rightPosition, rightRotation);
+    }
+
+    public void SetTrails(CustomTrailData? leftTrail, CustomTrailData? rightTrail)
+    {
+        currentLeftTrail = leftTrail;
+        currentRightTrail = rightTrail;
+    }
+
+    public void UpdateTrails(CSLConfig config)
+    {
+        var maybeTrail = currentLeftTrail;
+        if (maybeTrail == null)
+        {
+            Clear();
+            return;
+        }
+        var trail = maybeTrail.Value;
+
+        SwapMaterial(trail);
+
+        var duration = !config.OverrideTrailDuration ? trail.Length
+            : 0.4f * config.TrailDuration / 100f;
+
+        Vector3 bottom;
+        if (config.OverrideTrailWidth)
+        {
+            var trailTop = trail.Top.localPosition;
+            var trailBottom = trail.Bottom.localPosition;
+            var distance = Vector3.Distance(trailTop, trailBottom);
+            var width = distance > 0 ? config.TrailWidth / 100f / distance : 1f;
+            bottom = Vector3.LerpUnclamped(trailTop, trailBottom, width);
+        }
+        else
+        {
+            bottom = trail.Bottom.localPosition;
+        }
+
+        UpdateVertices(bottom, trail.Top.localPosition, duration * 1.4f);
+    }
+
+    private void UpdateVertices(Vector3 bottom, Vector3 top, float length)
     {
         leftMesh.mesh.vertices = [
             bottom,
@@ -63,31 +109,30 @@ internal class PreviewTrails
         UpdateColor(leftColor, rightColor);
     }
 
-    public void Clear()
+    private void Clear()
     {
         leftMesh.mesh.vertices = new Vector3[uvs.Length];
         rightMesh.mesh.vertices = new Vector3[uvs.Length];
     }
 
-    public void SwapMaterial(CustomTrailData trailData)
+    private void SwapMaterial(CustomTrailData trailData)
     {
         if (trailData.Material)
         {
             leftMeshRenderer.material = new(trailData.Material);
             rightMeshRenderer.material = new(trailData.Material);
-            currentTrail = trailData;
+            currentLeftTrail = trailData;
         }
-    }
-
-    public void SetPosition(Vector3 leftPosition, Vector3 rightPosition, Quaternion leftRotation, Quaternion rightRotation)
-    {
-        leftTrail.transform.SetPositionAndRotation(leftPosition, leftRotation);
-        rightTrail.transform.SetPositionAndRotation(rightPosition, rightRotation);
     }
 
     public void UpdateColor(Color left, Color right)
     {
-        if (currentTrail.ColorType == CustomSaber.ColorType.CustomColor) return;
+        if (currentLeftTrail == null)
+        {
+            return;
+        }
+        var trail = currentLeftTrail.Value;
+        if (trail.ColorType == CustomSaber.ColorType.CustomColor) return;
 
         leftColor = left;
         rightColor = right;

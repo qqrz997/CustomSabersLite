@@ -19,7 +19,7 @@ internal class TrailManager(CSLConfig config, GameplayCoreSceneSetupData gamepla
     /// Sets up custom trails for a custom saber
     /// </summary>
     /// <returns>if no suitable trail is created, a custom trail using the default trail material is created instead</returns>
-    public LiteSaberTrail[] CreateTrail(Saber defaultSaber, SaberTrail defaultTrail, Color saberTrailColor, LiteSaber customSaber, CustomTrailData[] customTrailData)
+    public LiteSaberTrail[] CreateTrail(Saber defaultSaber, SaberTrail defaultTrail, Color saberTrailColor, LiteSaber customSaber)
     {
         if (config.TrailType == TrailType.None)
         {
@@ -32,7 +32,9 @@ internal class TrailManager(CSLConfig config, GameplayCoreSceneSetupData gamepla
         defaultGranularity = defaultTrail._granularity;
         defaultTrailElementCollection = defaultTrail._trailElementCollection;
 
-        if (config.TrailType == TrailType.Vanilla || customTrailData is null)
+        var customTrailData = customSaber.GetTrailsFromInstance();
+
+        if (config.TrailType == TrailType.Vanilla || customTrailData == null)
         {
             return [SetupTrailUsingDefaultMaterial(saberObject, defaultSaber, saberTrailColor)];
         }
@@ -85,6 +87,7 @@ internal class TrailManager(CSLConfig config, GameplayCoreSceneSetupData gamepla
 
     private LiteSaberTrail InitTrail(CustomTrailData trailData, LiteSaberTrail trail)
     {
+        trail._trailRendererPrefab = defaultTrailRendererPrefab;
         trail._trailDuration = trailData.Length;
         trail._samplingFrequency = defaultSamplingFrequency;
         trail._granularity = defaultGranularity;

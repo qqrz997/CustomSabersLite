@@ -19,7 +19,5 @@ internal class CSLMenuInstaller : Installer
         Container.Bind<ViewControllerManager>().FromNewComponentOnNewGameObject().AsSingle().NonLazy();
         Container.BindInterfacesTo<MenuButtonManager>().AsSingle();
         Container.Bind<SaberPreviewManager>().AsSingle();
-
-        // Container.Bind<PreviewSabers>().AsTransient();
     }
 }

@@ -1,5 +1,4 @@
 ﻿using CustomSabersLite.Components.Game;
-using CustomSabersLite.Components.Managers;
 using CustomSabersLite.Utilities.Extensions;
 using UnityEngine;
 
@@ -10,13 +9,13 @@ internal class PreviewSabers
     private LiteSaber leftSaber;
     private LiteSaber rightSaber;
 
-    public void SetSabers(LiteSaberSet saberSet)
+    public void SetSabers(LiteSaber leftSaber, LiteSaber rightSaber)
     {
-        leftSaber?.gameObject.DestroyImmediate();
-        rightSaber?.gameObject.DestroyImmediate();
+        this.leftSaber?.gameObject.DestroyImmediate();
+        this.rightSaber?.gameObject.DestroyImmediate();
 
-        leftSaber = saberSet.NewSaberForSaberType(SaberType.SaberA);
-        rightSaber = saberSet.NewSaberForSaberType(SaberType.SaberB);
+        this.leftSaber = leftSaber;
+        this.rightSaber = rightSaber;
     }
 
     public void Init(Vector3 leftPosition, Vector3 rightPosition, Quaternion leftRotation, Quaternion rightRotation)

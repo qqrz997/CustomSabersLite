@@ -3,7 +3,6 @@ using UnityEngine;
 using Zenject;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Components.Managers;
-using System.Threading.Tasks;
 
 namespace CustomSabersLite.Components.Game;
 
@@ -54,14 +53,18 @@ internal class LiteSaberModelController : SaberModelController, IColorable, IPre
 
         transform.SetParent(parent, false);
 
-        customSaberInstance.Setup(transform, saberSet.Data.Type);
+        customSaberInstance.Setup(transform, saberSet.GetCurrentCustomSaberType());
         eventManagerManager.InitializeEventManager(customSaberInstance.EventManager, saber.saberType);
 
         var saberColor = config.EnableCustomColorScheme
             ? CustomSchemeColorForSaberType(saber.saberType)
             : colorManager.ColorForSaberType(saber.saberType);
 
-        customTrailInstances = trailManager.CreateTrail(saber, _saberTrail, saberColor, customSaberInstance, saberSet.Data.Trails);
+        customTrailInstances = trailManager.CreateTrail(
+            saber,
+            _saberTrail,
+            saberColor,
+            customSaberInstance);
 
         SetColor(saberColor);
     }

@@ -53,8 +53,6 @@ internal class SaberLoader(PluginDirs dirs, BundleLoader bundleLoader)
 
         var missingShaders = !await ShaderRepairUtils.RepairSaberShadersAsync(saberPrefab);
 
-        var trails = CustomTrailUtils.GetTrailFromCustomSaber(Type, saberPrefab);
-
-        return new CustomSaberData(relativePath, saberPrefab, descriptor, Type, trails) { MissingShaders = missingShaders };
+        return new CustomSaberData(relativePath, saberPrefab, descriptor, Type) { MissingShaders = missingShaders };
     }
 }

@@ -1,5 +1,6 @@
 ﻿using CustomSaber;
 using CustomSabersLite.Data;
+using CustomSabersLite.Utilities;
 using CustomSabersLite.Utilities.Extensions;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,6 +22,9 @@ internal class LiteSaber : MonoBehaviour
         transform.rotation = parent.rotation;
         Type = type;
     }
+
+    public CustomTrailData[] GetTrailsFromInstance() =>
+        CustomTrailUtils.GetTrailFromCustomSaber(gameObject, Type);
 
     void Awake()
     {

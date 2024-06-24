@@ -1,6 +1,5 @@
 ﻿using CustomSabersLite.Components.Managers;
 using CustomSabersLite.Configuration;
-using CustomSabersLite.Data;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -47,16 +46,16 @@ internal class SaberPreviewManager
         await saberSet.SetSabers(config.CurrentlySelectedSaber);
         token.ThrowIfCancellationRequested();
 
+        var leftSaber = saberSet.NewSaberForSaberType(SaberType.SaberA);
+        var rightSaber = saberSet.NewSaberForSaberType(SaberType.SaberB);
 
-        previewSabers.SetSabers(saberSet);
-
-        if (previewSabers == null)
-        {
-            Logger.Error("Couldn't get sabers for preview");
-            return;
-        }
-
+        previewSabers.SetSabers(leftSaber, rightSaber);
         previewSabers.Init(leftPreviewSaberPosition, rightPreviewSaberPosition, leftPreviewRotation, rightPreviewRotation);
+
+        var leftTrail = leftSaber.GetTrailsFromInstance()[0];
+        var rightTrail = rightSaber.GetTrailsFromInstance()[0];
+
+        previewTrails.SetTrails(leftTrail, rightTrail);
 
         UpdateTrailScale();
         UpdateColor();
@@ -71,33 +70,11 @@ internal class SaberPreviewManager
 
     public void UpdateTrailScale()
     {
-        var trails = saberSet.Data?.Trails;
-        if (trails == null || trails.Length == 0)
-        {
-            previewTrails.Clear();
-            return;
-        }
+        
 
-        var trail = trails[0];
-        previewTrails.SwapMaterial(trail);
-
-        var duration = !config.OverrideTrailDuration ? trail.Length
-            : 0.4f * config.TrailDuration / 100f;
-
-        var bottom = config.OverrideTrailWidth ? GetCustomWidthBottom(trail) :
-            trail.Bottom.localPosition;
-
-        previewTrails.UpdateVertices(bottom, trail.Top.localPosition, duration * 1.4f);
     }
 
-    private Vector3 GetCustomWidthBottom(CustomTrailData trail)
-    {
-        var trailTop = trail.Top.localPosition;
-        var trailBottom = trail.Bottom.localPosition;
-        var distance = Vector3.Distance(trailTop, trailBottom);
-        var width = distance > 0 ? config.TrailWidth / 100f / distance : 1f;
-        return Vector3.LerpUnclamped(trailTop, trailBottom, width);
-    }
+    
 
     public void UpdateColor()
     {
