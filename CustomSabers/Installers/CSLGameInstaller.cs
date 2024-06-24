@@ -3,33 +3,32 @@ using CustomSabersLite.Configuration;
 using SiraUtil.Sabers;
 using Zenject;
 
-namespace CustomSabersLite.Installers
+namespace CustomSabersLite.Installers;
+
+internal class CSLGameInstaller : Installer
 {
-    internal class CSLGameInstaller : Installer
+    public override void InstallBindings()
     {
-        public override void InstallBindings()
+        var config = Container.Resolve<CSLConfig>();
+
+        if (!config.Enabled)
         {
-            CSLConfig config = Container.Resolve<CSLConfig>();
+            Logger.Debug("Custom Sabers is disabled - will not run");
+            return;
+        }
 
-            if (!config.Enabled)
-            {
-                Logger.Debug("Custom Sabers is disabled - will not run");
-                return;
-            }
+        Container.Bind<TrailManager>().AsTransient();
+        Container.BindInterfacesAndSelfTo<EventManagerManager>().AsTransient();
 
-            Container.Bind<TrailManager>().AsTransient();
-            Container.BindInterfacesAndSelfTo<EventManagerManager>().AsTransient();
-
-            if (config.CurrentlySelectedSaber != null)
-            {
-                // This replaces the default sabers
-                Container.BindInterfacesAndSelfTo<LevelSaberManager>().AsSingle();
-                Container.BindInstance(SaberModelRegistration.Create<LiteSaberModelController>(5)).AsSingle();
-            }
-            else
-            {
-                Container.BindInterfacesTo<DefaultSaberSetter>().AsSingle();
-            }
+        if (config.CurrentlySelectedSaber != null)
+        {
+            // This replaces the default sabers
+            Container.BindInterfacesAndSelfTo<LevelSaberManager>().AsSingle();
+            Container.BindInstance(SaberModelRegistration.Create<LiteSaberModelController>(5)).AsSingle();
+        }
+        else
+        {
+            Container.BindInterfacesTo<DefaultSaberSetter>().AsSingle();
         }
     }
 }

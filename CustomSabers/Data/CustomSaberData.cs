@@ -1,34 +1,35 @@
 ﻿using UnityEngine;
 
-namespace CustomSabersLite.Data
+namespace CustomSabersLite.Data;
+
+/// <summary>
+/// Class that declares the neccessary information to manage a custom saber instance
+/// </summary>
+internal class CustomSaberData(string relativePath, GameObject saberPrefab, SaberDescriptor descriptor, CustomSaberType customSaberType)
 {
-    /// <summary>
-    /// Class that declares the neccessary information to manage a custom saber instance
-    /// </summary>
-    internal class CustomSaberData
+    public string FilePath { get; } = relativePath;
+
+    private SaberPrefab Left { get; } = new(saberPrefab, SaberType.SaberA);
+
+    private SaberPrefab Right { get; } = new(saberPrefab, SaberType.SaberB);
+
+    public SaberDescriptor Descriptor { get; } = descriptor;
+
+    public CustomSaberType Type { get; } = customSaberType;
+
+    public bool MissingShaders; // not yet implemented
+
+    private readonly GameObject parentPrefab = saberPrefab;
+
+    public static CustomSaberData Default =>
+        new(null, null, new SaberDescriptor { SaberName = "Default", AuthorName = "Beat Games" }, CustomSaberType.Default);
+
+    public GameObject GetPrefab(SaberType type) =>
+        type == SaberType.SaberA ? Left.Prefab : Right.Prefab;
+
+    public void Destroy()
     {
-        public string FilePath { get; private set; }
-        public GameObject SaberPrefab { get; private set; }
-        public SaberDescriptor Descriptor { get; private set; }
-        public CustomSaberType Type { get; private set; }
-
-        public bool MissingShaders; // not yet implemented
-
-        public CustomSaberData(string relativePath, GameObject saberPrefab, SaberDescriptor descriptor, CustomSaberType customSaberType)
-        {
-            FilePath = relativePath;
-            SaberPrefab = saberPrefab;
-            Descriptor = descriptor;
-            Type = customSaberType;
-        }
-
-        public static CustomSaberData Default =>
-            new CustomSaberData(null, null, new SaberDescriptor { SaberName = "Default", AuthorName = "Beat Games" }, CustomSaberType.Default);
-
-        public void Destroy()
-        {
-            Object.Destroy(Descriptor);
-            Object.Destroy(SaberPrefab);
-        }
+        Object.Destroy(Descriptor);
+        Object.Destroy(parentPrefab);
     }
 }

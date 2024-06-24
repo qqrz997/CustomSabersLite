@@ -1,168 +1,171 @@
-﻿using System;
+﻿using CustomSabersLite.Configuration;
+using CustomSabersLite.Data;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Newtonsoft.Json;
 using System.Threading.Tasks;
-using CustomSabersLite.Configuration;
-using CustomSabersLite.Data;
 using UnityEngine;
 using Zenject;
 
-namespace CustomSabersLite.Utilities.AssetBundles
+namespace CustomSabersLite.Utilities.AssetBundles;
+
+internal class CacheManager : IInitializable
 {
-    internal class CacheManager : IInitializable, IDisposable
+    private readonly CSLConfig config;
+    private readonly CustomSabersLoader customSabersLoader;
+
+    private readonly string sabersPath;
+    private readonly string cachePath;
+    private readonly string deletedSabersPath;
+
+    public Task CacheInitialization { get; }
+
+    public CacheManager(PluginDirs pluginDirs, CSLConfig config, CustomSabersLoader customSabersLoader)
     {
-        private readonly CSLConfig config;
-        private readonly CustomSabersLoader customSabersLoader;
+        this.config = config;
+        this.customSabersLoader = customSabersLoader;
 
-        private readonly string sabersPath;
-        private readonly string cachePath;
-        private readonly string deletedSabersPath;
+        sabersPath = pluginDirs.CustomSabers.FullName;
+        cachePath = pluginDirs.Cache.FullName;
+        deletedSabersPath = pluginDirs.DeletedSabers.FullName;
 
-        public Task CacheInitialization { get; private set; }
+        CacheInitialization = LoadAsync();
+    }
 
-        public CacheManager(PluginDirs pluginDirs, CSLConfig config, CustomSabersLoader customSabersLoader)
+    public int SelectedSaberIndex { get; set; } = 0; // used by UI to get position on the saber list 
+
+    public List<CustomSaberMetadata> SabersMetadata { get; private set; } = [];
+
+    private readonly string[] metaExt = [FileExts.Metadata];
+    private readonly string[] saberExt = [FileExts.Saber, FileExts.Whacker];
+
+    public void Initialize()
+    {
+        if (config.PluginVer != Plugin.Version.ToString())
         {
-            this.config = config;
-            this.customSabersLoader = customSabersLoader;
-
-            sabersPath = pluginDirs.CustomSabers.FullName;
-            cachePath = pluginDirs.Cache.FullName;
-            deletedSabersPath = pluginDirs.DeletedSabers.FullName;
-
-            CacheInitialization = LoadAsync();
+            Logger.Debug("Mod version has changed! Clearing cache");
+            ClearCache();
+            config.PluginVer = Plugin.Version.ToString();
         }
 
-        public int SelectedSaberIndex { get; set; } = 0; // used by UI to get position on the saber list 
+        Logger.Debug("Starting the CustomSabersAssetLoader");
+        Task.Run(LoadAsync);
+    }
 
-        public List<CustomSaberMetadata> SabersMetadata { get; private set; } = new List<CustomSaberMetadata>();
+    private async Task LoadAsync()
+    {
+        var fileMetadata = GetCachedMetadata();
 
-        private readonly IEnumerable<string> metaExt = new List<string> { FileExts.Metadata };
-        private readonly IEnumerable<string> saberExt = new List<string> { FileExts.Saber, FileExts.Whacker };
+        var sabersToLoad = GetSaberFiles(true).Where(f => !fileMetadata.ContainsKey(f));
+        var loadedSaberData = await customSabersLoader.LoadCustomSabersAsync(sabersToLoad);
 
-        public void Initialize()
+        UpdateCache(fileMetadata, loadedSaberData);
+
+        if (config.CurrentlySelectedSaber == null)
         {
-            if (config.PluginVer != Plugin.Version.ToString())
-            {
-                Logger.Debug("Mod version has changed! Clearing cache");
-                ClearCache();
-                config.PluginVer = Plugin.Version.ToString();
-            }
-
-            Logger.Debug("Starting the CustomSabersAssetLoader");
-            Task.Run(LoadAsync);
+            SelectedSaberIndex = 0;
+            return;
         }
 
-        private async Task LoadAsync()
+        for (var i = 0; i < SabersMetadata.Count(); i++)
         {
-            Dictionary<string, CustomSaberMetadata> fileMetadata = GetCachedMetadata();
-
-            IEnumerable<string> sabersToLoad = GetSaberFiles(true).Where(f => !fileMetadata.ContainsKey(f));
-            IEnumerable<CustomSaberData> loadedSaberData = await customSabersLoader.LoadCustomSabersAsync(sabersToLoad);
-
-            UpdateCache(fileMetadata, loadedSaberData);
-
-            if (config.CurrentlySelectedSaber == null)
+            if (SabersMetadata[i].RelativePath == config.CurrentlySelectedSaber)
             {
-                SelectedSaberIndex = 0;
-                return;
+                SelectedSaberIndex = i;
+                break;
             }
+        }
+    }
 
-            for (int i = 0; i < SabersMetadata.Count(); i++)
+    public async Task ReloadAsync()
+    {
+        Logger.Debug("Reloading the CustomSaberAssetLoader");
+        await LoadAsync();
+    }
+
+    private IEnumerable<string> GetSaberFiles(bool returnShortPath) =>
+        FileUtils.GetFilePaths(sabersPath, saberExt, searchOption: SearchOption.AllDirectories, returnShortPath);
+
+    private IEnumerable<string> GetMetadataFiles(bool returnShortPath) =>
+        FileUtils.GetFilePaths(cachePath, metaExt, searchOption: SearchOption.TopDirectoryOnly, returnShortPath);
+
+    private Dictionary<string, CustomSaberMetadata> GetCachedMetadata()
+    {
+        Dictionary<string, CustomSaberMetadata> fileMetadata = [];
+
+        foreach (var metaFile in GetMetadataFiles(false))
+        {
+            var metadata = JsonConvert.DeserializeObject<CustomSaberMetadata>(File.ReadAllText(metaFile));
+            if (metadata.RelativePath == null) continue;
+
+            if (File.Exists(Path.Combine(sabersPath, metadata.RelativePath)))
             {
-                if (SabersMetadata[i].RelativePath == config.CurrentlySelectedSaber)
+                fileMetadata.Add(metadata.RelativePath, metadata);
+            }
+        }
+
+        return fileMetadata;
+    }
+
+    private void UpdateCache(Dictionary<string, CustomSaberMetadata> fileMetadata, IEnumerable<CustomSaberData> loadedSaberData)
+    {
+        foreach (var saber in loadedSaberData)
+        {
+            var metadata = new CustomSaberMetadata
+            {
+                SaberName = saber.Descriptor.SaberName,
+                AuthorName = saber.Descriptor.AuthorName,
+                RelativePath = saber.FilePath,
+                MissingShaders = saber.MissingShaders,
+                CoverImage = saber.Descriptor.CoverImage?.texture.DuplicateTexture().Downscale(128, 128).EncodeToPNG(),
+            };
+
+            var metaFileName = Path.GetFileNameWithoutExtension(saber.FilePath) + FileExts.Metadata;
+
+            // Cache data for each loaded saber
+            var metaFilePath = Path.Combine(cachePath, metaFileName);
+
+            try
+            {
+                if (File.Exists(metaFilePath))
                 {
-                    SelectedSaberIndex = i;
-                    break;
+                    File.Delete(metaFilePath);
                 }
+                File.WriteAllText(metaFilePath, JsonConvert.SerializeObject(metadata));
             }
-        }
-
-        public async Task ReloadAsync()
-        {
-            Logger.Debug("Reloading the CustomSaberAssetLoader");
-            await LoadAsync();
-        }
-
-        private IEnumerable<string> GetSaberFiles(bool returnShortPath) =>
-            FileUtils.GetFilePaths(sabersPath, saberExt, searchOption: SearchOption.AllDirectories, returnShortPath);
-
-        private IEnumerable<string> GetMetadataFiles(bool returnShortPath) =>
-            FileUtils.GetFilePaths(cachePath, metaExt, searchOption: SearchOption.TopDirectoryOnly, returnShortPath);
-
-        private Dictionary<string, CustomSaberMetadata> GetCachedMetadata()
-        {
-            Dictionary<string, CustomSaberMetadata> fileMetadata = new Dictionary<string, CustomSaberMetadata>();
-
-            foreach (string metaFile in GetMetadataFiles(false))
+            catch (Exception ex)
             {
-                CustomSaberMetadata metadata = JsonConvert.DeserializeObject<CustomSaberMetadata>(File.ReadAllText(metaFile));
-                if (metadata.RelativePath is null) continue;
-
-                if (File.Exists(Path.Combine(sabersPath, metadata.RelativePath)))
-                {
-                    fileMetadata.Add(metadata.RelativePath, metadata);
-                }
+                Logger.Error($"Problem encountered when trying to cache a saber's metadata\n{ex.Message}\n{ex}");
+                continue;
             }
 
-            return fileMetadata;
+            fileMetadata.Add(metaFilePath, metadata);
+            saber.Destroy();
         }
 
-        private void UpdateCache(Dictionary<string, CustomSaberMetadata> fileMetadata, IEnumerable<CustomSaberData> loadedSaberData)
+        SabersMetadata.Clear();
+        SabersMetadata.Add(new CustomSaberMetadata() { SaberName = "Default", AuthorName = "Beat Games" });
+        SabersMetadata.AddRange(fileMetadata.Values);
+    }
+
+    private void ClearCache()
+    {
+        foreach (var metaFilePath in GetMetadataFiles(false))
         {
-            foreach (CustomSaberData saber in loadedSaberData)
+            var fileName = Path.GetFileName(metaFilePath);
+            var destinationPath = Path.Combine(deletedSabersPath, fileName);
+
+            try
             {
-                CustomSaberMetadata metadata = new CustomSaberMetadata
-                {
-                    SaberName = saber.Descriptor.SaberName,
-                    AuthorName = saber.Descriptor.AuthorName,
-                    RelativePath = saber.FilePath,
-                    MissingShaders = saber.MissingShaders,
-                    CoverImage = saber.Descriptor.CoverImage?.texture.DuplicateTexture().Downscale(128, 128).EncodeToPNG(),
-                };
-
-                string metaFileName = Path.GetFileNameWithoutExtension(saber.FilePath) + ".meta";
-
-                // Cache data for each loaded saber
-                string metaFilePath = Path.Combine(cachePath, metaFileName);
-
-                try
-                {
-                    if (File.Exists(metaFilePath))
-                    {
-                        File.Delete(metaFilePath);
-                    }
-                    File.WriteAllText(metaFilePath, JsonConvert.SerializeObject(metadata));
-                }
-                catch (Exception ex)
-                {
-                    Logger.Error($"Problem encountered when trying to cache a saber's metadata\n{ex.Message}\n{ex}");
-                    continue;
-                }
-
-                fileMetadata.Add(metaFilePath, metadata);
-                saber.Destroy();
-            }
-
-            SabersMetadata.Clear();
-            SabersMetadata.Add(new CustomSaberMetadata() { SaberName = "Default", AuthorName = "Beat Games" });
-            SabersMetadata.AddRange(fileMetadata.Values);
-        }
-
-        private void ClearCache()
-        {
-            foreach (string metaFilePath in GetMetadataFiles(false))
-            {
-                string fileName = Path.GetFileName(metaFilePath);
-                string destinationPath = Path.Combine(deletedSabersPath, fileName);
-
                 if (File.Exists(destinationPath)) File.Delete(destinationPath);
-
                 File.Move(metaFilePath, destinationPath);
             }
+            catch (Exception ex)
+            {
+                Logger.Error($"Problem encountered when trying to clear {fileName} from cache\n{ex}");
+            }
         }
-
-        public void Dispose() => SabersMetadata.Clear();
     }
 }

@@ -1,96 +1,82 @@
-﻿using CustomSabersLite.Components.Game;
-using CustomSabersLite.Components.Managers;
+﻿using CustomSabersLite.Components.Managers;
 using CustomSabersLite.Configuration;
-using CustomSabersLite.Data;
-using CustomSabersLite.Utilities.Extensions;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace CustomSabersLite.UI.Managers
+namespace CustomSabersLite.UI.Managers;
+
+internal class SaberPreviewManager
 {
-    internal class SaberPreviewManager
+    private readonly LiteSaberSet saberSet;
+    private readonly CSLConfig config;
+    private readonly ColorSchemesSettings colorSchemesSettings;
+
+    private readonly PreviewSabers previewSabers;
+    private readonly PreviewTrails previewTrails;
+
+    // using these for now until i figure out how to get the actual physical position on the ui view
+    //private readonly Vector3 leftPreviewSaberPosition = new(0.56f, 1.0f, 4.2f);
+    //private readonly Vector3 rightPreviewSaberPosition = new(1.25f, 1.0f, 4.05f); 
+    private readonly Vector3 leftPreviewSaberPosition = new(0.72f, 1.0f, 4.1f);
+    private readonly Vector3 rightPreviewSaberPosition = new(1.06f, 1.0f, 4.02f);
+    private readonly Quaternion leftPreviewRotation = Quaternion.Euler(270f, 103.25f, 0f);
+    private readonly Quaternion rightPreviewRotation = Quaternion.Euler(270f, 283.25f, 0f);
+
+    public SaberPreviewManager(LiteSaberSet saberSet, CSLConfig config, ColorSchemesSettings colorSchemesSettings)
     {
-        private readonly LiteSaberSet saberSet;
-        private readonly CSLConfig config;
-        private readonly ColorSchemesSettings colorSchemesSettings;
+        this.saberSet = saberSet;
+        this.config = config;
+        this.colorSchemesSettings = colorSchemesSettings;
 
-        public SaberPreviewManager(LiteSaberSet saberSet, CSLConfig config, ColorSchemesSettings colorSchemesSettings)
+        previewSabers = new();
+        previewTrails = new();
+        previewTrails.SetPosition(leftPreviewSaberPosition, rightPreviewSaberPosition, leftPreviewRotation, rightPreviewRotation);
+    }
+
+    public async Task GeneratePreview(CancellationToken token)
+    {
+        SetPreviewActive(false);
+
+        if (string.IsNullOrWhiteSpace(config.CurrentlySelectedSaber))
         {
-            this.saberSet = saberSet;
-            this.config = config;
-            this.colorSchemesSettings = colorSchemesSettings;
+            return;
         }
 
-        private LiteSaber leftPreviewSaber = null;
-        private LiteSaber rightPreviewSaber = null;
+        await saberSet.SetSabers(config.CurrentlySelectedSaber);
+        token.ThrowIfCancellationRequested();
 
-        // using these for now until i figure out how to get the actual physical position on the ui view
-        private readonly Vector3 leftPreviewSaberPosition = new Vector3(0.56f, 1.0f, 4.2f);
-        private readonly Vector3 rightPreviewSaberPosition = new Vector3(1.25f, 1.0f, 4.05f);
-        private readonly Quaternion previewRotation = Quaternion.Euler(270f, 100f, 0f);
+        var leftSaber = saberSet.NewSaberForSaberType(SaberType.SaberA);
+        var rightSaber = saberSet.NewSaberForSaberType(SaberType.SaberB);
 
-        public async Task GeneratePreview(CancellationToken token)
-        {
-            if (leftPreviewSaber)
-            {
-                leftPreviewSaber.gameObject.Destroy();
-                leftPreviewSaber = null;
-            }
-            if (rightPreviewSaber)
-            {
-                rightPreviewSaber.gameObject.Destroy();
-                rightPreviewSaber = null;
-            }
+        previewSabers.SetSabers(leftSaber, rightSaber);
+        previewSabers.Init(leftPreviewSaberPosition, rightPreviewSaberPosition, leftPreviewRotation, rightPreviewRotation);
 
-            if (string.IsNullOrWhiteSpace(config.CurrentlySelectedSaber))
-            {
-                return;
-            }
+        var leftTrail = leftSaber.GetTrailsFromInstance()?[0];
+        var rightTrail = rightSaber.GetTrailsFromInstance()?[0];
 
-            await saberSet.GetSaberData(config.CurrentlySelectedSaber);
-            token.ThrowIfCancellationRequested();
+        previewTrails.SetTrails(leftTrail, rightTrail);
 
-            await saberSet.SetSabers(config.CurrentlySelectedSaber);
+        UpdateTrailScale();
+        UpdateColor();
+        SetPreviewActive(true);
+    }
 
-            leftPreviewSaber = saberSet.NewSaberForSaberType(SaberType.SaberA);
-            rightPreviewSaber = saberSet.NewSaberForSaberType(SaberType.SaberB);
+    public void SetPreviewActive(bool active)
+    {
+        previewSabers.SetActive(active);
+        previewTrails.SetActive(active);
+    }
 
-            if (!leftPreviewSaber || !rightPreviewSaber)
-            {
-                Logger.Warn("Something went wrong when setting the current saber");
-                return;
-            }
+    public void UpdateTrailScale() => previewTrails.UpdateTrails(config);
 
-            SetColor();
-
-            leftPreviewSaber.gameObject.transform.SetPositionAndRotation(leftPreviewSaberPosition, previewRotation);
-            rightPreviewSaber.gameObject.transform.SetPositionAndRotation(rightPreviewSaberPosition, previewRotation);
-        }
-
-        public void SetPreviewActive(bool active)
-        {
-            leftPreviewSaber?.gameObject.SetActive(active);
-            rightPreviewSaber?.gameObject.SetActive(active);
-        }
-
-        public void SetColor()
-        {
-            if (config.EnableCustomColorScheme)
-            {
-                SetColor(config.LeftSaberColor, config.RightSaberColor);
-            }
-            else
-            {
-                ColorScheme selectedColorScheme = colorSchemesSettings.GetSelectedColorScheme();
-                SetColor(selectedColorScheme.saberAColor, selectedColorScheme.saberBColor);
-            }
-        }
-
-        private void SetColor(Color leftColor, Color rightColor)
-        {
-            leftPreviewSaber?.SetColor(leftColor);
-            rightPreviewSaber?.SetColor(rightColor);
-        }
+    public void UpdateColor()
+    {
+        var selectedColorScheme = colorSchemesSettings.GetSelectedColorScheme();
+        (var colorLeft, var colorRight) = 
+            config.EnableCustomColorScheme ? (config.LeftSaberColor, config.RightSaberColor) 
+            : (selectedColorScheme.saberAColor, selectedColorScheme.saberBColor);
+        previewSabers?.SetColor(colorLeft, colorRight);
+        previewTrails?.UpdateColor(colorLeft, colorRight);
     }
 }

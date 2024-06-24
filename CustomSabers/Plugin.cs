@@ -9,31 +9,30 @@ using SiraUtil.Zenject;
 using IPA.Loader;
 using Hive.Versioning;
 
-namespace CustomSabersLite
+namespace CustomSabersLite;
+
+[NoEnableDisable]
+[Plugin(RuntimeOptions.SingleStartInit)]
+internal class Plugin
 {
-    [NoEnableDisable]
-    [Plugin(RuntimeOptions.SingleStartInit)]
-    internal class Plugin
+    public static Version Version { get; private set; } = null;
+
+    [Init]
+    public async void Init(IPALogger logger, Config config, Zenjector zenjector, PluginMetadata pluginMetadata)
     {
-        public static Version Version { get; private set; } = null;
+        Version = pluginMetadata.HVersion;
+        _ = new Logger(logger);
+        var pluginConfig = config.Generated<CSLConfig>();
 
-        [Init]
-        public async void Init(IPALogger logger, Config config, Zenjector zenjector, PluginMetadata pluginMetadata)
+        if (!await CustomSaberUtils.LoadCustomSaberAssembly())
         {
-            Version = pluginMetadata.HVersion;
-            Logger pluginLogger = new Logger(logger);
-            CSLConfig pluginConfig = config.Generated<CSLConfig>();
-
-            if (!await CustomSaberUtils.LoadCustomSaberAssembly())
-            {
-                return;
-            }
-
-            zenjector.UseLogger(logger);
-
-            zenjector.Install<CSLAppInstaller>(Location.App, logger, pluginConfig);
-            zenjector.Install<CSLMenuInstaller>(Location.Menu);
-            zenjector.Install<CSLGameInstaller>(Location.Player);
+            return;
         }
+
+        zenjector.UseLogger(logger);
+
+        zenjector.Install<CSLAppInstaller>(Location.App, pluginConfig);
+        zenjector.Install<CSLMenuInstaller>(Location.Menu);
+        zenjector.Install<CSLGameInstaller>(Location.Player);
     }
 }

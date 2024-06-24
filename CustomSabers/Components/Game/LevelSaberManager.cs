@@ -1,32 +1,27 @@
 ﻿using CustomSabersLite.Components.Managers;
 using CustomSabersLite.Configuration;
 using System.Threading.Tasks;
+using Zenject;
 
-namespace CustomSabersLite.Components.Game
+namespace CustomSabersLite.Components.Game;
+
+internal class LevelSaberManager : IInitializable
 {
-    internal class LevelSaberManager
+    private readonly CSLConfig config;
+    private readonly LiteSaberSet saberSet;
+
+    public Task SaberSetupTask { get; }
+
+    public LevelSaberManager(CSLConfig config, LiteSaberSet saberSet)
     {
-        private readonly CSLConfig config;
-        private readonly LiteSaberSet saberSet;
-
-        public LevelSaberManager(CSLConfig config, LiteSaberSet saberSet)
-        {
-            this.config = config;
-            this.saberSet = saberSet;
-            Initialize();
-        }
-
-        public Task SaberSetupTask { get; private set; }
-
-        private async void Initialize()
-        {
-            SaberSetupTask = CreatLevelSaberInstance();
-            await SaberSetupTask;
-        }
-
-        private async Task CreatLevelSaberInstance()
-        {
-            await saberSet.SetSabers(config.CurrentlySelectedSaber);
-        }
+        this.config = config;
+        this.saberSet = saberSet;
+        SaberSetupTask = CreateLevelSaberInstance();
     }
+
+    public async void Initialize() => 
+        await SaberSetupTask;
+
+    private async Task CreateLevelSaberInstance() => 
+        await saberSet.SetSabers(config.CurrentlySelectedSaber);
 }

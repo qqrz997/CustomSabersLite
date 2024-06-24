@@ -4,41 +4,23 @@ using CustomSabersLite.Utilities.AssetBundles;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace CustomSabersLite.Components.Managers
+namespace CustomSabersLite.Components.Managers;
+
+internal class LiteSaberSet(CustomSabersLoader customSabersLoader)
 {
-    internal class LiteSaberSet
+    private readonly CustomSabersLoader customSabersLoader = customSabersLoader;
+
+    private CustomSaberData currentSaberData;
+
+    public LiteSaber NewSaberForSaberType(SaberType saberType)
     {
-        private readonly SaberInstanceManager saberInstanceManager;
-        private readonly CustomSabersLoader customSabersLoader;
-
-        public LiteSaberSet(SaberInstanceManager saberInstanceManager, CustomSabersLoader customSabersLoader)
-        {
-            this.saberInstanceManager = saberInstanceManager;
-            this.customSabersLoader = customSabersLoader;
-        }
-
-        private GameObject leftSaberPrefab = null;
-        private GameObject rightSaberPrefab = null;
-
-        public CustomSaberData Data { get; private set; }
-
-        public LiteSaber NewSaberForSaberType(SaberType saberType)
-        {
-            GameObject original = saberType == SaberType.SaberA ? leftSaberPrefab : rightSaberPrefab;
-            return original ? GameObject.Instantiate(original).AddComponent<LiteSaber>() : null;
-        }
-
-        public async Task SetSabers(string saberPath)
-        {
-            CustomSaberData saberData = await GetSaberData(saberPath);
-            if (saberData.SaberPrefab != null)
-            {
-                leftSaberPrefab = saberData.SaberPrefab.transform.Find("LeftSaber")?.gameObject;
-                rightSaberPrefab = saberData.SaberPrefab.transform.Find("RightSaber")?.gameObject;
-            }
-        }
-
-        public async Task<CustomSaberData> GetSaberData(string saberPath) =>
-            Data = await customSabersLoader.GetSaberData(saberPath);
+        var original = currentSaberData.GetPrefab(saberType);
+        if (!original) return null;
+        var newSaber = GameObject.Instantiate(original).AddComponent<LiteSaber>();
+        newSaber.Init(currentSaberData.Type);
+        return newSaber;
     }
+
+    public async Task SetSabers(string saberPath) => 
+        currentSaberData = await customSabersLoader.GetSaberData(saberPath);
 }

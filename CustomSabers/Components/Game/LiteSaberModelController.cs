@@ -3,82 +3,84 @@ using UnityEngine;
 using Zenject;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Components.Managers;
-using System.Threading.Tasks;
 
-namespace CustomSabersLite.Components.Game
+namespace CustomSabersLite.Components.Game;
+
+internal class LiteSaberModelController : SaberModelController, IColorable, IPreSaberModelInit
 {
-    internal class LiteSaberModelController : SaberModelController, IColorable, IPreSaberModelInit
+    private TrailManager trailManager;
+    private ColorManager colorManager;
+    private LiteSaberSet saberSet;
+    private EventManagerManager eventManagerManager;
+    private CSLConfig config;
+    private LevelSaberManager levelSaberManager;
+
+    [Inject]
+    public void Construct(TrailManager trailManager, ColorManager colorManager, LiteSaberSet saberSet, EventManagerManager eventManagerManager, CSLConfig config, LevelSaberManager levelSaberManager)
     {
-        private TrailManager trailManager;
-        private ColorManager colorManager;
-        private LiteSaberSet saberSet;
-        private EventManagerManager eventManagerManager;
-        private CSLConfig config;
-        private LevelSaberManager levelSaberManager;
+        this.trailManager = trailManager;
+        this.colorManager = colorManager;
+        this.saberSet = saberSet;
+        this.eventManagerManager = eventManagerManager;
+        this.config = config;
+        this.levelSaberManager = levelSaberManager;
+    }
 
-        [Inject]
-        public void Construct(TrailManager trailManager, ColorManager colorManager, LiteSaberSet saberSet, EventManagerManager eventManagerManager, CSLConfig config, LevelSaberManager levelSaberManager)
+    private Color? color;
+
+    public LiteSaber customSaberInstance;
+
+    public LiteSaberTrail[] customTrailInstances;
+
+    public Color Color { get => color.GetValueOrDefault(); set => SetColor(value); }
+
+    public bool PreInit(Transform parent, Saber saber)
+    {
+        CustomSaberInit(parent, saber);
+        return true;
+    }
+
+    private async void CustomSaberInit(Transform parent, Saber saber)
+    {
+        await levelSaberManager.SaberSetupTask;
+        customSaberInstance = saberSet.NewSaberForSaberType(saber.saberType);
+
+        if (!customSaberInstance)
         {
-            this.trailManager = trailManager;
-            this.colorManager = colorManager;
-            this.saberSet = saberSet;
-            this.eventManagerManager = eventManagerManager;
-            this.config = config;
-            this.levelSaberManager = levelSaberManager;
+            Logger.Error("Something went wrong when getting the custom saber instance");
+            return;
         }
 
-        private Color? color;
+        transform.SetParent(parent, false);
 
-        public LiteSaber customSaberInstance;
+        customSaberInstance.SetParent(transform);
+        eventManagerManager.InitializeEventManager(customSaberInstance.EventManager, saber.saberType);
 
-        public LiteSaberTrail[] customTrailInstances;
+        var saberColor = config.EnableCustomColorScheme
+            ? CustomSchemeColorForSaberType(saber.saberType)
+            : colorManager.ColorForSaberType(saber.saberType);
 
-        public Color Color { get => color.GetValueOrDefault(); set => SetColor(value); }
+        customTrailInstances = trailManager.CreateTrail(
+            saber,
+            _saberTrail,
+            saberColor,
+            customSaberInstance);
 
-        public bool PreInit(Transform parent, Saber saber)
+        SetColor(saberColor);
+    }
+
+    private Color CustomSchemeColorForSaberType(SaberType saberType) =>
+        saberType == SaberType.SaberA ? config.LeftSaberColor : config.RightSaberColor;
+
+    private void SetColor(Color color)
+    {
+        this.color = color;
+        customSaberInstance?.SetColor(color);
+        if (customTrailInstances != null)
         {
-            CustomSaberInit(parent, saber);
-            return true;
-        }
-
-        private async void CustomSaberInit(Transform parent, Saber saber)
-        {
-            await levelSaberManager.SaberSetupTask;
-            customSaberInstance = saberSet.NewSaberForSaberType(saber.saberType);
-
-            if (!customSaberInstance)
+            foreach (var customTrail in customTrailInstances)
             {
-                Logger.Error("Something went wrong when getting the custom saber instance");
-                return;
-            }
-
-            transform.SetParent(parent, false);
-
-            customSaberInstance.Setup(transform, saberSet.Data.Type);
-            eventManagerManager.InitializeEventManager(customSaberInstance.EventManager, saber.saberType);
-
-            Color saberColor = config.EnableCustomColorScheme
-                ? CustomSchemeColorForSaberType(saber.saberType)
-                : colorManager.ColorForSaberType(saber.saberType);
-
-            customTrailInstances = trailManager.CreateTrail(saber, _saberTrail, saberColor, customSaberInstance);
-
-            SetColor(saberColor);
-        }
-
-        private Color CustomSchemeColorForSaberType(SaberType saberType) =>
-            saberType == SaberType.SaberA ? config.LeftSaberColor : config.RightSaberColor;
-
-        private void SetColor(Color color)
-        {
-            this.color = color;
-            customSaberInstance?.SetColor(color);
-            if (customTrailInstances != null)
-            {
-                foreach (LiteSaberTrail customTrail in customTrailInstances)
-                {
-                    customTrail?.SetColor(color);
-                }
+                customTrail?.SetColor(color);
             }
         }
     }

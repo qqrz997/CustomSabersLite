@@ -1,9 +1,8 @@
-﻿namespace CustomSabersLite.Data
+﻿namespace CustomSabersLite.Data;
+
+public enum TrailType
 {
-    public enum TrailType
-    {
-        Custom,
-        Vanilla,
-        None
-    }
+    Custom,
+    Vanilla,
+    None
 }

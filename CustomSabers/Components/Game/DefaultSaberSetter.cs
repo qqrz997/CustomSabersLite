@@ -5,70 +5,61 @@ using System.Linq;
 using UnityEngine;
 using Zenject;
 
-namespace CustomSabersLite.Components.Game
+namespace CustomSabersLite.Components.Game;
+
+internal class DefaultSaberSetter(CSLConfig config, SaberManager saberManager, GameplayCoreSceneSetupData gameplayCoreData, ICoroutineStarter coroutineStarter) : IInitializable
 {
-    internal class DefaultSaberSetter : IInitializable
+    private readonly CSLConfig config = config;
+    private readonly SaberManager saberManager = saberManager;
+    private readonly GameplayCoreSceneSetupData gameplayCoreData = gameplayCoreData;
+    private readonly ICoroutineStarter coroutineStarter = coroutineStarter;
+
+    public void Initialize() => coroutineStarter.StartCoroutine(WaitForSaberModelController());
+
+    private IEnumerator WaitForSaberModelController()
     {
-        private readonly CSLConfig config;
-        private readonly SaberManager saberManager;
-        private readonly GameplayCoreSceneSetupData gameplayCoreData;
-        private readonly ICoroutineStarter coroutineStarter;
+        yield return new WaitUntil(() => Resources.FindObjectsOfTypeAll<SaberModelController>().Any());
+        SetupSabers();
+    }
 
-        private DefaultSaberSetter(CSLConfig config, SaberManager saberManager, GameplayCoreSceneSetupData gameplayCoreData, ICoroutineStarter coroutineStarter)
+    private void SetupSabers()
+    {
+        SetupSaber(saberManager.leftSaber);
+        SetupSaber(saberManager.rightSaber);
+    }
+
+    private void SetupSaber(Saber saber)
+    {
+        var saberModelController = saber.GetComponentInChildren<SaberModelController>();
+        var trail = saberModelController?.gameObject.GetComponent<SaberTrail>() ?? saber.GetComponentInChildren<SaberTrail>();
+        if (!saberModelController || !trail)
         {
-            this.config = config;
-            this.saberManager = saberManager;
-            this.gameplayCoreData = gameplayCoreData;
-            this.coroutineStarter = coroutineStarter;
+            return;
         }
 
-        public void Initialize() => coroutineStarter.StartCoroutine(WaitForSaberModelController());
-
-        private IEnumerator WaitForSaberModelController()
+        if (config.EnableCustomColorScheme)
         {
-            yield return new WaitUntil(() => Resources.FindObjectsOfTypeAll<SaberModelController>().Any());
-            SetupSabers();
+            var color = saber.saberType == SaberType.SaberA ? config.LeftSaberColor : config.RightSaberColor;
+
+            SetCustomSchemeColor(color, saberModelController);
+            trail._color = color.ColorWithAlpha(gameplayCoreData.playerSpecificSettings.saberTrailIntensity);
         }
 
-        private void SetupSabers()
+        trail.ConfigureTrail(config);
+    }
+
+    private static void SetCustomSchemeColor(Color color, SaberModelController saberModelController)
+    {
+        foreach (var setSaberGlowColor in saberModelController._setSaberGlowColors)
         {
-            SetupSaber(saberManager.leftSaber);
-            SetupSaber(saberManager.rightSaber);
-        }
-    
-        private void SetupSaber(Saber saber)
-        {
-            SaberModelController saberModelController = saber.GetComponentInChildren<SaberModelController>();
-            SaberTrail trail = saberModelController?.gameObject.GetComponent<SaberTrail>() ?? saber.GetComponentInChildren<SaberTrail>();
-            if (!saberModelController || !trail)
+            var materialPropertyBlock = setSaberGlowColor._materialPropertyBlock ?? new MaterialPropertyBlock();
+
+            foreach (var propertyTintColorPair in setSaberGlowColor._propertyTintColorPairs)
             {
-                return;
+                materialPropertyBlock.SetColor(propertyTintColorPair.property, color * propertyTintColorPair.tintColor);
             }
 
-            if (config.EnableCustomColorScheme)
-            {
-                Color color = saber.saberType == SaberType.SaberA ? config.LeftSaberColor : config.RightSaberColor;
-
-                SetCustomSchemeColor(color, saberModelController);
-                trail._color = color.ColorWithAlpha(gameplayCoreData.playerSpecificSettings.saberTrailIntensity);
-            }
-
-            trail.ConfigureTrail(config);
-        }
-
-        private static void SetCustomSchemeColor(Color color, SaberModelController saberModelController)
-        {
-            foreach (SetSaberGlowColor setSaberGlowColor in saberModelController._setSaberGlowColors)
-            {
-                MaterialPropertyBlock materialPropertyBlock = setSaberGlowColor._materialPropertyBlock ?? new MaterialPropertyBlock();
-
-                foreach (SetSaberGlowColor.PropertyTintColorPair propertyTintColorPair in setSaberGlowColor._propertyTintColorPairs)
-                {
-                    materialPropertyBlock.SetColor(propertyTintColorPair.property, color * propertyTintColorPair.tintColor);
-                }
-
-                setSaberGlowColor._meshRenderer.SetPropertyBlock(materialPropertyBlock);
-            }
+            setSaberGlowColor._meshRenderer.SetPropertyBlock(materialPropertyBlock);
         }
     }
 }

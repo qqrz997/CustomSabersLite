@@ -1,29 +1,23 @@
-﻿using CustomSabersLite.Utilities;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace CustomSabersLite.Data
+namespace CustomSabersLite.Data;
+
+/// <summary>
+/// Class that declares the neccessary information to create a <see cref="Components.Game.LiteSaberTrail"/>
+/// </summary>
+internal readonly struct CustomTrailData(Transform top, Transform bottom, Material material, CustomSaber.ColorType colorType, Color color, Color colorMultiplier, float length)
 {
-    /// <summary>
-    /// Class that declares the neccessary information to create a <see cref="Components.CSLSaberTrail"/>
-    /// </summary>
-    internal class CustomTrailData
-    {
-        // Probably should attach an array of this to CustomSaberData and handle it when the saber is loaded so that we know preemptively if a saber has trails, or even has secondary trails
+    public Transform Top { get; } = top;
 
-        public Transform TrailTop { get; }
-        public Transform TrailBottom { get; }
-        public Material Material { get; }
-        public Color Color { get; } // todo - find out what the CustomTrail colors and colortype actually mean. for now i will use the saber's color here
-        // public Color TrailColorMultiplier { get; }  todo ^
-        public int Length { get; }
+    public Transform Bottom { get; } = bottom;
 
-        public CustomTrailData(Transform trailTop, Transform trailBottom, Material trailMaterial, Color trailColor, int length = TrailUtils.LegacyDuration)
-        {
-            TrailTop = trailTop;
-            TrailBottom = trailBottom;
-            Material = trailMaterial;
-            Color = trailColor;
-            Length = length;
-        }
-    }
-}
+    public Material Material { get; } = material;
+
+    public CustomSaber.ColorType ColorType { get; } = colorType;
+
+    public Color Color { get; } = color;
+
+    public Color ColorMultiplier { get; } = colorMultiplier;
+
+    public float Length { get; } = length;
+};
