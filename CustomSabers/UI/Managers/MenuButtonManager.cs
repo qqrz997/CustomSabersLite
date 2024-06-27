@@ -13,31 +13,51 @@ internal class MenuButtonManager(MainFlowCoordinator mainFlowCoordinator, CSLFlo
 
     private MenuButton button;
 
-    private void PresentCSLFlowCoordinator() => 
-        mainFlowCoordinator.PresentFlowCoordinator(sabersFlowCoordinator);
-
-    public async void Initialize()
+    public void Initialize()
     {
         button = new("Sabers Loading...", "Choose your custom sabers", PresentCSLFlowCoordinator, interactable: false);
         MenuButtons.instance.RegisterButton(button);
-        
-        try
+
+        if (cacheManager.Initialized)
         {
-            await cacheManager.CacheInitialization;
-            button.Text = "Custom Sabers";
-            button.Interactable = true;
+            OnCacheInitSucceeded();
         }
-        catch (Exception ex) 
+        else
         {
-            Logger.Error($"{ex}");
-            button.Text = "Error loading sabers";
-        }
-        finally
-        {
-            MenuButtons.instance.UnregisterButton(button);
-            MenuButtons.instance.RegisterButton(button);
+            cacheManager.CacheInitializationSucceeded += OnCacheInitSucceeded;
+            cacheManager.CacheInitializationFailed += OnCacheInitFailed;
         }
     }
 
-    public void Dispose() => MenuButtons.instance.UnregisterButton(button);
+    private void PresentCSLFlowCoordinator() =>
+        mainFlowCoordinator.PresentFlowCoordinator(sabersFlowCoordinator);
+
+    private void OnCacheInitSucceeded()
+    {
+        Logger.Info("Init success");
+
+        button.Text = "Custom Sabers";
+        button.Interactable = true;
+
+        MenuButtons.instance.UnregisterButton(button);
+        MenuButtons.instance.RegisterButton(button);
+    }
+
+    private void OnCacheInitFailed()
+    {
+        Logger.Info("Init failure");
+
+        button.Text = "Error loading sabers";
+
+        MenuButtons.instance.UnregisterButton(button);
+        MenuButtons.instance.RegisterButton(button);
+    }
+
+    public void Dispose()
+    {
+        cacheManager.CacheInitializationSucceeded -= OnCacheInitSucceeded;
+        cacheManager.CacheInitializationFailed -= OnCacheInitFailed;
+
+        MenuButtons.instance.UnregisterButton(button);
+    }
 }
