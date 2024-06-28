@@ -242,29 +242,30 @@ internal class GameplaySetupTab(PluginDirs pluginDirs, CSLConfig config, CacheMa
     {
         saberList.data.Clear();
 
+        var tmpRegex = new Regex(@"<[^>]*>");
+
         foreach (var metadata in cacheManager.SabersMetadata)
         {
             var saberName = metadata.SaberName;
 
-            if (metadata.RelativePath != null)
+            if (metadata.RelativePath == null)
             {
-                if (!File.Exists(Path.Combine(saberAssetPath, metadata.RelativePath)))
-                {
-                    continue;
-                }
-
-                // Remove TMPro rich text tags
-                var regex = new Regex(@"<[^>]*>");
-                if (regex.IsMatch(saberName))
-                {
-                    saberName = regex.Replace(saberName, string.Empty).Trim();
-                }
-
-                var maxLength = 21;
-                saberName = saberName.Length <= maxLength 
-                    ? saberName 
-                    : saberName.Substring(0, maxLength - 1).Trim() + "...";
+                continue;
             }
+
+            if (!File.Exists(Path.Combine(saberAssetPath, metadata.RelativePath)))
+            {
+                continue;
+            }
+
+            var maxLength = 21;
+
+            if (tmpRegex.IsMatch(saberName))
+                saberName = tmpRegex.Replace(saberName, string.Empty).Trim();
+
+            saberName = saberName.Length <= maxLength
+                ? saberName
+                : saberName.Substring(0, maxLength - 1).Trim() + "...";
 
             saberList.data.Add(new CustomListTableData.CustomCellInfo(saberName));
         }

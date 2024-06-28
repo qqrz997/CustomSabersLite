@@ -2,6 +2,7 @@
 using CustomSabersLite.Utilities.AssetBundles;
 using System;
 using Zenject;
+using System.Threading.Tasks;
 
 namespace CustomSabersLite.UI.Managers;
 
@@ -17,33 +18,33 @@ internal class MenuButtonManager(MainFlowCoordinator mainFlowCoordinator, CSLFlo
     {
         button = new("Sabers Loading...", "Choose your custom sabers", PresentCSLFlowCoordinator, interactable: false);
         MenuButtons.instance.RegisterButton(button);
-
-        if (cacheManager.Initialized)
+        
+        if (cacheManager.InitializationFinished)
         {
-            OnCacheInitSucceeded();
+            OnCacheInitFinished();
         }
         else
         {
-            cacheManager.CacheInitializationSucceeded += OnCacheInitSucceeded;
-            cacheManager.CacheInitializationFailed += OnCacheInitFailed;
+            cacheManager.CacheInitializationFinished += OnCacheInitFinished;
         }
     }
 
     private void PresentCSLFlowCoordinator() =>
         mainFlowCoordinator.PresentFlowCoordinator(sabersFlowCoordinator);
 
-    private void OnCacheInitSucceeded()
+    private void OnCacheInitFinished()
     {
-        button.Text = "Custom Sabers";
-        button.Interactable = true;
+        if (cacheManager.InitializationFailed)
+        {
+            button.Text = "Error loading sabers";
+        }
+        else
+        {
+            button.Text = "Custom Sabers";
+            button.Interactable = true;
+        }
 
-        MenuButtons.instance.UnregisterButton(button);
-        MenuButtons.instance.RegisterButton(button);
-    }
-
-    private void OnCacheInitFailed()
-    {
-        button.Text = "Error loading sabers";
+        cacheManager.CacheInitializationFinished -= OnCacheInitFinished;
 
         MenuButtons.instance.UnregisterButton(button);
         MenuButtons.instance.RegisterButton(button);
@@ -51,9 +52,7 @@ internal class MenuButtonManager(MainFlowCoordinator mainFlowCoordinator, CSLFlo
 
     public void Dispose()
     {
-        cacheManager.CacheInitializationSucceeded -= OnCacheInitSucceeded;
-        cacheManager.CacheInitializationFailed -= OnCacheInitFailed;
-
+        cacheManager.CacheInitializationFinished -= OnCacheInitFinished;
         MenuButtons.instance.UnregisterButton(button);
     }
 }

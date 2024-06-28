@@ -1,21 +1,20 @@
-﻿using System;
-using BeatSaberMarkupLanguage.Attributes;
+﻿using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.ViewControllers;
-using HMUI;
-using CustomSabersLite.Data;
+using CustomSabersLite.Configuration;
+using CustomSabersLite.UI.Managers;
 using CustomSabersLite.Utilities;
 using CustomSabersLite.Utilities.AssetBundles;
-using CustomSabersLite.Configuration;
-using UnityEngine;
-using System.IO;
-using UnityEngine.UI;
-using TMPro;
-using System.Diagnostics;
-using Zenject;
+using HMUI;
+using System;
 using System.Collections;
-using CustomSabersLite.UI.Managers;
+using System.Diagnostics;
+using System.IO;
 using System.Threading;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+using Zenject;
 
 namespace CustomSabersLite.UI.Views;
 

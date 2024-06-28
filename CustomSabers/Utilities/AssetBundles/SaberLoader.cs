@@ -49,10 +49,9 @@ internal class SaberLoader(PluginDirs dirs, BundleLoader bundleLoader)
 
         var descriptor = saberPrefab.GetComponent<SaberDescriptor>();
         saberPrefab.name += $" {descriptor.SaberName}";
-        bundle.Unload(false);
 
         var missingShaders = !await ShaderRepairUtils.RepairSaberShadersAsync(saberPrefab);
 
-        return new CustomSaberData(relativePath, saberPrefab, descriptor, Type) { MissingShaders = missingShaders };
+        return new CustomSaberData(relativePath, bundle, saberPrefab, descriptor, Type) { MissingShaders = missingShaders };
     }
 }

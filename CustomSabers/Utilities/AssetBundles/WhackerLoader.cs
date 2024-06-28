@@ -66,11 +66,10 @@ internal class WhackerLoader(PluginDirs pluginDirs, BundleLoader bundleLoader)
             CoverImage = thumbEntry is null ? null : await GetCoverFromArchive(thumbEntry)
         };
         saberPrefab.name += $" {descriptor.SaberName}";
-        bundle.Unload(false);
 
         var missingShaders = !await ShaderRepairUtils.RepairSaberShadersAsync(saberPrefab);
 
-        return new CustomSaberData(relativePath, saberPrefab, descriptor, Type) { MissingShaders = missingShaders };
+        return new CustomSaberData(relativePath, bundle, saberPrefab, descriptor, Type) { MissingShaders = missingShaders };
     }
 
     private async Task<Sprite> GetCoverFromArchive(ZipArchiveEntry thumbEntry)

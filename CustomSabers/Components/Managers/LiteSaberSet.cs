@@ -21,6 +21,6 @@ internal class LiteSaberSet(CustomSabersLoader customSabersLoader)
         return newSaber;
     }
 
-    public async Task SetSabers(string saberPath) => 
+    public async Task SetSabers(string saberPath) =>
         currentSaberData = await customSabersLoader.GetSaberData(saberPath);
 }

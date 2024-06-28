@@ -26,20 +26,10 @@ internal class CustomSabersLoader(SaberInstanceManager saberInstanceManager, Sab
         return saberData;
     }
 
-    public async Task<List<CustomSaberData>> LoadCustomSabersAsync(IEnumerable<string> customSaberFiles)
+    public async Task<CustomSaberData> LoadSaberDataAsync(string relativeSaberPath) => Path.GetExtension(relativeSaberPath) switch
     {
-        List<CustomSaberData> customSabers = [];
-        foreach (var file in customSaberFiles)
-        {
-            customSabers.Add(await LoadSaberDataAsync(file));
-        }
-        return customSabers; // todo - isn't there a LINQ function for this?
-    }
-
-    private async Task<CustomSaberData> LoadSaberDataAsync(string saberPath) => Path.GetExtension(saberPath) switch
-    {
-        FileExts.Saber => await saberLoader.LoadCustomSaberAsync(saberPath),
-        FileExts.Whacker => await whackerLoader.LoadWhackerAsync(saberPath),
+        FileExts.Saber => await saberLoader.LoadCustomSaberAsync(relativeSaberPath),
+        FileExts.Whacker => await whackerLoader.LoadWhackerAsync(relativeSaberPath),
         _ => CustomSaberData.Default
     };
 }
