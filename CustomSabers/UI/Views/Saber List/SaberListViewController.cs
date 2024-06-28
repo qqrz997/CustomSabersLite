@@ -140,7 +140,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
         await cacheManager.ReloadAsync();
         SetupList();
         gameplaySetupTab.SetupList();
-        Select(customListTableData.tableView, cacheManager.SelectedSaberIndex);
+        StartCoroutine(ScrollToSelectedCell());
         reloadButtonSelectable.interactable = true;
     }
 

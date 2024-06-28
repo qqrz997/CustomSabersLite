@@ -34,8 +34,6 @@ internal class MenuButtonManager(MainFlowCoordinator mainFlowCoordinator, CSLFlo
 
     private void OnCacheInitSucceeded()
     {
-        Logger.Info("Init success");
-
         button.Text = "Custom Sabers";
         button.Interactable = true;
 
@@ -45,8 +43,6 @@ internal class MenuButtonManager(MainFlowCoordinator mainFlowCoordinator, CSLFlo
 
     private void OnCacheInitFailed()
     {
-        Logger.Info("Init failure");
-
         button.Text = "Error loading sabers";
 
         MenuButtons.instance.UnregisterButton(button);
