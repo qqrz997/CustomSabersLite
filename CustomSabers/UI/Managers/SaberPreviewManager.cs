@@ -8,7 +8,7 @@ namespace CustomSabersLite.UI.Managers;
 
 internal class SaberPreviewManager
 {
-    private readonly LiteSaberSet saberSet;
+    private readonly SaberFactory saberFactory;
     private readonly CSLConfig config;
     private readonly ColorSchemesSettings colorSchemesSettings;
 
@@ -23,9 +23,9 @@ internal class SaberPreviewManager
     private readonly Quaternion leftPreviewRotation = Quaternion.Euler(270f, 103.25f, 0f);
     private readonly Quaternion rightPreviewRotation = Quaternion.Euler(270f, 283.25f, 0f);
 
-    public SaberPreviewManager(LiteSaberSet saberSet, CSLConfig config, ColorSchemesSettings colorSchemesSettings)
+    public SaberPreviewManager(SaberFactory saberFactory, CSLConfig config, ColorSchemesSettings colorSchemesSettings)
     {
-        this.saberSet = saberSet;
+        this.saberFactory = saberFactory;
         this.config = config;
         this.colorSchemesSettings = colorSchemesSettings;
 
@@ -43,13 +43,13 @@ internal class SaberPreviewManager
             return;
         }
 
-        await saberSet.SetSabers(config.CurrentlySelectedSaber);
+        var saberData = await saberFactory.GetCurrentSaberDataAsync();
         token.ThrowIfCancellationRequested();
 
-        var leftSaber = saberSet.NewSaberForSaberType(SaberType.SaberA);
-        var rightSaber = saberSet.NewSaberForSaberType(SaberType.SaberB);
+        var leftSaber = saberFactory.TryCreate(SaberType.SaberA, saberData);
+        var rightSaber = saberFactory.TryCreate(SaberType.SaberB, saberData);
 
-        previewSabers.SetSabers(leftSaber, rightSaber);
+        previewSabers.ReplaceSabers(leftSaber, rightSaber);
         previewSabers.Init(leftPreviewSaberPosition, rightPreviewSaberPosition, leftPreviewRotation, rightPreviewRotation);
 
         var leftTrail = leftSaber.GetTrailsFromInstance()?[0];

@@ -9,7 +9,7 @@ internal class PreviewSabers
     private LiteSaber leftSaber;
     private LiteSaber rightSaber;
 
-    public void SetSabers(LiteSaber leftSaber, LiteSaber rightSaber)
+    public void ReplaceSabers(LiteSaber leftSaber, LiteSaber rightSaber)
     {
         this.leftSaber?.gameObject.DestroyImmediate();
         this.rightSaber?.gameObject.DestroyImmediate();

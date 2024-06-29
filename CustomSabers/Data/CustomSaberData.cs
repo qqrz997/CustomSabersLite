@@ -24,8 +24,8 @@ internal class CustomSaberData(string relativePath, AssetBundle assetBundle, Gam
     private readonly AssetBundle assetBundle = assetBundle;
     private readonly GameObject parentPrefab = saberPrefab;
 
-    public static CustomSaberData Default =>
-        new(null, null, null, new SaberDescriptor { SaberName = "Default", AuthorName = "Beat Games" }, CustomSaberType.Default);
+    public static CustomSaberData Empty =>
+        new(null, null, null, null, CustomSaberType.Default);
 
     public GameObject GetPrefab(SaberType type) =>
         type == SaberType.SaberA ? Left.Prefab : Right.Prefab;
