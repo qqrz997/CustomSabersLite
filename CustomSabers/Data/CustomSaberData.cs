@@ -34,7 +34,7 @@ internal class CustomSaberData(string relativePath, AssetBundle assetBundle, Gam
     {
         try
         {
-            assetBundle.Unload(true);
+            if (assetBundle) assetBundle.Unload(true);
             GameObject.Destroy(Descriptor);
             GameObject.Destroy(parentPrefab);
         }
