@@ -9,7 +9,9 @@ namespace CustomSabersLite.Utilities.AssetBundles;
 internal class SaberAssetBlacklist
 {
     private static readonly string[] saberNames = [
+        "Ama-Chaos_Sabers",
         "iSF-Curse",
+        "iSF-DiscordLightMode",
         "iSF-NewYears2022",
         "iSF-NewYears2022-BlackHandle",
         "iSF-NSG-Astral Wand",
@@ -18,7 +20,6 @@ internal class SaberAssetBlacklist
         "iSF-NSG-Zephyr",
         "iSF-Royals",
         "iSFxJoetastic-r99 from Apex Legends",
-        "iSFxJoetastic-ThomasTheWankEngines",
         "iSFxJoetastic-ThomasTheWankEngines",
         "iSFxP1-Dyson(Particles)",
         "iSFxP1-DysonCC(NoParticles)",
