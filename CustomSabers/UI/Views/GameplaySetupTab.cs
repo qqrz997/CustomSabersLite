@@ -11,7 +11,6 @@ using TMPro;
 using Zenject;
 using BeatSaberMarkupLanguage.Components;
 using CustomSabersLite.Utilities.AssetBundles;
-using System.IO;
 using HMUI;
 using System.Text.RegularExpressions;
 using System.ComponentModel;
@@ -20,9 +19,8 @@ using System.Collections;
 
 namespace CustomSabersLite.UI.Views;
 
-internal class GameplaySetupTab(PluginDirs pluginDirs, CSLConfig config, CacheManager cacheManager, ICoroutineStarter coroutineStarter) : IInitializable, IDisposable, INotifyPropertyChanged
+internal class GameplaySetupTab(CSLConfig config, CacheManager cacheManager, ICoroutineStarter coroutineStarter) : IInitializable, IDisposable, INotifyPropertyChanged
 {
-    private readonly PluginDirs pluginDirs = pluginDirs;
     private readonly CSLConfig config = config;
     private readonly CacheManager cacheManager = cacheManager;
     private readonly ICoroutineStarter coroutineStarter = coroutineStarter;
@@ -32,18 +30,18 @@ internal class GameplaySetupTab(PluginDirs pluginDirs, CSLConfig config, CacheMa
     public event PropertyChangedEventHandler PropertyChanged;
 
     private readonly string resourceName = "CustomSabersLite.UI.BSML.gameplaySetup.bsml";
-    private bool parsed;
-    private string saberAssetPath;
 
     public void Initialize()
     {
-        saberAssetPath = pluginDirs.CustomSabers.FullName;
-
         Logger.Debug("Creating tab");
         GameplaySetup.instance.AddTab("Custom Sabers", resourceName, this);
     }
 
-    public void Dispose() => GameplaySetup.instance.RemoveTab("Custom Sabers");
+    public void Dispose()
+    {
+        cacheManager.CacheInitializationFinished -= SetupList;
+        GameplaySetup.instance.RemoveTab("Custom Sabers");
+    }
 
     #region trail settings
 
@@ -217,7 +215,6 @@ internal class GameplaySetupTab(PluginDirs pluginDirs, CSLConfig config, CacheMa
     [UIAction("#post-parse")]
     public void PostParse()
     {
-        parsed = true;
         Root = saberList.gameObject;
 
         BSMLHelpers.SetSliderInteractable(trailDurationInteractable, OverrideTrailDuration);
@@ -235,39 +232,28 @@ internal class GameplaySetupTab(PluginDirs pluginDirs, CSLConfig config, CacheMa
         trailDurationRect.sizeDelta = new(50, trailDurationRect.sizeDelta.y);
         trailWidthRect.sizeDelta = new(50, trailWidthRect.sizeDelta.y);
 
-        SetupList();
+        if (cacheManager.InitializationFinished) SetupList();
+        else cacheManager.CacheInitializationFinished += SetupList;
     }
 
     public void SetupList()
     {
         saberList.data.Clear();
-
-        var tmpRegex = new Regex(@"<[^>]*>");
+        var richTextRegex = new Regex(@"<[^>]*>");
 
         foreach (var metadata in cacheManager.SabersMetadata)
         {
-            var saberName = metadata.SaberName;
-
-            if (metadata.RelativePath == null)
-            {
+            if (metadata.LoadingError != SaberLoaderError.None)
                 continue;
-            }
 
-            if (!File.Exists(Path.Combine(saberAssetPath, metadata.RelativePath)))
-            {
-                continue;
-            }
+            var saberName = richTextRegex.Replace(metadata.SaberName, string.Empty);
 
-            var maxLength = 21;
+            var maxLength = 24;
 
-            if (tmpRegex.IsMatch(saberName))
-                saberName = tmpRegex.Replace(saberName, string.Empty).Trim();
+            if (saberName.Length > maxLength)
+                saberName = saberName.Substring(0, maxLength - 1).Trim() + "...";
 
-            saberName = saberName.Length <= maxLength
-                ? saberName
-                : saberName.Substring(0, maxLength - 1).Trim() + "...";
-
-            saberList.data.Add(new CustomListTableData.CustomCellInfo(saberName));
+            saberList.data.Add(new(saberName));
         }
 
         saberList.tableView.ReloadData();

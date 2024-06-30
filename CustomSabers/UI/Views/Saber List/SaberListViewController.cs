@@ -2,14 +2,17 @@
 using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.ViewControllers;
 using CustomSabersLite.Configuration;
+using CustomSabersLite.Data;
 using CustomSabersLite.UI.Managers;
 using CustomSabersLite.Utilities;
 using CustomSabersLite.Utilities.AssetBundles;
+using CustomSabersLite.Utilities.Extensions;
 using HMUI;
 using System;
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading;
 using TMPro;
 using UnityEngine;
@@ -149,25 +152,26 @@ internal class SaberListViewController : BSMLAutomaticViewController
     private void SetupList() // todo - smoother saber list refresh
     {
         customListTableData.data.Clear();
+        var richTextRegex = new Regex(@"<[^>]*>");
 
         foreach (var metadata in cacheManager.SabersMetadata)
         {
-            if (metadata.RelativePath == null)
+            var (text, subtext) = metadata.LoadingError switch
             {
-                customListTableData.data.Add(new CustomListTableData.CustomCellInfo(metadata.SaberName, metadata.AuthorName, ImageUtils.defaultCoverImage));
-            }
-            else if (!File.Exists(Path.Combine(saberAssetPath, metadata.RelativePath)))
-            {
-                continue;
-            }
-            else
-            {
-                customListTableData.data.Add(new CustomListTableData.CustomCellInfo(
-                    metadata.SaberName,
-                    metadata.AuthorName,
-                    metadata.CoverImage is null ? ImageUtils.nullCoverImage : metadata.CoverImage.LoadImage()
-                ));
-            }
+                SaberLoaderError.None => (metadata.SaberName, metadata.AuthorName),
+                SaberLoaderError.Blacklist => ($"<color=#F77>Not loaded - </color> {metadata.SaberName}", "Incompatible after Beat Saber v1.29.1"),
+                SaberLoaderError.InvalidFileType => ($"<color=#F77>Error - </color> {metadata.SaberName}", "File is not of a valid type"),
+                SaberLoaderError.FileNotFound => ($"<color=#F77>Error - </color> {metadata.SaberName}", "Couldn't find file (was it deleted?)"),
+                SaberLoaderError.LegacyWhacker => ($"<color=#F77>Not loaded - </color> {metadata.SaberName}", "Legacy whacker, incompatible with PC"),
+                SaberLoaderError.NullBundle => ($"<color=#F77>Error - </color> {metadata.SaberName}", "Problem encountered when loading asset"),
+                SaberLoaderError.NullAsset => ($"<color=#F77>Error - </color> {metadata.SaberName}", "Problem encountered when loading saber model"),
+                _ => ($"<color=#F77>Error - </color> {metadata.SaberName}", "Unknown error encountered during loading")
+            };
+
+            customListTableData.data.Add(new(
+                text,
+                richTextRegex.Replace(subtext, string.Empty).Trim(),
+                metadata.GetIcon()));
         }
 
         customListTableData.tableView.ReloadData();

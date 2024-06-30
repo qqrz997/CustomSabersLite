@@ -1,9 +1,7 @@
 ﻿using CustomSabersLite.Components.Managers;
 using CustomSabersLite.Data;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using System.Linq;
 
 namespace CustomSabersLite.Utilities.AssetBundles;
 
@@ -20,16 +18,18 @@ internal class CustomSabersLoader(SaberInstanceManager saberInstanceManager, Sab
     {
         if (!saberInstanceManager.TryGetSaber(saberPath, out var saberData))
         {
-            saberData = await LoadSaberDataAsync(saberPath);
+            (saberData, _) = await LoadSaberDataAsync(saberPath);
             saberInstanceManager.AddSaber(saberData);
         }
         return saberData;
     }
 
-    public async Task<CustomSaberData> LoadSaberDataAsync(string relativeSaberPath) => Path.GetExtension(relativeSaberPath) switch
-    {
-        FileExts.Saber => await saberLoader.LoadCustomSaberAsync(relativeSaberPath),
-        FileExts.Whacker => await whackerLoader.LoadWhackerAsync(relativeSaberPath),
-        _ => CustomSaberData.Default
-    };
+    public async Task<(CustomSaberData saberData, SaberLoaderError loadingError)> LoadSaberDataAsync(string relativeSaberPath) =>
+        SaberAssetBlacklist.IsOnBlacklist(relativeSaberPath) ? (CustomSaberData.Empty, SaberLoaderError.Blacklist)
+        : Path.GetExtension(relativeSaberPath) switch
+        {
+            FileExts.Saber => await saberLoader.LoadCustomSaberAsync(relativeSaberPath),
+            FileExts.Whacker => await whackerLoader.LoadWhackerAsync(relativeSaberPath),
+            _ => (CustomSaberData.Empty, SaberLoaderError.InvalidFileType)
+        };
 }

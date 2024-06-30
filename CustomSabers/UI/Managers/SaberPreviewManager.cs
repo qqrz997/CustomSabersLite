@@ -1,5 +1,7 @@
 ﻿using CustomSabersLite.Components.Managers;
 using CustomSabersLite.Configuration;
+using CustomSabersLite.Data;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -52,8 +54,8 @@ internal class SaberPreviewManager
         previewSabers.ReplaceSabers(leftSaber, rightSaber);
         previewSabers.Init(leftPreviewSaberPosition, rightPreviewSaberPosition, leftPreviewRotation, rightPreviewRotation);
 
-        var leftTrail = leftSaber.GetTrailsFromInstance()?[0];
-        var rightTrail = rightSaber.GetTrailsFromInstance()?[0];
+        CustomTrailData? leftTrail = leftSaber.InstanceTrails?.Length > 0 ? leftSaber.InstanceTrails[0] : null;
+        CustomTrailData? rightTrail = rightSaber.InstanceTrails?.Length > 0 ? rightSaber.InstanceTrails[0] : null;
 
         previewTrails.SetTrails(leftTrail, rightTrail);
 

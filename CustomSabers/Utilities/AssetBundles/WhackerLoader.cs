@@ -23,14 +23,13 @@ internal class WhackerLoader(PluginDirs pluginDirs, BundleLoader bundleLoader)
     /// Loads a custom saber from a .whacker file
     /// </summary>
     /// <param name="relativePath">Path to the .whacker file in the CustomSabers folder</param>
-    /// <returns><seealso cref="CustomSaberData.Default"/> if a custom saber failed to load</returns>
-    public async Task<CustomSaberData> LoadWhackerAsync(string relativePath)
+    /// <returns><seealso cref="CustomSaberData.Empty"/> if a custom saber failed to load</returns>
+    public async Task<(CustomSaberData, SaberLoaderError)> LoadWhackerAsync(string relativePath)
     {
         var path = Path.Combine(sabersPath, relativePath);
+
         if (!File.Exists(path))
-        {
-            return CustomSaberData.Default;
-        }
+            return (CustomSaberData.Empty, SaberLoaderError.FileNotFound);
 
         Logger.Debug($"Attempting to load whacker file...\n\t- {path}");
 
@@ -41,21 +40,27 @@ internal class WhackerLoader(PluginDirs pluginDirs, BundleLoader bundleLoader)
         using var jsonStreamReader = new StreamReader(jsonStream);
         var whacker = (WhackerObject)new JsonSerializer().Deserialize(jsonStreamReader, typeof(WhackerObject));
 
+        if (whacker.config.isLegacy)
+            return (CustomSaberData.Empty, SaberLoaderError.LegacyWhacker);
+
         var bundleEntry = archive.GetEntry(whacker.pcFileName);
+
         var thumbEntry = archive.GetEntry(whacker.descriptor.coverImage);
 
         using var bundleStream = bundleEntry.Open();
         var bundle = await bundleLoader.LoadBundleAsync(bundleStream);
+
         if (!bundle)
-        {
-            return CustomSaberData.Default;
-        }
+            return (CustomSaberData.Empty, SaberLoaderError.NullBundle);
+
         var saberPrefab = await AssetBundleExtensions.LoadAssetAsync<GameObject>(bundle, "_Whacker");
+
         if (!saberPrefab)
         {
             bundle.Unload(true);
-            return CustomSaberData.Default;
+            return (CustomSaberData.Empty, SaberLoaderError.NullAsset);
         }
+
         saberPrefab.hideFlags = HideFlags.DontUnloadUnusedAsset;
 
         var descriptor = new SaberDescriptor
@@ -69,7 +74,8 @@ internal class WhackerLoader(PluginDirs pluginDirs, BundleLoader bundleLoader)
 
         var missingShaders = !await ShaderRepairUtils.RepairSaberShadersAsync(saberPrefab);
 
-        return new CustomSaberData(relativePath, bundle, saberPrefab, descriptor, Type) { MissingShaders = missingShaders };
+        return (new CustomSaberData(relativePath, bundle, saberPrefab, descriptor, Type) { MissingShaders = missingShaders },
+                SaberLoaderError.None);
     }
 
     private async Task<Sprite> GetCoverFromArchive(ZipArchiveEntry thumbEntry)

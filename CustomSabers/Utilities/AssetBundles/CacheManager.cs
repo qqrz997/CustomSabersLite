@@ -51,7 +51,7 @@ internal class CacheManager(PluginDirs pluginDirs, CSLConfig config, CustomSaber
         catch (Exception ex)
         {
             InitializationFailed = true;
-            Logger.Warn($"{ex}");
+            Logger.Critical($"Problem encountered during cache initialization - the mod will not activate\n{ex}");
         }
 
         InitializationFinished = true;
@@ -63,21 +63,23 @@ internal class CacheManager(PluginDirs pluginDirs, CSLConfig config, CustomSaber
     private async Task LoadAsync()
     {
         Logger.Debug("Initializing caching step");
-        Logger.Debug(config.CurrentlySelectedSaber != null ? $"Selected saber is: {config.CurrentlySelectedSaber}" : string.Empty);
+        Logger.Debug(config.CurrentlySelectedSaber != null 
+            ? $"Selected saber is: {config.CurrentlySelectedSaber}" 
+            : "No custom saber selected");
 
-        var existingFileMetadata = GetMetadataFiles(false)
+        var metaFilePaths = GetMetadataFiles(false);
+        Logger.Debug($"Found {metaFilePaths.Count} meta files in cache");
+        var existingFileMetadata = metaFilePaths
             .Select(File.ReadAllText)
             .Select(JsonConvert.DeserializeObject<CustomSaberMetadata>)
             .Where(metadata => metadata.RelativePath != null && File.Exists(Path.Combine(sabersPath, metadata.RelativePath)))
             .ToDictionary(metadata => metadata.RelativePath);
 
         var cachedMetadata = await UpdateCache(existingFileMetadata);
+        Logger.Debug($"Obtained metadata for {cachedMetadata.Count} sabers");
 
-        var sw = Stopwatch.StartNew();
-        var regex = new Regex(@"<color=#F77>Not loaded - </color> |<[^>]*>");
+        var regex = new Regex(@"<color=#F77>Not loaded -</color> |<color=#F77>Error -</color> |<[^>]*>");
         var sortedMetadata = cachedMetadata.OrderBy(v => regex.Replace(v.SaberName, string.Empty));
-        sw.Stop();
-        Logger.Info($"Sorting took {sw.Elapsed}");
 
         SabersMetadata.Clear();
         SabersMetadata.Add(new CustomSaberMetadata() { SaberName = "Default", AuthorName = "Beat Games" });
@@ -90,7 +92,11 @@ internal class CacheManager(PluginDirs pluginDirs, CSLConfig config, CustomSaber
     private async Task<List<CustomSaberMetadata>> UpdateCache(Dictionary<string, CustomSaberMetadata> existingFileMetadata)
     {
         var cachedMetadata = new List<CustomSaberMetadata>();
-        foreach (var saberFilePath in GetSaberFiles(true))
+
+        var relativeSaberPaths = GetSaberFiles(true);
+        Logger.Debug($"Found {relativeSaberPaths.Count} saber files in CustomSabers");
+        
+        foreach (var saberFilePath in relativeSaberPaths)
         {
             if (existingFileMetadata.ContainsKey(saberFilePath))
             {
@@ -98,29 +104,25 @@ internal class CacheManager(PluginDirs pluginDirs, CSLConfig config, CustomSaber
                 continue;
             }
 
-            // basic blacklist implementation
-            if (SaberAssetBlacklist.IsOnBlacklist(saberFilePath))
-            {
-                cachedMetadata.Add(new CustomSaberMetadata 
-                { 
-                    SaberName = $"<color=#F77>Not loaded - </color> {Path.GetFileNameWithoutExtension(saberFilePath)}",
-                    AuthorName = "Incompatible with current Beat Saber version",
-                    RelativePath = null,
-                });
-                continue;
-            }
+            var result = await customSabersLoader.LoadSaberDataAsync(saberFilePath);
+            using var saberData = result.saberData;
+            var loadingError = result.loadingError;
 
-            using var saberData = await customSabersLoader.LoadSaberDataAsync(saberFilePath);
-            var metadata = new CustomSaberMetadata
-            {
-                SaberName = saberData.Descriptor.SaberName,
-                AuthorName = saberData.Descriptor.AuthorName,
-                RelativePath = saberData.FilePath,
-                MissingShaders = saberData.MissingShaders,
-                CoverImage = saberData.Descriptor.CoverImage?.texture.DuplicateTexture().Downscale(128, 128).EncodeToPNG(),
-            };
+            var metadata = saberData.FilePath != null
+                ? new CustomSaberMetadata {
+                    SaberName = saberData.Descriptor.SaberName,
+                    AuthorName = saberData.Descriptor.AuthorName,
+                    RelativePath = saberData.FilePath ?? saberFilePath,
+                    MissingShaders = saberData.MissingShaders,
+                    CoverImage = saberData.Descriptor.CoverImage?.texture.DuplicateTexture().Downscale(128, 128).EncodeToPNG(),
+                    LoadingError = loadingError,
+                }
+                : new CustomSaberMetadata {
+                    SaberName = Path.GetFileNameWithoutExtension(saberFilePath),
+                    LoadingError = loadingError,
+                };
 
-            var metaFileName = Path.GetFileNameWithoutExtension(metadata.RelativePath) + FileExts.Metadata;
+            var metaFileName = Path.GetFileNameWithoutExtension(saberFilePath) + FileExts.Metadata;
             var metaFilePath = Path.Combine(cachePath, metaFileName);
 
             if (await WriteMetadataToFileAsync(metadata, metaFilePath))
