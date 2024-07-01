@@ -1,9 +1,7 @@
 ﻿using CustomSabersLite.Components.Managers;
 using CustomSabersLite.Data;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using System.Linq;
 
 namespace CustomSabersLite.Utilities.AssetBundles;
 
@@ -20,26 +18,18 @@ internal class CustomSabersLoader(SaberInstanceManager saberInstanceManager, Sab
     {
         if (!saberInstanceManager.TryGetSaber(saberPath, out var saberData))
         {
-            saberData = await LoadSaberDataAsync(saberPath);
+            (saberData, _) = await LoadSaberDataAsync(saberPath);
             saberInstanceManager.AddSaber(saberData);
         }
         return saberData;
     }
 
-    public async Task<List<CustomSaberData>> LoadCustomSabersAsync(IEnumerable<string> customSaberFiles)
-    {
-        List<CustomSaberData> customSabers = [];
-        foreach (var file in customSaberFiles)
+    public async Task<(CustomSaberData saberData, SaberLoaderError loadingError)> LoadSaberDataAsync(string relativeSaberPath) =>
+        SaberAssetBlacklist.IsOnBlacklist(relativeSaberPath) ? (CustomSaberData.Empty, SaberLoaderError.Blacklist)
+        : Path.GetExtension(relativeSaberPath) switch
         {
-            customSabers.Add(await LoadSaberDataAsync(file));
-        }
-        return customSabers; // todo - isn't there a LINQ function for this?
-    }
-
-    private async Task<CustomSaberData> LoadSaberDataAsync(string saberPath) => Path.GetExtension(saberPath) switch
-    {
-        FileExts.Saber => await saberLoader.LoadCustomSaberAsync(saberPath),
-        FileExts.Whacker => await whackerLoader.LoadWhackerAsync(saberPath),
-        _ => CustomSaberData.Default
-    };
+            FileExts.Saber => await saberLoader.LoadCustomSaberAsync(relativeSaberPath),
+            FileExts.Whacker => await whackerLoader.LoadWhackerAsync(relativeSaberPath),
+            _ => (CustomSaberData.Empty, SaberLoaderError.InvalidFileType)
+        };
 }
