@@ -46,9 +46,14 @@ internal class CacheManager(PluginDirs pluginDirs, CSLConfig config, CustomSaber
             config.PluginVer = Plugin.Version.ToString();
         }
 
+        await ReloadAsync();
+    }
+
+    public async Task ReloadAsync()
+    {
         try
         {
-            await ReloadAsync();
+            await InternalReloadAsync();
         }
         catch (Exception ex)
         {
@@ -62,7 +67,7 @@ internal class CacheManager(PluginDirs pluginDirs, CSLConfig config, CustomSaber
         }
     }
 
-    public async Task ReloadAsync()
+    private async Task InternalReloadAsync()
     {
         Logger.Debug("Initializing caching step");
         Logger.Debug(config.CurrentlySelectedSaber != null 

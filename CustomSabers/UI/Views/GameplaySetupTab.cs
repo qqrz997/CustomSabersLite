@@ -160,6 +160,9 @@ internal class GameplaySetupTab(CSLConfig config, CacheManager cacheManager, ICo
     [UIComponent("saber-list")]
     public CustomListTableData saberList;
 
+    [UIComponent("saber-list-loading")]
+    public ImageView saberListLoadingIcon;
+
     [UIAction("select-saber")]
     public void Select(TableView _, int row)
     {
@@ -256,6 +259,7 @@ internal class GameplaySetupTab(CSLConfig config, CacheManager cacheManager, ICo
             saberList.data.Add(new(saberName));
         }
 
+        saberListLoadingIcon.gameObject.SetActive(false);
         saberList.tableView.ReloadData();
     }
 

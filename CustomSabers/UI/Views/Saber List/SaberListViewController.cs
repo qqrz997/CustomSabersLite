@@ -4,7 +4,6 @@ using BeatSaberMarkupLanguage.ViewControllers;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Data;
 using CustomSabersLite.UI.Managers;
-using CustomSabersLite.Utilities;
 using CustomSabersLite.Utilities.AssetBundles;
 using CustomSabersLite.Utilities.Extensions;
 using HMUI;
@@ -62,6 +61,9 @@ internal class SaberListViewController : BSMLAutomaticViewController
 
     [UIComponent("saber-list")]
     public CustomListTableData customListTableData;
+
+    [UIComponent("saber-list-loading")]
+    public ImageView saberListLoadingIcon;
 
     [UIComponent("reload-button")]
     public Selectable reloadButtonSelectable;
@@ -154,9 +156,16 @@ internal class SaberListViewController : BSMLAutomaticViewController
     public async void ReloadSabers()
     {
         reloadButtonSelectable.interactable = false;
+
+        customListTableData.data.Clear();
+        customListTableData.tableView.ReloadData();
+        saberListLoadingIcon.gameObject.SetActive(true);
+
         await cacheManager.ReloadAsync();
+
         SetupList();
         gameplaySetupTab.SetupList();
+
         StartCoroutine(ScrollToSelectedCell());
         reloadButtonSelectable.interactable = true;
     }
@@ -164,6 +173,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
     private void SetupList() // todo - smoother saber list refresh
     {
         customListTableData.data.Clear();
+
         var richTextRegex = new Regex(@"<[^>]*>");
 
         foreach (var metadata in cacheManager.SabersMetadata)
@@ -187,6 +197,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
         }
 
         customListTableData.tableView.ReloadData();
+        saberListLoadingIcon.gameObject.SetActive(false);
     }
 
     private IEnumerator ScrollToSelectedCell()

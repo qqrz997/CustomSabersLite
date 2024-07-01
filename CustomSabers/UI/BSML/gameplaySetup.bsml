@@ -75,6 +75,7 @@
 
       <horizontal background='round-rect-panel' bg-color='#000000AA' pad='1' preferred-width='54'>
         <list list-style='Simple' visible-cells='5' stick-scrolling='false' select-cell='select-saber' id='saber-list'/>
+        <loading id='saber-list-loading' ignore-layout='true'/>
       </horizontal>
 
       <horizontal preferred-width='54'>

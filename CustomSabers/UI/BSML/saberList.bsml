@@ -10,6 +10,7 @@
 
       <horizontal background='round-rect-panel' bg-color='#00000077' pad='3'>
         <list id='saber-list' select-cell='select-saber' visible-cells='6' expand-cell='true'/>
+        <loading id='saber-list-loading' ignore-layout='true'/>
       </horizontal>
 
       <horizontal child-control-width='true'>
