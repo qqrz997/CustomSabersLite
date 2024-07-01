@@ -24,7 +24,7 @@ internal class LiteSaber : MonoBehaviour
         transform.rotation = parent.rotation;
     }
 
-    public CustomTrailData[] GetTrailsFromInstance() =>
+    public CustomTrailData[] InstanceTrails =>
         CustomTrailUtils.GetTrailFromCustomSaber(gameObject, Type);
 
     void Awake()

@@ -10,17 +10,17 @@ internal class LiteSaberModelController : SaberModelController, IColorable, IPre
 {
     private TrailManager trailManager;
     private ColorManager colorManager;
-    private LiteSaberSet saberSet;
+    private SaberFactory saberFactory;
     private EventManagerManager eventManagerManager;
     private CSLConfig config;
     private LevelSaberManager levelSaberManager;
 
     [Inject]
-    public void Construct(TrailManager trailManager, ColorManager colorManager, LiteSaberSet saberSet, EventManagerManager eventManagerManager, CSLConfig config, LevelSaberManager levelSaberManager)
+    public void Construct(TrailManager trailManager, ColorManager colorManager, SaberFactory saberFactory, EventManagerManager eventManagerManager, CSLConfig config, LevelSaberManager levelSaberManager)
     {
         this.trailManager = trailManager;
         this.colorManager = colorManager;
-        this.saberSet = saberSet;
+        this.saberFactory = saberFactory;
         this.eventManagerManager = eventManagerManager;
         this.config = config;
         this.levelSaberManager = levelSaberManager;
@@ -43,7 +43,7 @@ internal class LiteSaberModelController : SaberModelController, IColorable, IPre
     private async void CustomSaberInit(Transform parent, Saber saber)
     {
         await levelSaberManager.SaberSetupTask;
-        customSaberInstance = saberSet.NewSaberForSaberType(saber.saberType);
+        customSaberInstance = saberFactory.TryCreate(saber.saberType, levelSaberManager.CurrentSaberData);
 
         if (!customSaberInstance)
         {

@@ -31,7 +31,7 @@ internal class SaberInstanceManager : IDisposable
     {
         foreach (var saberInstance in saberInstances.Values)
         {
-            saberInstance.Destroy();
+            saberInstance.Dispose();
         }
     }
 }

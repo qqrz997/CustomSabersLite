@@ -1,21 +1,22 @@
-﻿using System;
-using BeatSaberMarkupLanguage.Attributes;
+﻿using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.ViewControllers;
-using HMUI;
-using CustomSabersLite.Data;
-using CustomSabersLite.Utilities;
-using CustomSabersLite.Utilities.AssetBundles;
 using CustomSabersLite.Configuration;
-using UnityEngine;
-using System.IO;
-using UnityEngine.UI;
-using TMPro;
-using System.Diagnostics;
-using Zenject;
-using System.Collections;
+using CustomSabersLite.Data;
 using CustomSabersLite.UI.Managers;
+using CustomSabersLite.Utilities.AssetBundles;
+using CustomSabersLite.Utilities.Extensions;
+using HMUI;
+using System;
+using System.Collections;
+using System.Diagnostics;
+using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+using Zenject;
 
 namespace CustomSabersLite.UI.Views;
 
@@ -43,8 +44,26 @@ internal class SaberListViewController : BSMLAutomaticViewController
         deletedSabersPath = pluginDirs.DeletedSabers.FullName;
     }
 
+    private CancellationTokenSource tokenSource;
+
+    [UIAction("#post-parse")]
+    public void PostParse()
+    {
+        if (cacheManager.InitializationFinished) OnCacheInitFinished();
+        else cacheManager.LoadingComplete += OnCacheInitFinished;
+    }
+
+    private void OnCacheInitFinished()
+    {
+        cacheManager.LoadingComplete -= OnCacheInitFinished;
+        SetupList();
+    }
+
     [UIComponent("saber-list")]
     public CustomListTableData customListTableData;
+
+    [UIComponent("saber-list-loading")]
+    public ImageView saberListLoadingIcon;
 
     [UIComponent("reload-button")]
     public Selectable reloadButtonSelectable;
@@ -55,11 +74,11 @@ internal class SaberListViewController : BSMLAutomaticViewController
     [UIComponent("delete-saber-modal-text")]
     public TextMeshProUGUI deleteSaberModalText;
 
-    private CancellationTokenSource tokenSource;
-
     [UIAction("select-saber")]
     public async void Select(TableView _, int row)
     {
+        if (!cacheManager.InitializationFinished) return;
+
         Logger.Debug($"saber selected at row {row}");
 
         tokenSource?.Cancel();
@@ -137,41 +156,48 @@ internal class SaberListViewController : BSMLAutomaticViewController
     public async void ReloadSabers()
     {
         reloadButtonSelectable.interactable = false;
+
+        customListTableData.data.Clear();
+        customListTableData.tableView.ReloadData();
+        saberListLoadingIcon.gameObject.SetActive(true);
+
         await cacheManager.ReloadAsync();
+
         SetupList();
         gameplaySetupTab.SetupList();
+
         StartCoroutine(ScrollToSelectedCell());
         reloadButtonSelectable.interactable = true;
     }
-
-    [UIAction("#post-parse")]
-    public void PostParse() => SetupList();
 
     private void SetupList() // todo - smoother saber list refresh
     {
         customListTableData.data.Clear();
 
+        var richTextRegex = new Regex(@"<[^>]*>");
+
         foreach (var metadata in cacheManager.SabersMetadata)
         {
-            if (metadata.RelativePath == null)
+            var (text, subtext) = metadata.LoadingError switch
             {
-                customListTableData.data.Add(new CustomListTableData.CustomCellInfo(metadata.SaberName, metadata.AuthorName, ImageUtils.defaultCoverImage));
-            }
-            else if (!File.Exists(Path.Combine(saberAssetPath, metadata.RelativePath)))
-            {
-                continue;
-            }
-            else
-            {
-                customListTableData.data.Add(new CustomListTableData.CustomCellInfo(
-                    metadata.SaberName,
-                    metadata.AuthorName,
-                    metadata.CoverImage is null ? ImageUtils.nullCoverImage : metadata.CoverImage.LoadImage()
-                ));
-            }
+                SaberLoaderError.None => (metadata.SaberName, metadata.AuthorName),
+                SaberLoaderError.Blacklist => ($"<color=#F77>Not loaded - </color> {metadata.SaberName}", "Incompatible after Beat Saber v1.29.1"),
+                SaberLoaderError.InvalidFileType => ($"<color=#F77>Error - </color> {metadata.SaberName}", "File is not of a valid type"),
+                SaberLoaderError.FileNotFound => ($"<color=#F77>Error - </color> {metadata.SaberName}", "Couldn't find file (was it deleted?)"),
+                SaberLoaderError.LegacyWhacker => ($"<color=#F77>Not loaded - </color> {metadata.SaberName}", "Legacy whacker, incompatible with PC"),
+                SaberLoaderError.NullBundle => ($"<color=#F77>Error - </color> {metadata.SaberName}", "Problem encountered when loading asset"),
+                SaberLoaderError.NullAsset => ($"<color=#F77>Error - </color> {metadata.SaberName}", "Problem encountered when loading saber model"),
+                _ => ($"<color=#F77>Error - </color> {metadata.SaberName}", "Unknown error encountered during loading")
+            };
+
+            customListTableData.data.Add(new(
+                text,
+                richTextRegex.Replace(subtext, string.Empty).Trim(),
+                metadata.GetIcon()));
         }
 
         customListTableData.tableView.ReloadData();
+        saberListLoadingIcon.gameObject.SetActive(false);
     }
 
     private IEnumerator ScrollToSelectedCell()
@@ -200,5 +226,6 @@ internal class SaberListViewController : BSMLAutomaticViewController
     {
         base.OnDestroy();
         tokenSource?.Dispose();
+        cacheManager.LoadingComplete -= OnCacheInitFinished;
     }
 }

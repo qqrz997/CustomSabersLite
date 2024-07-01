@@ -32,7 +32,7 @@ internal class TrailManager(CSLConfig config, GameplayCoreSceneSetupData gamepla
         defaultGranularity = defaultTrail._granularity;
         defaultTrailElementCollection = defaultTrail._trailElementCollection;
 
-        var customTrailData = customSaber.GetTrailsFromInstance();
+        var customTrailData = customSaber.InstanceTrails;
 
         if (config.TrailType == TrailType.Vanilla || customTrailData == null)
         {
