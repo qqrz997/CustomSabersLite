@@ -1,5 +1,13 @@
 changelog
 
+0.11.1
+- A large optimization which makes it possible to have large quantities of saber files in the CustomSabers folder
+- It is no longer necessary to wait until all sabers are loaded before being able to access the custom sabers settings menu
+- Added a progress bar in the custom sabers settings menu
+- Made a blacklist for sabers that cause an internal unity crash when loaded due to the unity update
+- If there was an error loading a saber, the saber list will display a brief description of the error
+- Various code rewrite and clean-up
+
 0.11.0
 - Added sabers' custom trails to the saber preview
 
