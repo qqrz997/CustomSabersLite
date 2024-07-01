@@ -45,6 +45,21 @@ internal class SaberListViewController : BSMLAutomaticViewController
         deletedSabersPath = pluginDirs.DeletedSabers.FullName;
     }
 
+    private CancellationTokenSource tokenSource;
+
+    [UIAction("#post-parse")]
+    public void PostParse()
+    {
+        if (cacheManager.InitializationFinished) OnCacheInitFinished();
+        else cacheManager.LoadingComplete += OnCacheInitFinished;
+    }
+
+    private void OnCacheInitFinished()
+    {
+        cacheManager.LoadingComplete -= OnCacheInitFinished;
+        SetupList();
+    }
+
     [UIComponent("saber-list")]
     public CustomListTableData customListTableData;
 
@@ -57,11 +72,11 @@ internal class SaberListViewController : BSMLAutomaticViewController
     [UIComponent("delete-saber-modal-text")]
     public TextMeshProUGUI deleteSaberModalText;
 
-    private CancellationTokenSource tokenSource;
-
     [UIAction("select-saber")]
     public async void Select(TableView _, int row)
     {
+        if (!cacheManager.InitializationFinished) return;
+
         Logger.Debug($"saber selected at row {row}");
 
         tokenSource?.Cancel();
@@ -146,9 +161,6 @@ internal class SaberListViewController : BSMLAutomaticViewController
         reloadButtonSelectable.interactable = true;
     }
 
-    [UIAction("#post-parse")]
-    public void PostParse() => SetupList();
-
     private void SetupList() // todo - smoother saber list refresh
     {
         customListTableData.data.Clear();
@@ -203,5 +215,6 @@ internal class SaberListViewController : BSMLAutomaticViewController
     {
         base.OnDestroy();
         tokenSource?.Dispose();
+        cacheManager.LoadingComplete -= OnCacheInitFinished;
     }
 }

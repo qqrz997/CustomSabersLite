@@ -39,7 +39,7 @@ internal class GameplaySetupTab(CSLConfig config, CacheManager cacheManager, ICo
 
     public void Dispose()
     {
-        cacheManager.CacheInitializationFinished -= SetupList;
+        cacheManager.LoadingComplete -= SetupList;
         GameplaySetup.instance.RemoveTab("Custom Sabers");
     }
 
@@ -233,7 +233,7 @@ internal class GameplaySetupTab(CSLConfig config, CacheManager cacheManager, ICo
         trailWidthRect.sizeDelta = new(50, trailWidthRect.sizeDelta.y);
 
         if (cacheManager.InitializationFinished) SetupList();
-        else cacheManager.CacheInitializationFinished += SetupList;
+        else cacheManager.LoadingComplete += SetupList;
     }
 
     public void SetupList()

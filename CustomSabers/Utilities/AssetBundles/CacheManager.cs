@@ -23,7 +23,12 @@ internal class CacheManager(PluginDirs pluginDirs, CSLConfig config, CustomSaber
     private readonly string cachePath = pluginDirs.Cache.FullName;
     private readonly string deletedSabersPath = pluginDirs.DeletedSabers.FullName;
 
-    public event Action CacheInitializationFinished;
+    private readonly string[] metaExt = [FileExts.Metadata];
+    private readonly string[] saberExt = [FileExts.Saber, FileExts.Whacker];
+
+    // please please tell me if this is stupid
+    public event Action<int> LoadingProgressChanged;
+    public event Action LoadingComplete;
     
     public bool InitializationFinished { get; private set; }
 
@@ -32,9 +37,6 @@ internal class CacheManager(PluginDirs pluginDirs, CSLConfig config, CustomSaber
     public int SelectedSaberIndex { get; set; } = 0; // used by UI to get position on the saber list 
 
     public List<CustomSaberMetadata> SabersMetadata { get; private set; } = [];
-
-    private readonly string[] metaExt = [FileExts.Metadata];
-    private readonly string[] saberExt = [FileExts.Saber, FileExts.Whacker];
 
     public async void Initialize()
     {
@@ -46,21 +48,21 @@ internal class CacheManager(PluginDirs pluginDirs, CSLConfig config, CustomSaber
 
         try
         {
-            await LoadAsync();
+            await ReloadAsync();
         }
         catch (Exception ex)
         {
             InitializationFailed = true;
             Logger.Critical($"Problem encountered during cache initialization - the mod will not activate\n{ex}");
         }
-
-        InitializationFinished = true;
-        CacheInitializationFinished?.Invoke();
+        finally
+        {
+            InitializationFinished = true;
+            LoadingComplete?.Invoke();
+        }
     }
 
-    public async Task ReloadAsync() => await LoadAsync();
-
-    private async Task LoadAsync()
+    public async Task ReloadAsync()
     {
         Logger.Debug("Initializing caching step");
         Logger.Debug(config.CurrentlySelectedSaber != null 
@@ -75,7 +77,7 @@ internal class CacheManager(PluginDirs pluginDirs, CSLConfig config, CustomSaber
             .Where(metadata => metadata.RelativePath != null && File.Exists(Path.Combine(sabersPath, metadata.RelativePath)))
             .ToDictionary(metadata => metadata.RelativePath);
 
-        var cachedMetadata = await UpdateCache(existingFileMetadata);
+        var cachedMetadata = await UpdateCacheAsync(existingFileMetadata);
         Logger.Debug($"Obtained metadata for {cachedMetadata.Count} sabers");
 
         var regex = new Regex(@"<color=#F77>Not loaded -</color> |<color=#F77>Error -</color> |<[^>]*>");
@@ -89,15 +91,19 @@ internal class CacheManager(PluginDirs pluginDirs, CSLConfig config, CustomSaber
         SelectedSaberIndex = index < 0 ? 0 : index;
     }
 
-    private async Task<List<CustomSaberMetadata>> UpdateCache(Dictionary<string, CustomSaberMetadata> existingFileMetadata)
+    private async Task<List<CustomSaberMetadata>> UpdateCacheAsync(Dictionary<string, CustomSaberMetadata> existingFileMetadata)
     {
         var cachedMetadata = new List<CustomSaberMetadata>();
+        var prevPercentProgress = 0;
+        LoadingProgressChanged?.Invoke(0);
 
         var relativeSaberPaths = GetSaberFiles(true);
         Logger.Debug($"Found {relativeSaberPaths.Count} saber files in CustomSabers");
-        
-        foreach (var saberFilePath in relativeSaberPaths)
+
+        for (var i = 0; i < relativeSaberPaths.Count; i++)
         {
+            var saberFilePath = relativeSaberPaths[i];
+
             if (existingFileMetadata.ContainsKey(saberFilePath))
             {
                 cachedMetadata.Add(existingFileMetadata[saberFilePath]);
@@ -112,7 +118,7 @@ internal class CacheManager(PluginDirs pluginDirs, CSLConfig config, CustomSaber
                 ? new CustomSaberMetadata {
                     SaberName = saberData.Descriptor.SaberName,
                     AuthorName = saberData.Descriptor.AuthorName,
-                    RelativePath = saberData.FilePath ?? saberFilePath,
+                    RelativePath = saberData.FilePath,
                     MissingShaders = saberData.MissingShaders,
                     CoverImage = saberData.Descriptor.CoverImage?.texture.DuplicateTexture().Downscale(128, 128).EncodeToPNG(),
                     LoadingError = loadingError,
@@ -125,18 +131,26 @@ internal class CacheManager(PluginDirs pluginDirs, CSLConfig config, CustomSaber
             var metaFileName = Path.GetFileNameWithoutExtension(saberFilePath) + FileExts.Metadata;
             var metaFilePath = Path.Combine(cachePath, metaFileName);
 
-            if (await WriteMetadataToFileAsync(metadata, metaFilePath))
-                cachedMetadata.Add(metadata);
+            cachedMetadata.Add(
+                await WriteMetadataToFileAsync(metadata, metaFilePath) ? metadata
+                : metadata with { LoadingError = SaberLoaderError.Unknown });
+
+            var currPercentProgress = (i + 1) * 100 / relativeSaberPaths.Count;
+            if (currPercentProgress != prevPercentProgress)
+            {
+                LoadingProgressChanged?.Invoke(currPercentProgress);
+                prevPercentProgress = currPercentProgress;
+            }
         }
 
         return cachedMetadata;
     }
 
     private List<string> GetSaberFiles(bool returnShortPath) =>
-        FileUtils.GetFilePaths(sabersPath, saberExt, searchOption: SearchOption.AllDirectories, returnShortPath);
+        FileUtils.GetFilePaths(sabersPath, saberExt, SearchOption.AllDirectories, returnShortPath);
 
     private List<string> GetMetadataFiles(bool returnShortPath) =>
-        FileUtils.GetFilePaths(cachePath, metaExt, searchOption: SearchOption.TopDirectoryOnly, returnShortPath);
+        FileUtils.GetFilePaths(cachePath, metaExt, SearchOption.TopDirectoryOnly, returnShortPath);
 
     private async Task<bool> WriteMetadataToFileAsync(CustomSaberMetadata metadata, string metaFilePath)
     {
