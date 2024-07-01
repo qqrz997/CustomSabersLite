@@ -23,9 +23,6 @@ internal class CacheManager(PluginDirs pluginDirs, CSLConfig config, CustomSaber
     private readonly string cachePath = pluginDirs.Cache.FullName;
     private readonly string deletedSabersPath = pluginDirs.DeletedSabers.FullName;
 
-    private readonly string[] metaExt = [FileExts.Metadata];
-    private readonly string[] saberExt = [FileExts.Saber, FileExts.Whacker];
-
     // please please tell me if this is stupid
     public event Action<int> LoadingProgressChanged;
     public event Action LoadingComplete;
@@ -75,7 +72,7 @@ internal class CacheManager(PluginDirs pluginDirs, CSLConfig config, CustomSaber
             : "No custom saber selected");
 
         var metaFilePaths = GetMetadataFiles(false);
-        Logger.Debug($"Found {metaFilePaths.Count} meta files in cache");
+        Logger.Debug($"Found {metaFilePaths.Length} meta files in cache");
         var existingFileMetadata = metaFilePaths
             .Select(File.ReadAllText)
             .Select(JsonConvert.DeserializeObject<CustomSaberMetadata>)
@@ -83,10 +80,10 @@ internal class CacheManager(PluginDirs pluginDirs, CSLConfig config, CustomSaber
             .ToDictionary(metadata => metadata.RelativePath);
 
         var cachedMetadata = await UpdateCacheAsync(existingFileMetadata);
-        Logger.Debug($"Obtained metadata for {cachedMetadata.Count} sabers");
+        Logger.Info($"Obtained metadata for {cachedMetadata.Count} sabers");
 
-        var regex = new Regex(@"<color=#F77>Not loaded -</color> |<color=#F77>Error -</color> |<[^>]*>");
-        var sortedMetadata = cachedMetadata.OrderBy(v => regex.Replace(v.SaberName, string.Empty));
+        var tmpRegex = new Regex(@"<[^>]*>");
+        var sortedMetadata = cachedMetadata.OrderBy(v => tmpRegex.Replace(v.SaberName, string.Empty));
 
         SabersMetadata.Clear();
         SabersMetadata.Add(new CustomSaberMetadata() { SaberName = "Default", AuthorName = "Beat Games" });
@@ -102,10 +99,10 @@ internal class CacheManager(PluginDirs pluginDirs, CSLConfig config, CustomSaber
         var prevPercentProgress = 0;
         LoadingProgressChanged?.Invoke(0);
 
-        var relativeSaberPaths = GetSaberFiles(true);
-        Logger.Debug($"Found {relativeSaberPaths.Count} saber files in CustomSabers");
+        var relativeSaberPaths = GetDistinctSaberFiles(true);
+        Logger.Info($"Found {relativeSaberPaths.Length} saber files in CustomSabers");
 
-        for (var i = 0; i < relativeSaberPaths.Count; i++)
+        for (var i = 0; i < relativeSaberPaths.Length; i++)
         {
             var saberFilePath = relativeSaberPaths[i];
 
@@ -140,7 +137,7 @@ internal class CacheManager(PluginDirs pluginDirs, CSLConfig config, CustomSaber
                 await WriteMetadataToFileAsync(metadata, metaFilePath) ? metadata
                 : metadata with { LoadingError = SaberLoaderError.Unknown });
 
-            var currPercentProgress = (i + 1) * 100 / relativeSaberPaths.Count;
+            var currPercentProgress = (i + 1) * 100 / relativeSaberPaths.Length;
             if (currPercentProgress != prevPercentProgress)
             {
                 LoadingProgressChanged?.Invoke(currPercentProgress);
@@ -150,12 +147,6 @@ internal class CacheManager(PluginDirs pluginDirs, CSLConfig config, CustomSaber
 
         return cachedMetadata;
     }
-
-    private List<string> GetSaberFiles(bool returnShortPath) =>
-        FileUtils.GetFilePaths(sabersPath, saberExt, SearchOption.AllDirectories, returnShortPath);
-
-    private List<string> GetMetadataFiles(bool returnShortPath) =>
-        FileUtils.GetFilePaths(cachePath, metaExt, SearchOption.TopDirectoryOnly, returnShortPath);
 
     private async Task<bool> WriteMetadataToFileAsync(CustomSaberMetadata metadata, string metaFilePath)
     {
@@ -197,4 +188,10 @@ internal class CacheManager(PluginDirs pluginDirs, CSLConfig config, CustomSaber
             }
         }
     }
+
+    private string[] GetDistinctSaberFiles(bool returnShortPath) =>
+        FileUtils.GetFilePaths(sabersPath, [FileExts.Saber, FileExts.Whacker], SearchOption.AllDirectories, returnShortPath);
+
+    private string[] GetMetadataFiles(bool returnShortPath) =>
+        FileUtils.GetFilePaths(cachePath, [FileExts.Metadata], SearchOption.TopDirectoryOnly, returnShortPath);
 }

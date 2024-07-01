@@ -6,37 +6,20 @@ namespace CustomSabersLite.Utilities;
 
 internal class FileUtils
 {
-    public static List<string> GetFilePaths(string path, IEnumerable<string> fileExtensions, SearchOption searchOption = SearchOption.AllDirectories, bool returnShortPath = false)
-    {
-        List<string> filePaths = [];
+    public static string[] GetFilePaths(string directory, string[] extensions, SearchOption searchOption, bool returnShortPath) =>
+        returnShortPath ? TrimPaths(GetFiles(directory, extensions, searchOption), directory)
+        : GetFiles(directory, extensions, searchOption);
 
-        foreach (var extension in fileExtensions)
-        {
-            var files = Directory.GetFiles(path, "*"+extension, searchOption);
-            filePaths.AddRange(returnShortPath ? GetSubPaths(files, path) : files);
-        }
+    private static string[] GetFiles(string directory, string[] extensions, SearchOption searchOption) =>
+        extensions
+        .Select(extension => Directory.EnumerateFiles(directory, $"*{extension}", searchOption))
+        .SelectMany(files => files)
+        .ToArray();
 
-        return filePaths;
-    }
-
-    private static List<string> GetSubPaths(IEnumerable<string> fullPaths, string trimPath)
-    {
-        List<string> subPaths = [];
-
-        foreach (var file in fullPaths)
-        {
-            var filePath = file.Replace(trimPath, "");
-            if (filePath.Length > 0 && filePath.StartsWith(@"\"))
-            {
-                filePath = filePath.Substring(1, filePath.Length - 1);
-            }
-
-            if (!string.IsNullOrWhiteSpace(filePath) && !fullPaths.Contains(filePath))
-            {
-                subPaths.Add(filePath);
-            }
-        }
-
-        return subPaths;
-    }
+    private static string[] TrimPaths(IEnumerable<string> fullPaths, string trimPath) =>
+        fullPaths
+        .Where(path => path != trimPath)
+        .Select(path => path.Replace(trimPath, string.Empty))
+        .Select(path => path.Substring(1, path.Length - 1))
+        .ToArray();
 }
