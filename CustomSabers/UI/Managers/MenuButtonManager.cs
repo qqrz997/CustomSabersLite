@@ -13,7 +13,7 @@ internal class MenuButtonManager(MainFlowCoordinator mainFlowCoordinator, CSLFlo
 
     public void Initialize()
     {
-        button = new("Sabers Loading...", "Choose your custom sabers", PresentCSLFlowCoordinator, interactable: true);
+        button = new("Custom Sabers", "Choose your custom sabers", PresentCSLFlowCoordinator, interactable: true);
         MenuButtons.instance.RegisterButton(button);
     }
 
