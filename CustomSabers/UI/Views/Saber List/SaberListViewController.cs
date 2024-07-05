@@ -49,6 +49,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
     [UIAction("#post-parse")]
     public void PostParse()
     {
+        reloadButtonSelectable.interactable = false;
         if (cacheManager.InitializationFinished) OnCacheInitFinished();
         else cacheManager.LoadingComplete += OnCacheInitFinished;
     }
@@ -57,6 +58,8 @@ internal class SaberListViewController : BSMLAutomaticViewController
     {
         cacheManager.LoadingComplete -= OnCacheInitFinished;
         SetupList();
+        StartCoroutine(ScrollToSelectedCell());
+        reloadButtonSelectable.interactable = true;
     }
 
     [UIComponent("saber-list")]
