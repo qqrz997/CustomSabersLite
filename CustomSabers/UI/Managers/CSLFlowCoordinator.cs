@@ -15,6 +15,8 @@ internal class CSLFlowCoordinator : FlowCoordinator
     [Inject] private readonly SaberPreviewManager previewManager;
     [Inject] private readonly CacheManager cacheManager;
 
+    [InjectOptional] private readonly TabTest tabTest;
+
     protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
     {
         try
@@ -25,7 +27,7 @@ internal class CSLFlowCoordinator : FlowCoordinator
                 showBackButton = true;
             }
 
-            ProvideInitialViewControllers(saberList, saberSettings);
+            ProvideInitialViewControllers(saberList, saberSettings, tabTest);
         }
         catch (Exception ex)
         {
