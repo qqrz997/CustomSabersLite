@@ -109,27 +109,6 @@ internal class GameplaySetupTab(CSLConfig config, CacheManager cacheManager, ICo
         set => config.EnableCustomEvents = value;
     }
 
-    [UIValue("enable-custom-color-scheme")]
-    public bool EnableCustomColorScheme
-    {
-        get => config.EnableCustomColorScheme;
-        set => config.EnableCustomColorScheme = value;
-    }
-
-    [UIValue("left-saber-color")]
-    public Color LeftSaberColor
-    {
-        get => config.LeftSaberColor;
-        set => config.LeftSaberColor = value;
-    }
-
-    [UIValue("right-saber-color")]
-    public Color RightSaberColor
-    {
-        get => config.RightSaberColor;
-        set => config.RightSaberColor = value;
-    }
-
     [UIValue("forcefully-foolish")]
     public bool ForcefullyFoolish
     {
@@ -170,50 +149,6 @@ internal class GameplaySetupTab(CSLConfig config, CacheManager cacheManager, ICo
         cacheManager.SelectedSaberIndex = row;
         config.CurrentlySelectedSaber = cacheManager.SabersMetadata[row].RelativePath;
     }
-
-    #region tabs
-    [UIComponent("settings-title")]
-    TextMeshProUGUI settingsTitleText;
-
-    [UIComponent("trail-settings-panel")]
-    RectTransform trailSettingsPanel;
-
-    [UIComponent("saber-settings-panel")]
-    RectTransform saberSettingsPanel;
-
-    private enum ActiveSettingsTab
-    {
-        None,
-        Trail,
-        Saber
-    }
-
-    private ActiveSettingsTab activeSettingsTab = ActiveSettingsTab.None;
-
-    [UIAction("show-trail-settings")]
-    public void ShowTrailSettings()
-    {
-        if (!activeSettingsTab.Equals(ActiveSettingsTab.Trail))
-        {
-            activeSettingsTab = ActiveSettingsTab.Trail;
-            settingsTitleText.text = "Trail Settings";
-            saberSettingsPanel.gameObject.SetActive(false);
-            trailSettingsPanel.gameObject.SetActive(true);
-        }
-    }
-
-    [UIAction("show-saber-settings")]
-    public void ShowSaberSettings()
-    {
-        if (!activeSettingsTab.Equals(ActiveSettingsTab.Saber))
-        {
-            activeSettingsTab = ActiveSettingsTab.Saber;
-            settingsTitleText.text = "Saber Settings";
-            trailSettingsPanel.gameObject.SetActive(false);
-            saberSettingsPanel.gameObject.SetActive(true);
-        }
-    }
-    #endregion
 
     [UIAction("#post-parse")]
     public void PostParse()
@@ -263,16 +198,8 @@ internal class GameplaySetupTab(CSLConfig config, CacheManager cacheManager, ICo
         saberList.tableView.ReloadData();
     }
 
-    private bool firstActivation = true;
-
     public void Activated()
     {
-        if (firstActivation)
-        {
-            ShowTrailSettings();
-            firstActivation = false;
-        }
-
         foreach (var name in SharedSaberSettings.PropertyNames)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
