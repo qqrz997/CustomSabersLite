@@ -57,27 +57,24 @@ internal class LiteSaber : MonoBehaviour
 
             var materials = renderer.sharedMaterials;
 
-            for (var i = 0; i < materials.Length; i++) 
+            for (var i = 0; i < materials.Length; i++)
             {
                 var material = materials[i];
-
-                if (!material || !material.HasProperty(MaterialProperties.Color)) continue;
-
-                if (material.HasProperty(MaterialProperties.CustomColors))
-                {
-                    if (material.GetFloat(MaterialProperties.CustomColors) > 0) AddColorableMaterial(renderer, materials, i);
-                }
-                else if (material.HasProperty(MaterialProperties.Glow))
-                {
-                    if (material.GetFloat(MaterialProperties.Glow) > 0) AddColorableMaterial(renderer, materials, i);
-                }
-                else if (material.HasProperty(MaterialProperties.Bloom))
-                {
-                    if (material.GetFloat(MaterialProperties.Bloom) > 0) AddColorableMaterial(renderer, materials, i);
-                }
+                if (material != null && IsColorable(material)) AddColorableMaterial(renderer, materials, i);
             }
         }
     }
+
+    private static bool IsColorable(Material material) =>
+        material.HasProperty(MaterialProperties.Color) && HasColorableProperty(material);
+
+    private static bool HasColorableProperty(Material material) =>
+        material.HasProperty(MaterialProperties.CustomColors) ? material.GetFloat(MaterialProperties.CustomColors) > 0
+        : HasGlowOrBloom(material);
+
+    private static bool HasGlowOrBloom(Material material) => 
+        material.HasProperty(MaterialProperties.Glow) && material.GetFloat(MaterialProperties.Glow) > 0 
+        || material.HasProperty(MaterialProperties.Bloom) && material.GetFloat(MaterialProperties.Bloom) > 0;
 
     private void AddColorableMaterial(Renderer renderer, Material[] materials, int index)
     {
