@@ -9,22 +9,36 @@ internal class PreviewSabers
     private LiteSaber leftSaber;
     private LiteSaber rightSaber;
 
-    public void ReplaceSabers(LiteSaber leftSaber, LiteSaber rightSaber)
-    {
-        this.leftSaber?.gameObject.DestroyImmediate();
-        this.rightSaber?.gameObject.DestroyImmediate();
-
-        this.leftSaber = leftSaber;
-        this.rightSaber = rightSaber;
-    }
+    private Vector3 leftPosition;
+    private Vector3 rightPosition;
+    private Quaternion leftRotation;
+    private Quaternion rightRotation;
 
     public void Init(Vector3 leftPosition, Vector3 rightPosition, Quaternion leftRotation, Quaternion rightRotation)
     {
-        if (leftSaber && rightSaber)
+        this.leftPosition = leftPosition;
+        this.rightPosition = rightPosition;
+        this.leftRotation = leftRotation;
+        this.rightRotation = rightRotation;
+    }
+
+    public void ReplaceSabers(LiteSaber newLeftSaber, LiteSaber newRightSaber)
+    {
+        leftSaber?.gameObject.DestroyImmediate();
+        rightSaber?.gameObject.DestroyImmediate();
+
+        leftSaber = newLeftSaber;
+        rightSaber = newRightSaber;
+
+        if (leftSaber)
         {
             leftSaber.transform.SetPositionAndRotation(leftPosition, leftRotation);
-            rightSaber.transform.SetPositionAndRotation(rightPosition, rightRotation);
             leftSaber.gameObject.name = "Preview Saber Left";
+        }
+
+        if (rightSaber)
+        {
+            rightSaber.transform.SetPositionAndRotation(rightPosition, rightRotation);
             rightSaber.gameObject.name = "Preview Saber Right";
         }
     }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace CustomSabersLite.UI.Managers;
 
-internal class PreviewTrails
+internal class BasicPreviewTrails
 {
     private readonly GameObject leftTrail;
     private readonly GameObject rightTrail;
@@ -31,7 +31,7 @@ internal class PreviewTrails
     private CustomTrailData? currentLeftTrail;
     private CustomTrailData? currentRightTrail;
 
-    public PreviewTrails()
+    public BasicPreviewTrails()
     {
         leftTrail = new("Preview Trail Left", typeof(MeshRenderer), typeof(MeshFilter));
         rightTrail = new("Preview Trail Right", typeof(MeshRenderer), typeof(MeshFilter));
@@ -44,7 +44,7 @@ internal class PreviewTrails
         SetActive(false);
     }
 
-    public void SetPosition(Vector3 leftPosition, Vector3 rightPosition, Quaternion leftRotation, Quaternion rightRotation)
+    public void Init(Vector3 leftPosition, Vector3 rightPosition, Quaternion leftRotation, Quaternion rightRotation)
     {
         leftTrail.transform.SetPositionAndRotation(leftPosition, leftRotation);
         rightTrail.transform.SetPositionAndRotation(rightPosition, rightRotation);
@@ -101,15 +101,15 @@ internal class PreviewTrails
             if (currentLeftTrail.Value.ColorType == CustomSaber.ColorType.CustomColor)
             {
                 leftColor = currentLeftTrail.Value.Color;
-                leftMesh.mesh.colors = [leftColor, leftColor, leftColor, leftColor];
             }
             else
             {
                 leftColor = left;
                 foreach (var rendererMaterial in leftMeshRenderer.materials)
                     rendererMaterial.SetColor(MaterialProperties.Color, leftColor);
-                leftMesh.mesh.colors = [leftColor, leftColor, leftColor, leftColor];
             }
+
+            leftMesh.mesh.colors = [leftColor, leftColor, leftColor, leftColor];
         }
 
         if (currentRightTrail != null)
@@ -117,15 +117,15 @@ internal class PreviewTrails
             if (currentRightTrail.Value.ColorType == CustomSaber.ColorType.CustomColor)
             {
                 rightColor = currentRightTrail.Value.Color;
-                rightMesh.mesh.colors = [rightColor, rightColor, rightColor, rightColor];
             }
             else
             {
                 rightColor = right;
                 foreach (var rendererMaterial in rightMeshRenderer.materials)
                     rendererMaterial.SetColor(MaterialProperties.Color, rightColor);
-                rightMesh.mesh.colors = [rightColor, rightColor, rightColor, rightColor];
             }
+
+            rightMesh.mesh.colors = [rightColor, rightColor, rightColor, rightColor];
         }
     }
 
