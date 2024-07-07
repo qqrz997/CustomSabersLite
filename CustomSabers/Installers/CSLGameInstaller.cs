@@ -17,7 +17,7 @@ internal class CSLGameInstaller : Installer
             return;
         }
 
-        Container.Bind<TrailManager>().AsTransient();
+        Container.Bind<TrailFactory>().AsSingle();
         Container.BindInterfacesAndSelfTo<EventManagerManager>().AsTransient();
 
         if (config.CurrentlySelectedSaber != null)

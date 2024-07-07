@@ -9,7 +9,7 @@ internal class LevelSaberManager : IInitializable
 {
     private readonly SaberFactory saberFactory;
 
-    public Task SaberSetupTask { get; }
+    public Task<CustomSaberData> SaberSetupTask { get; }
 
     public CustomSaberData CurrentSaberData { get; private set; }
 
@@ -22,6 +22,6 @@ internal class LevelSaberManager : IInitializable
     public async void Initialize() =>
         await SaberSetupTask;
 
-    private async Task CreateLevelSaberInstance() =>
+    private async Task<CustomSaberData> CreateLevelSaberInstance() =>
         CurrentSaberData = await saberFactory.GetCurrentSaberDataAsync();
 }

@@ -60,7 +60,12 @@ internal class LiteSaber : MonoBehaviour
             for (var i = 0; i < materials.Length; i++)
             {
                 var material = materials[i];
-                if (material != null && IsColorable(material)) AddColorableMaterial(renderer, materials, i);
+                if (material != null && IsColorable(material))
+                {
+                    materials[i] = new(materials[i]);
+                    renderer.sharedMaterials = materials;
+                    colorableMaterials.Add(materials[i]);
+                }
             }
         }
     }
@@ -75,11 +80,4 @@ internal class LiteSaber : MonoBehaviour
     private static bool HasGlowOrBloom(Material material) => 
         material.HasProperty(MaterialProperties.Glow) && material.GetFloat(MaterialProperties.Glow) > 0 
         || material.HasProperty(MaterialProperties.Bloom) && material.GetFloat(MaterialProperties.Bloom) > 0;
-
-    private void AddColorableMaterial(Renderer renderer, Material[] materials, int index)
-    {
-        materials[index] = new(materials[index]);
-        renderer.sharedMaterials = materials;
-        colorableMaterials.Add(materials[index]);
-    }
 }
