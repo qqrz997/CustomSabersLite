@@ -1,5 +1,6 @@
 ﻿using CustomSabersLite.Components.Managers;
 using CustomSabersLite.Configuration;
+using CustomSabersLite.Utilities;
 using CustomSabersLite.Utilities.AssetBundles;
 using Zenject;
 
@@ -14,6 +15,8 @@ internal class CSLAppInstaller(CSLConfig config) : Installer
         Container.Bind<PluginDirs>().AsSingle();
 
         Container.BindInstance(config);
+
+        Container.BindInterfacesAndSelfTo<InternalResourcesProvider>().AsSingle();
 
         Container.BindInterfacesAndSelfTo<CacheManager>().AsSingle();
         Container.Bind<BundleLoader>().AsSingle();
