@@ -25,6 +25,6 @@ internal class CSLAppInstaller(CSLConfig config) : Installer
         Container.Bind<CustomSabersLoader>().AsSingle();
 
         Container.BindInterfacesAndSelfTo<SaberInstanceManager>().AsSingle();
-        Container.BindInterfacesAndSelfTo<SaberFactory>().AsSingle();
+        Container.Bind<SaberFactory>().AsSingle();
     }
 }

@@ -29,9 +29,9 @@ internal class CSLConfig
 
     public virtual bool EnableCustomColorScheme { get; set; } = false;
 
-    public virtual Color LeftSaberColor { get; set; } = new Color(0.784f, 0.078f, 0.078f, 1f);
+    public virtual Color LeftSaberColor { get; set; } = new(0.784f, 0.078f, 0.078f);
 
-    public virtual Color RightSaberColor { get; set; } = new Color(0.157f, 0.557f, 0.824f, 1f);
+    public virtual Color RightSaberColor { get; set; } = new(0.157f, 0.557f, 0.824f);
 
     [Ignore] public virtual bool EnableMenuSabers { get; set; } = false;
 

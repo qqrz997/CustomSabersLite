@@ -49,7 +49,6 @@ internal class MenuSaber(CSLConfig config, Transform parent, SaberTrailRenderer 
         foreach (var trail in trailInstances)
         {
             trail.ConfigureTrail(config);
-            var width = trail.GetTrailWidth(trail._movementData.lastAddedData);
             trail.SetColor(cachedColor);
         }
     }

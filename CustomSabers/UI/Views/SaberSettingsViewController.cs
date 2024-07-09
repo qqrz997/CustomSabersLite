@@ -114,7 +114,11 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController, INotif
     public string TrailType
     {
         get => config.TrailType.ToString();
-        set => config.TrailType = Enum.TryParse(value, out TrailType trailType) ? trailType : config.TrailType;
+        set
+        {
+            config.TrailType = Enum.TryParse(value, out TrailType trailType) ? trailType : config.TrailType;
+            previewManager.UpdateTrails();
+        }
     }
 
     [UIValue("trail-type-list")]

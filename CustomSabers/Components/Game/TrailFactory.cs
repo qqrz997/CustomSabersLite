@@ -13,6 +13,9 @@ internal class TrailFactory
     [Inject] private readonly CSLConfig config;
     [Inject] private readonly InternalResourcesProvider resourcesProvider;
 
+    private readonly Transform defaultTop = new GameObject().transform;
+    private readonly Transform defaultBottom = new GameObject().transform;
+
     private SaberTrailRenderer TrailRendererPrefab => resourcesProvider.SaberTrailRenderer;
 
     private int defaultSamplingFrequency;
@@ -76,7 +79,7 @@ internal class TrailFactory
     {
         // Make new transforms based on the default ones, because we cannot modify the default transforms
         var trailData = new CustomTrailData(
-            new GameObject().transform, new GameObject().transform,
+            defaultTop, defaultBottom,
             TrailRendererPrefab._meshRenderer.material,
             CustomSaber.ColorType.CustomColor, Color.white, Color.white,
             TrailUtils.DefaultDuration);
