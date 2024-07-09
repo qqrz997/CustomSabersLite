@@ -30,7 +30,8 @@
         <horizontal id='right-preview-saber'/>
       </horizontal>
       <horizontal>
-        <checkbox-setting value='toggle-menu-sabers' text='Hold Sabers' hover-hint='Enable to hold the selected custom saber'/>
+        <checkbox-setting value='toggle-menu-sabers' text='Hold Sabers' hover-hint='Enable to hold the selected custom saber'
+                          apply-on-change='true'/>
       </horizontal>
     </vertical>
 

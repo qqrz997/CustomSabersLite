@@ -57,7 +57,11 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController, INotif
     public bool DisableWhiteTrail
     {
         get => config.DisableWhiteTrail;
-        set => config.DisableWhiteTrail = value;
+        set
+        {
+            config.DisableWhiteTrail = value; 
+            previewManager.UpdateTrails();
+        }
     }
 
     [UIValue("override-trail-duration")]
@@ -67,7 +71,7 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController, INotif
         set
         {
             config.OverrideTrailDuration = value;
-            previewManager.UpdateTrailScale();
+            previewManager.UpdateTrails();
             if (parsed) BSMLHelpers.SetSliderInteractable(trailDurationInteractable, value, trailDurationText);
         }
     }
@@ -79,7 +83,7 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController, INotif
         set
         {
             config.OverrideTrailWidth = value;
-            previewManager.UpdateTrailScale();
+            previewManager.UpdateTrails();
             if (parsed) BSMLHelpers.SetSliderInteractable(trailWidthInteractable, value, trailWidthText);
         }
     }
@@ -91,7 +95,7 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController, INotif
         set
         {
             config.TrailDuration = value;
-            previewManager.UpdateTrailScale();
+            previewManager.UpdateTrails();
         }
     }
 
@@ -102,7 +106,7 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController, INotif
         set
         {
             config.TrailWidth = value;
-            previewManager.UpdateTrailScale();
+            previewManager.UpdateTrails();
         }
     }
 

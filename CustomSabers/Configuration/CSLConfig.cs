@@ -13,9 +13,7 @@ internal class CSLConfig
 
     public virtual string CurrentlySelectedSaber { get; set; } = null;
 
-    public virtual TrailType TrailType { get; set; } = TrailType.Custom;
-
-    public virtual bool EnableCustomEvents { get; set; } = true;
+    public virtual bool DisableWhiteTrail { get; set; } = true;
 
     public virtual bool OverrideTrailDuration { get; set; } = false;
 
@@ -25,7 +23,9 @@ internal class CSLConfig
 
     public virtual int TrailWidth { get; set; } = 100;
 
-    public virtual bool DisableWhiteTrail { get; set; } = true;
+    public virtual TrailType TrailType { get; set; } = TrailType.Custom;
+
+    public virtual bool EnableCustomEvents { get; set; } = true;
 
     public virtual bool EnableCustomColorScheme { get; set; } = false;
 
@@ -33,11 +33,13 @@ internal class CSLConfig
 
     public virtual Color RightSaberColor { get; set; } = new Color(0.157f, 0.557f, 0.824f, 1f);
 
-    public virtual string PluginVer { get; set; } = string.Empty;
+    [Ignore] public virtual bool EnableMenuSabers { get; set; } = false;
 
     [Ignore] public virtual bool ForcefullyFoolish { get; set; } = false;
 
     [Ignore] public virtual bool Fooled { get; set; } = false;
+
+    public virtual string PluginVer { get; set; } = string.Empty;
 
     // public virtual void OnReload() { }
 

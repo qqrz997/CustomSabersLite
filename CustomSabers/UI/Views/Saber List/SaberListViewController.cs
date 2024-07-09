@@ -209,7 +209,15 @@ internal class SaberListViewController : BSMLAutomaticViewController
     }
 
     [UIValue("toggle-menu-sabers")]
-    public bool EnableMenuSabers; 
+    public bool EnableMenuSabers
+    {
+        get => config.EnableMenuSabers;
+        set
+        {
+            config.EnableMenuSabers = value;
+            previewManager.UpdateActivePreview();
+        }
+    }
 
     protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
     {

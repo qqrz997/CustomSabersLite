@@ -27,6 +27,8 @@ internal class SaberPreviewManager : IInitializable
     private readonly Transform leftPreviewParent = new GameObject("Left").transform;
     private readonly Transform rightPreviewParent = new GameObject("Right").transform;
 
+    private bool previewActive;
+
     public void Initialize()
     {
         leftPreviewParent.SetParent(previewParent);
@@ -65,18 +67,24 @@ internal class SaberPreviewManager : IInitializable
             menuSaberManager.ReplaceSabers(leftMenuSaber, rightMenuSaber);
         }
 
-        UpdateTrailScale();
+        UpdateTrails();
         UpdateColor();
         SetPreviewActive(true);
     }
 
     public void SetPreviewActive(bool active)
     {
-        previewParent.gameObject.SetActive(active);
-        menuSaberManager.SetActive(active);
+        previewActive = active;
+        UpdateActivePreview();
     }
 
-    public void UpdateTrailScale()
+    public void UpdateActivePreview()
+    {
+        previewParent.gameObject.SetActive(previewActive && !config.EnableMenuSabers);
+        menuSaberManager.SetActive(previewActive && config.EnableMenuSabers);
+    }
+
+    public void UpdateTrails()
     {
         previewTrailManager.UpdateTrails();
         menuSaberManager.UpdateTrails();
