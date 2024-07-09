@@ -8,37 +8,37 @@
         <button on-click='show-delete-saber-modal' text='Delete' face-color='#a83232'/>
       </horizontal>
 
-      <horizontal background='round-rect-panel' bg-color='#00000077' pad='3'>
+      <horizontal background='round-rect-panel' bg-color='#0007' pad='3'>
         <list id='saber-list' select-cell='select-saber' visible-cells='6' expand-cell='true'/>
         <loading id='saber-list-loading' ignore-layout='true'/>
       </horizontal>
 
       <horizontal child-control-width='true'>
-        <page-button event-click='saber-list#PageUp' direction='Up' bg='round-rect-panel' preferred-width='20'/>
+        <page-button event-click='saber-list#PageUp' direction='Up' preferred-width='20'/>
         <page-button event-click='saber-list#PageDown' direction='Down' preferred-width='20'/>
       </horizontal>
     </vertical>
 
     <!-- saber preview -->
-    <vertical preferred-width='50'>
+    <vertical preferred-width='50' spacing='3'>
       <horizontal horizontal-fit='PreferredSize' background='panel-top' preferred-width='35' preferred-height='7'>
         <text text='Saber Preview' align='Capline' font-size='6'/>
       </horizontal>
-      <horizontal preferred-height='65'>
+      <horizontal preferred-height='54' background='round-rect-panel' bg-color='#0007'>
+        <loading id='saber-preview-loading' ignore-layout='true' active='false'/>
         <horizontal id='left-preview-saber'/>
         <horizontal id='right-preview-saber'/>
+      </horizontal>
+      <horizontal>
+        <checkbox-setting value='toggle-menu-sabers' text='Hold Sabers' hover-hint='Enable to hold the selected custom saber'/>
       </horizontal>
     </vertical>
 
     <modal id='delete-saber-modal' clickerino-offerino-closerino='true' size-delta-x='67' size-delta-y='29' anchor-pos-x='0' anchor-pos-y='0'>
       <vertical pad='2'>
-        <!-- text -->
         <text id='delete-saber-modal-text' text='cyan is a furry' align='Center' font-size='6' />
-
-        <!-- buttons -->
         <horizontal>
           <action-button on-click='delete-selected-saber' text='Confirm' face-color='#FF1010' />
-
           <button on-click='hide-delete-saber-modal' text='Cancel' />
         </horizontal>
       </vertical>

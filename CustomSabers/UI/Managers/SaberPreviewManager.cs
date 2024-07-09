@@ -18,8 +18,8 @@ internal class SaberPreviewManager : IInitializable
     [Inject] private readonly BasicPreviewSaberManager previewSaberManager;
 
     // using these for now until i figure out how to get the actual physical position on the ui view
-    private readonly Vector3 leftPreviewSaberPosition = new(0.72f, 1.0f, 4.1f);
-    private readonly Vector3 rightPreviewSaberPosition = new(1.06f, 1.0f, 4.02f);
+    private readonly Vector3 leftPreviewSaberPosition = new(0.72f, 0.9f, 4.1f);
+    private readonly Vector3 rightPreviewSaberPosition = new(1.06f, 0.9f, 4.02f);
     private readonly Quaternion leftPreviewRotation = Quaternion.Euler(270f, 103.25f, 0f);
     private readonly Quaternion rightPreviewRotation = Quaternion.Euler(270f, 283.25f, 0f);
 

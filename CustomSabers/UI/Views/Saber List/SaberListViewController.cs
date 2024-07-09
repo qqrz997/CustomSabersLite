@@ -45,7 +45,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
     }
 
     private CancellationTokenSource tokenSource;
-
+     
     [UIAction("#post-parse")]
     public void PostParse()
     {
@@ -61,20 +61,12 @@ internal class SaberListViewController : BSMLAutomaticViewController
         reloadButtonSelectable.interactable = true;
     }
 
-    [UIComponent("saber-list")]
-    public CustomListTableData customListTableData;
-
-    [UIComponent("saber-list-loading")]
-    public ImageView saberListLoadingIcon;
-
-    [UIComponent("reload-button")]
-    public Selectable reloadButtonSelectable;
-
-    [UIComponent("delete-saber-modal")]
-    public ModalView deleteSaberModal;
-
-    [UIComponent("delete-saber-modal-text")]
-    public TextMeshProUGUI deleteSaberModalText;
+    [UIComponent("saber-list")] public CustomListTableData customListTableData;
+    [UIComponent("saber-list-loading")] public ImageView saberListLoadingIcon;
+    [UIComponent("saber-preview-loading")] public ImageView saberPreviewLoadingIcon;
+    [UIComponent("reload-button")] public Selectable reloadButtonSelectable;
+    [UIComponent("delete-saber-modal")] public ModalView deleteSaberModal;
+    [UIComponent("delete-saber-modal-text")] public TextMeshProUGUI deleteSaberModalText;
 
     [UIAction("select-saber")]
     public async void OnSelect(TableView _, int row)
@@ -93,9 +85,14 @@ internal class SaberListViewController : BSMLAutomaticViewController
             tokenSource?.Dispose();
             tokenSource = new();
 
+            saberPreviewLoadingIcon.gameObject.SetActive(true);
             await previewManager.GeneratePreview(tokenSource.Token);
         }
         catch (OperationCanceledException) { }
+        finally
+        {
+            saberPreviewLoadingIcon.gameObject.SetActive(false);
+        }
     }
 
     [UIAction("open-in-explorer")]
@@ -210,6 +207,9 @@ internal class SaberListViewController : BSMLAutomaticViewController
         customListTableData.tableView.SelectCellWithIdx(cacheManager.SelectedSaberIndex);
         customListTableData.tableView.ScrollToCellWithIdx(cacheManager.SelectedSaberIndex, TableView.ScrollPositionType.Center, true);
     }
+
+    [UIValue("toggle-menu-sabers")]
+    public bool EnableMenuSabers; 
 
     protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
     {
