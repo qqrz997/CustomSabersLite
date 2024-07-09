@@ -16,7 +16,7 @@ internal class CustomTrailUtils
     {
         CustomSaberType.Saber => TrailsFromSaber(saberObject),
         CustomSaberType.Whacker => TrailsFromWhacker(saberObject),
-        _ => null
+        _ => []
     };
 
     private static CustomTrailData[] TrailsFromSaber(GameObject saberObject)
@@ -24,7 +24,7 @@ internal class CustomTrailUtils
         var customTrails = saberObject.GetComponentsInChildren<CustomTrail>();
         if (customTrails.Length == 0)
         {
-            return null;
+            return [];
         }
         foreach (var invalidTrail in customTrails.Where(ct => !IsTrailValid(ct)))
         {
@@ -49,21 +49,6 @@ internal class CustomTrailUtils
     }
 
     private static bool IsTrailValid(CustomTrail ct) => ct.PointEnd && ct.PointStart;
-
-    /*
-    private static CustomTrailData[] TrailsFromSaber(GameObject saberObject) => saberObject.GetComponentsInChildren<CustomTrail>() switch
-    {
-        [] none => null,
-        [..] customTrails => customTrails
-            .Select(ct => new CustomTrailData(
-                ct.PointEnd,
-                ct.PointStart,
-                ct.TrailMaterial,
-                Color.white,
-                ConvertLegacyLength(ct.Length)))
-            .ToArray()
-    };
-    */
 
     private static CustomTrailData[] TrailsFromWhacker(GameObject saberObject)
     {

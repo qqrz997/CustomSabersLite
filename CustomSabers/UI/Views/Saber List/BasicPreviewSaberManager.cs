@@ -4,22 +4,18 @@ using UnityEngine;
 
 namespace CustomSabersLite.UI.Managers;
 
-internal class PreviewSabers
+internal class BasicPreviewSaberManager
 {
+    private readonly Transform left = new GameObject("Basic Preview Saber").transform;
+    private readonly Transform right = new GameObject("Basic Preview Saber").transform;
+
     private LiteSaber leftSaber;
     private LiteSaber rightSaber;
 
-    private Vector3 leftPosition;
-    private Vector3 rightPosition;
-    private Quaternion leftRotation;
-    private Quaternion rightRotation;
-
-    public void Init(Vector3 leftPosition, Vector3 rightPosition, Quaternion leftRotation, Quaternion rightRotation)
+    public void Init(Transform leftParent, Transform rightParent)
     {
-        this.leftPosition = leftPosition;
-        this.rightPosition = rightPosition;
-        this.leftRotation = leftRotation;
-        this.rightRotation = rightRotation;
+        left.SetParent(leftParent, false);
+        right.SetParent(rightParent, false);
     }
 
     public void ReplaceSabers(LiteSaber newLeftSaber, LiteSaber newRightSaber)
@@ -32,14 +28,12 @@ internal class PreviewSabers
 
         if (leftSaber)
         {
-            leftSaber.transform.SetPositionAndRotation(leftPosition, leftRotation);
-            leftSaber.gameObject.name = "Preview Saber Left";
+            leftSaber.SetParent(left);
         }
 
         if (rightSaber)
         {
-            rightSaber.transform.SetPositionAndRotation(rightPosition, rightRotation);
-            rightSaber.gameObject.name = "Preview Saber Right";
+            rightSaber.SetParent(right);
         }
     }
 

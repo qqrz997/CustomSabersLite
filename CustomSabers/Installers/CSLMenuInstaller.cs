@@ -27,5 +27,7 @@ internal class CSLMenuInstaller : Installer
 
         Container.Bind<MenuSaberManager>().AsSingle();
         Container.Bind<MenuSaber>().AsTransient();
+        Container.Bind<BasicPreviewSaberManager>().AsSingle();
+        Container.Bind<BasicPreviewTrailManager>().AsSingle();
     }
 }

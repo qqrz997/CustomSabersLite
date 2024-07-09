@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using CustomSabersLite.Utilities;
+using UnityEngine;
 
 namespace CustomSabersLite.Data;
 
@@ -20,4 +21,14 @@ internal readonly struct CustomTrailData(Transform top, Transform bottom, Materi
     public Color ColorMultiplier { get; } = colorMultiplier;
 
     public float Length { get; } = length;
+
+    public static CustomTrailData Default => new(
+        new GameObject().transform,
+        new GameObject().transform,
+        null,
+        CustomSaber.ColorType.CustomColor,
+        Color.white,
+        Color.white,
+        TrailUtils.DefaultDuration
+    );
 };

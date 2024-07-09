@@ -181,17 +181,14 @@ internal class GameplaySetupTab(CSLConfig config, CacheManager cacheManager, ICo
 
         foreach (var metadata in cacheManager.SabersMetadata)
         {
+            // remove rich text if the result would overflow
+            var maxLength = metadata.LoadingError == SaberLoaderError.None ? 24 : 19;
+            var cleanedName = richTextRegex.Replace(metadata.SaberName, string.Empty);
+            var displayName = cleanedName.Length <= maxLength ? metadata.SaberName 
+                : cleanedName.Substring(0, maxLength - 1).Trim() + "...";
             if (metadata.LoadingError != SaberLoaderError.None)
-                continue;
-
-            var saberName = richTextRegex.Replace(metadata.SaberName, string.Empty);
-
-            var maxLength = 24;
-
-            if (saberName.Length > maxLength)
-                saberName = saberName.Substring(0, maxLength - 1).Trim() + "...";
-
-            saberList.data.Add(new(saberName));
+                displayName = $"<color=red>Error</color> {displayName}";
+            saberList.data.Add(new(displayName));
         }
 
         saberListLoadingIcon.gameObject.SetActive(false);
@@ -217,8 +214,7 @@ internal class GameplaySetupTab(CSLConfig config, CacheManager cacheManager, ICo
     {
         yield return new WaitUntil(() => saberList.gameObject.activeInHierarchy);
         yield return new WaitForEndOfFrame();
-        var selectedSaber = cacheManager.SelectedSaberIndex;
-        saberList.tableView.SelectCellWithIdx(selectedSaber);
-        saberList.tableView.ScrollToCellWithIdx(selectedSaber, TableView.ScrollPositionType.Center, true);
+        saberList.tableView.SelectCellWithIdx(cacheManager.SelectedSaberIndex);
+        saberList.tableView.ScrollToCellWithIdx(cacheManager.SelectedSaberIndex, TableView.ScrollPositionType.Center, true);
     }
 }

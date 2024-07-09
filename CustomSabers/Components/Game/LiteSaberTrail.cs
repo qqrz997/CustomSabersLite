@@ -5,6 +5,8 @@ namespace CustomSabersLite.Components.Game;
 
 internal class LiteSaberTrail : SaberTrail
 {
+    private CustomSaber.ColorType trailColorType;
+    private Color colorMultiplier;
     private Transform customTrailTopTransform;
     private Transform customTrailBottomTransform;
 
@@ -12,14 +14,18 @@ internal class LiteSaberTrail : SaberTrail
 
     void Awake() => _movementData = customTrailMovementData;
 
-    public void Setup(Transform topTransform, Transform bottomTransform)
+    public void Init(CustomTrailData trailData)
     {
-        customTrailTopTransform = topTransform;
-        customTrailBottomTransform = bottomTransform;
+        trailColorType = trailData.ColorType;
+        colorMultiplier = trailData.ColorMultiplier;
+        customTrailTopTransform = trailData.Top;
+        customTrailBottomTransform = trailData.Bottom;
+
         customTrailTopTransform.name = "Custom Top";
         customTrailBottomTransform.name = "Custom Bottom";
-
         gameObject.layer = 12;
+
+        SetColorImpl(trailData.Color);
     }
 
     void Update()
@@ -32,11 +38,14 @@ internal class LiteSaberTrail : SaberTrail
 
     public void SetColor(Color color)
     {
-        _color = color;
+        if (trailColorType != CustomSaber.ColorType.CustomColor) SetColorImpl(color);
+    }
 
-        foreach (var rendererMaterial in _trailRenderer._meshRenderer.materials)
-        {
-            rendererMaterial.SetColor(MaterialProperties.Color, color);
-        }
+    private void SetColorImpl(Color color)
+    {
+        color *= colorMultiplier;
+        foreach (var material in _trailRenderer._meshRenderer.materials)
+            material.SetColor(MaterialProperties.Color, color);
+        _color = color;
     }
 }

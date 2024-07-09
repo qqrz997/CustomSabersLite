@@ -58,7 +58,6 @@ internal class SaberListViewController : BSMLAutomaticViewController
     {
         cacheManager.LoadingComplete -= OnCacheInitFinished;
         SetupList();
-        StartCoroutine(ScrollToSelectedCell());
         reloadButtonSelectable.interactable = true;
     }
 
@@ -78,21 +77,22 @@ internal class SaberListViewController : BSMLAutomaticViewController
     public TextMeshProUGUI deleteSaberModalText;
 
     [UIAction("select-saber")]
-    public async void Select(TableView _, int row)
+    public async void OnSelect(TableView _, int row)
     {
         if (!cacheManager.InitializationFinished) return;
 
         Logger.Debug($"saber selected at row {row}");
-
-        tokenSource?.Cancel();
-        tokenSource?.Dispose();
-        tokenSource = new();
-
         cacheManager.SelectedSaberIndex = row;
         config.CurrentlySelectedSaber = cacheManager.SabersMetadata[row].RelativePath;
 
         try
         {
+            Logger.Info("Generating preview");
+
+            tokenSource?.Cancel();
+            tokenSource?.Dispose();
+            tokenSource = new();
+
             await previewManager.GeneratePreview(tokenSource.Token);
         }
         catch (OperationCanceledException) { }
@@ -140,7 +140,6 @@ internal class SaberListViewController : BSMLAutomaticViewController
                     SetupList();
                     gameplaySetupTab.SetupList();
                     cacheManager.SelectedSaberIndex--;
-                    StartCoroutine(ScrollToSelectedCell());
                 }
                 else
                 {
@@ -169,11 +168,10 @@ internal class SaberListViewController : BSMLAutomaticViewController
         SetupList();
         gameplaySetupTab.SetupList();
 
-        StartCoroutine(ScrollToSelectedCell());
         reloadButtonSelectable.interactable = true;
     }
 
-    private void SetupList() // todo - smoother saber list refresh
+    private void SetupList()
     {
         customListTableData.data.Clear();
 
@@ -201,27 +199,29 @@ internal class SaberListViewController : BSMLAutomaticViewController
 
         customListTableData.tableView.ReloadData();
         saberListLoadingIcon.gameObject.SetActive(false);
+        StartCoroutine(ScrollToSelectedCell());
+        OnSelect(customListTableData.tableView, cacheManager.SelectedSaberIndex);
     }
 
     private IEnumerator ScrollToSelectedCell()
     {
         yield return new WaitUntil(() => customListTableData.gameObject.activeInHierarchy);
         yield return new WaitForEndOfFrame();
-        var selectedSaber = cacheManager.SelectedSaberIndex;
-        customListTableData.tableView.SelectCellWithIdx(selectedSaber);
-        customListTableData.tableView.ScrollToCellWithIdx(selectedSaber, TableView.ScrollPositionType.Center, true);
-        Select(customListTableData.tableView, cacheManager.SelectedSaberIndex);
+        customListTableData.tableView.SelectCellWithIdx(cacheManager.SelectedSaberIndex);
+        customListTableData.tableView.ScrollToCellWithIdx(cacheManager.SelectedSaberIndex, TableView.ScrollPositionType.Center, true);
     }
 
     protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
     {
         base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
         StartCoroutine(ScrollToSelectedCell());
+        previewManager.SetPreviewActive(true);
     }
 
     protected override void DidDeactivate(bool removedFromHierarchy, bool screenSystemDisabling)
     {
         base.DidDeactivate(removedFromHierarchy, screenSystemDisabling);
+        previewManager.SetPreviewActive(false);
         tokenSource?.Cancel();
     }
 

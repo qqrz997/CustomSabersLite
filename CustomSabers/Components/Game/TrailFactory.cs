@@ -35,8 +35,7 @@ internal class TrailFactory
         return config.TrailType switch
         {
             TrailType.Vanilla => [CreateDefaultTrail(defaultSaber, saberObject, intensity)],
-            TrailType.Custom when trailsData is not null => CreateTrails(saberObject, trailsData, intensity),
-            TrailType.Custom when trailsData is null => [CreateDefaultTrail(defaultSaber, saberObject, intensity)],
+            TrailType.Custom => CreateTrails(saberObject, trailsData, intensity),
             _ => []
         };
     }
@@ -61,13 +60,13 @@ internal class TrailFactory
         trail._trailDuration = trailData.Length;
         trail._samplingFrequency = defaultSamplingFrequency;
         trail._granularity = defaultGranularity;
-        trail._color = trailData.Color;
+        trail._color = trailData.Color * trailData.ColorMultiplier;
         trail._trailRenderer = Object.Instantiate(TrailRendererPrefab, Vector3.zero, Quaternion.identity);
         trail._trailRenderer._meshRenderer.material = trailData.Material;
-        trail._trailRenderer._meshRenderer.material.color = trailData.Color.ColorWithAlpha(intensity);
+        trail._trailRenderer._meshRenderer.material.color = trailData.Color.ColorWithAlpha(intensity) * trailData.ColorMultiplier;
         trail._trailElementCollection = defaultTrailElementCollection;
 
-        trail.Setup(trailData.Top, trailData.Bottom);
+        trail.Init(trailData);
         trail.ConfigureTrail(config);
 
         return trail;

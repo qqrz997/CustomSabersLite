@@ -12,7 +12,6 @@ internal class CSLFlowCoordinator : FlowCoordinator
     [Inject] private readonly MainFlowCoordinator mainFlowCoordinator;
     [Inject] private readonly SaberListViewController saberList;
     [Inject] private readonly SaberSettingsViewController saberSettings;
-    [Inject] private readonly SaberPreviewManager previewManager;
     [Inject] private readonly CacheManager cacheManager;
 
     [InjectOptional] private readonly TabTest tabTest;
@@ -52,11 +51,8 @@ internal class CSLFlowCoordinator : FlowCoordinator
         SetTitle("Custom Sabers");
     }
 
-    protected override void BackButtonWasPressed(ViewController topViewController)
-    {
+    protected override void BackButtonWasPressed(ViewController topViewController) => 
         mainFlowCoordinator.DismissFlowCoordinator(this);
-        previewManager.SetPreviewActive(false);
-    }
 
     void OnDestroy()
     {
