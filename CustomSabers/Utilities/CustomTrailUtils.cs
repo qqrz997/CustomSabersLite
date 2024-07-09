@@ -22,10 +22,6 @@ internal class CustomTrailUtils
     private static CustomTrailData[] TrailsFromSaber(GameObject saberObject)
     {
         var customTrails = saberObject.GetComponentsInChildren<CustomTrail>();
-        if (customTrails.Length == 0)
-        {
-            return [];
-        }
         foreach (var invalidTrail in customTrails.Where(ct => !IsTrailValid(ct)))
         {
             Logger.Warn("!! WARNING !!\n" +
@@ -35,16 +31,15 @@ internal class CustomTrailUtils
                 $"Invalid trail is on object: {invalidTrail.gameObject.name}\n" +
                 "-------------");
         }
-        return customTrails
-            .Where(IsTrailValid)
-            .Select(ct => new CustomTrailData(
-                ct.PointEnd,
-                ct.PointStart,
-                ct.TrailMaterial,
-                ct.colorType,
-                ct.TrailColor,
-                ct.MultiplierColor,
-                ConvertLegacyLength(ct.Length)))
+        return customTrails.Length == 0 ? []
+            : customTrails.Where(IsTrailValid)
+            .Select(ct => new CustomTrailData(ct.PointEnd,
+                                              ct.PointStart,
+                                              ct.TrailMaterial,
+                                              ct.colorType,
+                                              ct.TrailColor,
+                                              ct.MultiplierColor,
+                                              ConvertLegacyLength(ct.Length)))
             .ToArray();
     }
 
