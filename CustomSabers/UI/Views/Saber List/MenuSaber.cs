@@ -25,6 +25,10 @@ internal class MenuSaber(CSLConfig config, Transform parent, SaberTrailRenderer 
         if (!saberInstance) return;
 
         saberInstance.SetParent(saberParent);
+        foreach (var collider in saberInstance.GetComponentsInChildren<Collider>())
+        {
+            collider.enabled = false; // todo - is there a way to stop the colliders messing with the menu pointers
+        }
 
         var trails = saberInstance.InstanceTrails;
         for (var i = 0; i < trails.Length; i++)
