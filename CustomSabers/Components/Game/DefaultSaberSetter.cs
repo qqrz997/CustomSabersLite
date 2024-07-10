@@ -44,8 +44,6 @@ internal class DefaultSaberSetter(CSLConfig config, SaberManager saberManager, G
             SetCustomSchemeColor(color, saberModelController);
             trail._color = color.ColorWithAlpha(gameplayCoreData.playerSpecificSettings.saberTrailIntensity);
         }
-
-        trail.ConfigureTrail(config);
     }
 
     private static void SetCustomSchemeColor(Color color, SaberModelController saberModelController)

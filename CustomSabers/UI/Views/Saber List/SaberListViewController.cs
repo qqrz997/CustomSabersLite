@@ -79,7 +79,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
 
         try
         {
-            Logger.Info("Generating preview");
+            Logger.Debug("Generating preview");
 
             tokenSource?.Cancel();
             tokenSource?.Dispose();

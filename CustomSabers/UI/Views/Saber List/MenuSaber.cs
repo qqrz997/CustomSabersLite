@@ -14,50 +14,54 @@ internal class MenuSaber(CSLConfig config, Transform parent, SaberTrailRenderer 
     private readonly SaberTrailRenderer trailRendererPrefab = trailRendererPrefab;
 
     private LiteSaber saberInstance;
-    private readonly List<LiteSaberTrail> trailInstances = [];
-    private Color cachedColor = Color.cyan;
+    private List<LiteSaberTrail> trailInstances = [];
 
     public void ReplaceSaber(LiteSaber newSaber)
     {
+        trailInstances.Clear();
         saberInstance?.gameObject.DestroyImmediate();
         saberInstance = newSaber;
+        
         if (!saberInstance) return;
 
         saberInstance.SetParent(saberParent);
-        saberInstance.gameObject.name = "Menu LiteSaber";
-        UpdateTrails();
+
+        var trails = saberInstance.InstanceTrails;
+        for (var i = 0; i < trails.Length; i++)
+        {
+            trailInstances.Add(CreateTrail(saberInstance.gameObject, trails[i], i == 0));
+        }
     }
 
     public void UpdateTrails()
     {
-        if (!saberInstance) return;
-
+        var primaryTrail = true;
         foreach (var trail in trailInstances)
         {
-            Object.DestroyImmediate(trail);
-        }
-        trailInstances.Clear();
+            if (!trail._trailRenderer)
+            {
+                continue;
+            }
+            var whiteSectionDuration = config.DisableWhiteTrail ? 0f : 0.03f;
+            var (material, duration) = config.TrailType switch
+            {
+                TrailType.Custom => (trail.InstanceTrailData.Material, config.OverrideTrailDuration ? config.TrailDuration / 250f : trail.InstanceTrailData.Length),
+                TrailType.Vanilla => (trailRendererPrefab._meshRenderer.material, config.OverrideTrailDuration ? config.TrailDuration / 250f : 0.4f),
+                _ => (null, 0.0f)
+            };
 
-        var trailData = saberInstance.InstanceTrails;
-
-        for (var i = 0; i < trailData.Length; i++)
-        {
-            var trail = CreateTrail(saberInstance.gameObject, trailData[i], primaryTrail: i == 0);
-            trailInstances.Add(trail);
-        }
-
-        foreach (var trail in trailInstances)
-        {
-            trail.ConfigureTrail(config);
-            trail.SetColor(cachedColor);
+            trail.ConfigureTrail(config, primaryTrail);
+            primaryTrail = false;
         }
     }
 
     public void SetColor(Color color)
     {
-        cachedColor = color;
         saberInstance?.SetColor(color);
-        foreach (var trail in trailInstances) trail.SetColor(color);
+        foreach (var trail in trailInstances)
+        {
+            trail.SetColor(color);
+        }
     }
 
     public void SetActive(bool active) => saberInstance?.gameObject.SetActive(active);
@@ -65,9 +69,6 @@ internal class MenuSaber(CSLConfig config, Transform parent, SaberTrailRenderer 
     private LiteSaberTrail CreateTrail(GameObject parent, CustomTrailData trailData, bool primaryTrail = false)
     {
         var trail = parent.AddComponent<LiteSaberTrail>();
-
-        if (primaryTrail && config.OverrideTrailWidth)
-            trailData.Bottom.position = trailData.GetOverrideWidthBottom(config.TrailWidth);
 
         trail._trailDuration = trailData.Length;
         trail._samplingFrequency = 120;
@@ -78,7 +79,6 @@ internal class MenuSaber(CSLConfig config, Transform parent, SaberTrailRenderer 
         trail._trailRenderer._meshRenderer.material.color = trailData.Color * trailData.ColorMultiplier;
 
         trail.Init(trailData);
-        trail.ConfigureTrail(config);
 
         return trail;
     }

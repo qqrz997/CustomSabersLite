@@ -21,10 +21,8 @@ internal class BasicPreviewTrailManager
 
     public void SetTrails(LiteSaber leftSaber, LiteSaber rightSaber)
     {
-        var leftTrailData = leftSaber.InstanceTrails.Length > 0 ? leftSaber.InstanceTrails[0] : CustomTrailData.Default;
-        var rightTrailData = rightSaber.InstanceTrails.Length > 0 ? rightSaber.InstanceTrails[0] : CustomTrailData.Default;
-        leftTrail.ReplaceTrail(leftTrailData);
-        rightTrail.ReplaceTrail(rightTrailData);
+        leftTrail.ReplaceTrail(GetPrimaryTrailData(leftSaber));
+        rightTrail.ReplaceTrail(GetPrimaryTrailData(rightSaber));
     }
 
     public void UpdateTrails()
@@ -38,4 +36,9 @@ internal class BasicPreviewTrailManager
         leftTrail.UpdateColor(left);
         rightTrail.UpdateColor(right);
     }
+
+    private CustomTrailData GetPrimaryTrailData(LiteSaber saber) =>
+        !saber ? CustomTrailData.Default
+        : saber.InstanceTrails.Length == 0 ? CustomTrailData.Default
+        : saber.InstanceTrails[0];
 }

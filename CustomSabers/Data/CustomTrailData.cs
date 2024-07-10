@@ -8,9 +8,8 @@ namespace CustomSabersLite.Data;
 /// </summary>
 internal readonly struct CustomTrailData(Transform top, Transform bottom, Material material, CustomSaber.ColorType colorType, Color color, Color colorMultiplier, float length)
 {
-    public Transform Top { get; } = top;
-
-    public Transform Bottom { get; } = bottom;
+    private readonly Transform top = top;
+    private readonly Transform bottom = bottom;
 
     public Material Material { get; } = material;
 
@@ -21,6 +20,14 @@ internal readonly struct CustomTrailData(Transform top, Transform bottom, Materi
     public Color ColorMultiplier { get; } = colorMultiplier;
 
     public float Length { get; } = length;
+
+    public Vector3 TopPosition => top.position;
+
+    public Vector3 BottomPosition => bottom.position;
+
+    public Vector3 TopLocalPosition => top.localPosition;
+
+    public Vector3 BottomLocalPosition => bottom.localPosition;
 
     public static CustomTrailData Default => new(
         new GameObject().transform,

@@ -47,8 +47,8 @@ internal class BasicPreviewTrail
     public void UpdateMesh(CSLConfig config)
     {
         var bottom = config.OverrideTrailWidth ? currentTrailData.GetOverrideWidthBottom(config.TrailWidth, true)
-            : currentTrailData.Bottom.localPosition;
-        var top = currentTrailData.Top.localPosition;
+            : currentTrailData.BottomLocalPosition;
+        var top = currentTrailData.TopLocalPosition;
         var length = config.OverrideTrailDuration ? config.TrailDuration / 250f
             : Mathf.Clamp(currentTrailData.Length, 0f, 0.4f);
 

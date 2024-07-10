@@ -1,28 +1,24 @@
 ﻿using CustomSabersLite.Data;
+using CustomSabersLite.Utilities.Extensions;
 using UnityEngine;
 
 namespace CustomSabersLite.Components.Game;
 
 internal class LiteSaberTrail : SaberTrail
 {
-    private CustomSaber.ColorType trailColorType;
-    private Color colorMultiplier;
-    private Transform customTrailTopTransform;
-    private Transform customTrailBottomTransform;
-
     private readonly SaberMovementData customTrailMovementData = new();
+
+    public int OverrideWidth { private get; set; } = 100;
+
+    public bool UseWidthOverride { private get; set; }
+
+    public CustomTrailData InstanceTrailData { get; private set; }
 
     void Awake() => _movementData = customTrailMovementData;
 
     public void Init(CustomTrailData trailData)
     {
-        trailColorType = trailData.ColorType;
-        colorMultiplier = trailData.ColorMultiplier;
-        customTrailTopTransform = trailData.Top;
-        customTrailBottomTransform = trailData.Bottom;
-
-        customTrailTopTransform.name = "Custom Top";
-        customTrailBottomTransform.name = "Custom Bottom";
+        InstanceTrailData = trailData;
         gameObject.layer = 12;
 
         SetColorImpl(trailData.Color);
@@ -32,18 +28,21 @@ internal class LiteSaberTrail : SaberTrail
     {
         if (gameObject.activeInHierarchy)
         {
-            customTrailMovementData.AddNewData(customTrailTopTransform.position, customTrailBottomTransform.position, TimeHelper.time);
+            var topPosition = InstanceTrailData.TopPosition;
+            var bottomPosition = !UseWidthOverride ? InstanceTrailData.BottomPosition
+                : InstanceTrailData.GetOverrideWidthBottom(OverrideWidth);
+            customTrailMovementData.AddNewData(topPosition, bottomPosition, TimeHelper.time);
         }
     }
 
     public void SetColor(Color color)
     {
-        if (trailColorType != CustomSaber.ColorType.CustomColor) SetColorImpl(color);
+        if (InstanceTrailData.ColorType != CustomSaber.ColorType.CustomColor) SetColorImpl(color);
     }
 
     private void SetColorImpl(Color color)
     {
-        color *= colorMultiplier;
+        color *= InstanceTrailData.ColorMultiplier;
         foreach (var material in _trailRenderer._meshRenderer.materials)
             material.SetColor(MaterialProperties.Color, color);
         _color = color;

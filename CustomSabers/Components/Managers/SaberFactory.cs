@@ -17,8 +17,17 @@ internal class SaberFactory(CustomSabersLoader customSabersLoader, CSLConfig con
 
     public LiteSaber TryCreate(SaberType saberType, CustomSaberData saberData)
     {
+        if (saberData is null || saberData.FilePath is null)
+        {
+            return null;
+        }
+
         var original = saberData.GetPrefab(saberType);
-        if (!original) return null;
+        if (!original)
+        {
+            return null;
+        }
+
         var newSaber = GameObject.Instantiate(original).AddComponent<LiteSaber>();
         newSaber.Init(saberData.Type);
         return newSaber;

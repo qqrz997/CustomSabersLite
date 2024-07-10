@@ -4,7 +4,6 @@ using CustomSabersLite.Data;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Utilities;
 using Zenject;
-using CustomSabersLite.Utilities.Extensions;
 
 namespace CustomSabersLite.Components.Game;
 
@@ -57,9 +56,6 @@ internal class TrailFactory
     {
         var trail = saberObject.AddComponent<LiteSaberTrail>();
 
-        if (primaryTrail && config.OverrideTrailWidth)
-            trailData.Bottom.position = trailData.GetOverrideWidthBottom(config.TrailWidth);
-
         trail._trailDuration = trailData.Length;
         trail._samplingFrequency = defaultSamplingFrequency;
         trail._granularity = defaultGranularity;
@@ -70,7 +66,6 @@ internal class TrailFactory
         trail._trailElementCollection = defaultTrailElementCollection;
 
         trail.Init(trailData);
-        trail.ConfigureTrail(config);
 
         return trail;
     }
@@ -78,15 +73,18 @@ internal class TrailFactory
     private LiteSaberTrail CreateDefaultTrail(Saber defaultSaber, GameObject saberObject, float intensity)
     {
         // Make new transforms based on the default ones, because we cannot modify the default transforms
+        defaultTop.SetParent(defaultSaber._saberBladeTopTransform.parent);
+        defaultBottom.SetParent(defaultSaber._saberBladeBottomTransform.parent);
+
+        defaultTop.position = defaultSaber._saberBladeTopTransform.position;
+        defaultBottom.position = defaultSaber._saberBladeBottomTransform.position;
+
         var trailData = new CustomTrailData(
             defaultTop, defaultBottom,
             TrailRendererPrefab._meshRenderer.material,
             CustomSaber.ColorType.CustomColor, Color.white, Color.white,
             TrailUtils.DefaultDuration);
-        trailData.Top.SetParent(defaultSaber._saberBladeTopTransform.parent);
-        trailData.Bottom.SetParent(defaultSaber._saberBladeBottomTransform.parent);
-        trailData.Top.position = defaultSaber._saberBladeTopTransform.position;
-        trailData.Bottom.position = defaultSaber._saberBladeBottomTransform.position;
+
         return CreateTrail(saberObject, trailData, intensity, true);
     }
 }
