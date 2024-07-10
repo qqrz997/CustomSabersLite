@@ -14,15 +14,9 @@ internal class CustomSabersLoader(SaberInstanceManager saberInstanceManager, Sab
     private readonly SaberLoader saberLoader = saberLoader;
     private readonly WhackerLoader whackerLoader = whackerLoader;
 
-    public async Task<CustomSaberData> GetSaberData(string saberPath)
-    {
-        if (!saberInstanceManager.TryGetSaber(saberPath, out var saberData))
-        {
-            (saberData, _) = await LoadSaberDataAsync(saberPath);
-            saberInstanceManager.AddSaber(saberData);
-        }
-        return saberData;
-    }
+    public async Task<CustomSaberData> GetSaberData(string saberPath) =>
+        string.IsNullOrWhiteSpace(saberPath) ? null
+        : saberInstanceManager.TryGetSaber(saberPath) ?? await LoadNew(saberPath);
 
     public async Task<(CustomSaberData saberData, SaberLoaderError loadingError)> LoadSaberDataAsync(string relativeSaberPath) =>
         SaberAssetBlacklist.IsOnBlacklist(relativeSaberPath) ? (CustomSaberData.Empty, SaberLoaderError.Blacklist)
@@ -32,4 +26,11 @@ internal class CustomSabersLoader(SaberInstanceManager saberInstanceManager, Sab
             FileExts.Whacker => await whackerLoader.LoadWhackerAsync(relativeSaberPath),
             _ => (CustomSaberData.Empty, SaberLoaderError.InvalidFileType)
         };
+
+    private async Task<CustomSaberData> LoadNew(string saberPath)
+    {
+        var saberData = (await LoadSaberDataAsync(saberPath)).saberData;
+        saberInstanceManager.AddSaber(saberData);
+        return saberData;
+    }
 }

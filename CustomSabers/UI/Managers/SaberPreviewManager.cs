@@ -45,27 +45,17 @@ internal class SaberPreviewManager : IInitializable
     {
         SetPreviewActive(false);
 
-        if (string.IsNullOrWhiteSpace(config.CurrentlySelectedSaber)) return;
-
         var saberData = await saberFactory.GetCurrentSaberDataAsync();
         token.ThrowIfCancellationRequested();
 
         var leftSaber = saberFactory.TryCreate(SaberType.SaberA, saberData);
         var rightSaber = saberFactory.TryCreate(SaberType.SaberB, saberData);
-        
-        if (leftSaber && rightSaber)
-        {
-            previewSaberManager.ReplaceSabers(leftSaber, rightSaber);
-            previewTrailManager.SetTrails(leftSaber, rightSaber);
-        }
+        previewSaberManager.ReplaceSabers(leftSaber, rightSaber);
+        previewTrailManager.SetTrails(leftSaber, rightSaber);
 
         var leftMenuSaber = saberFactory.TryCreate(SaberType.SaberA, saberData);
         var rightMenuSaber = saberFactory.TryCreate(SaberType.SaberB, saberData);
-
-        if (leftMenuSaber && rightMenuSaber)
-        {
-            menuSaberManager.ReplaceSabers(leftMenuSaber, rightMenuSaber);
-        }
+        menuSaberManager.ReplaceSabers(leftMenuSaber, rightMenuSaber);
 
         UpdateTrails();
         UpdateColor();

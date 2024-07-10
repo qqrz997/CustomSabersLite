@@ -24,8 +24,10 @@ internal class SaberInstanceManager : IDisposable
     public bool HasSaber(string saberPath) => 
         saberInstances.ContainsKey(saberPath);
 
-    public bool TryGetSaber(string saberPath, out CustomSaberData saber) => 
-        saberInstances.TryGetValue(saberPath, out saber);
+    public CustomSaberData TryGetSaber(string saberPath) => 
+        saberPath is null ? null
+        : !saberInstances.ContainsKey(saberPath) ? null
+        : saberInstances[saberPath];
 
     public void Dispose()
     {
