@@ -12,9 +12,6 @@ internal class TrailFactory
     [Inject] private readonly CSLConfig config;
     [Inject] private readonly InternalResourcesProvider resourcesProvider;
 
-    private readonly Transform defaultTop = new GameObject().transform;
-    private readonly Transform defaultBottom = new GameObject().transform;
-
     private SaberTrailRenderer TrailRendererPrefab => resourcesProvider.SaberTrailRenderer;
 
     private int defaultSamplingFrequency;
@@ -47,12 +44,14 @@ internal class TrailFactory
         var trails = new List<LiteSaberTrail>();
         for (var i = 0; i < trailsData.Length; i++)
         {
-            trails.Add(CreateTrail(saberObject, trailsData[i], intensity, primaryTrail: i == 0));
+            var trail = CreateTrail(saberObject, trailsData[i], intensity);
+            trail.ConfigureTrail(config, i == 0);
+            trails.Add(trail);
         }
         return [..trails];
     }
 
-    private LiteSaberTrail CreateTrail(GameObject saberObject, CustomTrailData trailData, float intensity, bool primaryTrail = false)
+    private LiteSaberTrail CreateTrail(GameObject saberObject, CustomTrailData trailData, float intensity)
     {
         var trail = saberObject.AddComponent<LiteSaberTrail>();
 
@@ -73,18 +72,25 @@ internal class TrailFactory
     private LiteSaberTrail CreateDefaultTrail(Saber defaultSaber, GameObject saberObject, float intensity)
     {
         // Make new transforms based on the default ones, because we cannot modify the default transforms
-        defaultTop.SetParent(defaultSaber._saberBladeTopTransform.parent);
-        defaultBottom.SetParent(defaultSaber._saberBladeBottomTransform.parent);
+        var top = new GameObject().transform;
+        var bottom = new GameObject().transform;
 
-        defaultTop.position = defaultSaber._saberBladeTopTransform.position;
-        defaultBottom.position = defaultSaber._saberBladeBottomTransform.position;
+        top.SetParent(defaultSaber._saberBladeTopTransform.parent);
+        bottom.SetParent(defaultSaber._saberBladeBottomTransform.parent);
+
+        top.position = defaultSaber._saberBladeTopTransform.position;
+        bottom.position = defaultSaber._saberBladeBottomTransform.position;
 
         var trailData = new CustomTrailData(
-            defaultTop, defaultBottom,
+            top, bottom,
             TrailRendererPrefab._meshRenderer.material,
-            CustomSaber.ColorType.CustomColor, Color.white, Color.white,
+            defaultSaber.saberType == SaberType.SaberA ? CustomSaber.ColorType.LeftSaber : CustomSaber.ColorType.RightSaber,
+            Color.white, Color.white,
             TrailUtils.DefaultDuration);
 
-        return CreateTrail(saberObject, trailData, intensity, true);
+        var trail = CreateTrail(saberObject, trailData, intensity);
+        trail.ConfigureTrail(config, true);
+
+        return trail;
     }
 }
