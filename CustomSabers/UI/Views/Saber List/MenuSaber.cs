@@ -5,16 +5,19 @@ using CustomSabersLite.Utilities;
 using CustomSabersLite.Utilities.Extensions;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 namespace CustomSabersLite.UI.Views.Saber_List;
-internal class MenuSaber(CSLConfig config, Transform parent, SaberTrailRenderer trailRendererPrefab)
+internal class MenuSaber(Transform parent)
 {
-    private readonly CSLConfig config = config;
-    private readonly Transform saberParent = parent;
-    private readonly SaberTrailRenderer trailRendererPrefab = trailRendererPrefab;
+    [Inject] private readonly CSLConfig config;
+    [Inject] private readonly InternalResourcesProvider resourcesProvider;
 
+    private readonly Transform saberParent = parent;
     private LiteSaber saberInstance;
-    private List<LiteSaberTrail> trailInstances = [];
+    private readonly List<LiteSaberTrail> trailInstances = [];
+
+    private SaberTrailRenderer TrailRendererPrefab => resourcesProvider.SaberTrailRenderer;
 
     public void ReplaceSaber(LiteSaber newSaber)
     {
@@ -30,10 +33,9 @@ internal class MenuSaber(CSLConfig config, Transform parent, SaberTrailRenderer 
             collider.enabled = false; // todo - is there a way to stop the colliders messing with the menu pointers
         }
 
-        var trails = saberInstance.InstanceTrails;
-        for (var i = 0; i < trails.Length; i++)
+        foreach (var trail in saberInstance.InstanceTrails)
         {
-            trailInstances.Add(CreateTrail(saberInstance.gameObject, trails[i], i == 0));
+            trailInstances.Add(CreateTrail(saberInstance.gameObject, trail));
         }
     }
 
@@ -46,15 +48,12 @@ internal class MenuSaber(CSLConfig config, Transform parent, SaberTrailRenderer 
             {
                 continue;
             }
-            var whiteSectionDuration = config.DisableWhiteTrail ? 0f : 0.03f;
-            var (material, duration) = config.TrailType switch
-            {
-                TrailType.Custom => (trail.InstanceTrailData.Material, config.OverrideTrailDuration ? config.TrailDuration / 250f : trail.InstanceTrailData.Length),
-                TrailType.Vanilla => (trailRendererPrefab._meshRenderer.material, config.OverrideTrailDuration ? config.TrailDuration / 250f : 0.4f),
-                _ => (null, 0.0f)
-            };
 
             trail.ConfigureTrail(config, primaryTrail);
+
+            // todo - use custom default trail
+            trail.enabled = config.TrailType == TrailType.Custom;
+
             primaryTrail = false;
         }
     }
@@ -70,7 +69,7 @@ internal class MenuSaber(CSLConfig config, Transform parent, SaberTrailRenderer 
 
     public void SetActive(bool active) => saberInstance?.gameObject.SetActive(active);
 
-    private LiteSaberTrail CreateTrail(GameObject parent, CustomTrailData trailData, bool primaryTrail = false)
+    private LiteSaberTrail CreateTrail(GameObject parent, CustomTrailData trailData)
     {
         var trail = parent.AddComponent<LiteSaberTrail>();
 
@@ -78,7 +77,7 @@ internal class MenuSaber(CSLConfig config, Transform parent, SaberTrailRenderer 
         trail._samplingFrequency = 120;
         trail._granularity = 45;
         trail._color = trailData.Color * trailData.ColorMultiplier;
-        trail._trailRenderer = GameObject.Instantiate(trailRendererPrefab, Vector3.zero, Quaternion.identity);
+        trail._trailRenderer = GameObject.Instantiate(TrailRendererPrefab, Vector3.zero, Quaternion.identity);
         trail._trailRenderer._meshRenderer.material = trailData.Material;
         trail._trailRenderer._meshRenderer.material.color = trailData.Color * trailData.ColorMultiplier;
 

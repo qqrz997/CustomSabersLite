@@ -11,6 +11,7 @@ internal class MenuSaberManager
 {
     [Inject] private readonly MenuPointerProvider menuPointerProvider;
     [Inject] private readonly InternalResourcesProvider internalResourcesProvider;
+    [Inject] private readonly DiContainer container;
     [Inject] private readonly CSLConfig config;
 
     private MenuSaber leftSaber;
@@ -18,8 +19,8 @@ internal class MenuSaberManager
 
     public void Init()
     {
-        leftSaber = new(config, menuPointerProvider.LeftPointer.transform, internalResourcesProvider.SaberTrailRenderer);
-        rightSaber = new(config, menuPointerProvider.RightPointer.transform, internalResourcesProvider.SaberTrailRenderer);
+        leftSaber = container.Instantiate<MenuSaber>([menuPointerProvider.LeftPointer.transform]);
+        rightSaber = container.Instantiate<MenuSaber>([menuPointerProvider.RightPointer.transform]);
     }
 
     public void ReplaceSabers(LiteSaber newLeftSaber, LiteSaber newRightSaber)
