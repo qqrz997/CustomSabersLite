@@ -19,8 +19,8 @@ internal class MenuSaberManager
 
     public void Init()
     {
-        leftSaber = container.Instantiate<MenuSaber>([menuPointerProvider.LeftPointer.transform]);
-        rightSaber = container.Instantiate<MenuSaber>([menuPointerProvider.RightPointer.transform]);
+        leftSaber = container.Instantiate<MenuSaber>([menuPointerProvider.LeftPointer.transform, SaberType.SaberA]);
+        rightSaber = container.Instantiate<MenuSaber>([menuPointerProvider.RightPointer.transform, SaberType.SaberB]);
     }
 
     public void ReplaceSabers(LiteSaber newLeftSaber, LiteSaber newRightSaber)

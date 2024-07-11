@@ -4,8 +4,9 @@ using CustomSabersLite.Data;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Utilities;
 using Zenject;
+using CustomSabersLite.Components.Game;
 
-namespace CustomSabersLite.Components.Game;
+namespace CustomSabersLite.Components.Managers;
 
 internal class TrailFactory
 {
@@ -50,7 +51,7 @@ internal class TrailFactory
         trail._granularity = defaultGranularity;
         trail._trailRenderer = Object.Instantiate(TrailRendererPrefab, Vector3.zero, Quaternion.identity);
         trail._trailRenderer._meshRenderer.material = trailData.Material;
-        
+
         var baseColor = trailData.Color.ColorWithAlpha(intensity) * trailData.ColorMultiplier;
         trail._trailRenderer._meshRenderer.material.color = baseColor;
         trail._color = baseColor;
