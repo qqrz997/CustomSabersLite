@@ -7,10 +7,10 @@ namespace CustomSabersLite.Utilities;
 
 internal static class TrailUtils
 {
-    // Legacy trail duration in frames (i think)(i didn't actually check the original trail code lol)
-    public const int LegacyDuration = 36;
+    // Legacy trail duration in frames
+    public const int LegacyDuration = 30;
 
-    // Default duration of the saber trail - measured in seconds
+    // Default duration of the saber trail in seconds
     public const float DefaultDuration = 0.4f;
 
     /// <summary>
