@@ -28,6 +28,7 @@ internal class SaberPreviewManager : IInitializable
     private readonly Transform rightPreviewParent = new GameObject("Right").transform;
 
     private bool previewActive;
+    private bool previewGenerating;
 
     public void Initialize()
     {
@@ -43,7 +44,8 @@ internal class SaberPreviewManager : IInitializable
       
     public async Task GeneratePreview(CancellationToken token)
     {
-        SetPreviewActive(false);
+        previewGenerating = true;
+        UpdateActivePreview();
 
         var saberData = await saberFactory.GetCurrentSaberDataAsync();
         token.ThrowIfCancellationRequested();
@@ -59,7 +61,9 @@ internal class SaberPreviewManager : IInitializable
 
         UpdateTrails();
         UpdateColor();
-        SetPreviewActive(previewActive);
+
+        previewGenerating = false;
+        UpdateActivePreview();
     }
 
     public void SetPreviewActive(bool active)
@@ -70,8 +74,8 @@ internal class SaberPreviewManager : IInitializable
 
     public void UpdateActivePreview()
     {
-        previewParent.gameObject.SetActive(previewActive && !config.EnableMenuSabers);
-        menuSaberManager.SetActive(previewActive && config.EnableMenuSabers);
+        previewParent.gameObject.SetActive(previewActive && !previewGenerating && !config.EnableMenuSabers);
+        menuSaberManager.SetActive(previewActive && !previewGenerating && config.EnableMenuSabers);
     }
 
     public void UpdateTrails()
