@@ -59,7 +59,7 @@ internal class SaberPreviewManager : IInitializable
 
         UpdateTrails();
         UpdateColor();
-        SetPreviewActive(true);
+        SetPreviewActive(previewActive);
     }
 
     public void SetPreviewActive(bool active)
