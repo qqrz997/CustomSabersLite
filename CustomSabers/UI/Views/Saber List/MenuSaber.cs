@@ -15,6 +15,14 @@ internal class MenuSaber
     [Inject] private readonly Transform saberParent;
     [Inject] private readonly SaberType saberType;
 
+    private Transform transform;
+
+    [Inject] private void Construct()
+    {
+        transform = new GameObject("MenuLiteSaber").transform;
+        transform.SetParent(saberParent, false);
+    }
+
     private LiteSaber saberInstance;
     private LiteSaberTrail[] trailInstances = [];
 
@@ -25,13 +33,17 @@ internal class MenuSaber
 
         if (!saberInstance) return;
 
-        saberInstance.SetParent(saberParent);
+        saberInstance.SetParent(transform);
         foreach (var collider in saberInstance.GetComponentsInChildren<Collider>())
         {
             collider.enabled = false; // todo - is there a way to stop the colliders messing with the menu pointers
         }
 
-        CreateNewTrails();
+        foreach (var trail in trailInstances)
+        {
+            Object.Destroy(trail);
+        }
+        trailInstances = trailFactory.CreateTrail(saberInstance, saberType);
     }
 
     public void UpdateTrails()
@@ -54,16 +66,8 @@ internal class MenuSaber
         }
     }
 
-    public void SetActive(bool active) => saberInstance?.gameObject.SetActive(active);
-
-    private void CreateNewTrails()
-    {
-        foreach (var trail in trailInstances)
-        {
-            Object.Destroy(trail);
-        }
-        trailInstances = trailFactory.CreateTrail(saberInstance, saberType);
-    }
+    public void SetActive(bool active) => 
+        saberInstance?.gameObject.SetActive(active);
 
     public class Factory : PlaceholderFactory<Transform, SaberType, MenuSaber> { }
 }
