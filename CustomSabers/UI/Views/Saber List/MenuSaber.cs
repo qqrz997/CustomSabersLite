@@ -1,7 +1,6 @@
 ﻿using CustomSabersLite.Components.Game;
 using CustomSabersLite.Components.Managers;
 using CustomSabersLite.Configuration;
-using CustomSabersLite.Data;
 using CustomSabersLite.Utilities;
 using CustomSabersLite.Utilities.Extensions;
 using UnityEngine;
@@ -9,17 +8,15 @@ using Zenject;
 
 namespace CustomSabersLite.UI.Views.Saber_List;
 
-internal class MenuSaber(Transform parent, SaberType saberType)
+internal class MenuSaber
 {
     [Inject] private readonly CSLConfig config;
     [Inject] private readonly TrailFactory trailFactory;
-
-    private readonly SaberType saberType = saberType;
-    private readonly Transform saberParent = parent;
+    [Inject] private readonly Transform saberParent;
+    [Inject] private readonly SaberType saberType;
 
     private LiteSaber saberInstance;
     private LiteSaberTrail[] trailInstances = [];
-    private TrailType lastTrailType = TrailType.Custom;
 
     public void ReplaceSaber(LiteSaber newSaber)
     {
@@ -39,28 +36,12 @@ internal class MenuSaber(Transform parent, SaberType saberType)
 
     public void UpdateTrails()
     {
-        if (!saberInstance)
+        for (var i = 0; i < trailInstances.Length; i++)
         {
-            return;
-        }
-
-        if (lastTrailType != config.TrailType)
-        {
-            CreateNewTrails();   
-        }
-        lastTrailType = config.TrailType;
-
-        var primaryTrail = true;
-        foreach (var trail in trailInstances)
-        {
-            if (!trail._trailRenderer)
+            if (trailInstances[i]._trailRenderer)
             {
-                continue;
+                trailInstances[i].ConfigureTrail(config, i == 0);
             }
-
-            trail.ConfigureTrail(config, primaryTrail);
-
-            primaryTrail = false;
         }
     }
 
@@ -83,4 +64,6 @@ internal class MenuSaber(Transform parent, SaberType saberType)
         }
         trailInstances = trailFactory.CreateTrail(saberInstance, saberType);
     }
+
+    public class Factory : PlaceholderFactory<Transform, SaberType, MenuSaber> { }
 }

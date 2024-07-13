@@ -2,6 +2,7 @@
 using CustomSabersLite.UI.Views;
 using CustomSabersLite.UI.Views.Saber_List;
 using CustomSabersLite.Utilities;
+using UnityEngine;
 using Zenject;
 
 namespace CustomSabersLite.Installers;
@@ -25,8 +26,9 @@ internal class CSLMenuInstaller : Installer
         Container.BindInterfacesTo<MenuButtonManager>().AsSingle();
         Container.BindInterfacesAndSelfTo<SaberPreviewManager>().AsSingle();
 
-        Container.Bind<MenuSaberManager>().AsSingle();
+        Container.BindInterfacesAndSelfTo<MenuSaberManager>().AsSingle();
         Container.Bind<MenuSaber>().AsTransient();
+        Container.BindFactory<Transform, SaberType, MenuSaber, MenuSaber.Factory>();
         Container.Bind<BasicPreviewSaberManager>().AsSingle();
         Container.Bind<BasicPreviewTrailManager>().AsSingle();
     }

@@ -1,5 +1,4 @@
 ﻿using CustomSabersLite.Components.Game;
-using CustomSabersLite.Configuration;
 using CustomSabersLite.UI.Views.Saber_List;
 using CustomSabersLite.Utilities;
 using UnityEngine;
@@ -7,20 +6,18 @@ using Zenject;
 
 namespace CustomSabersLite.UI.Managers;
 
-internal class MenuSaberManager
+internal class MenuSaberManager : IInitializable
 {
     [Inject] private readonly MenuPointerProvider menuPointerProvider;
-    [Inject] private readonly InternalResourcesProvider internalResourcesProvider;
-    [Inject] private readonly DiContainer container;
-    [Inject] private readonly CSLConfig config;
+    [Inject] private readonly MenuSaber.Factory menuSaberFactory;
 
     private MenuSaber leftSaber;
     private MenuSaber rightSaber;
 
-    public void Init()
+    public void Initialize()
     {
-        leftSaber = container.Instantiate<MenuSaber>([menuPointerProvider.LeftPointer.transform, SaberType.SaberA]);
-        rightSaber = container.Instantiate<MenuSaber>([menuPointerProvider.RightPointer.transform, SaberType.SaberB]);
+        leftSaber = menuSaberFactory.Create(menuPointerProvider.LeftPointer.transform, SaberType.SaberA);
+        rightSaber = menuSaberFactory.Create(menuPointerProvider.RightPointer.transform, SaberType.SaberB);
     }
 
     public void ReplaceSabers(LiteSaber newLeftSaber, LiteSaber newRightSaber)

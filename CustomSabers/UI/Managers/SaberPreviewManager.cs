@@ -39,7 +39,6 @@ internal class SaberPreviewManager : IInitializable
 
         previewSaberManager.Init(leftPreviewParent, rightPreviewParent);
         previewTrailManager.Init(leftPreviewParent, rightPreviewParent);
-        menuSaberManager.Init();
     }
       
     public async Task GeneratePreview(CancellationToken token)
