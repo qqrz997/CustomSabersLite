@@ -61,7 +61,7 @@ internal class TrailFactory
         return trail;
     }
 
-    private LiteSaberTrail CreateDefaultTrail(GameObject saberObject, SaberType saberType, float intensity)
+    public LiteSaberTrail CreateDefaultTrail(GameObject saberObject, SaberType saberType, float intensity)
     {
         // Make new transforms based on the default ones, because we cannot modify the default transforms
         var top = new GameObject("Top").transform;

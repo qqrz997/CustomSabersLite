@@ -1,6 +1,7 @@
 ﻿using CustomSabersLite.Components.Game;
 using CustomSabersLite.Components.Managers;
 using CustomSabersLite.Configuration;
+using CustomSabersLite.Data;
 using CustomSabersLite.Utilities;
 using CustomSabersLite.Utilities.Extensions;
 using UnityEngine;
@@ -15,12 +16,15 @@ internal class MenuSaber
     [Inject] private readonly Transform saberParent;
     [Inject] private readonly SaberType saberType;
 
-    private Transform transform;
+    private GameObject gameObject;
+    private LiteSaberTrail defaultTrail;
 
     [Inject] private void Construct()
     {
-        transform = new GameObject("MenuLiteSaber").transform;
-        transform.SetParent(saberParent, false);
+        gameObject = new GameObject("MenuLiteSaber");
+        gameObject.SetActive(false);
+        gameObject.transform.SetParent(saberParent, false);
+        defaultTrail = trailFactory.CreateDefaultTrail(gameObject, saberType, 1f);
     }
 
     private LiteSaber saberInstance;
@@ -29,37 +33,45 @@ internal class MenuSaber
     public void ReplaceSaber(LiteSaber newSaber)
     {
         saberInstance?.gameObject.DestroyImmediate();
-        saberInstance = newSaber;
 
-        if (!saberInstance) return;
+        if (!newSaber)
+        {
+            return;
+        }
 
-        saberInstance.SetParent(transform);
-        foreach (var collider in saberInstance.GetComponentsInChildren<Collider>())
+        newSaber.SetParent(gameObject.transform);
+        
+        foreach (var collider in newSaber.GetComponentsInChildren<Collider>())
         {
             collider.enabled = false; // todo - is there a way to stop the colliders messing with the menu pointers
         }
 
-        foreach (var trail in trailInstances)
-        {
-            Object.Destroy(trail);
-        }
-        trailInstances = trailFactory.CreateTrail(saberInstance, saberType);
+        trailInstances = trailFactory.CreateTrail(newSaber, saberType);
+        saberInstance = newSaber;
     }
 
     public void UpdateTrails()
     {
+        defaultTrail.ConfigureTrail(config, true);
+        defaultTrail.enabled = !config.OverrideTrailDuration ? config.TrailType == TrailType.Vanilla
+            : config.TrailDuration > 0 && config.TrailType == TrailType.Vanilla;
+
         for (var i = 0; i < trailInstances.Length; i++)
         {
-            if (trailInstances[i]._trailRenderer)
+            if (trailInstances[i])
             {
                 trailInstances[i].ConfigureTrail(config, i == 0);
+                trailInstances[i].enabled = !config.OverrideTrailDuration ? config.TrailType == TrailType.Custom
+                    : config.TrailDuration > 0 && config.TrailType == TrailType.Custom;
             }
         }
     }
 
     public void SetColor(Color color)
     {
+        defaultTrail.SetColor(color);
         saberInstance?.SetColor(color);
+        
         foreach (var trail in trailInstances)
         {
             trail.SetColor(color);
@@ -67,7 +79,10 @@ internal class MenuSaber
     }
 
     public void SetActive(bool active) => 
-        saberInstance?.gameObject.SetActive(active);
+        gameObject.SetActive(saberInstance && active);
 
     public class Factory : PlaceholderFactory<Transform, SaberType, MenuSaber> { }
+
+    private bool IsZeroScale() =>
+        config.TrailWidth == 0 || config.TrailDuration == 0;
 }
