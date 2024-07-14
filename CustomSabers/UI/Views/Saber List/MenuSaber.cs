@@ -32,7 +32,10 @@ internal class MenuSaber
 
     public void ReplaceSaber(LiteSaber newSaber)
     {
-        saberInstance?.gameObject.DestroyImmediate();
+        if (saberInstance)
+        {
+            saberInstance.gameObject.Destroy();
+        }
 
         if (!newSaber)
         {
@@ -82,7 +85,4 @@ internal class MenuSaber
         gameObject.SetActive(saberInstance && active);
 
     public class Factory : PlaceholderFactory<Transform, SaberType, MenuSaber> { }
-
-    private bool IsZeroScale() =>
-        config.TrailWidth == 0 || config.TrailDuration == 0;
 }

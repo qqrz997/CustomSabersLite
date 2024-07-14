@@ -86,8 +86,7 @@ internal class SaberPreviewManager : IInitializable
     public void UpdateColor()
     {
         var selectedColorScheme = colorSchemesSettings.GetSelectedColorScheme();
-        var (colorLeft, colorRight) = config.EnableCustomColorScheme ? (config.LeftSaberColor, config.RightSaberColor) 
-            : (selectedColorScheme.saberAColor, selectedColorScheme.saberBColor);
+        var (colorLeft, colorRight) = (selectedColorScheme.saberAColor, selectedColorScheme.saberBColor);
         previewSaberManager.SetColor(colorLeft, colorRight);
         menuSaberManager.SetColor(colorLeft, colorRight);
         previewTrailManager.SetColor(colorLeft, colorRight);

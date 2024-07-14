@@ -131,39 +131,6 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController, INotif
         set => config.EnableCustomEvents = value;
     }
 
-    [UIValue("enable-custom-color-scheme")]
-    public bool EnableCustomColorScheme
-    {
-        get => config.EnableCustomColorScheme;
-        set
-        {
-            config.EnableCustomColorScheme = value;
-            previewManager.UpdateColor();
-        }
-    }
-
-    [UIValue("left-saber-color")]
-    public Color LeftSaberColor
-    {
-        get => config.LeftSaberColor;
-        set
-        {
-            config.LeftSaberColor = value;
-            previewManager.UpdateColor();
-        }
-    }
-
-    [UIValue("right-saber-color")]
-    public Color RightSaberColor
-    {
-        get => config.RightSaberColor;
-        set
-        {
-            config.RightSaberColor = value;
-            previewManager.UpdateColor();
-        }
-    }
-
     [UIValue("forcefully-foolish")]
     public bool ForcefullyFoolish
     {

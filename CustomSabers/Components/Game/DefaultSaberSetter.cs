@@ -36,28 +36,5 @@ internal class DefaultSaberSetter(CSLConfig config, SaberManager saberManager, G
         {
             return;
         }
-
-        if (config.EnableCustomColorScheme)
-        {
-            var color = saber.saberType == SaberType.SaberA ? config.LeftSaberColor : config.RightSaberColor;
-
-            SetCustomSchemeColor(color, saberModelController);
-            trail._color = color.ColorWithAlpha(gameplayCoreData.playerSpecificSettings.saberTrailIntensity);
-        }
-    }
-
-    private static void SetCustomSchemeColor(Color color, SaberModelController saberModelController)
-    {
-        foreach (var setSaberGlowColor in saberModelController._setSaberGlowColors)
-        {
-            var materialPropertyBlock = setSaberGlowColor._materialPropertyBlock ?? new MaterialPropertyBlock();
-
-            foreach (var propertyTintColorPair in setSaberGlowColor._propertyTintColorPairs)
-            {
-                materialPropertyBlock.SetColor(propertyTintColorPair.property, color * propertyTintColorPair.tintColor);
-            }
-
-            setSaberGlowColor._meshRenderer.SetPropertyBlock(materialPropertyBlock);
-        }
     }
 }

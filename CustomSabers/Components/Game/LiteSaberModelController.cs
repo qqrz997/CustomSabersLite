@@ -47,12 +47,8 @@ internal class LiteSaberModelController : SaberModelController, IColorable, IPre
         customSaberInstance.SetParent(transform);
         eventManagerManager.InitializeEventManager(customSaberInstance.EventManager, saber.saberType);
 
-        SetColor(config.EnableCustomColorScheme ? CustomSchemeColorForSaberType(saber.saberType)
-            : colorManager.ColorForSaberType(saber.saberType));
+        SetColor(colorManager.ColorForSaberType(saber.saberType));
     }
-
-    private Color CustomSchemeColorForSaberType(SaberType saberType) =>
-        saberType == SaberType.SaberA ? config.LeftSaberColor : config.RightSaberColor;
 
     private void SetColor(Color color)
     {
