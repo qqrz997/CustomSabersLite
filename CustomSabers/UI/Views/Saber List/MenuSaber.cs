@@ -49,7 +49,7 @@ internal class MenuSaber
             collider.enabled = false; // todo - is there a way to stop the colliders messing with the menu pointers
         }
 
-        trailInstances = trailFactory.CreateTrail(newSaber, saberType);
+        trailInstances = trailFactory.CreateTrail(newSaber, saberType, TrailType.Custom);
         saberInstance = newSaber;
     }
 
