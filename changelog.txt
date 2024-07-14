@@ -1,5 +1,13 @@
 changelog
 
+0.12.0
+- Added the ability to hold sabers in the menu
+- Removed the saber color scheme setting, however, this feature will be moved into its own mod
+- Game and menu saber trails now respect color types and color multipliers as they were originally intended to be used
+- Fixed the conversion of legacy custom trail length to new trail duration
+- Fixed the saber list selecting the default sabers upon opening the menu
+- Fixed some edge case errors related to loading sabers and trails
+
 0.11.1
 - A large optimization which makes it possible to have large quantities of saber files in the CustomSabers folder
 - It is no longer necessary to wait until all sabers are loaded before being able to access the custom sabers settings menu
