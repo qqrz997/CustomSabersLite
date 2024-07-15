@@ -23,7 +23,7 @@ internal class CSLGameInstaller : Installer
         {
             // This replaces the default sabers
             Container.BindInterfacesAndSelfTo<LevelSaberManager>().AsSingle();
-            Container.BindInstance(SaberModelRegistration.Create<LiteSaberModelController>(5)).AsSingle();
+            Container.BindInstance(SaberModelRegistration.Create<LiteSaberModelController>(5));
         }
         else
         {
