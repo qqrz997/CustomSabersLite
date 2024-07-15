@@ -1,5 +1,8 @@
 changelog
 
+0.12.1
+- Fixed incompatibility with other saber mods
+
 0.12.0
 - Added the ability to hold sabers in the menu
 - Removed the saber color scheme setting, however, this feature will be moved into its own mod
