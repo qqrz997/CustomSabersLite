@@ -18,9 +18,7 @@ internal class CustomSabersLoader(SaberInstanceManager saberInstanceManager, Sab
         string.IsNullOrWhiteSpace(saberPath) ? null
         : saberInstanceManager.TryGetSaber(saberPath) ?? await LoadNew(saberPath);
 
-    public async Task<(CustomSaberData saberData, SaberLoaderError loadingError)> LoadSaberDataAsync(string relativeSaberPath) =>
-        SaberAssetBlacklist.IsOnBlacklist(relativeSaberPath) ? (CustomSaberData.Empty, SaberLoaderError.Blacklist)
-        : Path.GetExtension(relativeSaberPath) switch
+    public async Task<(CustomSaberData saberData, SaberLoaderError loadingError)> LoadSaberDataAsync(string relativeSaberPath) => Path.GetExtension(relativeSaberPath) switch
         {
             FileExts.Saber => await saberLoader.LoadCustomSaberAsync(relativeSaberPath),
             FileExts.Whacker => await whackerLoader.LoadWhackerAsync(relativeSaberPath),

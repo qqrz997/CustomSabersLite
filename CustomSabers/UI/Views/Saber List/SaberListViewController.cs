@@ -179,7 +179,6 @@ internal class SaberListViewController : BSMLAutomaticViewController
             var (text, subtext) = metadata.LoadingError switch
             {
                 SaberLoaderError.None => (metadata.SaberName, metadata.AuthorName),
-                SaberLoaderError.Blacklist => ($"<color=#F77>Not loaded - </color> {metadata.SaberName}", "Incompatible after Beat Saber v1.29.1"),
                 SaberLoaderError.InvalidFileType => ($"<color=#F77>Error - </color> {metadata.SaberName}", "File is not of a valid type"),
                 SaberLoaderError.FileNotFound => ($"<color=#F77>Error - </color> {metadata.SaberName}", "Couldn't find file (was it deleted?)"),
                 SaberLoaderError.LegacyWhacker => ($"<color=#F77>Not loaded - </color> {metadata.SaberName}", "Legacy whacker, incompatible with PC"),
