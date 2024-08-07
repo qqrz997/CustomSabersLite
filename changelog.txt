@@ -1,5 +1,8 @@
 changelog
 
+0.12.2
+- Removed a preventitive measure to stop certain sabers from loading which would crash the game on Unity 2021.3.16f1; this is no longer a problem from Beat Saber 1.37.2 onwards
+
 0.12.1
 - Fixed incompatibility with other saber mods
 
