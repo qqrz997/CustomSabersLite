@@ -8,7 +8,6 @@ namespace CustomSabersLite.Components.Game;
 
 internal class LiteSaberModelController : SaberModelController, IColorable, IPreSaberModelInit
 {
-    [Inject] private readonly CSLConfig config;
     [Inject] private readonly LevelSaberManager levelSaberManager;
     [Inject] private readonly TrailFactory trailFactory;
     [Inject] private readonly SaberFactory saberFactory;
@@ -17,7 +16,7 @@ internal class LiteSaberModelController : SaberModelController, IColorable, IPre
     [Inject] private readonly GameplayCoreSceneSetupData gameplaySetupData;
 
     private LiteSaber customSaberInstance;
-    private LiteSaberTrail[] customTrailInstances;
+    private LiteSaberTrail[] customTrailInstances = [];
 
     public Color Color { get => color.GetValueOrDefault(); set => SetColor(value); }
     private Color? color;
