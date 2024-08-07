@@ -31,6 +31,7 @@ internal class LiteSaber : MonoBehaviour
     {
         GetColorableMaterialsFromSaber();
         EventManager = gameObject.TryGetComponentOrDefault<EventManager>();
+        SetLayer(gameObject, 12);
     }
 
     void OnDestroy()
@@ -46,6 +47,15 @@ internal class LiteSaber : MonoBehaviour
         foreach (var mat in colorableMaterials)
         {
             mat.SetColor(MaterialProperties.Color, color);
+        }
+    }
+
+    private void SetLayer(GameObject gameObject, int layer)
+    {
+        gameObject.layer = layer;
+        for (var i = 0; i < gameObject.transform.childCount; i++)
+        {
+            SetLayer(gameObject.transform.GetChild(i).gameObject, layer);
         }
     }
 
