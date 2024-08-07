@@ -29,9 +29,25 @@ internal class LiteSaber : MonoBehaviour
 
     void Awake()
     {
-        GetColorableMaterialsFromSaber();
         EventManager = gameObject.TryGetComponentOrDefault<EventManager>();
-        SetLayer(gameObject, 12);
+        SetLayer(gameObject, 12); 
+        foreach (var renderer in gameObject.GetComponentsInChildren<Renderer>(true))
+        {
+            if (!renderer) continue;
+
+            var materials = renderer.sharedMaterials;
+
+            for (var i = 0; i < materials.Length; i++)
+            {
+                var material = materials[i];
+                if (material != null && IsColorable(material))
+                {
+                    materials[i] = new(materials[i]);
+                    renderer.sharedMaterials = materials;
+                    colorableMaterials.Add(materials[i]);
+                }
+            }
+        }
     }
 
     void OnDestroy()
@@ -56,27 +72,6 @@ internal class LiteSaber : MonoBehaviour
         for (var i = 0; i < gameObject.transform.childCount; i++)
         {
             SetLayer(gameObject.transform.GetChild(i).gameObject, layer);
-        }
-    }
-
-    private void GetColorableMaterialsFromSaber()
-    {
-        foreach (var renderer in gameObject.GetComponentsInChildren<Renderer>(true))
-        {
-            if (!renderer) continue;
-
-            var materials = renderer.sharedMaterials;
-
-            for (var i = 0; i < materials.Length; i++)
-            {
-                var material = materials[i];
-                if (material != null && IsColorable(material))
-                {
-                    materials[i] = new(materials[i]);
-                    renderer.sharedMaterials = materials;
-                    colorableMaterials.Add(materials[i]);
-                }
-            }
         }
     }
 
