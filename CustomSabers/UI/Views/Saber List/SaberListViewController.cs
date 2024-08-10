@@ -134,9 +134,9 @@ internal class SaberListViewController : BSMLAutomaticViewController
                     File.Move(currentSaberPath, destinationPath);
 
                     cacheManager.SabersMetadata.RemoveAt(cacheManager.SelectedSaberIndex);
+                    cacheManager.SelectedSaberIndex--;
                     SetupList();
                     gameplaySetupTab.SetupList();
-                    cacheManager.SelectedSaberIndex--;
                 }
                 else
                 {
