@@ -1,5 +1,8 @@
 changelog
 
+0.12.5
+- Updated to 1.37.5
+
 0.12.4
 - Fixed the correct saber not being selected after deleting a saber
 - Fixed an error caused by deleting the last saber in the list
