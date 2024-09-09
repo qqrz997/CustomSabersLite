@@ -3,13 +3,13 @@
   "id": "CustomSabersLite",
   "name": "CustomSabersLite",
   "author": "qqrz997",
-  "version": "0.12.5",
+  "version": "0.12.6",
   "description": "A plugin to replace default sabers with custom sabers.",
-  "gameVersion": "1.37.4",
+  "gameVersion": "1.37.5",
   "dependsOn": {
     "BSIPA": "^4.3.5",
-    "BeatSaberMarkupLanguage": "^1.11.4",
-    "AssetBundleLoadingTools": "^1.1.7",
+    "BeatSaberMarkupLanguage": "^1.12.0",
+    "AssetBundleLoadingTools": "^1.1.8",
     "SiraUtil": "^3.1.11",
     "System.IO.Compression.FileSystem": "^4.7.3056"
   }

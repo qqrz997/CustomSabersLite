@@ -34,13 +34,13 @@ internal class GameplaySetupTab(CSLConfig config, CacheManager cacheManager, ICo
     public void Initialize()
     {
         Logger.Debug("Creating tab");
-        GameplaySetup.instance.AddTab("Custom Sabers", resourceName, this);
+        GameplaySetup.Instance.AddTab("Custom Sabers", resourceName, this);
     }
 
     public void Dispose()
     {
         cacheManager.LoadingComplete -= SetupList;
-        GameplaySetup.instance.RemoveTab("Custom Sabers");
+        GameplaySetup.Instance.RemoveTab("Custom Sabers");
     }
 
     #region trail settings
@@ -176,7 +176,7 @@ internal class GameplaySetupTab(CSLConfig config, CacheManager cacheManager, ICo
 
     public void SetupList()
     {
-        saberList.data.Clear();
+        saberList.Data.Clear();
         var richTextRegex = new Regex(@"<[^>]*>");
 
         foreach (var metadata in cacheManager.SabersMetadata)
@@ -188,11 +188,11 @@ internal class GameplaySetupTab(CSLConfig config, CacheManager cacheManager, ICo
                 : cleanedName.Substring(0, maxLength - 1).Trim() + "...";
             if (metadata.LoadingError != SaberLoaderError.None)
                 displayName = $"<color=red>Error</color> {displayName}";
-            saberList.data.Add(new(displayName));
+            saberList.Data.Add(new(displayName));
         }
 
         saberListLoadingIcon.gameObject.SetActive(false);
-        saberList.tableView.ReloadData();
+        saberList.TableView.ReloadData();
     }
 
     public void Activated()
@@ -214,7 +214,7 @@ internal class GameplaySetupTab(CSLConfig config, CacheManager cacheManager, ICo
     {
         yield return new WaitUntil(() => saberList.gameObject.activeInHierarchy);
         yield return new WaitForEndOfFrame();
-        saberList.tableView.SelectCellWithIdx(cacheManager.SelectedSaberIndex);
-        saberList.tableView.ScrollToCellWithIdx(cacheManager.SelectedSaberIndex, TableView.ScrollPositionType.Center, true);
+        saberList.TableView.SelectCellWithIdx(cacheManager.SelectedSaberIndex);
+        saberList.TableView.ScrollToCellWithIdx(cacheManager.SelectedSaberIndex, TableView.ScrollPositionType.Center, true);
     }
 }

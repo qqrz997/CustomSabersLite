@@ -156,8 +156,8 @@ internal class SaberListViewController : BSMLAutomaticViewController
     {
         reloadButtonSelectable.interactable = false;
 
-        customListTableData.data.Clear();
-        customListTableData.tableView.ReloadData();
+        customListTableData.Data.Clear();
+        customListTableData.TableView.ReloadData();
         saberListLoadingIcon.gameObject.SetActive(true);
 
         await cacheManager.ReloadAsync();
@@ -170,7 +170,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
 
     private void SetupList()
     {
-        customListTableData.data.Clear();
+        customListTableData.Data.Clear();
 
         var richTextRegex = new Regex(@"<[^>]*>");
 
@@ -187,24 +187,24 @@ internal class SaberListViewController : BSMLAutomaticViewController
                 _ => ($"<color=#F77>Error - </color> {metadata.SaberName}", "Unknown error encountered during loading")
             };
 
-            customListTableData.data.Add(new(
+            customListTableData.Data.Add(new(
                 text,
                 richTextRegex.Replace(subtext, string.Empty).Trim(),
                 metadata.GetIcon()));
         }
 
-        customListTableData.tableView.ReloadData();
+        customListTableData.TableView.ReloadData();
         saberListLoadingIcon.gameObject.SetActive(false);
         StartCoroutine(ScrollToSelectedCell());
-        OnSelect(customListTableData.tableView, cacheManager.SelectedSaberIndex);
+        OnSelect(customListTableData.TableView, cacheManager.SelectedSaberIndex);
     }
 
     private IEnumerator ScrollToSelectedCell()
     {
         yield return new WaitUntil(() => customListTableData.gameObject.activeInHierarchy);
         yield return new WaitForEndOfFrame();
-        customListTableData.tableView.SelectCellWithIdx(cacheManager.SelectedSaberIndex);
-        customListTableData.tableView.ScrollToCellWithIdx(cacheManager.SelectedSaberIndex, TableView.ScrollPositionType.Center, true);
+        customListTableData.TableView.SelectCellWithIdx(cacheManager.SelectedSaberIndex);
+        customListTableData.TableView.ScrollToCellWithIdx(cacheManager.SelectedSaberIndex, TableView.ScrollPositionType.Center, true);
     }
 
     [UIValue("toggle-menu-sabers")]

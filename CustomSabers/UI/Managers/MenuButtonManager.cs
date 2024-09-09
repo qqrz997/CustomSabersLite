@@ -14,12 +14,12 @@ internal class MenuButtonManager(MainFlowCoordinator mainFlowCoordinator, CSLFlo
     public void Initialize()
     {
         button = new("Custom Sabers", "Choose your custom sabers", PresentCSLFlowCoordinator, interactable: true);
-        MenuButtons.instance.RegisterButton(button);
+        MenuButtons.Instance.RegisterButton(button);
     }
 
     private void PresentCSLFlowCoordinator() =>
         mainFlowCoordinator.PresentFlowCoordinator(sabersFlowCoordinator);
 
     public void Dispose() => 
-        MenuButtons.instance.UnregisterButton(button);
+        MenuButtons.Instance.UnregisterButton(button);
 }
