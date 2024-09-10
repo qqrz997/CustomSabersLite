@@ -20,7 +20,7 @@ using Zenject;
 
 namespace CustomSabersLite.UI.Views;
 
-[HotReload(RelativePathToLayout = "../BSML/saberList.bsml")]
+[HotReload(RelativePathToLayout = "../../BSML/saberList.bsml")]
 [ViewDefinition("CustomSabersLite.UI.BSML.saberList.bsml")]
 internal class SaberListViewController : BSMLAutomaticViewController
 {
