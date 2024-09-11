@@ -66,6 +66,8 @@ internal class CacheManager : IInitializable
 
     private async Task InternalReloadAsync()
     {
+        saberListManager.SetData([]);
+
         Logger.Debug("Initializing caching step");
         Logger.Debug(config.CurrentlySelectedSaber != null
             ? $"Selected saber is: {config.CurrentlySelectedSaber}"

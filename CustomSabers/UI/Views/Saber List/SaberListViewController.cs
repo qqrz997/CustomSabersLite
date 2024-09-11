@@ -9,8 +9,10 @@ using HMUI;
 using IPA.Utilities.Async;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TMPro;
@@ -33,7 +35,13 @@ internal class SaberListViewController : BSMLAutomaticViewController
 
     private int selectedSaberIndex;
     private CancellationTokenSource tokenSource;
-     
+
+    [UIComponent("saber-list")] private CustomListTableData saberList;
+    [UIComponent("saber-list-loading")] private ImageView saberListLoadingIcon;
+    [UIComponent("reload-button")] private Selectable reloadButtonSelectable;
+    [UIComponent("delete-saber-modal")] private ModalView deleteSaberModal;
+    [UIComponent("delete-saber-modal-text")] private TextMeshProUGUI deleteSaberModalText;
+
     [UIAction("#post-parse")]
     public void PostParse()
     {
@@ -48,12 +56,6 @@ internal class SaberListViewController : BSMLAutomaticViewController
         SetupList();
         reloadButtonSelectable.interactable = true;
     }
-
-    [UIComponent("saber-list")] private CustomListTableData saberList;
-    [UIComponent("saber-list-loading")] private ImageView saberListLoadingIcon;
-    [UIComponent("reload-button")] private Selectable reloadButtonSelectable;
-    [UIComponent("delete-saber-modal")] private ModalView deleteSaberModal;
-    [UIComponent("delete-saber-modal-text")] private TextMeshProUGUI deleteSaberModalText;
 
     [UIAction("select-saber")]
     public async void SelectSaber(TableView tableView, int row)
@@ -114,14 +116,14 @@ internal class SaberListViewController : BSMLAutomaticViewController
     private void SetupList()
     {
         var filterOptions = new SaberListFilterOptions(
-            OrderBy.Name);
+            config.OrderByFilter);
 
         saberList.Data.Clear();
         saberListManager.GetList(filterOptions)
             .ForEach(i => saberList.Data.Add(i.ToCustomCellInfo()));
 
         saberList.TableView.ReloadData();
-        saberList.TableView.SelectCellWithIdx(selectedSaberIndex);
+        StartCoroutine(ScrollToSelectedCell());
     }
 
     private async Task GeneratePreview()
@@ -143,7 +145,21 @@ internal class SaberListViewController : BSMLAutomaticViewController
     {
         yield return new WaitUntil(() => saberList.gameObject.activeInHierarchy);
         yield return new WaitForEndOfFrame();
+        var selectedSaberIndex = saberListManager.IndexForPath(config.CurrentlySelectedSaber);
+        saberList.TableView.SelectCellWithIdx(selectedSaberIndex);
         saberList.TableView.ScrollToCellWithIdx(selectedSaberIndex, TableView.ScrollPositionType.Center, true);
+    }
+
+    [UIValue("order-by-choices")] private List<object> orderByChoices = Enum.GetNames(typeof(OrderBy)).ToList<object>();
+    [UIValue("order-by-filter")]
+    public string OrderByFilter
+    {
+        get => config.OrderByFilter.ToString();
+        set
+        {
+            config.OrderByFilter = Enum.TryParse(value, out OrderBy orderBy) ? orderBy : config.OrderByFilter;
+            SetupList();
+        }
     }
 
     [UIValue("toggle-menu-sabers")]
@@ -163,7 +179,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
 
         selectedSaberIndex = saberListManager.IndexForPath(config.CurrentlySelectedSaber);
 
-        saberList.TableView.SelectCellWithIdx(selectedSaberIndex);
+        //saberList.TableView.SelectCellWithIdx(selectedSaberIndex);
         StartCoroutine(ScrollToSelectedCell());
         UnityMainThreadTaskScheduler.Factory.StartNew(GeneratePreview);
         

@@ -91,10 +91,3 @@ internal class SaberListManager(PluginDirs dirs)
         _ => new ThumbnailWithSprite(ImageUtils.nullCoverImage)
     };
 }
-
-internal enum OrderBy
-{
-    Name,
-    Author,
-    Size, // ?
-}

@@ -1,30 +1,25 @@
 ﻿  <vertical child-control-height='false' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd'>
-  <horizontal spacing='2'>
-    <!-- saber list panel -->
-    <vertical child-align='MiddleCenter' horizontal-fit='Unconstrained' preferred-width='60' spacing='2'>
+  <horizontal spacing='2' child-control-width='true'>
+    <vertical child-expand-height='false' child-control-height='false' child-align='MiddleCenter' preferred-width='60'>
       <horizontal>
         <button on-click='open-in-explorer' text='Open Folder'/>
         <button on-click='reload-sabers' id='reload-button' text='Refresh' />
         <button on-click='show-delete-saber-modal' text='Delete' face-color='#a83232'/>
       </horizontal>
-
-      <horizontal background='round-rect-panel' bg-color='#0007' pad='3'>
-        <list id='saber-list' select-cell='select-saber' visible-cells='6' expand-cell='true'/>
-        <loading id='saber-list-loading' ignore-layout='true' active='false'/>
-      </horizontal>
-
-      <horizontal child-control-width='true'>
-        <page-button event-click='saber-list#PageUp' direction='Up' preferred-width='20'/>
-        <page-button event-click='saber-list#PageDown' direction='Down' preferred-width='20'/>
-      </horizontal>
+      <checkbox-setting text='Hold Sabers' value='toggle-menu-sabers' hover-hint='Enable to hold the selected custom saber' apply-on-change='true'/>
+      <dropdown-list-setting text='Order Sabers By' value='order-by-filter' choices='order-by-choices' apply-on-change='true'/>
     </vertical>
 
-    <!-- saber preview -->
-    <vertical preferred-width='50' spacing='3'>
-      <horizontal>
-        <checkbox-setting value='toggle-menu-sabers' text='Hold Sabers' hover-hint='Enable to hold the selected custom saber'
-                          apply-on-change='true'/>
+    <vertical child-align='MiddleCenter' horizontal-fit='Unconstrained' preferred-width='60' spacing='2'>
+      <horizontal background='round-rect-panel' bg-color='#0007' pad='3'>
+        <list id='saber-list' select-cell='select-saber' visible-cells='8' expand-cell='true'/>
+        <loading id='saber-list-loading' ignore-layout='true' active='false'/>
       </horizontal>
+    </vertical>
+  
+    <vertical>
+      <page-button event-click='saber-list#PageUp' direction='Up' preferred-width='10'/>
+      <page-button event-click='saber-list#PageDown' direction='Down' preferred-width='10'/>
     </vertical>
 
     <modal id='delete-saber-modal' clickerino-offerino-closerino='true' size-delta-x='67' size-delta-y='29' anchor-pos-x='0' anchor-pos-y='0'>

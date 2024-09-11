@@ -3,6 +3,7 @@ using IPA.Config.Stores;
 using CustomSabersLite.Data;
 using IPA.Config.Stores.Attributes;
 using UnityEngine;
+using CustomSabersLite.Models;
 
 [assembly: InternalsVisibleTo(GeneratedStore.AssemblyVisibilityTarget)]
 namespace CustomSabersLite.Configuration;
@@ -27,7 +28,9 @@ internal class CSLConfig
 
     public virtual bool EnableCustomEvents { get; set; } = true;
 
-    [Ignore] public virtual bool EnableMenuSabers { get; set; } = false;
+    [Ignore] public bool EnableMenuSabers { get; set; } = false;
+
+    [Ignore] public OrderBy OrderByFilter { get; set; } = OrderBy.Name;
 
     [Ignore] public virtual bool ForcefullyFoolish { get; set; } = false;
 
