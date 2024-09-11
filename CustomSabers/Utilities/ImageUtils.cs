@@ -57,10 +57,7 @@ internal static class ImageUtils
     /// <summary>
     /// Creates a <seealso cref="Sprite"/> from raw image data
     /// </summary>
-    public static Sprite LoadImage(this byte[] imageData)
-    {
-        var tex = new Texture2D(2, 2);
-        tex.LoadImage(imageData);
-        return Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100.0f);
-    }
+    public static Sprite ToSprite(this Texture2D tex, byte[] imageData, float pixelsPerUnit = 100) => 
+        !tex.LoadImage(imageData) ? null
+        : Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), pixelsPerUnit);
 }

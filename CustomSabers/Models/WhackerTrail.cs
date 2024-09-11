@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace CustomSabersLite.Data;
+namespace CustomSabersLite.Models;
 
 internal struct WhackerTrail
 {

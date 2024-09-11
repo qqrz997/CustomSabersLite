@@ -20,7 +20,7 @@
                       id='trail-width' min='0' max='100' increment='1' integer-only='true' show-buttons='true' apply-on-change='true' bind-value='true'/>
 
       <list-setting value='trail-type' text='Saber Trail Type' hover-hint='Select the type of trail you want to use' 
-                    options='trail-type-list' apply-on-change='true' bind-value='true' id='trail-type'/>
+                    options='trail-type-choices' apply-on-change='true' bind-value='true' id='trail-type'/>
 
       <checkbox-setting value='enable-custom-events' text='Enable Saber Events' hover-hint='Toggles saber events. For instance, an effect happening when you achieve a full combo'
                         apply-on-change='true' bind-value='true'/>
@@ -30,8 +30,7 @@
     <vertical child-control-height='false' spacing='2' preferred-width='54' child-align='MiddleCenter'>
       <page-button event-click='saber-list#PageUp' direction='Up' />
       <horizontal background='round-rect-panel' bg-color='#000000AA' pad='1'>
-        <list list-style='Simple' visible-cells='5' select-cell='select-saber' id='saber-list'/>
-        <loading id='saber-list-loading' ignore-layout='true'/>
+        <list list-style='Simple' visible-cells='5' select-cell='select-saber' id='saber-list' />
       </horizontal>
       <page-button event-click='saber-list#PageDown' direction='Down' />
     </vertical>

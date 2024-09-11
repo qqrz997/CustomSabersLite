@@ -1,4 +1,4 @@
-﻿<vertical child-control-height='false' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd'>
+﻿  <vertical child-control-height='false' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd'>
   <horizontal spacing='2'>
     <!-- saber list panel -->
     <vertical child-align='MiddleCenter' horizontal-fit='Unconstrained' preferred-width='60' spacing='2'>
@@ -10,7 +10,7 @@
 
       <horizontal background='round-rect-panel' bg-color='#0007' pad='3'>
         <list id='saber-list' select-cell='select-saber' visible-cells='6' expand-cell='true'/>
-        <loading id='saber-list-loading' ignore-layout='true'/>
+        <loading id='saber-list-loading' ignore-layout='true' active='false'/>
       </horizontal>
 
       <horizontal child-control-width='true'>
@@ -21,14 +21,6 @@
 
     <!-- saber preview -->
     <vertical preferred-width='50' spacing='3'>
-      <horizontal horizontal-fit='PreferredSize' background='panel-top' preferred-width='35' preferred-height='7'>
-        <text text='Saber Preview' align='Capline' font-size='6'/>
-      </horizontal>
-      <horizontal preferred-height='54' background='round-rect-panel' bg-color='#0007'>
-        <loading id='saber-preview-loading' ignore-layout='true' active='false'/>
-        <horizontal id='left-preview-saber'/>
-        <horizontal id='right-preview-saber'/>
-      </horizontal>
       <horizontal>
         <checkbox-setting value='toggle-menu-sabers' text='Hold Sabers' hover-hint='Enable to hold the selected custom saber'
                           apply-on-change='true'/>

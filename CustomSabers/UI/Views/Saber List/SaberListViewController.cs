@@ -2,17 +2,17 @@
 using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.ViewControllers;
 using CustomSabersLite.Configuration;
-using CustomSabersLite.Data;
+using CustomSabersLite.Models;
 using CustomSabersLite.UI.Managers;
 using CustomSabersLite.Utilities.AssetBundles;
-using CustomSabersLite.Utilities.Extensions;
 using HMUI;
+using IPA.Utilities.Async;
 using System;
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
-using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -24,26 +24,14 @@ namespace CustomSabersLite.UI.Views;
 [ViewDefinition("CustomSabersLite.UI.BSML.saberList.bsml")]
 internal class SaberListViewController : BSMLAutomaticViewController
 {
-    private CSLConfig config;
-    private CacheManager cacheManager;
-    private SaberPreviewManager previewManager;
-    private GameplaySetupTab gameplaySetupTab;
+    [Inject] private readonly CSLConfig config;
+    [Inject] private readonly CacheManager cacheManager;
+    [Inject] private readonly SaberListManager saberListManager;
+    [Inject] private readonly SaberPreviewManager previewManager;
+    [Inject] private readonly GameplaySetupTab gameplaySetupTab;
+    [Inject] private readonly PluginDirs directories;
 
-    private string saberAssetPath;
-    private string deletedSabersPath;
-
-    [Inject]
-    public void Construct(PluginDirs pluginDirs, CSLConfig config, CacheManager cacheManager, SaberPreviewManager previewManager, GameplaySetupTab gameplaySetupTab)
-    {
-        this.config = config;
-        this.cacheManager = cacheManager;
-        this.previewManager = previewManager;
-        this.gameplaySetupTab = gameplaySetupTab;
-
-        saberAssetPath = pluginDirs.CustomSabers.FullName;
-        deletedSabersPath = pluginDirs.DeletedSabers.FullName;
-    }
-
+    private int selectedSaberIndex;
     private CancellationTokenSource tokenSource;
      
     [UIAction("#post-parse")]
@@ -61,42 +49,23 @@ internal class SaberListViewController : BSMLAutomaticViewController
         reloadButtonSelectable.interactable = true;
     }
 
-    [UIComponent("saber-list")] public CustomListTableData customListTableData;
-    [UIComponent("saber-list-loading")] public ImageView saberListLoadingIcon;
-    [UIComponent("saber-preview-loading")] public ImageView saberPreviewLoadingIcon;
-    [UIComponent("reload-button")] public Selectable reloadButtonSelectable;
-    [UIComponent("delete-saber-modal")] public ModalView deleteSaberModal;
-    [UIComponent("delete-saber-modal-text")] public TextMeshProUGUI deleteSaberModalText;
+    [UIComponent("saber-list")] private CustomListTableData saberList;
+    [UIComponent("saber-list-loading")] private ImageView saberListLoadingIcon;
+    [UIComponent("reload-button")] private Selectable reloadButtonSelectable;
+    [UIComponent("delete-saber-modal")] private ModalView deleteSaberModal;
+    [UIComponent("delete-saber-modal-text")] private TextMeshProUGUI deleteSaberModalText;
 
     [UIAction("select-saber")]
-    public async void OnSelect(TableView _, int row)
+    public async void SelectSaber(TableView tableView, int row)
     {
-        if (!cacheManager.InitializationFinished) return;
-
-        Logger.Debug($"saber selected at row {row}");
-        cacheManager.SelectedSaberIndex = row;
-        config.CurrentlySelectedSaber = cacheManager.SabersMetadata[row].RelativePath;
-
-        try
-        {
-            Logger.Debug("Generating preview");
-
-            tokenSource?.Cancel();
-            tokenSource?.Dispose();
-            tokenSource = new();
-
-            saberPreviewLoadingIcon.gameObject.SetActive(true);
-            await previewManager.GeneratePreview(tokenSource.Token);
-        }
-        catch (OperationCanceledException) { }
-        finally
-        {
-            saberPreviewLoadingIcon.gameObject.SetActive(false);
-        }
+        Logger.Debug($"saber selected at row {row}"); 
+        selectedSaberIndex = row;
+        config.CurrentlySelectedSaber = saberListManager.PathForIndex(row);
+        await GeneratePreview();
     }
 
     [UIAction("open-in-explorer")]
-    public void OpenInExplorer() => Process.Start(saberAssetPath);
+    public void OpenInExplorer() => Process.Start(directories.CustomSabers.FullName);
 
     [UIAction("show-delete-saber-modal")]
     public void ShowDeleteSaberModal()
@@ -118,36 +87,10 @@ internal class SaberListViewController : BSMLAutomaticViewController
     public void DeleteSelectedSaber()
     {
         HideDeleteSaberModal();
-
-        var selectedSaber = config.CurrentlySelectedSaber;
-        if (selectedSaber != null)
+        if (saberListManager.DeleteSaber(config.CurrentlySelectedSaber))
         {
-            var currentSaberPath = Path.Combine(saberAssetPath, selectedSaber);
-            var destinationPath = Path.Combine(deletedSabersPath, selectedSaber);
-            try
-            {
-                if (File.Exists(destinationPath)) File.Delete(destinationPath);
-
-                if (File.Exists(currentSaberPath))
-                {
-                    Logger.Debug($"Moving {currentSaberPath}\nto {deletedSabersPath}");
-                    File.Move(currentSaberPath, destinationPath);
-
-                    cacheManager.SabersMetadata.RemoveAt(cacheManager.SelectedSaberIndex);
-                    cacheManager.SelectedSaberIndex--;
-                    SetupList();
-                    gameplaySetupTab.SetupList();
-                }
-                else
-                {
-                    Logger.Warn($"Saber doesn't exist at {currentSaberPath}");
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Problem encountered when trying to delete selected saber");
-                Logger.Error(ex.Message);
-            }
+            SetupList();
+            gameplaySetupTab.SetupList();
         }
     }
 
@@ -155,9 +98,8 @@ internal class SaberListViewController : BSMLAutomaticViewController
     public async void ReloadSabers()
     {
         reloadButtonSelectable.interactable = false;
-
-        customListTableData.Data.Clear();
-        customListTableData.TableView.ReloadData();
+        saberList.Data.Clear();
+        saberList.TableView.ReloadData();
         saberListLoadingIcon.gameObject.SetActive(true);
 
         await cacheManager.ReloadAsync();
@@ -165,46 +107,43 @@ internal class SaberListViewController : BSMLAutomaticViewController
         SetupList();
         gameplaySetupTab.SetupList();
 
+        saberListLoadingIcon.gameObject.SetActive(false);
         reloadButtonSelectable.interactable = true;
     }
 
     private void SetupList()
     {
-        customListTableData.Data.Clear();
+        var filterOptions = new SaberListFilterOptions(
+            OrderBy.Name);
 
-        var richTextRegex = new Regex(@"<[^>]*>");
+        saberList.Data.Clear();
+        saberListManager.GetList(filterOptions)
+            .ForEach(i => saberList.Data.Add(i.ToCustomCellInfo()));
 
-        foreach (var metadata in cacheManager.SabersMetadata)
+        saberList.TableView.ReloadData();
+        saberList.TableView.SelectCellWithIdx(selectedSaberIndex);
+    }
+
+    private async Task GeneratePreview()
+    {
+        try
         {
-            var (text, subtext) = metadata.LoadingError switch
-            {
-                SaberLoaderError.None => (metadata.SaberName, metadata.AuthorName),
-                SaberLoaderError.InvalidFileType => ($"<color=#F77>Error - </color> {metadata.SaberName}", "File is not of a valid type"),
-                SaberLoaderError.FileNotFound => ($"<color=#F77>Error - </color> {metadata.SaberName}", "Couldn't find file (was it deleted?)"),
-                SaberLoaderError.LegacyWhacker => ($"<color=#F77>Not loaded - </color> {metadata.SaberName}", "Legacy whacker, incompatible with PC"),
-                SaberLoaderError.NullBundle => ($"<color=#F77>Error - </color> {metadata.SaberName}", "Problem encountered when loading asset"),
-                SaberLoaderError.NullAsset => ($"<color=#F77>Error - </color> {metadata.SaberName}", "Problem encountered when loading saber model"),
-                _ => ($"<color=#F77>Error - </color> {metadata.SaberName}", "Unknown error encountered during loading")
-            };
+            Logger.Debug("Generating preview");
 
-            customListTableData.Data.Add(new(
-                text,
-                richTextRegex.Replace(subtext, string.Empty).Trim(),
-                metadata.GetIcon()));
+            tokenSource?.Cancel();
+            tokenSource?.Dispose();
+            tokenSource = new();
+
+            await previewManager.GeneratePreview(tokenSource.Token);
         }
-
-        customListTableData.TableView.ReloadData();
-        saberListLoadingIcon.gameObject.SetActive(false);
-        StartCoroutine(ScrollToSelectedCell());
-        OnSelect(customListTableData.TableView, cacheManager.SelectedSaberIndex);
+        catch (OperationCanceledException) { }
     }
 
     private IEnumerator ScrollToSelectedCell()
     {
-        yield return new WaitUntil(() => customListTableData.gameObject.activeInHierarchy);
+        yield return new WaitUntil(() => saberList.gameObject.activeInHierarchy);
         yield return new WaitForEndOfFrame();
-        customListTableData.TableView.SelectCellWithIdx(cacheManager.SelectedSaberIndex);
-        customListTableData.TableView.ScrollToCellWithIdx(cacheManager.SelectedSaberIndex, TableView.ScrollPositionType.Center, true);
+        saberList.TableView.ScrollToCellWithIdx(selectedSaberIndex, TableView.ScrollPositionType.Center, true);
     }
 
     [UIValue("toggle-menu-sabers")]
@@ -221,7 +160,13 @@ internal class SaberListViewController : BSMLAutomaticViewController
     protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
     {
         base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
+
+        selectedSaberIndex = saberListManager.IndexForPath(config.CurrentlySelectedSaber);
+
+        saberList.TableView.SelectCellWithIdx(selectedSaberIndex);
         StartCoroutine(ScrollToSelectedCell());
+        UnityMainThreadTaskScheduler.Factory.StartNew(GeneratePreview);
+        
         previewManager.SetPreviewActive(true);
     }
 

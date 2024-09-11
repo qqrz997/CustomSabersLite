@@ -17,13 +17,7 @@ internal class SaberPreviewManager : IInitializable
     [Inject] private readonly BasicPreviewTrailManager previewTrailManager;
     [Inject] private readonly BasicPreviewSaberManager previewSaberManager;
 
-    // using these for now until i figure out how to get the actual physical position on the ui view
-    private readonly Vector3 leftPreviewSaberPosition = new(0.72f, 0.9f, 4.1f);
-    private readonly Vector3 rightPreviewSaberPosition = new(1.06f, 0.9f, 4.02f);
-    private readonly Quaternion leftPreviewRotation = Quaternion.Euler(270f, 103.25f, 0f);
-    private readonly Quaternion rightPreviewRotation = Quaternion.Euler(270f, 283.25f, 0f);
-
-    private readonly Transform previewParent = new GameObject("__CustomSabersLite Basic Preview").transform;
+    private readonly Transform previewParent = new GameObject("CustomSabersLite Basic Preview").transform;
     private readonly Transform leftPreviewParent = new GameObject("Left").transform;
     private readonly Transform rightPreviewParent = new GameObject("Right").transform;
 
@@ -34,8 +28,11 @@ internal class SaberPreviewManager : IInitializable
     {
         leftPreviewParent.SetParent(previewParent);
         rightPreviewParent.SetParent(previewParent);
-        leftPreviewParent.SetPositionAndRotation(leftPreviewSaberPosition, leftPreviewRotation);
-        rightPreviewParent.SetPositionAndRotation(rightPreviewSaberPosition, rightPreviewRotation);
+
+        previewParent.SetPositionAndRotation(new Vector3(1.1f, 0.8f, 1.1f), Quaternion.Euler(270f, 135f, 0f));
+        leftPreviewParent.localPosition = new Vector3(0f, 0.2f, 0f);
+        rightPreviewParent.localPosition = new Vector3(0f, -0.2f, 0f);
+        rightPreviewParent.localRotation = Quaternion.Euler(0f, 0f, 180f);
 
         previewSaberManager.Init(leftPreviewParent, rightPreviewParent);
         previewTrailManager.Init(leftPreviewParent, rightPreviewParent);

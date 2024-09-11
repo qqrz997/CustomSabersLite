@@ -6,6 +6,7 @@ using CustomSabersLite.Data;
 using UnityEngine;
 using AssetBundleLoadingTools.Utilities;
 using System.Threading.Tasks;
+using CustomSabersLite.Models;
 
 namespace CustomSabersLite.Utilities.AssetBundles;
 
@@ -81,7 +82,8 @@ internal class WhackerLoader(PluginDirs pluginDirs, BundleLoader bundleLoader)
     private async Task<Sprite> GetCoverFromArchive(ZipArchiveEntry thumbEntry)
     {
         using var memoryStream = new MemoryStream();
-        await thumbEntry.Open().CopyToAsync(memoryStream);
-        return memoryStream.ToArray().LoadImage();
+        using var thumbStream = thumbEntry.Open();
+        await thumbStream.CopyToAsync(memoryStream);
+        return new Texture2D(2, 2).ToSprite(memoryStream.ToArray());
     }
 }

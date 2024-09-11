@@ -17,7 +17,7 @@ internal class ImageLoading
         if (file.Count() > 0)
         {
             var texture = new Texture2D(2, 2);
-            if (texture.LoadImage(file))
+            if (texture.ToSprite(file))
             {
                 return texture;
             }
