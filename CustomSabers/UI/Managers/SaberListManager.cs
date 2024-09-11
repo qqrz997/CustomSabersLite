@@ -13,11 +13,11 @@ internal class SaberListManager(PluginDirs dirs)
 {
     private readonly PluginDirs directories = dirs;
 
-    private SaberListCellInfo[] Data { get; set; } = [];
+    private List<SaberListCellInfo> Data { get; set; } = [];
     private List<SaberListCellInfo> SaberList { get; } = [];
 
     public void SetData(IEnumerable<CustomSaberMetadata> data) =>
-        Data = data.Select(MetaToInfo).ToArray();
+        Data = data.Select(MetaToInfo).ToList();
 
     public List<SaberListCellInfo> GetList(SaberListFilterOptions filterOptions)
     {
@@ -26,14 +26,13 @@ internal class SaberListManager(PluginDirs dirs)
         {
             OrderBy.Name => i.Metadata.SaberName, // should sort by a sanitized string (todo - separate the json model)
             OrderBy.Author => i.Metadata.AuthorName,
-            OrderBy.Size or _ => throw new NotImplementedException()
+            _ => throw new NotImplementedException()
         }).ToList();
 
         SaberList.Clear();
         SaberList.Add(CellInfoForDefaultSabers);
         SaberList.AddRange(sortedData);
 
-        SaberList.ForEach(i => Logger.Warn(i.Metadata.SaberName));
         return SaberList;
     }
 
@@ -50,7 +49,9 @@ internal class SaberListManager(PluginDirs dirs)
             File.Delete(destinationPath);
 
         File.Move(currentSaberPath, destinationPath);
-        SaberList.RemoveAt(IndexForPath(relativePath));
+
+        if (Data.FirstOrDefault(i => i.Metadata.RelativePath == relativePath) is SaberListCellInfo i) 
+            Data.Remove(i);
 
         return true;
     }
@@ -85,7 +86,7 @@ internal class SaberListManager(PluginDirs dirs)
 
     private static IThumbnail GetCellIcon(CustomSaberMetadata meta) => meta.CoverImage switch
     {
-        _ when meta.SaberName == "Default" && meta.AuthorName == "Beat Games" => new ThumbnailWithSprite(ImageUtils.defaultCoverImage), // amazing stuff
+        _ when meta.SaberName == "Default" && meta.AuthorName == "Beat Games" => new ThumbnailWithSprite(ImageUtils.defaultCoverImage), // amazing stuff really
         [..] bytes  => new ThumbnailWithData(bytes),
         _ => new ThumbnailWithSprite(ImageUtils.nullCoverImage)
     };
