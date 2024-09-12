@@ -4,7 +4,7 @@ using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components.Settings;
 using BeatSaberMarkupLanguage.ViewControllers;
 using CustomSabersLite.Configuration;
-using CustomSabersLite.Data;
+using CustomSabersLite.Models;
 using Zenject;
 using CustomSabersLite.UI.Managers;
 using CustomSabersLite.Utilities;

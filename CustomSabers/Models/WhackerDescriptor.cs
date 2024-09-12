@@ -1,6 +1,6 @@
 ﻿namespace CustomSabersLite.Models;
 
-internal struct WhackerDescriptor
+internal class WhackerDescriptor
 {
     public string objectName;
     public string author;

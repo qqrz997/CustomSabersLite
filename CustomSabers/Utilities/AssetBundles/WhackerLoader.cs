@@ -2,11 +2,10 @@
 using System.IO.Compression;
 using System.Linq;
 using Newtonsoft.Json;
-using CustomSabersLite.Data;
+using CustomSabersLite.Models;
 using UnityEngine;
 using AssetBundleLoadingTools.Utilities;
 using System.Threading.Tasks;
-using CustomSabersLite.Models;
 
 namespace CustomSabersLite.Utilities.AssetBundles;
 
@@ -39,7 +38,7 @@ internal class WhackerLoader(PluginDirs pluginDirs, BundleLoader bundleLoader)
 
         using var jsonStream = json.Open();
         using var jsonStreamReader = new StreamReader(jsonStream);
-        var whacker = (WhackerObject)new JsonSerializer().Deserialize(jsonStreamReader, typeof(WhackerObject));
+        var whacker = (WhackerModel)new JsonSerializer().Deserialize(jsonStreamReader, typeof(WhackerModel));
 
         if (whacker.config.isLegacy)
             return (CustomSaberData.Empty, SaberLoaderError.LegacyWhacker);

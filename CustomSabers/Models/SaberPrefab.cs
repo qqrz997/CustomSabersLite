@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-namespace CustomSabersLite.Data;
+namespace CustomSabersLite.Models;
 
-internal readonly struct SaberPrefab
+internal class SaberPrefab
 {
     public GameObject Prefab { get; }
 

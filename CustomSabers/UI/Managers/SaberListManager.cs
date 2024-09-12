@@ -1,11 +1,9 @@
-﻿using CustomSabersLite.Data;
-using CustomSabersLite.Models;
+﻿using CustomSabersLite.Models;
 using CustomSabersLite.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using UnityEngine;
 
 namespace CustomSabersLite.UI.Managers;
 
@@ -65,10 +63,7 @@ internal class SaberListManager(PluginDirs dirs)
         SaberList.ElementAtOrDefault(row) is SaberListCellInfo i ? i.Metadata.RelativePath : null;
 
     private static SaberListCellInfo CellInfoForDefaultSabers =>
-        MetaToInfo(DefaultMeta);
-
-    private static CustomSaberMetadata DefaultMeta =>
-        new() { SaberName = "Default", AuthorName = "Beat Games" }; // this is a model issue
+        MetaToInfo(CustomSaberMetadata.DefaultSaber);
 
     private static SaberListCellInfo MetaToInfo(CustomSaberMetadata meta) =>
         new(meta, GetCellInfo(meta), GetCellIcon(meta));

@@ -1,5 +1,5 @@
 ﻿using CustomSaber;
-using CustomSabersLite.Data;
+using CustomSabersLite.Models;
 using CustomSabersLite.Utilities;
 using CustomSabersLite.Utilities.Extensions;
 using System.Collections.Generic;

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using CustomSabersLite.Data;
+using CustomSabersLite.Models;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Utilities;
 using Zenject;

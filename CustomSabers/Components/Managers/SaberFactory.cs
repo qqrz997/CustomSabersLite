@@ -1,6 +1,6 @@
 ﻿using CustomSabersLite.Components.Game;
 using CustomSabersLite.Configuration;
-using CustomSabersLite.Data;
+using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.AssetBundles;
 using System.Threading.Tasks;
 using UnityEngine;

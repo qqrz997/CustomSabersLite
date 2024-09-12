@@ -1,5 +1,5 @@
 ﻿using CustomSabersLite.Components.Managers;
-using CustomSabersLite.Data;
+using CustomSabersLite.Models;
 using System.Threading.Tasks;
 using Zenject;
 

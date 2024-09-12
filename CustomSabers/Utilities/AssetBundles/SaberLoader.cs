@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
-using CustomSabersLite.Data;
+using CustomSabersLite.Models;
 
 namespace CustomSabersLite.Utilities.AssetBundles;
 

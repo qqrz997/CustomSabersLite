@@ -3,7 +3,6 @@ using CustomSabersLite.Configuration;
 using System;
 using UnityEngine;
 using System.Linq;
-using CustomSabersLite.Utilities;
 
 namespace CustomSabersLite.Components.Game;
 

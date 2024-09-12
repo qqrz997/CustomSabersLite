@@ -1,12 +1,12 @@
 ﻿using CustomSabersLite.Utilities;
 using UnityEngine;
 
-namespace CustomSabersLite.Data;
+namespace CustomSabersLite.Models;
 
 /// <summary>
 /// Class that declares the neccessary information to create a <see cref="Components.Game.LiteSaberTrail"/>
 /// </summary>
-internal readonly struct CustomTrailData(Transform top, Transform bottom, Material material, CustomSaber.ColorType colorType, Color color, Color colorMultiplier, float length)
+internal class CustomTrailData(Transform top, Transform bottom, Material material, CustomSaber.ColorType colorType, Color color, Color colorMultiplier, float length)
 {
     private readonly Transform top = top;
     private readonly Transform bottom = bottom;

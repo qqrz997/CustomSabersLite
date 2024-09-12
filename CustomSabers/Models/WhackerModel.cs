@@ -1,6 +1,6 @@
 ﻿namespace CustomSabersLite.Models;
 
-internal struct WhackerObject
+internal class WhackerModel
 {
     public string androidFileName;
     public string pcFileName;

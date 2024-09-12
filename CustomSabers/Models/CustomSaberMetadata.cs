@@ -1,11 +1,8 @@
-﻿namespace CustomSabersLite.Data;
+﻿namespace CustomSabersLite.Models;
 
-public struct CustomSaberMetadata
+public record CustomSaberMetadata (string SaberName, string AuthorName, string RelativePath, bool MissingShaders, byte[] CoverImage, SaberLoaderError LoadingError)
 {
-    public string SaberName;
-    public string AuthorName;
-    public string RelativePath;
-    public bool MissingShaders; // todo - flag
-    public byte[] CoverImage;
-    public SaberLoaderError LoadingError;
+    public static CustomSaberMetadata DefaultSaber =>
+        new("Default", "Beat Games", null, false, null, SaberLoaderError.None);
+
 }

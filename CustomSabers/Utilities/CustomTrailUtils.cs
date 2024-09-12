@@ -1,5 +1,4 @@
 ﻿using CustomSaber;
-using CustomSabersLite.Data;
 using CustomSabersLite.Models;
 using Newtonsoft.Json;
 using System.Collections.Generic;
@@ -49,12 +48,12 @@ internal class CustomTrailUtils
     private static CustomTrailData[] TrailsFromWhacker(GameObject saberObject)
     {
         var texts = saberObject.GetComponentsInChildren<Text>();
-        var trailDatas = new Dictionary<Text, WhackerTrail>();
+        var trailDatas = new Dictionary<Text, WhackerTrailModel>();
         var transformDatas = new Dictionary<Text, WhackerTrailTransform>();
 
         foreach (var trailDataText in texts.Where(t => t.text.Contains("\"trailColor\":")))
         {
-            trailDatas.Add(trailDataText, JsonConvert.DeserializeObject<WhackerTrail>(trailDataText.text));
+            trailDatas.Add(trailDataText, JsonConvert.DeserializeObject<WhackerTrailModel>(trailDataText.text));
         }
         foreach (var trailTransformText in texts.Where(t => t.text.Contains("\"isTop\":")))
         {

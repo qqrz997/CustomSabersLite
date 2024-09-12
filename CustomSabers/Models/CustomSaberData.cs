@@ -2,7 +2,7 @@
 using System.IO;
 using UnityEngine;
 
-namespace CustomSabersLite.Data;
+namespace CustomSabersLite.Models;
 
 /// <summary>
 /// Class that declares the neccessary information to manage a custom saber instance

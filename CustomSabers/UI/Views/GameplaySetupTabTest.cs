@@ -1,10 +1,9 @@
 ﻿using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components.Settings;
-using CustomSabersLite.Data;
+using CustomSabersLite.Models;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 using TMPro;
 using BeatSaberMarkupLanguage.Components;
 using HMUI;

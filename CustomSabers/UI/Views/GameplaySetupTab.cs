@@ -1,8 +1,7 @@
 ﻿using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components.Settings;
-using BeatSaberMarkupLanguage.GameplaySetup;
 using CustomSabersLite.Configuration;
-using CustomSabersLite.Data;
+using CustomSabersLite.Models;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,7 +15,6 @@ using System.ComponentModel;
 using System.Collections;
 using CustomSabersLite.UI.Managers;
 using CustomSabersLite.Utilities;
-using CustomSabersLite.Models;
 
 namespace CustomSabersLite.UI.Views;
 

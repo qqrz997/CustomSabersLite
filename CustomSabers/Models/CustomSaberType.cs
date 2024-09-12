@@ -1,4 +1,4 @@
-﻿namespace CustomSabersLite.Data;
+﻿namespace CustomSabersLite.Models;
 
 internal enum CustomSaberType
 {

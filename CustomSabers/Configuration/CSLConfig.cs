@@ -1,9 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using IPA.Config.Stores;
-using CustomSabersLite.Data;
-using IPA.Config.Stores.Attributes;
-using UnityEngine;
 using CustomSabersLite.Models;
+using IPA.Config.Stores.Attributes;
 
 [assembly: InternalsVisibleTo(GeneratedStore.AssemblyVisibilityTarget)]
 namespace CustomSabersLite.Configuration;

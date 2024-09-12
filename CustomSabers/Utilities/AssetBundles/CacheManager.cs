@@ -1,5 +1,5 @@
 ﻿using CustomSabersLite.Configuration;
-using CustomSabersLite.Data;
+using CustomSabersLite.Models;
 using CustomSabersLite.UI.Managers;
 using Newtonsoft.Json;
 using System;
@@ -109,19 +109,15 @@ internal class CacheManager : IInitializable
 
             var metadata = saberData.FilePath != null
                 ? new CustomSaberMetadata
-                {
-                    SaberName = saberData.Descriptor.SaberName,
-                    AuthorName = saberData.Descriptor.AuthorName,
-                    RelativePath = saberData.FilePath,
-                    MissingShaders = saberData.MissingShaders,
-                    CoverImage = saberData.Descriptor.CoverImage?.texture.DuplicateTexture().Downscale(128, 128).EncodeToPNG(),
-                    LoadingError = loadingError,
-                }
-                : new CustomSaberMetadata
-                {
-                    SaberName = Path.GetFileNameWithoutExtension(saberFilePath),
-                    LoadingError = loadingError,
-                };
+                (
+                    saberData.Descriptor.SaberName,
+                    saberData.Descriptor.AuthorName,
+                    saberData.FilePath,
+                    saberData.MissingShaders,
+                    saberData.Descriptor.CoverImage?.texture.DuplicateTexture().Downscale(128, 128).EncodeToPNG(),
+                    loadingError
+                )
+                : new CustomSaberMetadata(Path.GetFileNameWithoutExtension(saberFilePath), null, null, false, null, loadingError);
 
             var metaFileName = Path.GetFileNameWithoutExtension(saberFilePath) + FileExts.Metadata;
             var metaFilePath = Path.Combine(directories.Cache.FullName, metaFileName);

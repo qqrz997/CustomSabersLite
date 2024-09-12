@@ -1,5 +1,4 @@
 ﻿using BeatSaberMarkupLanguage.Components;
-using CustomSabersLite.Data;
 
 namespace CustomSabersLite.Models;
 
