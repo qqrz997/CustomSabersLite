@@ -34,5 +34,6 @@ internal class Plugin
         zenjector.Install<CSLAppInstaller>(Location.App, pluginConfig);
         zenjector.Install<CSLMenuInstaller>(Location.Menu);
         zenjector.Install<CSLGameInstaller>(Location.Player);
+        zenjector.Install<CSLMultiplayerInstaller>(Location.MultiPlayer);
     }
 }
