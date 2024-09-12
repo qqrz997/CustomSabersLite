@@ -9,7 +9,7 @@ internal class ImageLoading
         LoadSpriteRaw(ResourceLoading.LoadFromResourceAsync(resourcePath).Result, pixelsPerUnit);
 
     public static Sprite LoadSpriteRaw(byte[] image, float pixelsPerUnit = 100.0f) =>
-        image != null ? LoadSpriteFromTexture(LoadTextureRaw(image), pixelsPerUnit) 
+        image != null ? LoadSpriteFromTexture(LoadTextureRaw(image), pixelsPerUnit)
         : null;
 
     public static Texture2D LoadTextureRaw(byte[] file)

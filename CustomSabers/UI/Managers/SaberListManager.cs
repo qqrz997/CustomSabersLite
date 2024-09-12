@@ -50,7 +50,7 @@ internal class SaberListManager(PluginDirs dirs)
 
         File.Move(currentSaberPath, destinationPath);
 
-        if (Data.FirstOrDefault(i => i.Metadata.RelativePath == relativePath) is SaberListCellInfo i) 
+        if (Data.FirstOrDefault(i => i.Metadata.RelativePath == relativePath) is SaberListCellInfo i)
             Data.Remove(i);
 
         return true;
@@ -64,10 +64,10 @@ internal class SaberListManager(PluginDirs dirs)
     public string PathForIndex(int row) =>
         SaberList.ElementAtOrDefault(row) is SaberListCellInfo i ? i.Metadata.RelativePath : null;
 
-    private static SaberListCellInfo CellInfoForDefaultSabers => 
+    private static SaberListCellInfo CellInfoForDefaultSabers =>
         MetaToInfo(DefaultMeta);
 
-    private static CustomSaberMetadata DefaultMeta => 
+    private static CustomSaberMetadata DefaultMeta =>
         new() { SaberName = "Default", AuthorName = "Beat Games" }; // this is a model issue
 
     private static SaberListCellInfo MetaToInfo(CustomSaberMetadata meta) =>
@@ -87,7 +87,7 @@ internal class SaberListManager(PluginDirs dirs)
     private static IThumbnail GetCellIcon(CustomSaberMetadata meta) => meta.CoverImage switch
     {
         _ when meta.SaberName == "Default" && meta.AuthorName == "Beat Games" => new ThumbnailWithSprite(ImageUtils.defaultCoverImage), // amazing stuff really
-        [..] bytes  => new ThumbnailWithData(bytes),
+        [..] bytes => new ThumbnailWithData(bytes),
         _ => new ThumbnailWithSprite(ImageUtils.nullCoverImage)
     };
 }

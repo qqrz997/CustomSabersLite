@@ -2,6 +2,8 @@
 using CustomSabersLite.Configuration;
 using System;
 using UnityEngine;
+using System.Linq;
+using CustomSabersLite.Utilities;
 
 namespace CustomSabersLite.Components.Game;
 
@@ -139,7 +141,7 @@ internal class EventManagerManager(BeatmapObjectManager beatmapObjectManager, Ga
 
     private void ScoreChangedEvent()
     {
-        float relativeScore = relativeScoreCounter.relativeScore;
+        var relativeScore = relativeScoreCounter.relativeScore;
         if (Math.Abs(previousScore - relativeScore) > 0f)
         {
             eventManager?.OnAccuracyChanged?.Invoke(relativeScore);
@@ -147,18 +149,7 @@ internal class EventManagerManager(BeatmapObjectManager beatmapObjectManager, Ga
         }
     }
 
-    private float GetLastNoteTime(IReadonlyBeatmapData beatmapData)
-    {
-        var lastNoteTime = 0.0f;
-        foreach (var noteData in beatmapData.GetBeatmapDataItems<NoteData>(0))
-        {
-            if (noteData.colorType == ColorType.None) continue;
-
-            if (noteData.time > lastNoteTime)
-            {
-                lastNoteTime = noteData.time;
-            }
-        }
-        return lastNoteTime;
-    }
+    private float GetLastNoteTime(IReadonlyBeatmapData beatmapData) => beatmapData
+        .GetBeatmapDataItems<NoteData>(0)
+        .LastOrDefault(data => data.colorType != ColorType.None)?.time ?? 0.0f;
 }

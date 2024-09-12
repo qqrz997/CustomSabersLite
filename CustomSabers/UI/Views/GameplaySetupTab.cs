@@ -20,7 +20,7 @@ using CustomSabersLite.Models;
 
 namespace CustomSabersLite.UI.Views;
 
-internal class GameplaySetupTab : IInitializable, IDisposable, INotifyPropertyChanged
+internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged
 {
     [Inject] private readonly CSLConfig config;
     [Inject] private readonly CacheManager cacheManager;
@@ -31,20 +31,10 @@ internal class GameplaySetupTab : IInitializable, IDisposable, INotifyPropertyCh
 
     public event PropertyChangedEventHandler PropertyChanged;
 
-    private readonly string resourceName = "CustomSabersLite.UI.BSML.gameplaySetup.bsml";
     private int selectedSaberIndex;
 
-    public void Initialize()
-    {
-        Logger.Debug("Creating tab");
-        GameplaySetup.Instance.AddTab("Custom Sabers", resourceName, this);
-    }
-
-    public void Dispose()
-    {
+    public void Dispose() =>
         cacheManager.LoadingComplete -= SetupList;
-        GameplaySetup.Instance.RemoveTab("Custom Sabers");
-    }
 
     [UIValue("disable-white-trail")]
     private bool DisableWhiteTrail
@@ -89,7 +79,7 @@ internal class GameplaySetupTab : IInitializable, IDisposable, INotifyPropertyCh
         set => config.TrailWidth = value;
     }
 
-    [UIValue("trail-type-choices")] private List<object> trailTypeChoices = Enum.GetNames(typeof(TrailType)).ToList<object>();
+    [UIValue("trail-type-choices")] private List<object> trailTypeChoices = [.. Enum.GetNames(typeof(TrailType))];
     [UIValue("trail-type")]
     private string TrailType
     {
@@ -110,7 +100,7 @@ internal class GameplaySetupTab : IInitializable, IDisposable, INotifyPropertyCh
     [UIComponent("trail-width")] private readonly TextMeshProUGUI trailWidthText;
     [UIComponent("trail-type")] private readonly RectTransform trailTypeRT;
     [UIComponent("saber-list")] private readonly CustomListTableData saberList;
-    
+
     [UIAction("#post-parse")]
     private void PostParse()
     {
@@ -149,16 +139,15 @@ internal class GameplaySetupTab : IInitializable, IDisposable, INotifyPropertyCh
             OrderBy.Name);
 
         saberList.Data.Clear();
-        saberListManager.GetList(filterOptions)
-            .ForEach(i => saberList.Data.Add(i.ToCustomCellInfo()));
+        saberListManager.GetList(filterOptions).Select(i => i.ToCustomCellInfo()).ForEach(saberList.Data.Add);
 
         saberList.TableView.ReloadData();
         saberList.TableView.SelectCellWithIdx(selectedSaberIndex);
     }
 
-    public void Activated()
+    public void Activated(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
     {
-        SharedSaberSettings.PropertyNames.ForEach(n => PropertyChanged(this, new(n)));
+        SharedSaberSettings.PropertyNames.ForEach(NotifyPropertyChanged);
 
         selectedSaberIndex = saberListManager.IndexForPath(config.CurrentlySelectedSaber);
 
@@ -172,4 +161,6 @@ internal class GameplaySetupTab : IInitializable, IDisposable, INotifyPropertyCh
         yield return new WaitForEndOfFrame();
         saberList.TableView.ScrollToCellWithIdx(selectedSaberIndex, TableView.ScrollPositionType.Center, true);
     }
+    private void NotifyPropertyChanged(string propertyName) =>
+        PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 }

@@ -51,7 +51,7 @@ internal class TabTest : BSMLAutomaticViewController
     public string TrailType;
 
     [UIValue("trail-type-list")]
-    public List<object> trailTypeList = Enum.GetNames(typeof(TrailType)).ToList<object>();
+    public List<object> trailTypeList = [.. Enum.GetNames(typeof(TrailType))];
 
     [UIValue("enable-custom-events")]
     public bool EnableCustomEvents;

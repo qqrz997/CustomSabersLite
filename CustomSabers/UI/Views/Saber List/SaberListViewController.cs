@@ -60,7 +60,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
     [UIAction("select-saber")]
     public async void SelectSaber(TableView tableView, int row)
     {
-        Logger.Debug($"saber selected at row {row}"); 
+        Logger.Debug($"saber selected at row {row}");
         selectedSaberIndex = row;
         config.CurrentlySelectedSaber = saberListManager.PathForIndex(row);
         await GeneratePreview();
@@ -78,7 +78,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
             return;
         }
 
-        deleteSaberModalText.text = $"Are you sure you want to delete\n{ Path.GetFileNameWithoutExtension(config.CurrentlySelectedSaber) }?";
+        deleteSaberModalText.text = $"Are you sure you want to delete\n{Path.GetFileNameWithoutExtension(config.CurrentlySelectedSaber)}?";
         deleteSaberModal.Show(true);
     }
 
@@ -150,7 +150,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
         saberList.TableView.ScrollToCellWithIdx(selectedSaberIndex, TableView.ScrollPositionType.Center, true);
     }
 
-    [UIValue("order-by-choices")] private List<object> orderByChoices = Enum.GetNames(typeof(OrderBy)).ToList<object>();
+    [UIValue("order-by-choices")] private List<object> orderByChoices = [.. Enum.GetNames(typeof(OrderBy))];
     [UIValue("order-by-filter")]
     public string OrderByFilter
     {
@@ -182,7 +182,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
         //saberList.TableView.SelectCellWithIdx(selectedSaberIndex);
         StartCoroutine(ScrollToSelectedCell());
         UnityMainThreadTaskScheduler.Factory.StartNew(GeneratePreview);
-        
+
         previewManager.SetPreviewActive(true);
     }
 

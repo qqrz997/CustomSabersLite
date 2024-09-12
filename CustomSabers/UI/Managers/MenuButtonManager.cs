@@ -20,6 +20,6 @@ internal class MenuButtonManager(MainFlowCoordinator mainFlowCoordinator, CSLFlo
     private void PresentCSLFlowCoordinator() =>
         mainFlowCoordinator.PresentFlowCoordinator(sabersFlowCoordinator);
 
-    public void Dispose() => 
+    public void Dispose() =>
         MenuButtons.Instance.UnregisterButton(button);
 }

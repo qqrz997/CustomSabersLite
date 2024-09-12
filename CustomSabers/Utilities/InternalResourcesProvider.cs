@@ -30,16 +30,13 @@ internal class InternalResourcesProvider : IInitializable
             saberTrailRendererComponent._meshFilter = saberTrailRendererPrefab.GetComponent<MeshFilter>();
             SaberTrailRenderer = saberTrailRendererComponent;
         }
-        
+
         // this probably won't live very long
         var time = Utils.CanUseDateTimeNowSafely ? DateTime.Now : DateTime.UtcNow;
         if (time.Month == 4 && time.Day == 1)
         {
-            SaberModelPrefab = TryLoadAsset<GameObject>("Assets/Prefabs/Sabers/BasicSaberModel.prefab"); 
-            foreach (var component in SaberModelPrefab.GetComponentsInChildren<MonoBehaviour>())
-            {
-                UnityEngine.Object.Destroy(component);
-            }
+            SaberModelPrefab = TryLoadAsset<GameObject>("Assets/Prefabs/Sabers/BasicSaberModel.prefab");
+            SaberModelPrefab.GetComponentsInChildren<MonoBehaviour>().ForEach(GameObject.Destroy);
             SceneManager.activeSceneChanged += OnSceneChanged;
         }
     }

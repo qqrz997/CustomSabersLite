@@ -5,7 +5,7 @@ namespace CustomSabersLite.Data;
 internal readonly struct SaberPrefab
 {
     public GameObject Prefab { get; }
-    
+
     public SaberPrefab(GameObject prefab, SaberType saberType)
     {
         if (!prefab) return;

@@ -11,16 +11,16 @@ internal class SharedSaberSettings
     public bool OverrideTrailWidth;
     public int TrailWidth;
     public TrailType TrailType;
-    public bool EnableCustomEvents; 
+    public bool EnableCustomEvents;
     public bool ForcefullyFoolish;
     public bool EnableCustomColorScheme;
     public Color LeftSaberColor;
     public Color RightSaberColor;
 
-    internal static string[] PropertyNames = 
-    [ 
-        nameof(DisableWhiteTrail), 
-        nameof(OverrideTrailDuration), 
+    internal static string[] PropertyNames =
+    [
+        nameof(DisableWhiteTrail),
+        nameof(OverrideTrailDuration),
         nameof(TrailDuration),
         nameof(OverrideTrailWidth),
         nameof(TrailWidth),

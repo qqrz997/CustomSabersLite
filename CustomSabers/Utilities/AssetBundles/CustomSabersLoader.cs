@@ -19,11 +19,11 @@ internal class CustomSabersLoader(SaberInstanceManager saberInstanceManager, Sab
         : saberInstanceManager.TryGetSaber(saberPath) ?? await LoadNew(saberPath);
 
     public async Task<(CustomSaberData saberData, SaberLoaderError loadingError)> LoadSaberDataAsync(string relativeSaberPath) => Path.GetExtension(relativeSaberPath) switch
-        {
-            FileExts.Saber => await saberLoader.LoadCustomSaberAsync(relativeSaberPath),
-            FileExts.Whacker => await whackerLoader.LoadWhackerAsync(relativeSaberPath),
-            _ => (CustomSaberData.Empty, SaberLoaderError.InvalidFileType)
-        };
+    {
+        FileExts.Saber => await saberLoader.LoadCustomSaberAsync(relativeSaberPath),
+        FileExts.Whacker => await whackerLoader.LoadWhackerAsync(relativeSaberPath),
+        _ => (CustomSaberData.Empty, SaberLoaderError.InvalidFileType)
+    };
 
     private async Task<CustomSaberData> LoadNew(string saberPath)
     {

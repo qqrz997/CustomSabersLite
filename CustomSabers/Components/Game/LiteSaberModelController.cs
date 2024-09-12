@@ -3,6 +3,7 @@ using UnityEngine;
 using Zenject;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Components.Managers;
+using CustomSabersLite.Utilities;
 
 namespace CustomSabersLite.Components.Game;
 
@@ -53,12 +54,6 @@ internal class LiteSaberModelController : SaberModelController, IColorable, IPre
     {
         this.color = color;
         customSaberInstance?.SetColor(color);
-        if (customTrailInstances != null)
-        {
-            foreach (var customTrail in customTrailInstances)
-            {
-                customTrail?.SetColor(color);
-            }
-        }
+        customTrailInstances?.ForEach(t => t.SetColor(color));
     }
 }

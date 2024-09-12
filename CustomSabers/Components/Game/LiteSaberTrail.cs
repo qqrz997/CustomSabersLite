@@ -1,4 +1,5 @@
 ﻿using CustomSabersLite.Data;
+using CustomSabersLite.Utilities;
 using CustomSabersLite.Utilities.Extensions;
 using UnityEngine;
 
@@ -21,7 +22,7 @@ internal class LiteSaberTrail : SaberTrail
         InstanceTrailData = trailData;
         gameObject.layer = 12;
 
-        SetColorImpl(trailData.Color);
+        SetColor(trailData.Color);
     }
 
     void Update()
@@ -37,14 +38,11 @@ internal class LiteSaberTrail : SaberTrail
 
     public void SetColor(Color color)
     {
-        if (InstanceTrailData.ColorType != CustomSaber.ColorType.CustomColor) SetColorImpl(color);
-    }
-
-    private void SetColorImpl(Color color)
-    {
-        color *= InstanceTrailData.ColorMultiplier;
-        foreach (var material in _trailRenderer._meshRenderer.materials)
-            material.SetColor(MaterialProperties.Color, color);
-        _color = color;
+        if (InstanceTrailData.ColorType != CustomSaber.ColorType.CustomColor)
+        {
+            color *= InstanceTrailData.ColorMultiplier;
+            _trailRenderer._meshRenderer.materials.ForEach(m => m.SetColor(MaterialProperties.Color, color));
+            _color = color;
+        }
     }
 }

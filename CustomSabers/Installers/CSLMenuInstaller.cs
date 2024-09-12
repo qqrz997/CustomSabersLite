@@ -22,7 +22,7 @@ internal class CSLMenuInstaller : Installer
         //Container.Bind<TabTest>().FromNewComponentAsViewController().AsSingle();
 
         // UI managers
-        Container.Bind<ViewControllerManager>().FromNewComponentOnNewGameObject().AsSingle().NonLazy();
+        Container.BindInterfacesTo<GameplaySetupTabController>().AsSingle();
         Container.BindInterfacesTo<MenuButtonManager>().AsSingle();
         Container.BindInterfacesAndSelfTo<SaberPreviewManager>().AsSingle();
 

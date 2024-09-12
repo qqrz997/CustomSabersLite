@@ -18,19 +18,15 @@ internal class CSLFlowCoordinator : FlowCoordinator
 
     protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
     {
-        try
+        if (firstActivation)
         {
-            if (firstActivation)
-            {
-                SetTitle("Custom Sabers");
-                showBackButton = true;
-            }
-
-            ProvideInitialViewControllers(saberList, saberSettings, tabTest);
+            SetTitle("Custom Sabers");
+            showBackButton = true;
         }
-        catch (Exception ex)
+
+        if (addedToHierarchy)
         {
-            Logger.Error($"{ex}");
+            ProvideInitialViewControllers(saberList, saberSettings, tabTest);
         }
 
         cacheManager.LoadingProgressChanged += DisplayPercentageProgress;
@@ -51,12 +47,12 @@ internal class CSLFlowCoordinator : FlowCoordinator
         SetTitle("Custom Sabers");
     }
 
-    protected override void BackButtonWasPressed(ViewController topViewController) => 
-        mainFlowCoordinator.DismissFlowCoordinator(this);
-
-    void OnDestroy()
+    protected override void DidDeactivate(bool removedFromHierarchy, bool screenSystemDisabling)
     {
         cacheManager.LoadingProgressChanged -= DisplayPercentageProgress;
         cacheManager.LoadingComplete -= LoadingCompleted;
     }
+
+    protected override void BackButtonWasPressed(ViewController topViewController) =>
+        mainFlowCoordinator.DismissFlowCoordinator(this);
 }

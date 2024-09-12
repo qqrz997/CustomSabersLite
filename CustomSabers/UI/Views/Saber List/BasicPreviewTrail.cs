@@ -1,5 +1,6 @@
 ﻿using CustomSabersLite.Configuration;
 using CustomSabersLite.Data;
+using CustomSabersLite.Utilities;
 using CustomSabersLite.Utilities.Extensions;
 using UnityEngine;
 
@@ -34,7 +35,7 @@ internal class BasicPreviewTrail
         mesh.MarkDynamic();
         vertices = new Vector3[4];
         triangles = [0, 3, 1, /**/ 0, 2, 3];
-        uvs = [ new(1, 0), new(0, 0), new(1, 1), new(0, 1) ];
+        uvs = [new(1, 0), new(0, 0), new(1, 1), new(0, 1)];
         colors = new Color[4];
     }
 
@@ -69,10 +70,10 @@ internal class BasicPreviewTrail
 
     public void UpdateColor(Color color)
     {
-        var trailColor = currentTrailData.ColorType == CustomSaber.ColorType.CustomColor 
+        var trailColor = currentTrailData.ColorType == CustomSaber.ColorType.CustomColor
             ? currentTrailData.Color * currentTrailData.ColorMultiplier
             : color * currentTrailData.ColorMultiplier;
-        foreach (var material in meshRenderer.materials) material.SetColor(MaterialProperties.Color, trailColor);
+        meshRenderer.materials.ForEach(m => m.SetColor(MaterialProperties.Color, trailColor));
         colors[0] = trailColor;
         colors[1] = trailColor;
         colors[2] = trailColor;

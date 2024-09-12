@@ -30,7 +30,7 @@ internal class LiteSaber : MonoBehaviour
     void Awake()
     {
         EventManager = gameObject.TryGetComponentOrDefault<EventManager>();
-        SetLayer(gameObject, 12); 
+        SetLayer(gameObject, 12);
         foreach (var renderer in gameObject.GetComponentsInChildren<Renderer>(true))
         {
             if (!renderer) continue;
@@ -58,13 +58,8 @@ internal class LiteSaber : MonoBehaviour
         }
     }
 
-    public void SetColor(Color color)
-    {
-        foreach (var mat in colorableMaterials)
-        {
-            mat.SetColor(MaterialProperties.Color, color);
-        }
-    }
+    public void SetColor(Color color) =>
+        colorableMaterials.ForEach(mat => mat.SetColor(MaterialProperties.Color, color));
 
     private void SetLayer(GameObject gameObject, int layer)
     {
@@ -82,7 +77,7 @@ internal class LiteSaber : MonoBehaviour
         material.HasProperty(MaterialProperties.CustomColors) ? material.GetFloat(MaterialProperties.CustomColors) > 0
         : HasGlowOrBloom(material);
 
-    private static bool HasGlowOrBloom(Material material) => 
-        material.HasProperty(MaterialProperties.Glow) && material.GetFloat(MaterialProperties.Glow) > 0 
+    private static bool HasGlowOrBloom(Material material) =>
+        material.HasProperty(MaterialProperties.Glow) && material.GetFloat(MaterialProperties.Glow) > 0
         || material.HasProperty(MaterialProperties.Bloom) && material.GetFloat(MaterialProperties.Bloom) > 0;
 }

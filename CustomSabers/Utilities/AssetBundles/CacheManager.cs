@@ -30,10 +30,8 @@ internal class CacheManager : IInitializable
 
     public event Action<int> LoadingProgressChanged;
     public event Action LoadingComplete;
-    
-    public bool InitializationFinished { get; private set; }
 
-    public bool InitializationFailed { get; private set; }
+    public bool InitializationFinished { get; private set; }
 
     public async void Initialize()
     {
@@ -54,7 +52,6 @@ internal class CacheManager : IInitializable
         }
         catch (Exception ex)
         {
-            InitializationFailed = true;
             Logger.Critical($"Problem encountered during cache initialization - the mod will not activate\n{ex}");
         }
         finally
@@ -111,7 +108,8 @@ internal class CacheManager : IInitializable
             var loadingError = result.loadingError;
 
             var metadata = saberData.FilePath != null
-                ? new CustomSaberMetadata {
+                ? new CustomSaberMetadata
+                {
                     SaberName = saberData.Descriptor.SaberName,
                     AuthorName = saberData.Descriptor.AuthorName,
                     RelativePath = saberData.FilePath,
@@ -119,7 +117,8 @@ internal class CacheManager : IInitializable
                     CoverImage = saberData.Descriptor.CoverImage?.texture.DuplicateTexture().Downscale(128, 128).EncodeToPNG(),
                     LoadingError = loadingError,
                 }
-                : new CustomSaberMetadata {
+                : new CustomSaberMetadata
+                {
                     SaberName = Path.GetFileNameWithoutExtension(saberFilePath),
                     LoadingError = loadingError,
                 };

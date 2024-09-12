@@ -22,14 +22,12 @@ internal class MenuPointerProvider : IInitializable
         meshRenderers.AddRange(GetMenuHandleRenderers(RightPointer));
     }
 
-    public void SetPointerVisibility(bool visible)
-    {
-        foreach (var renderer in meshRenderers) renderer.enabled = visible;
-    }
+    public void SetPointerVisibility(bool visible) =>
+        meshRenderers.ForEach(r => r.enabled = visible);
 
     private List<MeshRenderer> GetMenuHandleRenderers(GameObject menuHandle) => [
-        menuHandle.transform.Find("Glowing").GetComponent<MeshRenderer>(), 
-        menuHandle.transform.Find("Normal").GetComponent<MeshRenderer>(), 
+        menuHandle.transform.Find("Glowing").GetComponent<MeshRenderer>(),
+        menuHandle.transform.Find("Normal").GetComponent<MeshRenderer>(),
         menuHandle.transform.Find("FakeGlow0").GetComponent<MeshRenderer>(),
         menuHandle.transform.Find("FakeGlow1").GetComponent<MeshRenderer>()
     ];

@@ -28,11 +28,13 @@
   
     <!--Saber list container-->
     <vertical child-control-height='false' spacing='2' preferred-width='54' child-align='MiddleCenter'>
-      <page-button event-click='saber-list#PageUp' direction='Up' />
       <horizontal background='round-rect-panel' bg-color='#000000AA' pad='1'>
         <list list-style='Simple' visible-cells='5' select-cell='select-saber' id='saber-list' />
       </horizontal>
-      <page-button event-click='saber-list#PageDown' direction='Down' />
+      <horizontal>
+        <page-button event-click='saber-list#PageUp' direction='Up' preferred-width='25'/>
+        <page-button event-click='saber-list#PageDown' direction='Down' preferred-width='25'/>
+      </horizontal>
     </vertical>
   </horizontal>
 </vertical>

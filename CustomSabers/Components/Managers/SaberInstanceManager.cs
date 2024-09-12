@@ -1,4 +1,5 @@
 ﻿using CustomSabersLite.Data;
+using CustomSabersLite.Utilities;
 using System;
 using System.Collections.Generic;
 
@@ -21,19 +22,14 @@ internal class SaberInstanceManager : IDisposable
         }
     }
 
-    public bool HasSaber(string saberPath) => 
+    public bool HasSaber(string saberPath) =>
         saberInstances.ContainsKey(saberPath);
 
-    public CustomSaberData TryGetSaber(string saberPath) => 
+    public CustomSaberData TryGetSaber(string saberPath) =>
         saberPath is null ? null
         : !saberInstances.ContainsKey(saberPath) ? null
         : saberInstances[saberPath];
 
-    public void Dispose()
-    {
-        foreach (var saberInstance in saberInstances.Values)
-        {
-            saberInstance.Dispose();
-        }
-    }
+    public void Dispose() =>
+        saberInstances.Values.ForEach(i => i.Dispose());
 }

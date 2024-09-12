@@ -29,7 +29,7 @@ internal static class ImageUtils
     /// Downscales a texture if it is bigger than the given width and height
     /// </summary>
     public static Texture2D Downscale(this Texture2D origTexture, int width, int height, FilterMode filterMode = FilterMode.Trilinear) =>
-        width * height > origTexture.width * origTexture.height ? origTexture 
+        width * height > origTexture.width * origTexture.height ? origTexture
         : origTexture.Rescale(width, height, filterMode);
 
     /// <summary>
@@ -57,7 +57,7 @@ internal static class ImageUtils
     /// <summary>
     /// Creates a <seealso cref="Sprite"/> from raw image data
     /// </summary>
-    public static Sprite ToSprite(this Texture2D tex, byte[] imageData, float pixelsPerUnit = 100) => 
+    public static Sprite ToSprite(this Texture2D tex, byte[] imageData, float pixelsPerUnit = 100) =>
         !tex.LoadImage(imageData) ? null
         : Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), pixelsPerUnit);
 }

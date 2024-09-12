@@ -22,7 +22,7 @@ internal class TrailFactory
     /// Sets up custom trails for a custom saber
     /// </summary>
     /// <returns>if no suitable trail is created, a custom trail using the default trail material is created instead</returns>
-    public LiteSaberTrail[] CreateTrail(LiteSaber customSaber, SaberType saberType, float intensity = 1f) => 
+    public LiteSaberTrail[] CreateTrail(LiteSaber customSaber, SaberType saberType, float intensity = 1f) =>
         CreateTrail(customSaber, saberType, config.TrailType, intensity);
 
     public LiteSaberTrail[] CreateTrail(LiteSaber customSaber, SaberType saberType, TrailType trailType, float intensity = 1f) => trailType switch
