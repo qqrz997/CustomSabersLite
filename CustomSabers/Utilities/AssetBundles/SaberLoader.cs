@@ -19,37 +19,47 @@ internal class SaberLoader(PluginDirs dirs, BundleLoader bundleLoader)
     /// Loads a custom saber from a .saber file
     /// </summary>
     /// <param name="relativePath">Path to the .saber file in the CustomSabers folder</param>
-    /// <returns><seealso cref="CustomSaberData.Empty"/> if a custom saber failed to load</returns>
-    public async Task<(CustomSaberData, SaberLoaderError)> LoadCustomSaberAsync(string relativePath)
+    /// <returns><seealso cref="NoSaberData"/> if a custom saber failed to load</returns>
+    public async Task<ISaberData> LoadCustomSaberAsync(string relativePath)
     {
         var path = Path.Combine(sabersPath, relativePath);
 
         if (!File.Exists(path))
-            return (CustomSaberData.Empty, SaberLoaderError.FileNotFound);
+            return new NoSaberData(relativePath, SaberLoaderError.FileNotFound);
 
         Logger.Debug($"Attempting to load saber file...\n\t- {path}");
 
         var bundle = await bundleLoader.LoadBundleAsync(path);
 
         if (!bundle)
-            return (CustomSaberData.Empty, SaberLoaderError.NullBundle);
+            return new NoSaberData(relativePath, SaberLoaderError.NullBundle);
 
         var saberPrefab = await bundleLoader.LoadAssetAsync<GameObject>(bundle, "_CustomSaber");
 
         if (!saberPrefab)
         {
             bundle.Unload(true);
-            return (CustomSaberData.Empty, SaberLoaderError.NullAsset);
+            return new NoSaberData(relativePath, SaberLoaderError.NullAsset);
         }
 
-        saberPrefab.hideFlags = HideFlags.DontUnloadUnusedAsset;
-
         var descriptor = saberPrefab.GetComponent<SaberDescriptor>();
+        var image = descriptor.CoverImage?.texture?.DuplicateTexture().Downscale(128, 128).EncodeToPNG();
+
+        saberPrefab.hideFlags |= HideFlags.DontUnloadUnusedAsset;
         saberPrefab.name += $" {descriptor.SaberName}";
 
-        var missingShaders = !await ShaderRepairUtils.RepairSaberShadersAsync(saberPrefab);
+        var shaderInfo = await ShaderRepairUtils.RepairSaberShadersAsync(saberPrefab);
+        var missingShaders = !shaderInfo.AllShadersReplaced;
+        var missingShaderNames = shaderInfo.MissingShaderNames;
 
-        return (new CustomSaberData(relativePath, bundle, saberPrefab, descriptor, Type) { MissingShaders = missingShaders },
-                SaberLoaderError.None);
+        return 
+            new CustomSaberData(
+                new CustomSaberMetadata(
+                    new SaberFileInfo(relativePath, Type),
+                    SaberLoaderError.None,
+                    new Descriptor(descriptor.SaberName, descriptor.AuthorName, image), 
+                    new SaberModelFlags(missingShaders, missingShaderNames)), // todo - missing shader names
+                bundle,
+                saberPrefab);
     }
 }

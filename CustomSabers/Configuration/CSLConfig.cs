@@ -26,8 +26,6 @@ internal class CSLConfig
 
     public virtual bool EnableCustomEvents { get; set; } = true;
 
-    public virtual string PluginVer { get; set; } = string.Empty;
-
     [Ignore] public bool EnableMenuSabers { get; set; } = false;
 
     [Ignore] public OrderBy OrderByFilter { get; set; } = OrderBy.Name;

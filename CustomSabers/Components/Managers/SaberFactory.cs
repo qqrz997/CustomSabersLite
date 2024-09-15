@@ -12,24 +12,19 @@ internal class SaberFactory(CustomSabersLoader customSabersLoader, CSLConfig con
     private readonly CustomSabersLoader customSabersLoader = customSabersLoader;
     private readonly CSLConfig config = config;
 
-    public async Task<CustomSaberData> GetCurrentSaberDataAsync() =>
+    public async Task<ISaberData> GetCurrentSaberDataAsync() =>
         await customSabersLoader.GetSaberData(config.CurrentlySelectedSaber);
 
-    public LiteSaber TryCreate(SaberType saberType, CustomSaberData saberData)
+    public LiteSaber TryCreate(SaberType saberType, ISaberData saberData)
     {
-        if (saberData is null || saberData.FilePath is null)
+        if (saberData is CustomSaberData customSaberData)
         {
-            return null;
-        }
+            var original = customSaberData.GetPrefab(saberType);
+            var newSaber = GameObject.Instantiate(original).AddComponent<LiteSaber>();
+            newSaber.Init(saberData.Metadata.FileInfo.Type);
 
-        var original = saberData.GetPrefab(saberType);
-        if (!original)
-        {
-            return null;
+            return newSaber;
         }
-
-        var newSaber = GameObject.Instantiate(original).AddComponent<LiteSaber>();
-        newSaber.Init(saberData.Type);
-        return newSaber;
+        return null;
     }
 }

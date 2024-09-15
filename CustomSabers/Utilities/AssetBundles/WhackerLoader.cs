@@ -12,10 +12,10 @@ namespace CustomSabersLite.Utilities.AssetBundles;
 /// <summary>
 /// Class for loading .whacker files
 /// </summary>
-internal class WhackerLoader(PluginDirs pluginDirs, BundleLoader bundleLoader)
+internal class WhackerLoader(PluginDirs directories, BundleLoader bundleLoader)
 {
     private readonly BundleLoader bundleLoader = bundleLoader;
-    private readonly string sabersPath = pluginDirs.CustomSabers.FullName;
+    private readonly string sabersPath = directories.CustomSabers.FullName;
 
     private const CustomSaberType Type = CustomSaberType.Whacker;
 
@@ -23,13 +23,13 @@ internal class WhackerLoader(PluginDirs pluginDirs, BundleLoader bundleLoader)
     /// Loads a custom saber from a .whacker file
     /// </summary>
     /// <param name="relativePath">Path to the .whacker file in the CustomSabers folder</param>
-    /// <returns><seealso cref="CustomSaberData.Empty"/> if a custom saber failed to load</returns>
-    public async Task<(CustomSaberData, SaberLoaderError)> LoadWhackerAsync(string relativePath)
+    /// <returns><seealso cref="NoSaberData"/> if a custom saber failed to load</returns>
+    public async Task<ISaberData> LoadWhackerAsync(string relativePath)
     {
         var path = Path.Combine(sabersPath, relativePath);
 
         if (!File.Exists(path))
-            return (CustomSaberData.Empty, SaberLoaderError.FileNotFound);
+            return new NoSaberData(relativePath, SaberLoaderError.FileNotFound);
 
         Logger.Debug($"Attempting to load whacker file...\n\t- {path}");
 
@@ -41,7 +41,7 @@ internal class WhackerLoader(PluginDirs pluginDirs, BundleLoader bundleLoader)
         var whacker = (WhackerModel)new JsonSerializer().Deserialize(jsonStreamReader, typeof(WhackerModel));
 
         if (whacker.config.isLegacy)
-            return (CustomSaberData.Empty, SaberLoaderError.LegacyWhacker);
+            return new NoSaberData(relativePath, SaberLoaderError.LegacyWhacker);
 
         var bundleEntry = archive.GetEntry(whacker.pcFileName);
 
@@ -51,38 +51,40 @@ internal class WhackerLoader(PluginDirs pluginDirs, BundleLoader bundleLoader)
         var bundle = await bundleLoader.LoadBundleAsync(bundleStream);
 
         if (!bundle)
-            return (CustomSaberData.Empty, SaberLoaderError.NullBundle);
+            return new NoSaberData(relativePath, SaberLoaderError.NullBundle);
 
         var saberPrefab = await AssetBundleExtensions.LoadAssetAsync<GameObject>(bundle, "_Whacker");
 
         if (!saberPrefab)
         {
             bundle.Unload(true);
-            return (CustomSaberData.Empty, SaberLoaderError.NullAsset);
+            return new NoSaberData(relativePath, SaberLoaderError.NullAsset);
         }
 
-        saberPrefab.hideFlags = HideFlags.DontUnloadUnusedAsset;
+        saberPrefab.hideFlags |= HideFlags.DontUnloadUnusedAsset;
+        saberPrefab.name += $" {whacker.descriptor.objectName}";
 
-        var descriptor = new SaberDescriptor
+        byte[] image = null;
+        if (thumbEntry != null)
         {
-            SaberName = whacker.descriptor.objectName,
-            AuthorName = whacker.descriptor.author,
-            Description = whacker.descriptor.description,
-            CoverImage = thumbEntry is null ? null : await GetCoverFromArchive(thumbEntry)
-        };
-        saberPrefab.name += $" {descriptor.SaberName}";
+            using var imageMemoryStream = new MemoryStream();
+            using var imageStream = thumbEntry.Open();
+            await imageStream.CopyToAsync(imageMemoryStream);
+            image = imageMemoryStream.ToArray();
+        }
 
-        var missingShaders = !await ShaderRepairUtils.RepairSaberShadersAsync(saberPrefab);
+        var shaderInfo = await ShaderRepairUtils.RepairSaberShadersAsync(saberPrefab);
+        var missingShaders = !shaderInfo.AllShadersReplaced;
+        var missingShaderNames = shaderInfo.MissingShaderNames;
 
-        return (new CustomSaberData(relativePath, bundle, saberPrefab, descriptor, Type) { MissingShaders = missingShaders },
-                SaberLoaderError.None);
-    }
-
-    private async Task<Sprite> GetCoverFromArchive(ZipArchiveEntry thumbEntry)
-    {
-        using var memoryStream = new MemoryStream();
-        using var thumbStream = thumbEntry.Open();
-        await thumbStream.CopyToAsync(memoryStream);
-        return new Texture2D(2, 2).ToSprite(memoryStream.ToArray());
+        return
+            new CustomSaberData(
+                new CustomSaberMetadata(
+                    new SaberFileInfo(relativePath, Type),
+                    SaberLoaderError.None,
+                    new Descriptor(whacker.descriptor.objectName, whacker.descriptor.author, image),
+                    new SaberModelFlags(missingShaders, missingShaderNames)),
+                bundle,
+                saberPrefab);
     }
 }

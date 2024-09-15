@@ -1,8 +1,8 @@
 ﻿namespace CustomSabersLite.Models;
 
-internal enum CustomSaberType
+public enum CustomSaberType
 {
-    Default,
+    Default = 0,
     Saber,
     Whacker
 }

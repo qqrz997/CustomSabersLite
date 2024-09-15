@@ -1,8 +1,12 @@
 ﻿namespace CustomSabersLite.Models;
 
-public record CustomSaberMetadata (string SaberName, string AuthorName, string RelativePath, bool MissingShaders, byte[] CoverImage, SaberLoaderError LoadingError)
+internal sealed class CustomSaberMetadata(SaberFileInfo fileInfo, SaberLoaderError loaderError, Descriptor descriptor, SaberModelFlags flags) : ISaberMetadata
 {
-    public static CustomSaberMetadata DefaultSaber =>
-        new("Default", "Beat Games", null, false, null, SaberLoaderError.None);
+    public SaberFileInfo FileInfo { get; } = fileInfo;
 
+    public SaberLoaderError LoaderError { get; } = loaderError;
+
+    public Descriptor Descriptor { get; } = descriptor;
+
+    public SaberModelFlags Flags { get; } = flags;
 }

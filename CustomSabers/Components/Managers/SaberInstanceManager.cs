@@ -11,14 +11,14 @@ internal class SaberInstanceManager : IDisposable
 
     public void AddSaber(CustomSaberData saberData)
     {
-        if (saberData.FilePath is null)
+        if (saberData.Metadata.FileInfo.RelativePath is null)
         {
             return;
         }
 
-        if (!HasSaber(saberData.FilePath))
+        if (!HasSaber(saberData.Metadata.FileInfo.RelativePath))
         {
-            saberInstances.Add(saberData.FilePath, saberData);
+            saberInstances.Add(saberData.Metadata.FileInfo.RelativePath, saberData);
         }
     }
 

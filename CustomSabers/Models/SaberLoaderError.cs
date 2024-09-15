@@ -2,7 +2,7 @@
 
 public enum SaberLoaderError
 {
-    None,
+    None = 0,
     Unknown,
     InvalidFileType,
     FileNotFound,

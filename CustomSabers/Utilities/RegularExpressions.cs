@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace CustomSabersLite.Models;
+namespace CustomSabersLite.Utilities;
 
 internal class RegularExpressions
 {

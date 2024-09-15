@@ -127,6 +127,11 @@ internal class SaberListViewController : BSMLAutomaticViewController
 
     private async Task GeneratePreview()
     {
+        if (!cacheManager.InitializationFinished)
+        {
+            return;
+        }
+
         try
         {
             Logger.Debug("Generating preview");

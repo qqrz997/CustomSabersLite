@@ -22,8 +22,8 @@ internal class SaberListManager(PluginDirs dirs)
         var sortedData = Data
             .OrderBy(i => filterOptions.OrderBy switch
         {
-            OrderBy.Name => i.Metadata.SaberName, // should sort by a sanitized string (todo - separate the json model)
-            OrderBy.Author => i.Metadata.AuthorName,
+            OrderBy.Name => i.Metadata.Descriptor.SaberName, // should sort by a sanitized string / type for name or extension method
+            OrderBy.Author => i.Metadata.Descriptor.AuthorName,
             _ => throw new NotImplementedException()
         }).ToList();
 
@@ -48,7 +48,7 @@ internal class SaberListManager(PluginDirs dirs)
 
         File.Move(currentSaberPath, destinationPath);
 
-        if (Data.FirstOrDefault(i => i.Metadata.RelativePath == relativePath) is SaberListCellInfo i)
+        if (Data.FirstOrDefault(i => i.Metadata.FileInfo.RelativePath == relativePath) is SaberListCellInfo i)
             Data.Remove(i);
 
         return true;
@@ -56,32 +56,32 @@ internal class SaberListManager(PluginDirs dirs)
 
     public int IndexForPath(string relativePath) =>
         string.IsNullOrEmpty(relativePath) ? 0
-        : SaberList.FirstOrDefault(i => i.Metadata.RelativePath == relativePath) is not SaberListCellInfo i ? 0
+        : SaberList.FirstOrDefault(i => i.Metadata?.FileInfo?.RelativePath == relativePath) is not SaberListCellInfo i ? 0
         : SaberList.IndexOf(i);
 
     public string PathForIndex(int row) =>
-        SaberList.ElementAtOrDefault(row) is SaberListCellInfo i ? i.Metadata.RelativePath : null;
+        SaberList.ElementAtOrDefault(row) is SaberListCellInfo i ? i.Metadata.FileInfo.RelativePath : null;
 
     private static SaberListCellInfo CellInfoForDefaultSabers =>
-        MetaToInfo(CustomSaberMetadata.DefaultSaber);
+        MetaToInfo(new CustomSaberMetadata(null, SaberLoaderError.None, new("Default", "Beat Games", null), null));
 
     private static SaberListCellInfo MetaToInfo(CustomSaberMetadata meta) =>
         new(meta, GetCellInfo(meta), GetCellIcon(meta));
 
-    private static SaberListCellText GetCellInfo(CustomSaberMetadata meta) => meta.LoadingError switch // again, this shouldn't be here
+    private static SaberListCellText GetCellInfo(CustomSaberMetadata meta) => meta.LoaderError switch
     {
-        SaberLoaderError.None => new(meta.SaberName, meta.AuthorName),
-        SaberLoaderError.InvalidFileType => new($"<color=#F77>Error - </color> {meta.SaberName}", "File is not of a valid type"),
-        SaberLoaderError.FileNotFound => new($"<color=#F77>Error - </color> {meta.SaberName}", "Couldn't find file (was it deleted?)"),
-        SaberLoaderError.LegacyWhacker => new($"<color=#F77>Not loaded - </color> {meta.SaberName}", "Legacy whacker, incompatible with PC"),
-        SaberLoaderError.NullBundle => new($"<color=#F77>Error - </color> {meta.SaberName}", "Problem encountered when loading asset"),
-        SaberLoaderError.NullAsset => new($"<color=#F77>Error - </color> {meta.SaberName}", "Problem encountered when loading saber model"),
-        _ => new($"<color=#F77>Error - </color> {meta.SaberName}", "Unknown error encountered during loading")
+        SaberLoaderError.None => new(meta.Descriptor.SaberName, meta.Descriptor.AuthorName),
+        SaberLoaderError.InvalidFileType => new($"<color=#F77>Error - </color> {meta.FileInfo.FileName}", "File is not of a valid type"),
+        SaberLoaderError.FileNotFound => new($"<color=#F77>Error - </color> {meta.FileInfo.FileName}", "Couldn't find file (was it deleted?)"),
+        SaberLoaderError.LegacyWhacker => new($"<color=#F77>Not loaded - </color> {meta.FileInfo.FileName}", "Legacy whacker, incompatible with PC"),
+        SaberLoaderError.NullBundle => new($"<color=#F77>Error - </color> {meta.FileInfo.FileName}", "Problem encountered when loading asset"),
+        SaberLoaderError.NullAsset => new($"<color=#F77>Error - </color> {meta.FileInfo.FileName}", "Problem encountered when loading saber model"),
+        _ => new($"<color=#F77>Error - </color> {meta.FileInfo.FileName}", "Unknown error encountered during loading")
     };
 
-    private static IThumbnail GetCellIcon(CustomSaberMetadata meta) => meta.CoverImage switch
+    private static IThumbnail GetCellIcon(CustomSaberMetadata meta) => meta.Descriptor.Image switch
     {
-        _ when meta.SaberName == "Default" && meta.AuthorName == "Beat Games" => new ThumbnailWithSprite(ImageUtils.defaultCoverImage), // amazing stuff really
+        _ when meta.Descriptor.SaberName == "Default" && meta.Descriptor.AuthorName == "Beat Games" => new ThumbnailWithSprite(ImageUtils.defaultCoverImage), // amazing stuff really
         [..] bytes => new ThumbnailWithData(bytes),
         _ => new ThumbnailWithSprite(ImageUtils.nullCoverImage)
     };
