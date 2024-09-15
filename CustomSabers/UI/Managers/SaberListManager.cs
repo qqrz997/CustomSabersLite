@@ -63,7 +63,11 @@ internal class SaberListManager(PluginDirs dirs)
         SaberList.ElementAtOrDefault(row) is SaberListCellInfo i ? i.Metadata.FileInfo.RelativePath : null;
 
     private static SaberListCellInfo CellInfoForDefaultSabers =>
-        MetaToInfo(new CustomSaberMetadata(null, SaberLoaderError.None, new("Default", "Beat Games", null), null));
+        MetaToInfo(new CustomSaberMetadata(
+            new(null, CustomSaberType.Default), 
+            SaberLoaderError.None, 
+            new("Default", "Beat Games", null),
+            new(false, [])));
 
     private static SaberListCellInfo MetaToInfo(CustomSaberMetadata meta) =>
         new(meta, GetCellInfo(meta), GetCellIcon(meta));
@@ -81,8 +85,8 @@ internal class SaberListManager(PluginDirs dirs)
 
     private static IThumbnail GetCellIcon(CustomSaberMetadata meta) => meta.Descriptor.Image switch
     {
-        _ when meta.Descriptor.SaberName == "Default" && meta.Descriptor.AuthorName == "Beat Games" => new ThumbnailWithSprite(ImageUtils.defaultCoverImage), // amazing stuff really
+        _ when meta.Descriptor.SaberName == "Default" => new SpriteThumbnail(ImageUtils.defaultCoverImage), // amazing stuff really
         [..] bytes => new ThumbnailWithData(bytes),
-        _ => new ThumbnailWithSprite(ImageUtils.nullCoverImage)
+        _ => new SpriteThumbnail(ImageUtils.nullCoverImage)
     };
 }
