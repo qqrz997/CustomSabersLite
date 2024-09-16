@@ -25,9 +25,5 @@ internal class CSLGameInstaller : Installer
             Container.BindInterfacesAndSelfTo<LevelSaberManager>().AsSingle();
             Container.BindInstance(SaberModelRegistration.Create<LiteSaberModelController>(5));
         }
-        else
-        {
-            Container.BindInterfacesTo<DefaultSaberSetter>().AsSingle();
-        }
     }
 }
