@@ -131,11 +131,6 @@
   <ItemGroup>
     <EmbeddedResource Include="manifest.json" />
     <EmbeddedResource Include="UI\BSML\*.bsml" />
-    <EmbeddedResource Include="Resources\null-image.png" />
-    <EmbeddedResource Include="Resources\defaultsabers-image.png" />
-    <EmbeddedResource Include="Resources\CustomSaber.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Utilities\UI\" />
+    <EmbeddedResource Include="Resources\*" />
   </ItemGroup>
 </Project>

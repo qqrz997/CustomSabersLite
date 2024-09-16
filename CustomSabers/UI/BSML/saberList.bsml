@@ -1,35 +1,38 @@
-﻿  <vertical child-control-height='false' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd'>
-  <horizontal spacing='2' child-control-width='true'>
-    <vertical child-expand-height='false' child-control-height='false' child-align='MiddleCenter' preferred-width='60'>
-      <horizontal>
-        <button on-click='open-in-explorer' text='Open Folder'/>
-        <button on-click='reload-sabers' id='reload-button' text='Refresh' />
-        <button on-click='show-delete-saber-modal' text='Delete' face-color='#a83232'/>
-      </horizontal>
-      <checkbox-setting text='Hold Sabers' value='toggle-menu-sabers' hover-hint='Enable to hold the selected custom saber' apply-on-change='true'/>
-      <dropdown-list-setting text='Order Sabers By' value='order-by-filter' choices='order-by-choices' apply-on-change='true'/>
-    </vertical>
+﻿<vertical child-control-height="false" child-expand-height="false" xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd'>
 
+  <horizontal child-expand-height='false' child-control-height='false' child-align='MiddleCenter' preferred-width='60'>
+    <checkbox-setting text='Hold Sabers' value='toggle-menu-sabers' hover-hint='Enable to hold the selected custom saber' apply-on-change='true'/>
+    <dropdown-list-setting text='Order Sabers By' value='order-by-filter' choices='order-by-choices' apply-on-change='true'/>
+  </horizontal>
+
+  <horizontal spacing='2' child-control-width='true'>
     <vertical child-align='MiddleCenter' horizontal-fit='Unconstrained' preferred-width='60' spacing='2'>
-      <horizontal background='round-rect-panel' bg-color='#0007' pad='3'>
-        <list id='saber-list' select-cell='select-saber' visible-cells='8' expand-cell='true'/>
+      <horizontal background='round-rect-panel' bg-color='#0007' pad='1'>
+        <list id='saber-list' select-cell='select-saber' visible-cells='8' expand-cell='true' min-width='90'/>
         <loading id='saber-list-loading' ignore-layout='true' active='false'/>
       </horizontal>
     </vertical>
-  
     <vertical>
-      <page-button event-click='saber-list#PageUp' direction='Up' preferred-width='10'/>
-      <page-button event-click='saber-list#PageDown' direction='Down' preferred-width='10'/>
-    </vertical>
-
-    <modal id='delete-saber-modal' clickerino-offerino-closerino='true' size-delta-x='67' size-delta-y='29' anchor-pos-x='0' anchor-pos-y='0'>
-      <vertical pad='2'>
-        <text id='delete-saber-modal-text' text='cyan is a furry' align='Center' font-size='6' />
-        <horizontal>
-          <action-button on-click='delete-selected-saber' text='Confirm' face-color='#FF1010' />
-          <button on-click='hide-delete-saber-modal' text='Cancel' />
-        </horizontal>
+      <vertical spacing='5'>
+        <page-button event-click='saber-list#PageUp' direction='Up' preferred-width='10'/>
+        <page-button event-click='saber-list#PageDown' direction='Down' preferred-width='10'/>
       </vertical>
-    </modal>
+
+      <vertical>
+        <button on-click='open-in-explorer' text='Open Folder' vertical-fit='Unconstrained' horizontal-fit='Unconstrained'/>
+        <button on-click='reload-sabers' id='reload-button' text='Refresh' vertical-fit='Unconstrained' horizontal-fit='Unconstrained'/>
+        <button on-click='show-delete-saber-modal' text='Delete' face-color='#a83232' vertical-fit='Unconstrained' horizontal-fit='Unconstrained'/>
+      </vertical>
+    </vertical>
   </horizontal>
+    
+  <modal id='delete-saber-modal' clickerino-offerino-closerino='true' size-delta-x='67' size-delta-y='29' anchor-pos-x='0' anchor-pos-y='0'>
+    <vertical pad='2'>
+      <text id='delete-saber-modal-text' text='cyan is a furry' align='Center' font-size='6' />
+      <horizontal>
+        <action-button on-click='delete-selected-saber' text='Confirm' face-color='#FF1010' />
+        <button on-click='hide-delete-saber-modal' text='Cancel' />
+      </horizontal>
+    </vertical>
+  </modal>
 </vertical>
