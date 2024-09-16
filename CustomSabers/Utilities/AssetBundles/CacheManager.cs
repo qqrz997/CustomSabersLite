@@ -25,7 +25,7 @@ internal class CacheManager : IInitializable
     }
 
     private string CacheFilePath => 
-        Path.Combine(directories.UserData.FullName, "cache");
+        Path.Combine(directories.UserData.FullName, "sabers.cache");
 
     private string[] SaberRelativeFilePaths =>
         FileUtils.GetFilePaths(directories.CustomSabers.FullName, [FileExts.Saber, FileExts.Whacker], SearchOption.AllDirectories, true);
