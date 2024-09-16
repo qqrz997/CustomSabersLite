@@ -47,7 +47,7 @@ internal class TabTest : BSMLAutomaticViewController
     public int TrailWidth;
 
     [UIValue("trail-type")]
-    public string TrailType;
+    public string TrailType = null!;
 
     [UIValue("trail-type-list")]
     public List<object> trailTypeList = [.. Enum.GetNames(typeof(TrailType))];
@@ -59,25 +59,25 @@ internal class TabTest : BSMLAutomaticViewController
     public bool ForcefullyFoolish;
 
     [UIComponent("trail-duration")]
-    private GenericInteractableSetting trailDurationInteractable;
+    private GenericInteractableSetting trailDurationInteractable = null!;
 
     [UIComponent("trail-duration")]
-    private TextMeshProUGUI trailDurationText;
+    private TextMeshProUGUI trailDurationText = null!;
 
     [UIComponent("trail-width")]
-    private GenericInteractableSetting trailWidthInteractable;
+    private GenericInteractableSetting trailWidthInteractable = null!;
 
     [UIComponent("trail-width")]
-    private TextMeshProUGUI trailWidthText;
+    private TextMeshProUGUI trailWidthText = null!;
 
     [UIComponent("trail-type")]
-    private RectTransform trailTypeRT;
+    private RectTransform trailTypeRT = null!;
 
     [UIComponent("saber-list")]
-    public CustomListTableData saberList;
+    public CustomListTableData saberList = null!;
 
     [UIComponent("saber-list-loading")]
-    public ImageView saberListLoadingIcon;
+    public ImageView saberListLoadingIcon = null!;
 
     [UIAction("select-saber")]
     public void Select(TableView _, int row) { }

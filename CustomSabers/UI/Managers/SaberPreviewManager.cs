@@ -9,13 +9,13 @@ namespace CustomSabersLite.UI.Managers;
 
 internal class SaberPreviewManager : IInitializable
 {
-    [Inject] private readonly SaberFactory saberFactory;
-    [Inject] private readonly CSLConfig config;
-    [Inject] private readonly ColorSchemesSettings colorSchemesSettings;
+    [Inject] private readonly SaberFactory saberFactory = null!;
+    [Inject] private readonly CSLConfig config = null!;
+    [Inject] private readonly ColorSchemesSettings colorSchemesSettings = null!;
 
-    [Inject] private readonly MenuSaberManager menuSaberManager;
-    [Inject] private readonly BasicPreviewTrailManager previewTrailManager;
-    [Inject] private readonly BasicPreviewSaberManager previewSaberManager;
+    [Inject] private readonly MenuSaberManager menuSaberManager = null!;
+    [Inject] private readonly BasicPreviewTrailManager previewTrailManager = null!;
+    [Inject] private readonly BasicPreviewSaberManager previewSaberManager = null!;
 
     private readonly Transform previewParent = new GameObject("CustomSabersLite Basic Preview").transform;
     private readonly Transform leftPreviewParent = new GameObject("Left").transform;

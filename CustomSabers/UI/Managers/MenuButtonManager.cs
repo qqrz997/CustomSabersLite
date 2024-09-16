@@ -9,7 +9,7 @@ internal class MenuButtonManager(MainFlowCoordinator mainFlowCoordinator, CSLFlo
     private readonly MainFlowCoordinator mainFlowCoordinator = mainFlowCoordinator;
     private readonly CSLFlowCoordinator sabersFlowCoordinator = sabersFlowCoordinator;
 
-    private MenuButton button;
+    private MenuButton button = null!;
 
     public void Initialize()
     {

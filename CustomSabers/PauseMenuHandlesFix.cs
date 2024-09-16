@@ -2,9 +2,9 @@
 
 namespace CustomSabersLite;
 
-internal class PauseMenuHandlesFix : IInitializable
+internal class PauseMenuHandlesFix(MultiplayerLocalActivePlayerInGameMenuViewController multiplayerLocalActivePlayerInGameMenuViewControllerAndThisIsAReallyLongNameThatMakesMyWordWrappingLookFunny) : IInitializable
 {
-    [Inject] private readonly MultiplayerLocalActivePlayerInGameMenuViewController multiplayerLocalActivePlayerInGameMenuViewController;
+    private readonly MultiplayerLocalActivePlayerInGameMenuViewController multiplayerLocalActivePlayerInGameMenuViewController = multiplayerLocalActivePlayerInGameMenuViewControllerAndThisIsAReallyLongNameThatMakesMyWordWrappingLookFunny;
 
     public void Initialize() => 
         multiplayerLocalActivePlayerInGameMenuViewController._menuControllersGameObject.SetActive(false);

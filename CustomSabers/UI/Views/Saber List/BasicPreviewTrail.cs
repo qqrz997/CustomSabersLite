@@ -12,25 +12,26 @@ internal class BasicPreviewTrail
     private readonly MeshRenderer meshRenderer;
     private readonly MeshFilter meshFilter;
 
+    private readonly Mesh mesh;
+
     public BasicPreviewTrail(string name)
     {
         gameObject = new(name);
         meshRenderer = gameObject.AddComponent<MeshRenderer>();
         meshFilter = gameObject.AddComponent<MeshFilter>();
+        mesh = new Mesh();
     }
 
     private CustomTrailData currentTrailData = CustomTrailData.Default;
-    private Mesh mesh;
 
-    private Vector3[] vertices;
-    private int[] triangles;
-    private Vector2[] uvs;
-    private Color[] colors;
+    private Vector3[] vertices = [];
+    private int[] triangles = [];
+    private Vector2[] uvs = [];
+    private Color[] colors = [];
 
     public void Init(Transform parent)
     {
         gameObject.transform.SetParent(parent, false);
-        mesh = new Mesh();
         meshFilter.mesh = mesh;
         mesh.MarkDynamic();
         vertices = new Vector3[4];

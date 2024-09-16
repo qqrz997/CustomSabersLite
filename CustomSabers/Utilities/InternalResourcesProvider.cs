@@ -14,21 +14,24 @@ namespace CustomSabersLite.Utilities;
 
 internal class InternalResourcesProvider : IInitializable
 {
-    public SaberTrailRenderer SaberTrailRenderer { get; private set; }
+    public SaberTrailRenderer? SaberTrailRenderer { get; private set; }
 
-    private GameObject SaberModelPrefab { get; set; }
+    private GameObject? SaberModelPrefab { get; set; }
 
     private readonly List<UnityEngine.Object> loadedObjects = [];
 
     public void Initialize()
     {
-        if (!SaberTrailRenderer)
+        if (SaberTrailRenderer == null)
         {
             var saberTrailRendererPrefab = TryLoadAsset<GameObject>("Assets/Prefabs/Effects/Sabers/SaberTrailRenderer.prefab");
-            var saberTrailRendererComponent = saberTrailRendererPrefab.GetComponent<SaberTrailRenderer>();
-            saberTrailRendererComponent._meshRenderer = saberTrailRendererPrefab.GetComponent<MeshRenderer>();
-            saberTrailRendererComponent._meshFilter = saberTrailRendererPrefab.GetComponent<MeshFilter>();
-            SaberTrailRenderer = saberTrailRendererComponent;
+            if (saberTrailRendererPrefab != null)
+            {
+                var saberTrailRendererComponent = saberTrailRendererPrefab.GetComponent<SaberTrailRenderer>();
+                saberTrailRendererComponent._meshRenderer = saberTrailRendererPrefab.GetComponent<MeshRenderer>();
+                saberTrailRendererComponent._meshFilter = saberTrailRendererPrefab.GetComponent<MeshFilter>();
+                SaberTrailRenderer = saberTrailRendererComponent;
+            }
         }
 
         // this probably won't live very long
@@ -36,8 +39,11 @@ internal class InternalResourcesProvider : IInitializable
         if (time.Month == 4 && time.Day == 1)
         {
             SaberModelPrefab = TryLoadAsset<GameObject>("Assets/Prefabs/Sabers/BasicSaberModel.prefab");
-            SaberModelPrefab.GetComponentsInChildren<MonoBehaviour>().ForEach(GameObject.Destroy);
-            SceneManager.activeSceneChanged += OnSceneChanged;
+            if (SaberModelPrefab != null)
+            {
+                SaberModelPrefab.GetComponentsInChildren<MonoBehaviour>().ForEach(GameObject.Destroy);
+                SceneManager.activeSceneChanged += OnSceneChanged;
+            }
         }
     }
 
@@ -67,6 +73,8 @@ internal class InternalResourcesProvider : IInitializable
     private void CreateNewSaber(Vector3 pos, Quaternion rot, Color color)
     {
         var saber = GameObject.Instantiate(SaberModelPrefab);
+        if (saber == null) return;
+
         foreach (var setSaberGlowColor in saber.GetComponentsInChildren<SetSaberGlowColor>())
         {
             var materialPropertyBlock = setSaberGlowColor._materialPropertyBlock ?? new MaterialPropertyBlock();
@@ -80,7 +88,7 @@ internal class InternalResourcesProvider : IInitializable
         saber.transform.rotation = rot;
     }
 
-    private T TryLoadAsset<T>(object label) where T : UnityEngine.Object
+    private T? TryLoadAsset<T>(object label) where T : UnityEngine.Object
     {
         var asset = AddressablesExtensions.LoadContent<T>(label).FirstOrDefault();
         if (asset == null)

@@ -11,6 +11,6 @@ internal class DefaultSaberData : ISaberData
             new Descriptor("Default", "Beat Games", null),
             new SaberModelFlags(false, []));
 
-    public GameObject GetPrefab(SaberType type) => null;
+    public GameObject? GetPrefab(SaberType type) => null;
     public void Dispose() { }
 }

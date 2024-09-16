@@ -2,25 +2,16 @@
 using CustomSabersLite.UI.Views.Saber_List;
 using CustomSabersLite.Utilities;
 using UnityEngine;
-using Zenject;
 
 namespace CustomSabersLite.UI.Managers;
 
-internal class MenuSaberManager : IInitializable
+internal class MenuSaberManager(MenuPointers menuPointers, MenuSaber.Factory menuSaberFactory)
 {
-    [Inject] private readonly MenuPointerProvider menuPointerProvider;
-    [Inject] private readonly MenuSaber.Factory menuSaberFactory;
+    private readonly MenuPointers menuPointers = menuPointers;
+    private readonly MenuSaber leftSaber = menuSaberFactory.Create(menuPointers.LeftParent, SaberType.SaberA);
+    private readonly MenuSaber rightSaber = menuSaberFactory.Create(menuPointers.RightParent, SaberType.SaberB);
 
-    private MenuSaber leftSaber;
-    private MenuSaber rightSaber;
-
-    public void Initialize()
-    {
-        leftSaber = menuSaberFactory.Create(menuPointerProvider.LeftPointer.transform, SaberType.SaberA);
-        rightSaber = menuSaberFactory.Create(menuPointerProvider.RightPointer.transform, SaberType.SaberB);
-    }
-
-    public void ReplaceSabers(LiteSaber newLeftSaber, LiteSaber newRightSaber)
+    public void ReplaceSabers(LiteSaber? newLeftSaber, LiteSaber? newRightSaber)
     {
         leftSaber?.ReplaceSaber(newLeftSaber);
         rightSaber?.ReplaceSaber(newRightSaber);
@@ -43,6 +34,6 @@ internal class MenuSaberManager : IInitializable
         leftSaber?.SetActive(active);
         rightSaber?.SetActive(active);
 
-        menuPointerProvider.SetPointerVisibility(!active);
+        menuPointers.SetPointerVisibility(!active);
     }
 }

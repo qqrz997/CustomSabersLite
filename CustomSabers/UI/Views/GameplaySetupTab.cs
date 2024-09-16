@@ -20,14 +20,14 @@ namespace CustomSabersLite.UI.Views;
 
 internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged
 {
-    [Inject] private readonly CSLConfig config;
-    [Inject] private readonly CacheManager cacheManager;
-    [Inject] private readonly ICoroutineStarter coroutineStarter;
-    [Inject] private readonly SaberListManager saberListManager;
+    [Inject] private readonly CSLConfig config = null!;
+    [Inject] private readonly CacheManager cacheManager = null!;
+    [Inject] private readonly ICoroutineStarter coroutineStarter = null!;
+    [Inject] private readonly SaberListManager saberListManager = null!;
 
-    public GameObject Root { get; private set; }
+    public GameObject? Root { get; private set; }
 
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     private int selectedSaberIndex;
 
@@ -92,12 +92,12 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged
         set => config.EnableCustomEvents = value;
     }
 
-    [UIComponent("trail-duration")] private readonly SliderSetting trailDurationSlider;
-    [UIComponent("trail-duration")] private readonly TextMeshProUGUI trailDurationText;
-    [UIComponent("trail-width")] private readonly SliderSetting trailWidthSlider;
-    [UIComponent("trail-width")] private readonly TextMeshProUGUI trailWidthText;
-    [UIComponent("trail-type")] private readonly RectTransform trailTypeRT;
-    [UIComponent("saber-list")] private readonly CustomListTableData saberList;
+    [UIComponent("trail-duration")] private readonly SliderSetting trailDurationSlider = null!;
+    [UIComponent("trail-duration")] private readonly TextMeshProUGUI trailDurationText = null!;
+    [UIComponent("trail-width")] private readonly SliderSetting trailWidthSlider = null!;
+    [UIComponent("trail-width")] private readonly TextMeshProUGUI trailWidthText = null!;
+    [UIComponent("trail-type")] private readonly RectTransform trailTypeRT = null!;
+    [UIComponent("saber-list")] private readonly CustomListTableData saberList = null!;
 
     [UIAction("#post-parse")]
     private void PostParse()
@@ -160,5 +160,5 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged
         saberList.TableView.ScrollToCellWithIdx(selectedSaberIndex, TableView.ScrollPositionType.Center, true);
     }
     private void NotifyPropertyChanged(string propertyName) =>
-        PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }

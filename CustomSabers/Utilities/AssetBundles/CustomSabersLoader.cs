@@ -15,8 +15,7 @@ internal class CustomSabersLoader(SaberInstanceManager saberInstanceManager, Sab
     private readonly WhackerLoader whackerLoader = whackerLoader;
 
     public async Task<ISaberData> GetSaberData(string saberPath) =>
-        string.IsNullOrWhiteSpace(saberPath) ? null
-        : saberInstanceManager.TryGetSaber(saberPath) ?? await LoadNew(saberPath);
+        saberInstanceManager.TryGetSaber(saberPath) ?? await LoadNew(saberPath);
 
     public async Task<ISaberData> LoadSaberDataAsync(string relativePath) => Path.GetExtension(relativePath) switch
     {

@@ -6,9 +6,9 @@ using Zenject;
 
 namespace CustomSabersLite.UI.Managers;
 
-internal class BasicPreviewTrailManager
+internal class BasicPreviewTrailManager(CSLConfig config)
 {
-    [Inject] private readonly CSLConfig config;
+    private readonly CSLConfig config = config;
 
     private readonly BasicPreviewTrail leftTrail = new("Basic Preview Trail");
     private readonly BasicPreviewTrail rightTrail = new("Basic Preview Trail");
@@ -19,7 +19,7 @@ internal class BasicPreviewTrailManager
         rightTrail.Init(rightParent);
     }
 
-    public void SetTrails(LiteSaber leftSaber, LiteSaber rightSaber)
+    public void SetTrails(LiteSaber? leftSaber, LiteSaber? rightSaber)
     {
         leftTrail.ReplaceTrail(GetPrimaryTrailData(leftSaber));
         rightTrail.ReplaceTrail(GetPrimaryTrailData(rightSaber));
@@ -37,8 +37,8 @@ internal class BasicPreviewTrailManager
         rightTrail.UpdateColor(right);
     }
 
-    private CustomTrailData GetPrimaryTrailData(LiteSaber saber) =>
-        !saber ? CustomTrailData.Default
+    private CustomTrailData GetPrimaryTrailData(LiteSaber? saber) =>
+        saber == null ? CustomTrailData.Default
         : saber.InstanceTrails.Length == 0 ? CustomTrailData.Default
         : saber.InstanceTrails[0];
 }

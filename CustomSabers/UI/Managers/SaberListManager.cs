@@ -54,12 +54,12 @@ internal class SaberListManager(PluginDirs dirs)
         return true;
     }
 
-    public int IndexForPath(string relativePath) =>
+    public int IndexForPath(string? relativePath) =>
         string.IsNullOrEmpty(relativePath) ? 0
         : SaberList.FirstOrDefault(i => i.Metadata?.FileInfo?.RelativePath == relativePath) is not SaberListCellInfo i ? 0
         : SaberList.IndexOf(i);
 
-    public string PathForIndex(int row) =>
+    public string? PathForIndex(int row) =>
         SaberList.ElementAtOrDefault(row) is SaberListCellInfo i ? i.Metadata.FileInfo.RelativePath : null;
 
     private static SaberListCellInfo CellInfoForDefaultSabers =>
@@ -85,8 +85,9 @@ internal class SaberListManager(PluginDirs dirs)
 
     private static IThumbnail GetCellIcon(CustomSaberMetadata meta) => meta.Descriptor.Image switch
     {
-        _ when meta.Descriptor.SaberName == "Default" => new SpriteThumbnail(ImageUtils.defaultCoverImage), // amazing stuff really
+        _ when meta.Descriptor.SaberName == "Default" => 
+            ImageUtils.defaultCoverImage == null ? new NoThumbnail() : new SpriteThumbnail(ImageUtils.defaultCoverImage), // amazing stuff really
         [..] bytes => new ThumbnailWithData(bytes),
-        _ => new SpriteThumbnail(ImageUtils.nullCoverImage)
+        _ => ImageUtils.nullCoverImage == null ? new NoThumbnail() : new SpriteThumbnail(ImageUtils.nullCoverImage)
     };
 }

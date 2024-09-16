@@ -25,21 +25,21 @@ namespace CustomSabersLite.UI.Views;
 [ViewDefinition("CustomSabersLite.UI.BSML.saberList.bsml")]
 internal class SaberListViewController : BSMLAutomaticViewController
 {
-    [Inject] private readonly CSLConfig config;
-    [Inject] private readonly CacheManager cacheManager;
-    [Inject] private readonly SaberListManager saberListManager;
-    [Inject] private readonly SaberPreviewManager previewManager;
-    [Inject] private readonly GameplaySetupTab gameplaySetupTab;
-    [Inject] private readonly PluginDirs directories;
+    [Inject] private readonly CSLConfig config = null!;
+    [Inject] private readonly CacheManager cacheManager = null!;
+    [Inject] private readonly SaberListManager saberListManager = null!;
+    [Inject] private readonly SaberPreviewManager previewManager = null!;
+    [Inject] private readonly GameplaySetupTab gameplaySetupTab = null!;
+    [Inject] private readonly PluginDirs directories = null!;
 
     private int selectedSaberIndex;
-    private CancellationTokenSource tokenSource;
+    private CancellationTokenSource? tokenSource;
 
-    [UIComponent("saber-list")] private CustomListTableData saberList;
-    [UIComponent("saber-list-loading")] private ImageView saberListLoadingIcon;
-    [UIComponent("reload-button")] private Selectable reloadButtonSelectable;
-    [UIComponent("delete-saber-modal")] private ModalView deleteSaberModal;
-    [UIComponent("delete-saber-modal-text")] private TextMeshProUGUI deleteSaberModalText;
+    [UIComponent("saber-list")] private CustomListTableData saberList = null!;
+    [UIComponent("saber-list-loading")] private ImageView saberListLoadingIcon = null!;
+    [UIComponent("reload-button")] private Selectable reloadButtonSelectable = null!;
+    [UIComponent("delete-saber-modal")] private ModalView deleteSaberModal = null!;
+    [UIComponent("delete-saber-modal-text")] private TextMeshProUGUI deleteSaberModalText = null!;
 
     [UIAction("#post-parse")]
     public void PostParse()
@@ -88,7 +88,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
     public void DeleteSelectedSaber()
     {
         HideDeleteSaberModal();
-        if (saberListManager.DeleteSaber(config.CurrentlySelectedSaber))
+        if (saberListManager.DeleteSaber(config.CurrentlySelectedSaber ?? string.Empty))
         {
             SetupList();
             gameplaySetupTab.SetupList();

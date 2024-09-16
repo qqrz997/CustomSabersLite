@@ -2,9 +2,9 @@
 
 namespace CustomSabersLite.Models;
 
-internal class SaberFileInfo(string relativePath, CustomSaberType saberType)
+internal class SaberFileInfo(string? relativePath, CustomSaberType saberType)
 {
-    public string RelativePath { get; } = string.IsNullOrWhiteSpace(relativePath) ? null : relativePath;
+    public string? RelativePath { get; } = string.IsNullOrWhiteSpace(relativePath) ? null : relativePath;
 
     public CustomSaberType Type { get; } = saberType;
 

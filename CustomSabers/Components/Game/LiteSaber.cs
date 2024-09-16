@@ -11,7 +11,7 @@ internal class LiteSaber : MonoBehaviour
 {
     private readonly List<Material> colorableMaterials = [];
 
-    public EventManager EventManager { get; private set; }
+    public EventManager EventManager { get; private set; } = null!;
 
     public CustomSaberType Type { get; private set; }
 
@@ -29,7 +29,7 @@ internal class LiteSaber : MonoBehaviour
 
     void Awake()
     {
-        EventManager = gameObject.TryGetComponentOrDefault<EventManager>();
+        EventManager = gameObject.TryGetComponentOrAdd<EventManager>();
         SetLayer(gameObject, 12);
         foreach (var renderer in gameObject.GetComponentsInChildren<Renderer>(true))
         {

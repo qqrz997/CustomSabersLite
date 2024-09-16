@@ -5,10 +5,10 @@ using Zenject;
 
 namespace CustomSabersLite.UI.Managers;
 
-internal class GameplaySetupTabController : IInitializable, IDisposable
+internal class GameplaySetupTabController(GameplaySetupViewController gameplaySetup, GameplaySetupTab tab) : IInitializable, IDisposable
 {
-    [Inject] private readonly GameplaySetupViewController gameplaySetupViewController;
-    [Inject] private readonly GameplaySetupTab gameplaySetupTab;
+    private readonly GameplaySetupViewController gameplaySetupViewController = gameplaySetup;
+    private readonly GameplaySetupTab gameplaySetupTab = tab;
 
     private const string ResourceName = "CustomSabersLite.UI.BSML.gameplaySetup.bsml";
 

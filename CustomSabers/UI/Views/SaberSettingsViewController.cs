@@ -15,11 +15,11 @@ namespace CustomSabersLite.UI.Views;
 [ViewDefinition("CustomSabersLite.UI.BSML.saberSettings.bsml")]
 internal class SaberSettingsViewController : BSMLAutomaticViewController
 {
-    [Inject] private readonly CSLConfig config;
-    [Inject] private readonly SaberPreviewManager previewManager;
+    [Inject] private readonly CSLConfig config = null!;
+    [Inject] private readonly SaberPreviewManager previewManager = null!;
 
-    [UIComponent("trail-duration")] private SliderSetting trailDurationSlider;
-    [UIComponent("trail-width")] private SliderSetting trailWidthSlider;
+    [UIComponent("trail-duration")] private SliderSetting trailDurationSlider = null!;
+    [UIComponent("trail-width")] private SliderSetting trailWidthSlider = null!;
 
     [UIValue("enabled")]
     private bool Enabled

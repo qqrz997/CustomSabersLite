@@ -38,24 +38,25 @@ internal class WhackerLoader(PluginDirs directories, BundleLoader bundleLoader)
 
         using var jsonStream = json.Open();
         using var jsonStreamReader = new StreamReader(jsonStream);
-        var whacker = (WhackerModel)new JsonSerializer().Deserialize(jsonStreamReader, typeof(WhackerModel));
 
+        if (new JsonSerializer().Deserialize(jsonStreamReader, typeof(WhackerModel)) is not WhackerModel whacker)
+            return new NoSaberData(relativePath, SaberLoaderError.InvalidFileType);
+        
         if (whacker.config.isLegacy)
             return new NoSaberData(relativePath, SaberLoaderError.LegacyWhacker);
 
         var bundleEntry = archive.GetEntry(whacker.pcFileName);
-
         var thumbEntry = archive.GetEntry(whacker.descriptor.coverImage);
 
         using var bundleStream = bundleEntry.Open();
         var bundle = await bundleLoader.LoadBundleAsync(bundleStream);
 
-        if (!bundle)
+        if (bundle == null)
             return new NoSaberData(relativePath, SaberLoaderError.NullBundle);
 
         var saberPrefab = await AssetBundleExtensions.LoadAssetAsync<GameObject>(bundle, "_Whacker");
 
-        if (!saberPrefab)
+        if (saberPrefab == null)
         {
             bundle.Unload(true);
             return new NoSaberData(relativePath, SaberLoaderError.NullAsset);
@@ -64,7 +65,7 @@ internal class WhackerLoader(PluginDirs directories, BundleLoader bundleLoader)
         saberPrefab.hideFlags |= HideFlags.DontUnloadUnusedAsset;
         saberPrefab.name += $" {whacker.descriptor.objectName}";
 
-        byte[] image = null;
+        byte[]? image = null;
         if (thumbEntry != null)
         {
             using var imageMemoryStream = new MemoryStream();

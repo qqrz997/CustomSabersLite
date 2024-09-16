@@ -34,7 +34,7 @@ internal static class TrailUtils
         trail._framesToScaleCheck = 0;
         trail._inited = false;
 
-        if (trail is LiteSaberTrail customTrail)
+        if (trail is LiteSaberTrail customTrail && customTrail.InstanceTrailData != null)
         {
             var duration = config.OverrideTrailDuration ? config.TrailDuration / 250f
                 : customTrail.InstanceTrailData.Length;

@@ -4,5 +4,5 @@ namespace CustomSabersLite.Models;
 
 internal interface IThumbnail
 {
-    public Sprite GetSprite();
+    public Sprite? GetSprite();
 }

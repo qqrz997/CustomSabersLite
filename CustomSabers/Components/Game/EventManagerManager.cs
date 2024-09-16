@@ -17,7 +17,7 @@ internal class EventManagerManager(BeatmapObjectManager beatmapObjectManager, Ga
     private readonly IReadonlyBeatmapData beatmapData = beatmapData;
     private readonly CSLConfig config = config;
 
-    private EventManager eventManager;
+    private EventManager? eventManager;
     private float? lastNoteTime;
     private float previousScore;
     private SaberType saberType;

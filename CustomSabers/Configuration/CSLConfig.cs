@@ -10,7 +10,7 @@ internal class CSLConfig
 {
     public virtual bool Enabled { get; set; } = true;
 
-    public virtual string CurrentlySelectedSaber { get; set; } = null;
+    public virtual string? CurrentlySelectedSaber { get; set; } = null;
 
     public virtual bool DisableWhiteTrail { get; set; } = true;
 

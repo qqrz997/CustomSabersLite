@@ -17,6 +17,7 @@ internal class LevelSaberManager : IInitializable
     {
         this.saberFactory = saberFactory;
         SaberSetupTask = CreateLevelSaberInstance();
+        CurrentSaberData = new DefaultSaberData();
     }
 
     public async void Initialize() =>

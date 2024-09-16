@@ -8,12 +8,12 @@ namespace CustomSabersLite.UI.Managers;
 
 internal class CSLFlowCoordinator : FlowCoordinator
 {
-    [Inject] private readonly MainFlowCoordinator mainFlowCoordinator;
-    [Inject] private readonly SaberListViewController saberList;
-    [Inject] private readonly SaberSettingsViewController saberSettings;
-    [Inject] private readonly CacheManager cacheManager;
+    [Inject] private readonly MainFlowCoordinator mainFlowCoordinator = null!;
+    [Inject] private readonly SaberListViewController saberList = null!;
+    [Inject] private readonly SaberSettingsViewController saberSettings = null!;
+    [Inject] private readonly CacheManager cacheManager = null!;
 
-    [InjectOptional] private readonly TabTest tabTest;
+    [InjectOptional] private readonly TabTest? tabTest;
 
     protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
     {

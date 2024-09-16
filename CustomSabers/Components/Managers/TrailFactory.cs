@@ -3,17 +3,16 @@ using UnityEngine;
 using CustomSabersLite.Models;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Utilities;
-using Zenject;
 using CustomSabersLite.Components.Game;
 
 namespace CustomSabersLite.Components.Managers;
 
-internal class TrailFactory
+internal class TrailFactory(CSLConfig config, InternalResourcesProvider resourcesProvider)
 {
-    [Inject] private readonly CSLConfig config;
-    [Inject] private readonly InternalResourcesProvider resourcesProvider;
+    private readonly CSLConfig config = config;
+    private readonly InternalResourcesProvider resourcesProvider = resourcesProvider;
 
-    private SaberTrailRenderer TrailRendererPrefab => resourcesProvider.SaberTrailRenderer;
+    private SaberTrailRenderer? TrailRendererPrefab => resourcesProvider.SaberTrailRenderer;
 
     private readonly int defaultSamplingFrequency = 120;
     private readonly int defaultGranularity = 45;
@@ -48,17 +47,21 @@ internal class TrailFactory
     private LiteSaberTrail CreateTrail(GameObject saberObject, CustomTrailData trailData, float intensity)
     {
         var trail = saberObject.AddComponent<LiteSaberTrail>();
+        var baseColor = trailData.Color.ColorWithAlpha(intensity) * trailData.ColorMultiplier;
 
         trail._trailDuration = trailData.Length;
         trail._samplingFrequency = defaultSamplingFrequency;
         trail._granularity = defaultGranularity;
         trail._trailRenderer = Object.Instantiate(TrailRendererPrefab, Vector3.zero, Quaternion.identity);
-        trail._trailRenderer._meshRenderer.material = trailData.Material;
-
-        var baseColor = trailData.Color.ColorWithAlpha(intensity) * trailData.ColorMultiplier;
-        trail._trailRenderer._meshRenderer.material.color = baseColor;
+        if (trail._trailRenderer != null)
+        {
+            trail._trailRenderer._meshRenderer.material = trailData.Material;
+            if (trail._trailRenderer._meshRenderer.material != null)
+            {
+                trail._trailRenderer._meshRenderer.material.color = baseColor;
+            }
+        }
         trail._color = baseColor;
-
         trail.Init(trailData);
 
         return trail;
@@ -77,7 +80,7 @@ internal class TrailFactory
 
         var trailData = new CustomTrailData(
             top, bottom,
-            TrailRendererPrefab._meshRenderer.material,
+            TrailRendererPrefab?._meshRenderer.material,
             saberType == SaberType.SaberA ? CustomSaber.ColorType.LeftSaber : CustomSaber.ColorType.RightSaber,
             Color.white, Color.white,
             TrailUtils.DefaultDuration);

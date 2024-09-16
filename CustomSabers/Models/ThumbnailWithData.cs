@@ -5,8 +5,8 @@ namespace CustomSabersLite.Models;
 
 internal sealed record ThumbnailWithData(byte[] ImageData) : IThumbnail
 {
-    private Sprite Sprite { get; set; }
+    private Sprite? Sprite { get; set; }
 
-    public Sprite GetSprite() =>
+    public Sprite? GetSprite() =>
         Sprite ??= new Texture2D(2, 2).ToSprite(ImageData);
 }

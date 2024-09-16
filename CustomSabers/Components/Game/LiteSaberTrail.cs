@@ -13,7 +13,7 @@ internal class LiteSaberTrail : SaberTrail
 
     public bool UseWidthOverride { private get; set; }
 
-    public CustomTrailData InstanceTrailData { get; private set; }
+    public CustomTrailData? InstanceTrailData { get; private set; }
 
     void Awake() => _movementData = customTrailMovementData;
 
@@ -27,7 +27,7 @@ internal class LiteSaberTrail : SaberTrail
 
     void Update()
     {
-        if (gameObject.activeInHierarchy)
+        if (gameObject.activeInHierarchy && InstanceTrailData != null)
         {
             var topPosition = InstanceTrailData.TopPosition;
             var bottomPosition = !UseWidthOverride ? InstanceTrailData.BottomPosition
@@ -38,7 +38,7 @@ internal class LiteSaberTrail : SaberTrail
 
     public void SetColor(Color color)
     {
-        if (InstanceTrailData.ColorType != CustomSaber.ColorType.CustomColor)
+        if (InstanceTrailData != null && InstanceTrailData.ColorType != CustomSaber.ColorType.CustomColor)
         {
             color *= InstanceTrailData.ColorMultiplier;
             _trailRenderer._meshRenderer.materials.ForEach(m => m.SetColor(MaterialProperties.Color, color));

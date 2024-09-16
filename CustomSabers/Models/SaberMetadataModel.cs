@@ -4,7 +4,7 @@ namespace CustomSabersLite.Models;
 
 public class SaberMetadataModel
 {
-    public string RelativePath { get; }
+    public string? RelativePath { get; }
 
     public CustomSaberType SaberType { get; }
 
@@ -14,14 +14,16 @@ public class SaberMetadataModel
 
     public string AuthorName { get; }
 
-    public byte[] Image { get; }
+    public byte[]? Image { get; }
 
     public bool IncompatibleShaders { get; }
 
     public string[] IncompatibleShaderNames { get; }
 
     [JsonConstructor]
-    public SaberMetadataModel(string relativePath, CustomSaberType saberType, SaberLoaderError loaderError, string saberName, string authorName, byte[] image, bool incompatibleShaders, string[] incompatibleShaderNames)
+    public SaberMetadataModel(
+        string? relativePath, CustomSaberType saberType, SaberLoaderError loaderError, string saberName, 
+        string authorName, byte[]? image, bool incompatibleShaders, string[] incompatibleShaderNames)
     {
         RelativePath = relativePath;
         SaberType = saberType;

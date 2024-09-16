@@ -11,7 +11,7 @@ internal class CSLMenuInstaller : Installer
 {
     public override void InstallBindings()
     {
-        Container.BindInterfacesAndSelfTo<MenuPointerProvider>().AsSingle();
+        Container.BindInterfacesAndSelfTo<MenuPointers>().AsSingle();
 
         // View controllers
         Container.Bind<SaberListViewController>().FromNewComponentAsViewController().AsSingle();
@@ -26,7 +26,7 @@ internal class CSLMenuInstaller : Installer
         Container.BindInterfacesTo<MenuButtonManager>().AsSingle();
         Container.BindInterfacesAndSelfTo<SaberPreviewManager>().AsSingle();
 
-        Container.BindInterfacesAndSelfTo<MenuSaberManager>().AsSingle();
+        Container.Bind<MenuSaberManager>().AsSingle();
         Container.Bind<MenuSaber>().AsTransient();
         Container.BindFactory<Transform, SaberType, MenuSaber, MenuSaber.Factory>();
         Container.Bind<BasicPreviewSaberManager>().AsSingle();

@@ -1,9 +1,12 @@
-﻿namespace CustomSabersLite.Models;
+﻿using Newtonsoft.Json;
 
-internal class WhackerModel
+namespace CustomSabersLite.Models;
+
+[method: JsonConstructor]
+internal class WhackerModel(string androidFileName, string pcFileName, WhackerDescriptor descriptor, WhackerConfig config)
 {
-    public string androidFileName;
-    public string pcFileName;
-    public WhackerDescriptor descriptor;
-    public WhackerConfig config;
+    public string androidFileName = androidFileName;
+    public string pcFileName = pcFileName;
+    public WhackerDescriptor descriptor = descriptor;
+    public WhackerConfig config = config;
 }

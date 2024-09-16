@@ -31,12 +31,12 @@ internal class SaberLoader(PluginDirs dirs, BundleLoader bundleLoader)
 
         var bundle = await bundleLoader.LoadBundleAsync(path);
 
-        if (!bundle)
+        if (bundle == null)
             return new NoSaberData(relativePath, SaberLoaderError.NullBundle);
 
         var saberPrefab = await bundleLoader.LoadAssetAsync<GameObject>(bundle, "_CustomSaber");
 
-        if (!saberPrefab)
+        if (saberPrefab == null)
         {
             bundle.Unload(true);
             return new NoSaberData(relativePath, SaberLoaderError.NullAsset);

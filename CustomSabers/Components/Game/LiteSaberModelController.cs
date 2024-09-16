@@ -8,14 +8,14 @@ namespace CustomSabersLite.Components.Game;
 
 internal class LiteSaberModelController : SaberModelController, IColorable, IPreSaberModelInit
 {
-    [Inject] private readonly LevelSaberManager levelSaberManager;
-    [Inject] private readonly TrailFactory trailFactory;
-    [Inject] private readonly SaberFactory saberFactory;
-    [Inject] private readonly EventManagerManager eventManagerManager;
-    [Inject] private readonly ColorManager colorManager;
-    [Inject] private readonly GameplayCoreSceneSetupData gameplaySetupData;
+    [Inject] private readonly LevelSaberManager levelSaberManager = null!;
+    [Inject] private readonly TrailFactory trailFactory = null!;
+    [Inject] private readonly SaberFactory saberFactory = null!;
+    [Inject] private readonly EventManagerManager eventManagerManager = null!;
+    [Inject] private readonly ColorManager colorManager = null!;
+    [Inject] private readonly GameplayCoreSceneSetupData gameplaySetupData = null!;
 
-    private LiteSaber customSaberInstance;
+    private LiteSaber? customSaberInstance;
     private LiteSaberTrail[] customTrailInstances = [];
 
     public Color Color { get => color.GetValueOrDefault(); set => SetColor(value); }
@@ -34,7 +34,7 @@ internal class LiteSaberModelController : SaberModelController, IColorable, IPre
         var saberData = await levelSaberManager.SaberSetupTask;
         customSaberInstance = saberFactory.TryCreate(saber.saberType, saberData);
 
-        if (!customSaberInstance)
+        if (customSaberInstance == null)
         {
             Logger.Error("Something went wrong when getting the custom saber instance");
             return;

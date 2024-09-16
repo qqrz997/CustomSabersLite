@@ -30,8 +30,8 @@ internal class CacheManager : IInitializable
     private string[] SaberRelativeFilePaths =>
         FileUtils.GetFilePaths(directories.CustomSabers.FullName, [FileExts.Saber, FileExts.Whacker], SearchOption.AllDirectories, true);
 
-    public event Action<int> LoadingProgressChanged;
-    public event Action LoadingComplete;
+    public event Action<int>? LoadingProgressChanged;
+    public event Action? LoadingComplete;
 
     public bool InitializationFinished { get; private set; }
 
@@ -62,9 +62,9 @@ internal class CacheManager : IInitializable
         Logger.Debug("Initializing caching step");
         saberListManager.SetData([]);
 
-        var existingCache =
-            !File.Exists(CacheFilePath) ? new CacheFileModel(Plugin.Version.ToString(), cachedMetadata: [])
-            : JsonConvert.DeserializeObject<CacheFileModel>(await File.ReadAllTextAsync(CacheFilePath));
+        CacheFileModel existingCache = 
+            !File.Exists(CacheFilePath) ? CacheFileModel.CreateNew()
+            : JsonConvert.DeserializeObject<CacheFileModel>(await File.ReadAllTextAsync(CacheFilePath)) ?? CacheFileModel.CreateNew();
 
         // { if the cache format changes the old one should be deleted }
 

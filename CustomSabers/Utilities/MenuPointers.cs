@@ -1,29 +1,30 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Zenject;
 
 namespace CustomSabersLite.Utilities;
-internal class MenuPointerProvider : IInitializable
+
+internal class MenuPointers
 {
-    public GameObject LeftPointer { get; private set; }
+    private GameObject LeftPointer { get; }
+    private GameObject RightPointer { get; }
+    private List<MeshRenderer> MeshRenderers { get; } = [];
 
-    public GameObject RightPointer { get; private set; }
-
-    private readonly List<MeshRenderer> meshRenderers = [];
-
-    public void Initialize()
+    private MenuPointers()
     {
         var controllers = Resources.FindObjectsOfTypeAll<VRController>();
         LeftPointer = controllers.First(c => c.transform.name == "ControllerLeft").transform.Find("MenuHandle").gameObject;
         RightPointer = controllers.First(c => c.transform.name == "ControllerRight").transform.Find("MenuHandle").gameObject;
 
-        meshRenderers.AddRange(GetMenuHandleRenderers(LeftPointer));
-        meshRenderers.AddRange(GetMenuHandleRenderers(RightPointer));
+        MeshRenderers.AddRange(GetMenuHandleRenderers(LeftPointer));
+        MeshRenderers.AddRange(GetMenuHandleRenderers(RightPointer));
     }
+    
+    public Transform LeftParent => LeftPointer.transform;
+    public Transform RightParent => RightPointer.transform;
 
-    public void SetPointerVisibility(bool visible) =>
-        meshRenderers.ForEach(r => r.enabled = visible);
+    public void SetPointerVisibility(bool visible) => 
+        MeshRenderers.ForEach(r => r.enabled = visible);
 
     private List<MeshRenderer> GetMenuHandleRenderers(GameObject menuHandle) => [
         menuHandle.transform.Find("Glowing").GetComponent<MeshRenderer>(),

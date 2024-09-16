@@ -8,7 +8,6 @@ internal class SaberPrefab
 
     public SaberPrefab(GameObject prefab, SaberType saberType)
     {
-        if (!prefab) return;
         var name = saberType == SaberType.SaberA ? "LeftSaber" : "RightSaber";
         Prefab = prefab.transform.Find(name).gameObject;
     }
