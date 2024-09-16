@@ -3,6 +3,7 @@ using CustomSabersLite.Configuration;
 using System;
 using UnityEngine;
 using System.Linq;
+using CustomSabersLite.Utilities.Extensions;
 
 namespace CustomSabersLite.Components.Game;
 
@@ -27,12 +28,8 @@ internal class EventManagerManager(BeatmapObjectManager beatmapObjectManager, Ga
         this.eventManager = eventManager;
         this.saberType = saberType;
 
-        if (!config.EnableCustomEvents)
-        {
-            return;
-        }
-
-        if (eventManager?.OnLevelStart == null)
+        if (!config.EnableCustomEvents || 
+            eventManager && eventManager.OnLevelStart == null)
         {
             return;
         }
@@ -90,19 +87,19 @@ internal class EventManagerManager(BeatmapObjectManager beatmapObjectManager, Ga
             // Note was cut
             if (noteCutInfo.saberType == saberType)
             {
-                eventManager?.OnSlice?.Invoke();
+                eventManager.Maybe()?.OnSlice?.Invoke();
             }
         }
         else
         {
             // Player has skill issue
-            eventManager?.OnComboBreak?.Invoke();
+            eventManager.Maybe()?.OnComboBreak?.Invoke();
         }
 
         if (Mathf.Approximately(noteController.noteData.time, lastNoteTime.Value))
         {
             lastNoteTime = 0;
-            eventManager?.OnLevelEnded?.Invoke();
+            eventManager.Maybe()?.OnLevelEnded?.Invoke();
         }
     }
 
@@ -112,13 +109,13 @@ internal class EventManagerManager(BeatmapObjectManager beatmapObjectManager, Ga
 
         if (noteController.noteData.colorType != ColorType.None)
         {
-            eventManager?.OnComboBreak?.Invoke();
+            eventManager.Maybe()?.OnComboBreak?.Invoke();
         }
 
         if (Mathf.Approximately(noteController.noteData.time, lastNoteTime.Value))
         {
             lastNoteTime = 0;
-            eventManager?.OnLevelEnded?.Invoke();
+            eventManager.Maybe()?.OnLevelEnded?.Invoke();
         }
     }
 
@@ -126,24 +123,28 @@ internal class EventManagerManager(BeatmapObjectManager beatmapObjectManager, Ga
     {
         if (multiplier > 1 && progress < 0.1f)
         {
-            eventManager?.MultiplierUp?.Invoke();
+            eventManager.Maybe()?.MultiplierUp?.Invoke();
         }
     }
 
-    private void ComboChanged(int combo) => eventManager?.OnComboChanged?.Invoke(combo);
+    private void ComboChanged(int combo) => 
+        eventManager.Maybe()?.OnComboChanged?.Invoke(combo);
 
-    private void SaberStartedCollision(SaberType saberType) => eventManager?.SaberStartColliding?.Invoke();
+    private void SaberStartedCollision(SaberType saberType) => 
+        eventManager.Maybe()?.SaberStartColliding?.Invoke();
 
-    private void SaberEndedCollision(SaberType saberType) => eventManager?.SaberStopColliding?.Invoke();
+    private void SaberEndedCollision(SaberType saberType) => 
+        eventManager.Maybe()?.SaberStopColliding?.Invoke();
 
-    private void LevelWasFailed() => eventManager?.OnLevelFail?.Invoke();
+    private void LevelWasFailed() => 
+        eventManager.Maybe()?.OnLevelFail?.Invoke();
 
     private void ScoreChangedEvent()
     {
         var relativeScore = relativeScoreCounter.relativeScore;
         if (Math.Abs(previousScore - relativeScore) > 0f)
         {
-            eventManager?.OnAccuracyChanged?.Invoke(relativeScore);
+            eventManager.Maybe()?.OnAccuracyChanged?.Invoke(relativeScore);
             previousScore = relativeScore;
         }
     }

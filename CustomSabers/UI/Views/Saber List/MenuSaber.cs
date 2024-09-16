@@ -13,17 +13,15 @@ internal class MenuSaber
 {
     private readonly CSLConfig config;
     private readonly TrailFactory trailFactory;
-    private readonly Transform saberParent;
     private readonly SaberType saberType;
 
-    private GameObject gameObject;
-    private LiteSaberTrail defaultTrail;
+    private readonly GameObject gameObject;
+    private readonly LiteSaberTrail defaultTrail;
 
     private MenuSaber(CSLConfig config, TrailFactory trailFactory, Transform saberParent, SaberType saberType)
     {
         this.config = config;
         this.trailFactory = trailFactory;
-        this.saberParent = saberParent;
         this.saberType = saberType;
 
         gameObject = new GameObject("MenuLiteSaber");
@@ -37,17 +35,14 @@ internal class MenuSaber
 
     public void ReplaceSaber(LiteSaber? newSaber)
     {
-        saberInstance?.gameObject.Destroy();
+        saberInstance.Maybe()?.gameObject.Destroy();
 
         if (newSaber == null)
             return;
 
         newSaber.SetParent(gameObject.transform);
-
-        // todo - is there a way to stop the colliders messing with the menu pointers
-        newSaber.GetComponentsInChildren<Collider>()
-            .ForEach(c => c.enabled = false);
-
+        newSaber.GetComponentsInChildren<Collider>().ForEach(c => c.enabled = false);
+        
         trailInstances = trailFactory.CreateTrail(newSaber, saberType, TrailType.Custom);
         saberInstance = newSaber;
     }

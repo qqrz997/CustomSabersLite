@@ -4,6 +4,7 @@ using CustomSabersLite.Models;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Utilities;
 using CustomSabersLite.Components.Game;
+using CustomSabersLite.Utilities.Extensions;
 
 namespace CustomSabersLite.Components.Managers;
 
@@ -80,7 +81,7 @@ internal class TrailFactory(CSLConfig config, InternalResourcesProvider resource
 
         var trailData = new CustomTrailData(
             top, bottom,
-            TrailRendererPrefab?._meshRenderer.material,
+            TrailRendererPrefab.Maybe()?._meshRenderer.material,
             saberType == SaberType.SaberA ? CustomSaber.ColorType.LeftSaber : CustomSaber.ColorType.RightSaber,
             Color.white, Color.white,
             TrailUtils.DefaultDuration);

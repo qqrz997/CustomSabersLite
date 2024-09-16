@@ -56,7 +56,7 @@ internal class SaberListManager(PluginDirs dirs)
 
     public int IndexForPath(string? relativePath) =>
         string.IsNullOrEmpty(relativePath) ? 0
-        : SaberList.FirstOrDefault(i => i.Metadata?.FileInfo?.RelativePath == relativePath) is not SaberListCellInfo i ? 0
+        : SaberList.FirstOrDefault(i => i.Metadata.FileInfo.RelativePath == relativePath) is not SaberListCellInfo i ? 0
         : SaberList.IndexOf(i);
 
     public string? PathForIndex(int row) =>
