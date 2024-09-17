@@ -27,7 +27,7 @@ internal class CacheManager : IInitializable
     private string CacheFilePath => 
         Path.Combine(directories.UserData.FullName, "sabers.cache");
 
-    private string[] SaberRelativeFilePaths =>
+    private string[] InstalledSaberRelativePaths =>
         FileUtils.GetFilePaths(directories.CustomSabers.FullName, [FileExts.Saber, FileExts.Whacker], SearchOption.AllDirectories, true);
 
     public event Action<int>? LoadingProgressChanged;
@@ -62,68 +62,43 @@ internal class CacheManager : IInitializable
         Logger.Debug("Initializing caching step");
         saberListManager.SetData([]);
 
-        CacheFileModel existingCache = 
+        var existingCache = 
             !File.Exists(CacheFilePath) ? CacheFileModel.CreateNew()
             : JsonConvert.DeserializeObject<CacheFileModel>(await File.ReadAllTextAsync(CacheFilePath)) ?? CacheFileModel.CreateNew();
 
         // { if the cache format changes the old one should be deleted }
 
-        var cache = await CreateUpdatedCache(existingCache);
+        var metadata = await UpdateAndGetCachedMetadata(existingCache);
 
-        saberListManager.SetData(cache.CachedMetadata
-            .Select(m => new CustomSaberMetadata(
+        saberListManager.SetData(metadata.Select(m => 
+            new CustomSaberMetadata(
                 new SaberFileInfo(m.RelativePath, m.SaberType),
                 m.LoaderError,
                 new Descriptor(m.SaberName, m.AuthorName, m.Image),
                 new SaberModelFlags(m.IncompatibleShaders, m.IncompatibleShaderNames))));
     }
 
-    private async Task<CacheFileModel> CreateUpdatedCache(CacheFileModel existingCache)
+    private async Task<IEnumerable<SaberMetadataModel>> UpdateAndGetCachedMetadata(CacheFileModel existingCache)
     {
-        var saberPaths = SaberRelativeFilePaths;
+        var installedSabers = InstalledSaberRelativePaths;
         var cachedMetaPaths = existingCache.CachedMetadata.ToDictionary(meta => meta.RelativePath);
-        
-        var sabersToLoadForCaching = saberPaths.WhereNot(cachedMetaPaths.ContainsKey);
+
+        var sabersToLoadForCaching = installedSabers.WhereNot(cachedMetaPaths.ContainsKey);
         if (!sabersToLoadForCaching.Any())
         {
             // no new sabers were found, so continue with existing cache
-            return existingCache;
+            return existingCache.CachedMetadata.Where(meta => installedSabers.Contains(meta.RelativePath));
         }
 
         var loadedMetadata = await LoadMetadata(sabersToLoadForCaching);
         loadedMetadata.ForEach(m => cachedMetaPaths.Add(m.RelativePath, m));
-
-        /*var strippedCache = cachedMetaPaths.Values
-            .Where(meta => meta.LoaderError == SaberLoaderError.None)
-            .Where(meta => meta.IncompatibleShaders)
-            .Select(meta =>
-            new
-            {
-                FileName = Path.GetFileName(meta.RelativePath),
-                meta.AuthorName,
-                meta.IncompatibleShaderNames
-            });
-
-        var incompatibleShaders = cachedMetaPaths.Values
-            .SelectMany(meta => meta.IncompatibleShaderNames)
-            .GroupBy(name => name)
-            .Select(group => new { Name = group.Key, Count = group.Count() });
-        await File.WriteAllTextAsync(
-            Path.Combine(directories.UserData.FullName, "IncompatibleShadersByName.json"),
-            JsonConvert.SerializeObject(incompatibleShaders.OrderBy(t => t.Name), Formatting.Indented));
-        await File.WriteAllTextAsync(
-            Path.Combine(directories.UserData.FullName, "IncompatibleShadersByOccurance.json"),
-            JsonConvert.SerializeObject(incompatibleShaders.OrderByDescending(t => t.Count), Formatting.Indented));
-        await File.WriteAllTextAsync(
-            Path.Combine(directories.UserData.FullName, "StrippedMetadata.json"),
-            JsonConvert.SerializeObject(strippedCache.OrderBy(t => t.FileName), Formatting.Indented));*/
 
         var newCache = new CacheFileModel(Plugin.Version.ToString(), cachedMetaPaths.Values.ToArray());
 
         var cacheJson = JsonConvert.SerializeObject(newCache);
         await File.WriteAllTextAsync(CacheFilePath, cacheJson);
 
-        return newCache;
+        return newCache.CachedMetadata.Where(meta => installedSabers.Contains(meta.RelativePath));
     }
 
     private async Task<List<SaberMetadataModel>> LoadMetadata(IEnumerable<string> sabersForCaching)

@@ -73,7 +73,7 @@ internal class SaberListManager(PluginDirs dirs)
         : SaberList.IndexOf(i);
 
     public SaberListCellInfo? Select(int row) =>
-        SaberList.ElementAtOrDefault(row;
+        SaberList.ElementAtOrDefault(row);
 
     private static SaberListCellInfo CellInfoForDefaultSabers =>
         MetaToInfo(new CustomSaberMetadata(
