@@ -142,8 +142,8 @@ internal class CacheManager : IInitializable
                 saberData.Metadata.FileInfo.RelativePath,
                 saberData.Metadata.FileInfo.Type,
                 saberData.Metadata.LoaderError,
-                saberData.Metadata.Descriptor.SaberName,
-                saberData.Metadata.Descriptor.AuthorName,
+                saberData.Metadata.Descriptor.SaberName.FullName,
+                saberData.Metadata.Descriptor.AuthorName.FullName,
                 saberData.Metadata.Descriptor.Image,
                 saberData.Metadata.Flags.IncompatibleShaders,
                 saberData.Metadata.Flags.IncompatibleShaderNames));

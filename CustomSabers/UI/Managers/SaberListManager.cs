@@ -11,23 +11,34 @@ internal class SaberListManager(PluginDirs dirs)
 {
     private readonly PluginDirs directories = dirs;
 
-    private List<SaberListCellInfo> Data { get; set; } = [];
+    private List<SaberListCellInfo> Data { get; } = [];
     private List<SaberListCellInfo> SaberList { get; } = [];
 
-    public void SetData(IEnumerable<CustomSaberMetadata> data) =>
-        Data = data.Select(MetaToInfo).ToList();
+    public void SetData(IEnumerable<CustomSaberMetadata> data)
+    {
+        Data.Clear();
+        Data.AddRange(data.Select(MetaToInfo));
+    }
 
     public List<SaberListCellInfo> GetList(SaberListFilterOptions? filterOptions = null)
     {
         filterOptions ??= SaberListFilterOptions.Default;
 
+        // this logic feels like it doesn't belong here and has no actual structure/meaning
+        // it will not easily expand
         var sortedData = Data
             .OrderBy(i => filterOptions.OrderBy switch
         {
-            OrderBy.Name => i.Metadata.Descriptor.SaberName, // should sort by a sanitized string / type for name or extension method
+            OrderBy.Name => i.Metadata.Descriptor.SaberName,
             OrderBy.Author => i.Metadata.Descriptor.AuthorName,
             _ => throw new NotImplementedException()
-        }).ToList();
+        })
+            .ThenBy(i => filterOptions.OrderBy switch
+        {
+            OrderBy.Name => i.Metadata.Descriptor.AuthorName,
+            OrderBy.Author => i.Metadata.Descriptor.SaberName,
+            _ => throw new NotImplementedException()
+        });
 
         SaberList.Clear();
         SaberList.Add(CellInfoForDefaultSabers);
@@ -52,7 +63,7 @@ internal class SaberListManager(PluginDirs dirs)
 
         if (Data.FirstOrDefault(i => i.Metadata.FileInfo.RelativePath == relativePath) is SaberListCellInfo i)
             Data.Remove(i);
-
+        
         return true;
     }
 
@@ -76,7 +87,7 @@ internal class SaberListManager(PluginDirs dirs)
 
     private static SaberListCellText GetCellInfo(CustomSaberMetadata meta) => meta.LoaderError switch
     {
-        SaberLoaderError.None => new(meta.Descriptor.SaberName, meta.Descriptor.AuthorName),
+        SaberLoaderError.None => new(meta.Descriptor.SaberName.FullName, meta.Descriptor.AuthorName.FullName),
         SaberLoaderError.InvalidFileType => new($"<color=#F77>Error - </color> {meta.FileInfo.FileName}", "File is not of a valid type"),
         SaberLoaderError.FileNotFound => new($"<color=#F77>Error - </color> {meta.FileInfo.FileName}", "Couldn't find file (was it deleted?)"),
         SaberLoaderError.LegacyWhacker => new($"<color=#F77>Not loaded - </color> {meta.FileInfo.FileName}", "Legacy whacker, incompatible with PC"),
@@ -87,7 +98,7 @@ internal class SaberListManager(PluginDirs dirs)
 
     private static IThumbnail GetCellIcon(CustomSaberMetadata meta) => meta.Descriptor.Image switch
     {
-        _ when meta.Descriptor.SaberName == "Default" => 
+        _ when meta.Descriptor.SaberName.FullName == "Default" => 
             ImageUtils.defaultCoverImage == null ? new NoThumbnail() : new SpriteThumbnail(ImageUtils.defaultCoverImage), // amazing stuff really
         [..] bytes => new ThumbnailWithData(bytes),
         _ => ImageUtils.nullCoverImage == null ? new NoThumbnail() : new SpriteThumbnail(ImageUtils.nullCoverImage)

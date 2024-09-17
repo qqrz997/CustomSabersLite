@@ -1,10 +1,10 @@
 ﻿namespace CustomSabersLite.Models;
 
-public class Descriptor(string? saberName, string? authorName, byte[]? image)
+internal class Descriptor(string? saberName, string? authorName, byte[]? image)
 {
-    public string SaberName { get; } = saberName is not null ? saberName : "Unknown";
+    public RichTextSegment SaberName { get; } = RichTextSegment.Create(saberName);
 
-    public string AuthorName { get; } = authorName is not null ? authorName : "Unknown";
+    public RichTextSegment AuthorName { get; } = RichTextSegment.Create(authorName);
 
     public byte[]? Image { get; } = image;
 }

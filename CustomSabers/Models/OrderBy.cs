@@ -2,6 +2,6 @@
 
 internal enum OrderBy
 {
-    Name,
+    Name = 0,
     Author,
 }
