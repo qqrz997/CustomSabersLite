@@ -4,6 +4,7 @@ using BeatSaberMarkupLanguage.ViewControllers;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Models;
 using CustomSabersLite.UI.Managers;
+using CustomSabersLite.Utilities;
 using CustomSabersLite.Utilities.AssetBundles;
 using HMUI;
 using IPA.Utilities.Async;
@@ -12,6 +13,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TMPro;
@@ -32,7 +34,6 @@ internal class SaberListViewController : BSMLAutomaticViewController
     [Inject] private readonly GameplaySetupTab gameplaySetupTab = null!;
     [Inject] private readonly PluginDirs directories = null!;
 
-    private int selectedSaberIndex;
     private CancellationTokenSource? tokenSource;
 
     [UIComponent("saber-list")] private CustomListTableData saberList = null!;
@@ -60,8 +61,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
     public async void SelectSaber(TableView tableView, int row)
     {
         Logger.Debug($"saber selected at row {row}");
-        selectedSaberIndex = row;
-        config.CurrentlySelectedSaber = saberListManager.PathForIndex(row);
+        config.CurrentlySelectedSaber = saberListManager.Select(row)?.Metadata.FileInfo.RelativePath;
         await GeneratePreview();
     }
 
@@ -119,7 +119,8 @@ internal class SaberListViewController : BSMLAutomaticViewController
 
         saberList.Data.Clear();
         saberListManager.GetList(filterOptions)
-            .ForEach(i => saberList.Data.Add(i.ToCustomCellInfo()));
+            .Select(i => i.ToCustomCellInfo())
+            .ForEach(saberList.Data.Add);
 
         saberList.TableView.ReloadData();
         StartCoroutine(ScrollToSelectedCell());
@@ -181,9 +182,6 @@ internal class SaberListViewController : BSMLAutomaticViewController
     {
         base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
 
-        selectedSaberIndex = saberListManager.IndexForPath(config.CurrentlySelectedSaber);
-
-        //saberList.TableView.SelectCellWithIdx(selectedSaberIndex);
         StartCoroutine(ScrollToSelectedCell());
         UnityMainThreadTaskScheduler.Factory.StartNew(GeneratePreview);
 

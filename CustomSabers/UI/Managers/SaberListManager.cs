@@ -17,8 +17,10 @@ internal class SaberListManager(PluginDirs dirs)
     public void SetData(IEnumerable<CustomSaberMetadata> data) =>
         Data = data.Select(MetaToInfo).ToList();
 
-    public List<SaberListCellInfo> GetList(SaberListFilterOptions filterOptions)
+    public List<SaberListCellInfo> GetList(SaberListFilterOptions? filterOptions = null)
     {
+        filterOptions ??= SaberListFilterOptions.Default;
+
         var sortedData = Data
             .OrderBy(i => filterOptions.OrderBy switch
         {
@@ -59,8 +61,8 @@ internal class SaberListManager(PluginDirs dirs)
         : SaberList.FirstOrDefault(i => i.Metadata.FileInfo.RelativePath == relativePath) is not SaberListCellInfo i ? 0
         : SaberList.IndexOf(i);
 
-    public string? PathForIndex(int row) =>
-        SaberList.ElementAtOrDefault(row) is SaberListCellInfo i ? i.Metadata.FileInfo.RelativePath : null;
+    public SaberListCellInfo? Select(int row) =>
+        SaberList.ElementAtOrDefault(row;
 
     private static SaberListCellInfo CellInfoForDefaultSabers =>
         MetaToInfo(new CustomSaberMetadata(

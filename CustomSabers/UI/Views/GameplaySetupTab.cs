@@ -29,8 +29,6 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    private int selectedSaberIndex;
-
     public void Dispose() =>
         cacheManager.LoadingComplete -= SetupList;
 
@@ -127,38 +125,35 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged
     private void SelectSaber(TableView tableView, int row)
     {
         Logger.Debug($"saber selected at row {row}");
-        selectedSaberIndex = row;
-        config.CurrentlySelectedSaber = saberListManager.PathForIndex(row);
+        config.CurrentlySelectedSaber = saberListManager.Select(row)?.Metadata.FileInfo.RelativePath;
     }
 
     public void SetupList()
     {
-        var filterOptions = new SaberListFilterOptions(
-            OrderBy.Name);
-
         saberList.Data.Clear();
-        saberListManager.GetList(filterOptions).Select(i => i.ToCustomCellInfo()).ForEach(saberList.Data.Add);
+        saberListManager.GetList()
+            .Select(i => i.ToCustomCellInfo())
+            .ForEach(saberList.Data.Add);
 
         saberList.TableView.ReloadData();
-        saberList.TableView.SelectCellWithIdx(selectedSaberIndex);
     }
 
     public void Activated(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
     {
         SharedSaberSettings.PropertyNames.ForEach(NotifyPropertyChanged);
-
-        selectedSaberIndex = saberListManager.IndexForPath(config.CurrentlySelectedSaber);
-
-        saberList.TableView.SelectCellWithIdx(selectedSaberIndex);
         coroutineStarter.StartCoroutine(ScrollToSelectedCell());
     }
 
     private IEnumerator ScrollToSelectedCell()
     {
         yield return new WaitUntil(() => saberList.gameObject.activeInHierarchy);
-        yield return new WaitForEndOfFrame();
+        yield return null;
+        yield return null;
+        var selectedSaberIndex = saberListManager.IndexForPath(config.CurrentlySelectedSaber);
+        saberList.TableView.SelectCellWithIdx(selectedSaberIndex);
         saberList.TableView.ScrollToCellWithIdx(selectedSaberIndex, TableView.ScrollPositionType.Center, true);
     }
+
     private void NotifyPropertyChanged(string propertyName) =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }
