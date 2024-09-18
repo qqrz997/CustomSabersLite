@@ -6,9 +6,11 @@ namespace CustomSabersLite.Utilities;
 
 internal class FileUtils
 {
-    public static string[] GetFilePaths(string directory, string[] extensions, SearchOption searchOption, bool returnShortPath) =>
-        returnShortPath ? TrimPaths(GetFiles(directory, extensions, searchOption), directory)
-        : GetFiles(directory, extensions, searchOption);
+    public static string[] GetFilePaths(string directory, string[] extensions, SearchOption searchOption, bool returnShortPath)
+    {
+        var files = GetFiles(directory, extensions, searchOption);
+        return returnShortPath ? TrimPaths(files, directory) : files;
+    }
 
     private static string[] GetFiles(string directory, string[] extensions, SearchOption searchOption) =>
         extensions

@@ -9,4 +9,10 @@ internal sealed class CustomSaberMetadata(SaberFileInfo fileInfo, SaberLoaderErr
     public Descriptor Descriptor { get; } = descriptor;
 
     public SaberModelFlags Flags { get; } = flags;
+
+    public static CustomSaberMetadata DefaultSabers => new(
+        new SaberFileInfo(null, CustomSaberType.Default),
+        SaberLoaderError.None,
+        new Descriptor("Default", "Beat Games", null),
+        new SaberModelFlags(false, []));
 }

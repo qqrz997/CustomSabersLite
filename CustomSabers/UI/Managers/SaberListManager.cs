@@ -76,11 +76,7 @@ internal class SaberListManager(PluginDirs dirs)
         SaberList.ElementAtOrDefault(row);
 
     private static SaberListCellInfo CellInfoForDefaultSabers =>
-        MetaToInfo(new CustomSaberMetadata(
-            new(null, CustomSaberType.Default), 
-            SaberLoaderError.None, 
-            new("Default", "Beat Games", null),
-            new(false, [])));
+        MetaToInfo(CustomSaberMetadata.DefaultSabers);
 
     private static SaberListCellInfo MetaToInfo(CustomSaberMetadata meta) =>
         new(meta, GetCellInfo(meta), GetCellIcon(meta));
@@ -96,11 +92,8 @@ internal class SaberListManager(PluginDirs dirs)
         _ => new($"<color=#F77>Error - </color> {meta.FileInfo.FileName}", "Unknown error encountered during loading")
     };
 
-    private static IThumbnail GetCellIcon(CustomSaberMetadata meta) => meta.Descriptor.Image switch
-    {
-        _ when meta.Descriptor.SaberName.FullName == "Default" => 
-            ImageUtils.defaultCoverImage == null ? new NoThumbnail() : new SpriteThumbnail(ImageUtils.defaultCoverImage), // amazing stuff really
-        [..] bytes => new ThumbnailWithData(bytes),
-        _ => ImageUtils.nullCoverImage == null ? new NoThumbnail() : new SpriteThumbnail(ImageUtils.nullCoverImage)
-    };
+    private static IThumbnail GetCellIcon(CustomSaberMetadata meta) =>
+        meta.FileInfo.Type == CustomSaberType.Default ? new SpriteThumbnail(CSLResources.DefaultCoverImage)
+        : meta.Descriptor.Image is null ? new SpriteThumbnail(CSLResources.NullCoverImage)
+        : new ThumbnailWithData(meta.Descriptor.Image);
 }

@@ -1,12 +1,10 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 
 namespace CustomSabersLite.Utilities;
 
-internal static class ImageUtils
+internal static class TextureExtensions
 {
-    public static readonly Sprite? nullCoverImage = ImageLoading.LoadSpriteFromResources("CustomSabersLite.Resources.null-image.png");
-    public static readonly Sprite? defaultCoverImage = ImageLoading.LoadSpriteFromResources("CustomSabersLite.Resources.defaultsabers-image.png");
-
     /// <summary>
     /// Duplicates a texture to get around unreadable assets
     /// </summary>
@@ -31,9 +29,6 @@ internal static class ImageUtils
         width * height > origTexture.width * origTexture.height ? origTexture
         : origTexture.Rescale(width, height, filterMode);
 
-    /// <summary>
-    /// Rescales a texture
-    /// </summary>
     private static Texture2D Rescale(this Texture2D origTexture, int width, int height, FilterMode filterMode)
     {
         var textureRect = new Rect(0, 0, width, height);
