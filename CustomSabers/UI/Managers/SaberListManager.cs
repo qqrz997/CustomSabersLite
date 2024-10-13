@@ -1,5 +1,6 @@
 ﻿using CustomSabersLite.Components.Managers;
 using CustomSabersLite.Models;
+using CustomSabersLite.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -74,17 +75,23 @@ internal class SaberListManager(SaberInstanceManager saberInstances)
     public SaberListCellInfo? Select(int row) =>
         SaberList.ElementAtOrDefault(row);
 
-    private static SaberListCellInfo MetaToInfo(CustomSaberMetadata meta) =>
-        new(meta, GetCellInfo(meta), meta.Descriptor.Icon);
-
-    private static SaberListCellText GetCellInfo(CustomSaberMetadata meta) => meta.LoaderError switch
+    private static SaberListCellInfo MetaToInfo(CustomSaberMetadata meta)
     {
-        SaberLoaderError.None => new(meta.Descriptor.SaberName.FullName, meta.Descriptor.AuthorName.FullName),
-        SaberLoaderError.InvalidFileType => new($"<color=#F77>Error - </color> {meta.FileInfo.FileName}", "File is not of a valid type"),
-        SaberLoaderError.FileNotFound => new($"<color=#F77>Error - </color> {meta.FileInfo.FileName}", "Couldn't find file"),
-        SaberLoaderError.LegacyWhacker => new($"<color=#F77>Not loaded - </color> {meta.FileInfo.FileName}", "Legacy whacker, incompatible with PC"),
-        SaberLoaderError.NullBundle => new($"<color=#F77>Error - </color> {meta.FileInfo.FileName}", "Problem encountered when loading asset"),
-        SaberLoaderError.NullAsset => new($"<color=#F77>Error - </color> {meta.FileInfo.FileName}", "Problem encountered when loading saber model"),
-        _ => new($"<color=#F77>Error - </color> {meta.FileInfo.FileName}", "Unknown error encountered during loading")
-    };
+        SaberListCellText text = meta.LoaderError switch
+        {
+            SaberLoaderError.None => new(meta.Descriptor.SaberName.FullName, meta.Descriptor.AuthorName.FullName),
+            SaberLoaderError.InvalidFileType => new($"<color=#F77>Error - </color> {meta.FileInfo.FileName}", "File is not of a valid type"),
+            SaberLoaderError.FileNotFound => new($"<color=#F77>Error - </color> {meta.FileInfo.FileName}", "Couldn't find file"),
+            SaberLoaderError.LegacyWhacker => new($"<color=#F77>Not loaded - </color> {meta.FileInfo.FileName}", "Legacy whacker, incompatible with PC"),
+            SaberLoaderError.NullBundle => new($"<color=#F77>Error - </color> {meta.FileInfo.FileName}", "Problem encountered when loading asset"),
+            SaberLoaderError.NullAsset => new($"<color=#F77>Error - </color> {meta.FileInfo.FileName}", "Problem encountered when loading saber model"),
+            _ => new($"<color=#F77>Error - </color> {meta.FileInfo.FileName}", "Unknown error encountered during loading")
+        };
+        var spriteIcon = meta.LoaderError switch
+        {
+            SaberLoaderError.None => meta.Descriptor.Icon,
+            _ => CSLResources.DefaultCoverImage
+        };
+        return new SaberListCellInfo(meta, text, spriteIcon);
+    }
 }
