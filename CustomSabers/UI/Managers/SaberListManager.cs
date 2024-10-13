@@ -12,42 +12,33 @@ internal class SaberListManager(SaberInstanceManager saberInstances)
 {
     private readonly SaberInstanceManager saberInstanceManager = saberInstances;
 
-    private List<SaberListCellInfo> Data { get; } = [];
-    private List<SaberListCellInfo> SaberList { get; } = [];
+    private IQueryable<SaberListCellInfo> Data { get; set; } = Array.Empty<SaberListCellInfo>().AsQueryable();
+    private List<SaberListCellInfo> SaberList { get; set; } = [];
 
     private SaberListCellInfo InfoForDefaultSabers { get; } = MetaToInfo(CustomSaberMetadata.Default);
 
-    public void SetData(IEnumerable<CustomSaberMetadata> data)
-    {
-        Data.Clear();
-        Data.AddRange(data.Select(MetaToInfo));
-    }
+    public void SetData(IEnumerable<CustomSaberMetadata> data) => 
+        Data = data.Select(MetaToInfo).AsQueryable();
 
     public List<SaberListCellInfo> GetList(SaberListFilterOptions? filterOptions = null)
     {
         filterOptions ??= SaberListFilterOptions.Default;
 
-        // this logic feels like it doesn't belong here and has no actual structure/meaning
-        // it will not easily expand
-        var sortedData = Data
-            .OrderBy(i => filterOptions.OrderBy switch
+        // todo - this logic may not stay here
+        var orderedData = filterOptions.OrderBy switch
         {
-            OrderBy.Name => i.Metadata.Descriptor.SaberName,
-            OrderBy.Author => i.Metadata.Descriptor.AuthorName,
-            _ => throw new NotImplementedException()
-        })
-            .ThenBy(i => filterOptions.OrderBy switch
-        {
-            OrderBy.Name => i.Metadata.Descriptor.AuthorName,
-            OrderBy.Author => i.Metadata.Descriptor.SaberName,
-            _ => throw new NotImplementedException()
-        });
+            OrderBy.Name => Data
+                .OrderBy(i => i.Metadata.Descriptor.SaberName)
+                .ThenBy(i => i.Metadata.Descriptor.AuthorName),
 
-        SaberList.Clear();
-        SaberList.Add(InfoForDefaultSabers);
-        SaberList.AddRange(sortedData);
+            OrderBy.Author => Data
+                .OrderBy(i => i.Metadata.Descriptor.AuthorName)
+                .ThenBy(i => i.Metadata.Descriptor.SaberName),
 
-        return SaberList;
+            _ => throw new NotImplementedException()
+        };
+
+        return SaberList = [InfoForDefaultSabers, .. orderedData];
     }
 
     public bool DeleteSaber(string relativePath)
@@ -64,7 +55,9 @@ internal class SaberListManager(SaberInstanceManager saberInstances)
 
         File.Move(currentSaberPath, destinationPath);
 
-        return Data.Remove(Data.FirstOrDefault(i => i.Metadata.FileInfo.RelativePath == relativePath));
+        var deletedData = Data.FirstOrDefault(i => i.Metadata.FileInfo.RelativePath == relativePath);
+        Data = Data.Where(i => i != deletedData);
+        return deletedData != null;
     }
 
     public int IndexForPath(string? relativePath) =>
