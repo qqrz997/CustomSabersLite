@@ -77,16 +77,7 @@ internal class SaberListManager(SaberInstanceManager saberInstances)
 
     private static SaberListCellInfo MetaToInfo(CustomSaberMetadata meta)
     {
-        SaberListCellText text = meta.LoaderError switch
-        {
-            SaberLoaderError.None => new(meta.Descriptor.SaberName.FullName, meta.Descriptor.AuthorName.FullName),
-            SaberLoaderError.InvalidFileType => new($"<color=#F77>Error - </color> {meta.FileInfo.FileName}", "File is not of a valid type"),
-            SaberLoaderError.FileNotFound => new($"<color=#F77>Error - </color> {meta.FileInfo.FileName}", "Couldn't find file"),
-            SaberLoaderError.LegacyWhacker => new($"<color=#F77>Not loaded - </color> {meta.FileInfo.FileName}", "Legacy whacker, incompatible with PC"),
-            SaberLoaderError.NullBundle => new($"<color=#F77>Error - </color> {meta.FileInfo.FileName}", "Problem encountered when loading asset"),
-            SaberLoaderError.NullAsset => new($"<color=#F77>Error - </color> {meta.FileInfo.FileName}", "Problem encountered when loading saber model"),
-            _ => new($"<color=#F77>Error - </color> {meta.FileInfo.FileName}", "Unknown error encountered during loading")
-        };
+        var text = SaberListCellText.Create(meta);
         var spriteIcon = meta.LoaderError switch
         {
             SaberLoaderError.None => meta.Descriptor.Icon,
