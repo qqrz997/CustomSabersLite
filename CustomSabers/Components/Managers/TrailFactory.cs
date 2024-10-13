@@ -2,9 +2,8 @@
 using UnityEngine;
 using CustomSabersLite.Models;
 using CustomSabersLite.Configuration;
-using CustomSabersLite.Utilities;
 using CustomSabersLite.Components.Game;
-using CustomSabersLite.Utilities.Extensions;
+using CustomSabersLite.Utilities;
 
 namespace CustomSabersLite.Components.Managers;
 
@@ -13,7 +12,7 @@ internal class TrailFactory(CSLConfig config, InternalResourcesProvider resource
     private readonly CSLConfig config = config;
     private readonly InternalResourcesProvider resourcesProvider = resourcesProvider;
 
-    private SaberTrailRenderer? TrailRendererPrefab => resourcesProvider.SaberTrailRenderer;
+    private SaberTrailRenderer TrailRendererPrefab => resourcesProvider.SaberTrailRenderer;
 
     private readonly int defaultSamplingFrequency = 120;
     private readonly int defaultGranularity = 45;
@@ -81,7 +80,7 @@ internal class TrailFactory(CSLConfig config, InternalResourcesProvider resource
 
         var trailData = new CustomTrailData(
             top, bottom,
-            TrailRendererPrefab.Maybe()?._meshRenderer.material,
+            TrailRendererPrefab._meshRenderer.material,
             saberType == SaberType.SaberA ? CustomSaber.ColorType.LeftSaber : CustomSaber.ColorType.RightSaber,
             Color.white, Color.white,
             TrailUtils.DefaultDuration);

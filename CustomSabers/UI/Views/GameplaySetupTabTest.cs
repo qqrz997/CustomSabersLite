@@ -15,7 +15,7 @@ namespace CustomSabersLite.UI.Views;
 [ViewDefinition("CustomSabersLite.UI.BSML.gameplaySetup.bsml")]
 internal class TabTest : BSMLAutomaticViewController
 {
-    [UIAction("#post-parse")]
+    /*[UIAction("#post-parse")]
     public void PostParse()
     {
         // Saber Trail Type list setting 
@@ -80,5 +80,5 @@ internal class TabTest : BSMLAutomaticViewController
     public ImageView saberListLoadingIcon = null!;
 
     [UIAction("select-saber")]
-    public void Select(TableView _, int row) { }
+    public void Select(TableView _, int row) { }*/
 }

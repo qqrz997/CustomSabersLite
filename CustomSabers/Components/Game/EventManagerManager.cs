@@ -3,9 +3,10 @@ using CustomSabersLite.Configuration;
 using System;
 using UnityEngine;
 using System.Linq;
-using CustomSabersLite.Utilities.Extensions;
 
 namespace CustomSabersLite.Components.Game;
+
+#pragma warning disable IDE0031 // Use null propagation
 
 internal class EventManagerManager(BeatmapObjectManager beatmapObjectManager, GameEnergyCounter gameEnergyCounter, ObstacleSaberSparkleEffectManager obstacleCollisionManager, RelativeScoreAndImmediateRankCounter relativeScoreCounter, IScoreController scoreController, IComboController comboController, IReadonlyBeatmapData beatmapData, CSLConfig config) : IDisposable
 {
@@ -80,71 +81,76 @@ internal class EventManagerManager(BeatmapObjectManager beatmapObjectManager, Ga
 
     private void NoteWasCut(NoteController noteController, in NoteCutInfo noteCutInfo)
     {
-        if (!lastNoteTime.HasValue) return;
+        if (lastNoteTime == null || eventManager == null) return;
 
-        if (noteCutInfo.allIsOK)
-        {
-            // Note was cut
-            if (noteCutInfo.saberType == saberType)
-            {
-                eventManager.Maybe()?.OnSlice?.Invoke();
-            }
-        }
-        else
+        if (!noteCutInfo.allIsOK)
         {
             // Player has skill issue
-            eventManager.Maybe()?.OnComboBreak?.Invoke();
+            eventManager.OnComboBreak?.Invoke();
+        }
+        else if (noteCutInfo.saberType == saberType)
+        {
+            // Note was cut
+            eventManager.OnSlice?.Invoke();
         }
 
         if (Mathf.Approximately(noteController.noteData.time, lastNoteTime.Value))
         {
             lastNoteTime = 0;
-            eventManager.Maybe()?.OnLevelEnded?.Invoke();
+            eventManager.OnLevelEnded?.Invoke();
         }
     }
 
     private void NoteWasMissed(NoteController noteController)
     {
-        if (!lastNoteTime.HasValue) return;
+        if (lastNoteTime == null || eventManager == null) return;
 
         if (noteController.noteData.colorType != ColorType.None)
         {
-            eventManager.Maybe()?.OnComboBreak?.Invoke();
+            eventManager.OnComboBreak?.Invoke();
         }
 
         if (Mathf.Approximately(noteController.noteData.time, lastNoteTime.Value))
         {
             lastNoteTime = 0;
-            eventManager.Maybe()?.OnLevelEnded?.Invoke();
+            eventManager.OnLevelEnded?.Invoke();
         }
     }
 
     private void MultiplierChanged(int multiplier, float progress)
     {
-        if (multiplier > 1 && progress < 0.1f)
+        if (eventManager != null && multiplier > 1 && progress < 0.1f)
         {
-            eventManager.Maybe()?.MultiplierUp?.Invoke();
+            eventManager.MultiplierUp?.Invoke();
         }
     }
 
-    private void ComboChanged(int combo) => 
-        eventManager.Maybe()?.OnComboChanged?.Invoke(combo);
+    private void ComboChanged(int combo)
+    {
+        if (eventManager != null) eventManager.OnComboChanged?.Invoke(combo);
+    }
 
-    private void SaberStartedCollision(SaberType saberType) => 
-        eventManager.Maybe()?.SaberStartColliding?.Invoke();
+    private void SaberStartedCollision(SaberType saberType)
+    {
+        if (eventManager != null) eventManager.SaberStartColliding?.Invoke();
+    }
 
-    private void SaberEndedCollision(SaberType saberType) => 
-        eventManager.Maybe()?.SaberStopColliding?.Invoke();
+    private void SaberEndedCollision(SaberType saberType)
+    {
+        if (eventManager != null) eventManager.SaberStopColliding?.Invoke();
+    }
 
-    private void LevelWasFailed() => 
-        eventManager.Maybe()?.OnLevelFail?.Invoke();
+    private void LevelWasFailed()
+    {
+        if (eventManager != null) eventManager.OnLevelFail?.Invoke();
+    }
 
     private void ScoreChangedEvent()
     {
         var relativeScore = relativeScoreCounter.relativeScore;
         if (Math.Abs(previousScore - relativeScore) > 0f)
         {
-            eventManager.Maybe()?.OnAccuracyChanged?.Invoke(relativeScore);
+            if (eventManager != null) eventManager.OnAccuracyChanged?.Invoke(relativeScore);
             previousScore = relativeScore;
         }
     }

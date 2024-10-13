@@ -1,10 +1,15 @@
-﻿namespace CustomSabersLite.Models;
+﻿using CustomSabersLite.Utilities;
+using UnityEngine;
 
-internal class Descriptor(string? saberName, string? authorName, byte[]? image)
+namespace CustomSabersLite.Models;
+
+internal class Descriptor(string? saberName, string? authorName, Sprite? icon)
 {
     public RichTextSegment SaberName { get; } = RichTextSegment.Create(saberName);
 
     public RichTextSegment AuthorName { get; } = RichTextSegment.Create(authorName);
 
-    public byte[]? Image { get; } = image;
+    public Sprite Icon { get; } = icon ?? CSLResources.NullCoverImage;
+
+    public static Descriptor DefaultSabers { get; } = new("Default", "Beat Games", CSLResources.DefaultCoverImage);
 }

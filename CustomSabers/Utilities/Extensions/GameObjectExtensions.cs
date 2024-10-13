@@ -1,12 +1,9 @@
 ﻿using UnityEngine;
 
-namespace CustomSabersLite.Utilities.Extensions;
+namespace CustomSabersLite.Utilities;
 
 internal static class GameObjectExtensions
 {
-    public static T? Maybe<T>(this T? obj) where T : Object =>
-        obj is not null && obj ? obj! : null;
-
     public static T TryGetComponentOrAdd<T>(this GameObject obj) where T : MonoBehaviour =>
         obj.GetComponent<T>() ?? obj.AddComponent<T>();
 

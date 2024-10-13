@@ -3,11 +3,12 @@ using CustomSabersLite.Components.Managers;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Models;
 using CustomSabersLite.Utilities;
-using CustomSabersLite.Utilities.Extensions;
 using UnityEngine;
 using Zenject;
 
 namespace CustomSabersLite.UI.Views.Saber_List;
+
+#pragma warning disable IDE0031 // Use null propagation
 
 internal class MenuSaber
 {
@@ -35,10 +36,8 @@ internal class MenuSaber
 
     public void ReplaceSaber(LiteSaber? newSaber)
     {
-        saberInstance.Maybe()?.gameObject.Destroy();
-
-        if (newSaber == null)
-            return;
+        if (saberInstance != null) saberInstance.gameObject.Destroy();
+        if (newSaber == null) return;
 
         newSaber.SetParent(gameObject.transform);
         newSaber.GetComponentsInChildren<Collider>().ForEach(c => c.enabled = false);

@@ -1,5 +1,5 @@
 ﻿using CustomSabersLite.UI.Views;
-using CustomSabersLite.Utilities.AssetBundles;
+using CustomSabersLite.Utilities;
 using HMUI;
 using System.Threading.Tasks;
 using Zenject;
@@ -11,7 +11,7 @@ internal class CSLFlowCoordinator : FlowCoordinator
     [Inject] private readonly MainFlowCoordinator mainFlowCoordinator = null!;
     [Inject] private readonly SaberListViewController saberList = null!;
     [Inject] private readonly SaberSettingsViewController saberSettings = null!;
-    [Inject] private readonly CacheManager cacheManager = null!;
+    [Inject] private readonly SaberMetadataCache cacheManager = null!;
 
     [InjectOptional] private readonly TabTest? tabTest;
 

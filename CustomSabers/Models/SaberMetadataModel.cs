@@ -2,36 +2,30 @@
 
 namespace CustomSabersLite.Models;
 
-public class SaberMetadataModel
+[method: JsonConstructor]
+public class SaberMetadataModel(string relativePath, string hash, CustomSaberType saberType, SaberLoaderError loaderError, string saberName, string authorName, bool incompatibleShaders, string[] incompatibleShaderNames)
 {
-    public string? RelativePath { get; }
+    [JsonProperty("path")]
+    public string RelativePath { get; } = relativePath;
 
-    public CustomSaberType SaberType { get; }
+    [JsonProperty("hash")]
+    public string Hash { get; } = hash;
 
-    public SaberLoaderError LoaderError { get; }
+    [JsonProperty("type")]
+    public CustomSaberType SaberType { get; } = saberType;
 
-    public string SaberName { get; }
+    [JsonProperty("error")]
+    public SaberLoaderError LoaderError { get; } = loaderError;
 
-    public string AuthorName { get; }
+    [JsonProperty("name")]
+    public string SaberName { get; } = saberName;
 
-    public byte[]? Image { get; }
+    [JsonProperty("author")]
+    public string AuthorName { get; } = authorName;
 
-    public bool IncompatibleShaders { get; }
+    [JsonProperty("hasIncompatibleShaders")]
+    public bool IncompatibleShaders { get; } = incompatibleShaders;
 
-    public string[] IncompatibleShaderNames { get; }
-
-    [JsonConstructor]
-    public SaberMetadataModel(
-        string? relativePath, CustomSaberType saberType, SaberLoaderError loaderError, string saberName, 
-        string authorName, byte[]? image, bool incompatibleShaders, string[] incompatibleShaderNames)
-    {
-        RelativePath = relativePath;
-        SaberType = saberType;
-        LoaderError = loaderError;
-        SaberName = saberName;
-        AuthorName = authorName;
-        Image = image;
-        IncompatibleShaders = incompatibleShaders;
-        IncompatibleShaderNames = incompatibleShaderNames;
-    }
+    [JsonProperty("incompatibleShaderNames")]
+    public string[] IncompatibleShaderNames { get; } = incompatibleShaderNames;
 }

@@ -1,6 +1,5 @@
 ﻿using CustomSabersLite.Models;
 using CustomSabersLite.Utilities;
-using CustomSabersLite.Utilities.Extensions;
 using UnityEngine;
 
 namespace CustomSabersLite.Components.Game;
@@ -15,7 +14,7 @@ internal class LiteSaberTrail : SaberTrail
 
     public CustomTrailData? InstanceTrailData { get; private set; }
 
-    void Awake() => _movementData = customTrailMovementData;
+    new void Awake() => _movementData = customTrailMovementData;
 
     public void Init(CustomTrailData trailData)
     {

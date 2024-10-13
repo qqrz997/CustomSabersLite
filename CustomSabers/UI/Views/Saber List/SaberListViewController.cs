@@ -5,7 +5,6 @@ using CustomSabersLite.Configuration;
 using CustomSabersLite.Models;
 using CustomSabersLite.UI.Managers;
 using CustomSabersLite.Utilities;
-using CustomSabersLite.Utilities.AssetBundles;
 using HMUI;
 using IPA.Utilities.Async;
 using System;
@@ -28,11 +27,10 @@ namespace CustomSabersLite.UI.Views;
 internal class SaberListViewController : BSMLAutomaticViewController
 {
     [Inject] private readonly CSLConfig config = null!;
-    [Inject] private readonly CacheManager cacheManager = null!;
+    [Inject] private readonly SaberMetadataCache cacheManager = null!;
     [Inject] private readonly SaberListManager saberListManager = null!;
     [Inject] private readonly SaberPreviewManager previewManager = null!;
     [Inject] private readonly GameplaySetupTab gameplaySetupTab = null!;
-    [Inject] private readonly PluginDirs directories = null!;
 
     private CancellationTokenSource? tokenSource;
 
@@ -66,7 +64,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
     }
 
     [UIAction("open-in-explorer")]
-    public void OpenInExplorer() => Process.Start(directories.CustomSabers.FullName);
+    public void OpenInExplorer() => Process.Start(PluginDirs.CustomSabers.FullName);
 
     [UIAction("show-delete-saber-modal")]
     public void ShowDeleteSaberModal()

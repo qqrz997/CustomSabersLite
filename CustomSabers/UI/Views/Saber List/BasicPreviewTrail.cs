@@ -1,7 +1,6 @@
 ﻿using CustomSabersLite.Configuration;
 using CustomSabersLite.Models;
 using CustomSabersLite.Utilities;
-using CustomSabersLite.Utilities.Extensions;
 using UnityEngine;
 
 namespace CustomSabersLite.UI.Managers;

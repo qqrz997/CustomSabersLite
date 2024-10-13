@@ -1,5 +1,4 @@
 ﻿using CustomSabersLite.Models;
-using UnityEngine;
 
 namespace CustomSabersLite.Configuration;
 
@@ -12,10 +11,6 @@ internal class SharedSaberSettings
     public int TrailWidth;
     public TrailType TrailType;
     public bool EnableCustomEvents;
-    public bool ForcefullyFoolish;
-    public bool EnableCustomColorScheme;
-    public Color LeftSaberColor;
-    public Color RightSaberColor;
 
     internal static string[] PropertyNames =
     [
@@ -25,10 +20,6 @@ internal class SharedSaberSettings
         nameof(OverrideTrailWidth),
         nameof(TrailWidth),
         nameof(TrailType),
-        nameof(EnableCustomEvents),
-        nameof(ForcefullyFoolish),
-        nameof(EnableCustomColorScheme),
-        nameof(LeftSaberColor),
-        nameof(RightSaberColor)
+        nameof(EnableCustomEvents)
     ];
 }

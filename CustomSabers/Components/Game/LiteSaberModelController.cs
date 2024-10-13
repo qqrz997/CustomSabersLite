@@ -3,9 +3,10 @@ using UnityEngine;
 using Zenject;
 using CustomSabersLite.Components.Managers;
 using CustomSabersLite.Utilities;
-using CustomSabersLite.Utilities.Extensions;
 
 namespace CustomSabersLite.Components.Game;
+
+#pragma warning disable IDE0031 // Use null propagation
 
 internal class LiteSaberModelController : SaberModelController, IColorable, IPreSaberModelInit
 {
@@ -53,7 +54,7 @@ internal class LiteSaberModelController : SaberModelController, IColorable, IPre
     private void SetColor(Color color)
     {
         this.color = color;
-        customSaberInstance.Maybe()?.SetColor(color);
+        if (customSaberInstance != null) customSaberInstance.SetColor(color);
         customTrailInstances?.ForEach(t => t.SetColor(color));
     }
 }

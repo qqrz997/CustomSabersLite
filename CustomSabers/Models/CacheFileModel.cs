@@ -6,6 +6,5 @@ public class CacheFileModel(string version, SaberMetadataModel[] cachedMetadata)
 
     public SaberMetadataModel[] CachedMetadata { get; } = cachedMetadata;
 
-    public static CacheFileModel CreateNew() =>
-        new(Plugin.Version.ToString(), []);
+    public static CacheFileModel Empty => new(Plugin.Version.ToString(), []);
 }

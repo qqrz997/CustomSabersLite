@@ -10,7 +10,7 @@ internal static class CustomSaberUtils
     {
         try
         {
-            Assembly.Load(await ResourceLoading.LoadFromResourceAsync("CustomSabersLite.Resources.CustomSaber.dll"));
+            Assembly.Load(await ResourceLoading.GetResourceAsync("CustomSabersLite.Resources.CustomSaber.dll"));
             return true;
         }
         catch (Exception ex)

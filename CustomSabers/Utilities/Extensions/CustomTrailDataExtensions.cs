@@ -1,7 +1,7 @@
 ﻿using CustomSabersLite.Models;
 using UnityEngine;
 
-namespace CustomSabersLite.Utilities.Extensions;
+namespace CustomSabersLite.Utilities;
 
 internal static class CustomTrailDataExtensions
 {

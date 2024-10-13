@@ -6,8 +6,6 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-using static CustomSabersLite.Utilities.TrailUtils;
-
 namespace CustomSabersLite.Utilities;
 
 internal class CustomTrailUtils
@@ -31,7 +29,7 @@ internal class CustomTrailUtils
                 ct.colorType,
                 ct.TrailColor,
                 ct.MultiplierColor,
-                ConvertLegacyLength(ct.Length)))
+                TrailUtils.ConvertLegacyLength(ct.Length)))
             .ToArray();
     }
 
@@ -68,7 +66,7 @@ internal class CustomTrailUtils
                 trailData.Value.colorType,
                 trailData.Value.trailColor,
                 trailData.Value.multiplierColor,
-                ConvertLegacyLength(trailData.Value.length)));
+                TrailUtils.ConvertLegacyLength(trailData.Value.length)));
         }
 
         return [.. customTrailData];

@@ -2,7 +2,6 @@
 using CustomSabersLite.Configuration;
 using CustomSabersLite.UI.Managers;
 using CustomSabersLite.Utilities;
-using CustomSabersLite.Utilities.AssetBundles;
 using Zenject;
 
 namespace CustomSabersLite.Installers;
@@ -13,14 +12,14 @@ internal class CSLAppInstaller(CSLConfig config) : Installer
 
     public override void InstallBindings()
     {
-        Container.Bind<PluginDirs>().AsSingle();
-
         Container.BindInstance(config);
 
         Container.BindInterfacesAndSelfTo<InternalResourcesProvider>().AsSingle();
 
-        Container.BindInterfacesAndSelfTo<CacheManager>().AsSingle();
+        Container.BindInterfacesAndSelfTo<SaberMetadataCache>().AsSingle();
         Container.Bind<SaberListManager>().AsSingle();
+
+        Container.Bind<SpriteCache>().AsSingle();
 
         Container.Bind<BundleLoader>().AsSingle();
         Container.Bind<SaberLoader>().AsSingle();

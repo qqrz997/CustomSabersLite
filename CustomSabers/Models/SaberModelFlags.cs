@@ -8,4 +8,6 @@ public class SaberModelFlags(bool incompatibleShaders, IEnumerable<string> incom
     public bool IncompatibleShaders { get; } = incompatibleShaders;
 
     public string[] IncompatibleShaderNames { get; } = incompatibleShaderNames.ToArray();
+
+    public static SaberModelFlags None { get; } = new(false, []);
 }

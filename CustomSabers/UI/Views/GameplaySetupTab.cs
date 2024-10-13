@@ -9,7 +9,6 @@ using System.Linq;
 using TMPro;
 using Zenject;
 using BeatSaberMarkupLanguage.Components;
-using CustomSabersLite.Utilities.AssetBundles;
 using HMUI;
 using System.ComponentModel;
 using System.Collections;
@@ -21,7 +20,7 @@ namespace CustomSabersLite.UI.Views;
 internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged
 {
     [Inject] private readonly CSLConfig config = null!;
-    [Inject] private readonly CacheManager cacheManager = null!;
+    [Inject] private readonly SaberMetadataCache cacheManager = null!;
     [Inject] private readonly ICoroutineStarter coroutineStarter = null!;
     [Inject] private readonly SaberListManager saberListManager = null!;
 

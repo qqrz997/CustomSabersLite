@@ -13,7 +13,6 @@ internal class ShaderRepairUtils
     /// Uses AssetBundleLoadingTools to replace shaders with single-pass-instanced-compatible shaders
     /// </summary>
     /// <param name="sabersObject">The root object of the custom saber</param>
-    /// <returns>true if all shaders are replaced successfully</returns>
     public static async Task<ShaderReplacementInfo> RepairSaberShadersAsync(GameObject sabersObject)
     {
         var materials = ShaderRepair.GetMaterialsFromGameObjectRenderers(sabersObject);

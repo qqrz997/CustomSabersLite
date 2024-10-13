@@ -4,18 +4,19 @@ using System.Linq;
 using Newtonsoft.Json;
 using CustomSabersLite.Models;
 using UnityEngine;
-using AssetBundleLoadingTools.Utilities;
 using System.Threading.Tasks;
+using AssetBundleLoadingTools.Utilities;
 
-namespace CustomSabersLite.Utilities.AssetBundles;
+namespace CustomSabersLite.Utilities;
 
 /// <summary>
 /// Class for loading .whacker files
 /// </summary>
-internal class WhackerLoader(PluginDirs directories, BundleLoader bundleLoader)
+internal class WhackerLoader(BundleLoader bundleLoader, SpriteCache spriteCache)
 {
     private readonly BundleLoader bundleLoader = bundleLoader;
-    private readonly string sabersPath = directories.CustomSabers.FullName;
+    private readonly SpriteCache spriteCache = spriteCache;
+    private readonly string sabersPath = PluginDirs.CustomSabers.FullName;
 
     private const CustomSaberType Type = CustomSaberType.Whacker;
 
@@ -31,25 +32,25 @@ internal class WhackerLoader(PluginDirs directories, BundleLoader bundleLoader)
         if (!File.Exists(path))
             return new NoSaberData(relativePath, SaberLoaderError.FileNotFound);
 
-        Logger.Debug($"Attempting to load whacker file...\n\t- {path}");
+        Logger.Debug($"Attempting to load whacker file - {relativePath}");
 
-        using var archive = ZipFile.OpenRead(path);
+        using var fileStream = File.OpenRead(path);
+        using var archive = new ZipArchive(fileStream, ZipArchiveMode.Read);
+
         var json = archive.Entries.Where(x => x.FullName.EndsWith(".json")).FirstOrDefault();
-
         using var jsonStream = json.Open();
         using var jsonStreamReader = new StreamReader(jsonStream);
 
         if (new JsonSerializer().Deserialize(jsonStreamReader, typeof(WhackerModel)) is not WhackerModel whacker)
             return new NoSaberData(relativePath, SaberLoaderError.InvalidFileType);
-        
+
         if (whacker.config.isLegacy)
             return new NoSaberData(relativePath, SaberLoaderError.LegacyWhacker);
 
         var bundleEntry = archive.GetEntry(whacker.pcFileName);
-        var thumbEntry = archive.GetEntry(whacker.descriptor.coverImage);
 
         using var bundleStream = bundleEntry.Open();
-        var bundle = await bundleLoader.LoadBundleAsync(bundleStream);
+        var bundle = await bundleLoader.LoadBundle(bundleStream);
 
         if (bundle == null)
             return new NoSaberData(relativePath, SaberLoaderError.NullBundle);
@@ -65,27 +66,34 @@ internal class WhackerLoader(PluginDirs directories, BundleLoader bundleLoader)
         saberPrefab.hideFlags |= HideFlags.DontUnloadUnusedAsset;
         saberPrefab.name += $" {whacker.descriptor.objectName}";
 
-        byte[]? image = null;
-        if (thumbEntry != null)
-        {
-            using var imageMemoryStream = new MemoryStream();
-            using var imageStream = thumbEntry.Open();
-            await imageStream.CopyToAsync(imageMemoryStream);
-            image = imageMemoryStream.ToArray();
-        }
-
         var shaderInfo = await ShaderRepairUtils.RepairSaberShadersAsync(saberPrefab);
         var missingShaders = !shaderInfo.AllShadersReplaced;
         var missingShaderNames = shaderInfo.MissingShaderNames;
 
+        var icon = await GetDownscaledIcon(archive.GetEntry(whacker.descriptor.coverImage));
+        spriteCache.AddSprite(relativePath, icon);
+
+        var assetHash = await Task.Run(() => Hashing.MD5Checksum(path, "x2")) ?? string.Empty;
+
         return
             new CustomSaberData(
                 new CustomSaberMetadata(
-                    new SaberFileInfo(relativePath, Type),
+                    new SaberFileInfo(relativePath, assetHash, Type),
                     SaberLoaderError.None,
-                    new Descriptor(whacker.descriptor.objectName, whacker.descriptor.author, image),
+                    new Descriptor(whacker.descriptor.objectName, whacker.descriptor.author, icon),
                     new SaberModelFlags(missingShaders, missingShaderNames)),
                 bundle,
                 saberPrefab);
+    }
+
+    private async Task<Sprite?> GetDownscaledIcon(ZipArchiveEntry? thumbEntry)
+    {
+        if (thumbEntry is null) return null;
+        using var memoryStream = new MemoryStream();
+        using var thumbStream = thumbEntry.Open();
+        await thumbStream.CopyToAsync(memoryStream);
+        var icon = new Texture2D(2, 2).ToSprite(memoryStream.ToArray());
+        return icon == null || icon.texture == null ? null 
+            : icon.texture.Downscale(128, 128).ToSprite();
     }
 }

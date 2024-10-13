@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace CustomSabersLite.Utilities;
 
@@ -53,5 +52,12 @@ internal static class TextureExtensions
     /// </summary>
     public static Sprite? ToSprite(this Texture2D tex, byte[] imageData, float pixelsPerUnit = 100) =>
         !tex.LoadImage(imageData) ? null
+        : Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), pixelsPerUnit);
+
+    /// <summary>
+    /// Creates a <seealso cref="Sprite"/> from an existing texture
+    /// </summary>
+    public static Sprite? ToSprite(this Texture2D? tex, float pixelsPerUnit = 100) =>
+        !tex || tex is null ? null
         : Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), pixelsPerUnit);
 }

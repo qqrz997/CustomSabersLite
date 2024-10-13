@@ -1,5 +1,5 @@
-﻿using CustomSabersLite.Models;
-using CustomSabersLite.Utilities;
+﻿using CustomSabersLite.Components.Managers;
+using CustomSabersLite.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,12 +7,14 @@ using System.Linq;
 
 namespace CustomSabersLite.UI.Managers;
 
-internal class SaberListManager(PluginDirs dirs)
+internal class SaberListManager(SaberInstanceManager saberInstances)
 {
-    private readonly PluginDirs directories = dirs;
+    private readonly SaberInstanceManager saberInstanceManager = saberInstances;
 
     private List<SaberListCellInfo> Data { get; } = [];
     private List<SaberListCellInfo> SaberList { get; } = [];
+
+    private SaberListCellInfo InfoForDefaultSabers { get; } = MetaToInfo(CustomSaberMetadata.Default);
 
     public void SetData(IEnumerable<CustomSaberMetadata> data)
     {
@@ -41,7 +43,7 @@ internal class SaberListManager(PluginDirs dirs)
         });
 
         SaberList.Clear();
-        SaberList.Add(CellInfoForDefaultSabers);
+        SaberList.Add(InfoForDefaultSabers);
         SaberList.AddRange(sortedData);
 
         return SaberList;
@@ -49,22 +51,19 @@ internal class SaberListManager(PluginDirs dirs)
 
     public bool DeleteSaber(string relativePath)
     {
-        var currentSaberPath = Path.Combine(directories.CustomSabers.FullName, relativePath);
+        var currentSaberPath = Path.Combine(PluginDirs.CustomSabers.FullName, relativePath);
 
         if (!File.Exists(currentSaberPath))
             return false;
 
-        var destinationPath = Path.Combine(directories.DeletedSabers.FullName, relativePath);
+        var destinationPath = Path.Combine(PluginDirs.DeletedSabers.FullName, relativePath);
 
         if (File.Exists(destinationPath))
             File.Delete(destinationPath);
 
         File.Move(currentSaberPath, destinationPath);
 
-        if (Data.FirstOrDefault(i => i.Metadata.FileInfo.RelativePath == relativePath) is SaberListCellInfo i)
-            Data.Remove(i);
-        
-        return true;
+        return Data.Remove(Data.FirstOrDefault(i => i.Metadata.FileInfo.RelativePath == relativePath));
     }
 
     public int IndexForPath(string? relativePath) =>
@@ -75,25 +74,17 @@ internal class SaberListManager(PluginDirs dirs)
     public SaberListCellInfo? Select(int row) =>
         SaberList.ElementAtOrDefault(row);
 
-    private static SaberListCellInfo CellInfoForDefaultSabers =>
-        MetaToInfo(CustomSaberMetadata.DefaultSabers);
-
     private static SaberListCellInfo MetaToInfo(CustomSaberMetadata meta) =>
-        new(meta, GetCellInfo(meta), GetCellIcon(meta));
+        new(meta, GetCellInfo(meta), meta.Descriptor.Icon);
 
     private static SaberListCellText GetCellInfo(CustomSaberMetadata meta) => meta.LoaderError switch
     {
         SaberLoaderError.None => new(meta.Descriptor.SaberName.FullName, meta.Descriptor.AuthorName.FullName),
         SaberLoaderError.InvalidFileType => new($"<color=#F77>Error - </color> {meta.FileInfo.FileName}", "File is not of a valid type"),
-        SaberLoaderError.FileNotFound => new($"<color=#F77>Error - </color> {meta.FileInfo.FileName}", "Couldn't find file (was it deleted?)"),
+        SaberLoaderError.FileNotFound => new($"<color=#F77>Error - </color> {meta.FileInfo.FileName}", "Couldn't find file"),
         SaberLoaderError.LegacyWhacker => new($"<color=#F77>Not loaded - </color> {meta.FileInfo.FileName}", "Legacy whacker, incompatible with PC"),
         SaberLoaderError.NullBundle => new($"<color=#F77>Error - </color> {meta.FileInfo.FileName}", "Problem encountered when loading asset"),
         SaberLoaderError.NullAsset => new($"<color=#F77>Error - </color> {meta.FileInfo.FileName}", "Problem encountered when loading saber model"),
         _ => new($"<color=#F77>Error - </color> {meta.FileInfo.FileName}", "Unknown error encountered during loading")
     };
-
-    private static IThumbnail GetCellIcon(CustomSaberMetadata meta) =>
-        meta.FileInfo.Type == CustomSaberType.Default ? new SpriteThumbnail(CSLResources.DefaultCoverImage)
-        : meta.Descriptor.Image is null ? new SpriteThumbnail(CSLResources.NullCoverImage)
-        : new ThumbnailWithData(meta.Descriptor.Image);
 }
