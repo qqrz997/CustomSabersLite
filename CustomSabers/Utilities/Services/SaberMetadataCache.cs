@@ -106,29 +106,34 @@ internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManag
 
     private async Task SaveMetadataToCache(CacheFileModel cacheFile)
     {
-        Logger.Info("Saving cache");
-
+        Logger.Debug("Saving cache");
         var tempCacheDir = Directory.CreateDirectory(Path.Combine(PluginDirs.UserData.FullName, "temp"));
         var imagesDir = tempCacheDir.CreateSubdirectory("images");
 
-        foreach (var meta in cacheFile.CachedMetadata)
+        try
         {
-            var imageData = spriteCache.GetSprite(meta.RelativePath)?.texture.EncodeToPNG();
-            if (imageData == null)
-                continue;
+            foreach (var meta in cacheFile.CachedMetadata)
+            {
+                var imageData = spriteCache.GetSprite(meta.RelativePath)?.texture.EncodeToPNG();
+                if (imageData == null)
+                    continue;
 
-            var imagePath = Path.Combine(imagesDir.FullName, meta.Hash + ".png");
-            if (!File.Exists(imagePath))
-                await File.WriteAllBytesAsync(imagePath, imageData);
+                var imagePath = Path.Combine(imagesDir.FullName, meta.Hash + ".png");
+                if (!File.Exists(imagePath))
+                    await File.WriteAllBytesAsync(imagePath, imageData);
+            }
+
+            var cacheJson = JsonConvert.SerializeObject(cacheFile, Formatting.None);
+            var metadataFilePath = Path.Combine(tempCacheDir.FullName, MetadataFileName);
+            await File.WriteAllTextAsync(metadataFilePath, cacheJson);
+
+            if (File.Exists(CacheArchiveFilePath)) File.Delete(CacheArchiveFilePath);
+            ZipFile.CreateFromDirectory(tempCacheDir.FullName, CacheArchiveFilePath);
         }
-
-        var cacheJson = JsonConvert.SerializeObject(cacheFile, Formatting.None);
-        var metadataFilePath = Path.Combine(tempCacheDir.FullName, MetadataFileName);
-        await File.WriteAllTextAsync(metadataFilePath, cacheJson);
-
-        if (File.Exists(CacheArchiveFilePath)) File.Delete(CacheArchiveFilePath);
-        ZipFile.CreateFromDirectory(tempCacheDir.FullName, CacheArchiveFilePath);
-        tempCacheDir.Delete(true);
+        finally
+        {
+            tempCacheDir.Delete(true);
+        }
     }
 
     private async Task<CacheFileModel> GetUpdatedCache(CacheFileModel existingCache, string[] installedSabers)
