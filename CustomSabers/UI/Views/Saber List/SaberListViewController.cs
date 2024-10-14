@@ -51,6 +51,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
     private void OnCacheInitFinished()
     {
         cacheManager.LoadingComplete -= OnCacheInitFinished;
+        UnityMainThreadTaskScheduler.Factory.StartNew(GeneratePreview);
         SetupList();
         reloadButtonSelectable.interactable = true;
     }
