@@ -28,9 +28,6 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    public void Dispose() =>
-        cacheManager.LoadingComplete -= SetupList;
-
     [UIValue("disable-white-trail")]
     private bool DisableWhiteTrail
     {
@@ -116,8 +113,8 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged
         trailDurationRect.sizeDelta = trailDurationRect.sizeDelta with { x = 50 };
         trailWidthRect.sizeDelta = trailWidthRect.sizeDelta with { x = 50 };
 
-        if (cacheManager.InitializationFinished) SetupList();
-        else cacheManager.LoadingComplete += SetupList;
+        if (cacheManager.CurrentProgress.Completed) SetupList();
+        else cacheManager.LoadingProgressChanged += LoadingProgressChanged;
     }
 
     [UIAction("select-saber")]
@@ -155,4 +152,12 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged
 
     private void NotifyPropertyChanged(string propertyName) =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+    private void LoadingProgressChanged(SaberMetadataCache.Progress progress)
+    {
+        if (progress.Completed) SetupList();
+    }
+
+    public void Dispose() =>
+        cacheManager.LoadingProgressChanged -= LoadingProgressChanged;
 }

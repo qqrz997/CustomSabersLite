@@ -44,13 +44,19 @@ internal class SaberListViewController : BSMLAutomaticViewController
     public void PostParse()
     {
         reloadButtonSelectable.interactable = false;
-        if (cacheManager.InitializationFinished) OnCacheInitFinished();
-        else cacheManager.LoadingComplete += OnCacheInitFinished;
+        if (cacheManager.CurrentProgress.Completed) OnCacheInitFinished();
+        else cacheManager.LoadingProgressChanged += LoadingProgressChanged;
+    }
+
+    private void LoadingProgressChanged(SaberMetadataCache.Progress progress)
+    {
+        Logger.Info("Progress changed");
+        if (progress.Completed) OnCacheInitFinished();
     }
 
     private void OnCacheInitFinished()
     {
-        cacheManager.LoadingComplete -= OnCacheInitFinished;
+        Logger.Notice("Cache init finished");
         UnityMainThreadTaskScheduler.Factory.StartNew(GeneratePreview);
         SetupList();
         reloadButtonSelectable.interactable = true;
@@ -128,10 +134,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
 
     private async Task GeneratePreview()
     {
-        if (!cacheManager.InitializationFinished)
-        {
-            return;
-        }
+        if (!cacheManager.CurrentProgress.Completed) return;
 
         try
         {
@@ -199,6 +202,6 @@ internal class SaberListViewController : BSMLAutomaticViewController
     {
         base.OnDestroy();
         tokenSource?.Dispose();
-        cacheManager.LoadingComplete -= OnCacheInitFinished;
+        cacheManager.LoadingProgressChanged -= LoadingProgressChanged;
     }
 }

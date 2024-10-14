@@ -1,6 +1,8 @@
 ﻿using CustomSabersLite.UI.Views;
 using CustomSabersLite.Utilities;
 using HMUI;
+using IPA.Utilities.Async;
+using System.Threading;
 using System.Threading.Tasks;
 using Zenject;
 
@@ -15,11 +17,18 @@ internal class CSLFlowCoordinator : FlowCoordinator
 
     [InjectOptional] private readonly TabTest? tabTest;
 
+    private bool loadingProgressCompleted;
+    private CancellationTokenSource cancellationTokenSource = new();
+
+
+    private void Awake() => 
+        cacheManager.LoadingProgressChanged += LoadingProgressChanged;
+
     protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
     {
         if (firstActivation)
         {
-            SetTitle("Custom Sabers");
+            if (!loadingProgressCompleted) SetTitle("Custom Sabers");
             showBackButton = true;
         }
 
@@ -27,29 +36,35 @@ internal class CSLFlowCoordinator : FlowCoordinator
         {
             ProvideInitialViewControllers(saberList, saberSettings, tabTest);
         }
-
-        cacheManager.LoadingProgressChanged += DisplayPercentageProgress;
-        cacheManager.LoadingComplete += LoadingCompleted;
     }
 
-    private void DisplayPercentageProgress(int percent)
+    private void LoadingProgressChanged(SaberMetadataCache.Progress progress)
     {
-        var barString = new string('+', percent / 10);
-        var percentString = $"{percent}%";
-        SetTitle($"{barString,10} {percentString} {barString,-10}");
+        loadingProgressCompleted = progress.Completed;
+
+        SetTitle(!progress.StagePercent.HasValue ? $"{progress.Stage}"
+            : $"{progress.Stage} {progress.StagePercent.Value}%");
+
+        if (progress.Completed)
+        {
+            cancellationTokenSource.Cancel();
+            cancellationTokenSource.Dispose();
+            cancellationTokenSource = new();
+            UnityMainThreadTaskScheduler.Factory.StartNew(() => DisplayLoadingCompletedMessage(cancellationTokenSource.Token));
+        }
     }
 
-    private async void LoadingCompleted()
+    private async Task DisplayLoadingCompletedMessage(CancellationToken token)
     {
         SetTitle("<color=#BFB>Loading Completed!</color>");
-        await Task.Delay(3000);
+        await Task.Delay(3000, token);
         SetTitle("Custom Sabers");
     }
 
-    protected override void DidDeactivate(bool removedFromHierarchy, bool screenSystemDisabling)
+    protected void OnDestroy()
     {
-        cacheManager.LoadingProgressChanged -= DisplayPercentageProgress;
-        cacheManager.LoadingComplete -= LoadingCompleted;
+        cacheManager.LoadingProgressChanged -= LoadingProgressChanged;
+        cancellationTokenSource.Dispose();
     }
 
     protected override void BackButtonWasPressed(ViewController topViewController) =>

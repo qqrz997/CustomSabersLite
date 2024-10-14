@@ -26,31 +26,40 @@ internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManag
     private string CacheArchiveFileName => "cache";
     private string CacheArchiveFilePath => Path.Combine(PluginDirs.UserData.FullName, CacheArchiveFileName);
 
-    public event Action<int>? LoadingProgressChanged;
-    public event Action? LoadingComplete;
+    internal record Progress(bool Completed, string Stage, int? StagePercent = null);
 
-    public bool InitializationFinished { get; private set; }
+    public event Action<Progress>? LoadingProgressChanged;
 
-    public async void Initialize() =>
-        await ReloadAsync();
+    private Progress currentProgress = new(false, string.Empty, 0);
+    public Progress CurrentProgress
+    {
+        get => currentProgress; 
+        private set
+        {
+            currentProgress = value;
+            LoadingProgressChanged?.Invoke(value);
+        }
+    }
+
+    public async void Initialize() => await ReloadAsync();
 
     public async Task ReloadAsync()
     {
-        var stopwatch = Stopwatch.StartNew();
+        CurrentProgress = new(false, "Reloading");
+
         try
         {
+            var stopwatch = Stopwatch.StartNew();
             await InternalReloadAsync();
+            stopwatch.Stop();
+            Logger.Info($"Cache loading took {stopwatch.ElapsedMilliseconds}ms");
         }
         catch (Exception ex)
         {
             Logger.Critical($"Problem encountered during cache initialization - the mod will not activate\n{ex}");
         }
 
-        InitializationFinished = true;
-        LoadingComplete?.Invoke();
-
-        stopwatch.Stop();
-        Logger.Info($"Cache loading took {stopwatch.ElapsedMilliseconds}ms");
+        CurrentProgress = new(true, "Completed");
     }
 
     private async Task InternalReloadAsync()
@@ -63,8 +72,6 @@ internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManag
             Logger.Warn("Internal reload was denied because of a failure during cache migration");
             return;
         }
-
-        LoadingProgressChanged?.Invoke(0);
 
         var installedSaberPaths = FileUtils.GetFilePaths(
             PluginDirs.CustomSabers.FullName, [FileExts.Saber, FileExts.Whacker], SearchOption.AllDirectories, true).ToArray();
@@ -90,6 +97,8 @@ internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManag
 
     private async Task<CacheFileModel> GetLocalCache()
     {
+        CurrentProgress = currentProgress with { Stage = "Loading Cache" };
+
         if (!File.Exists(CacheArchiveFilePath))
             return CacheFileModel.Empty;
 
@@ -114,7 +123,8 @@ internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManag
 
     private async Task SaveMetadataToCache(CacheFileModel cacheFile)
     {
-        Logger.Debug("Saving cache");
+        CurrentProgress = currentProgress with { Stage = "Saving Metadata" };
+
         var tempCacheDir = Directory.CreateDirectory(Path.Combine(PluginDirs.UserData.FullName, "temp"));
         var imagesDir = tempCacheDir.CreateSubdirectory("images");
 
@@ -146,8 +156,9 @@ internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManag
 
     private async Task<CacheFileModel> GetUpdatedCache(CacheFileModel existingCache, string[] installedSabers)
     {
+        CurrentProgress = currentProgress with { Stage = "Updating Cache" };
+
         var cachedMetaPaths = existingCache.CachedMetadata
-            .Where(meta => meta.LoaderError == SaberLoaderError.None)
             .ToDictionary(meta => meta.RelativePath);
 
         var sabersToLoadForCaching = installedSabers.WhereNot(cachedMetaPaths.ContainsKey);
@@ -165,6 +176,8 @@ internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManag
 
     private async Task<List<SaberMetadataModel>> LoadMetadataFromSabers(IEnumerable<string> sabersForCaching)
     {
+        CurrentProgress = currentProgress with { Stage = "Loading Sabers" };
+
         var saberMetadata = new List<SaberMetadataModel>();
         var itemsCount = sabersForCaching.Count();
         var lastPercent = 0;
@@ -187,11 +200,13 @@ internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManag
             var currentPercent = (currentItem + 1) * 100 / itemsCount;
             if (currentPercent > lastPercent)
             {
-                LoadingProgressChanged?.Invoke(currentPercent);
+                CurrentProgress = currentProgress with { StagePercent = currentPercent };
                 lastPercent = currentPercent;
             }
             currentItem++;
         }
+
+        CurrentProgress = currentProgress with { StagePercent = null };
         return saberMetadata;
     }
 
