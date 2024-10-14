@@ -14,12 +14,13 @@ using Zenject;
 
 namespace CustomSabersLite.Utilities;
 
-internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManager saberListManager, SpriteCache spriteCache, SaberInstanceManager saberInstances) : IInitializable
+internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManager saberListManager, SpriteCache spriteCache, SaberInstanceManager saberInstances, SaberMetadataCacheMigrationManager migrationManager) : IInitializable
 {
     private readonly CustomSabersLoader customSabersLoader = saberLoader;
     private readonly SaberListManager saberListManager = saberListManager;
     private readonly SpriteCache spriteCache = spriteCache;
     private readonly SaberInstanceManager saberInstanceManager = saberInstances;
+    private readonly SaberMetadataCacheMigrationManager saberMetadataCacheMigrationManager = migrationManager;
 
     private string MetadataFileName => "metadata.json";
     private string CacheArchiveFileName => "cache";
@@ -56,6 +57,13 @@ internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManag
     {
         saberInstanceManager.Clear(false);
         saberListManager.SetData([]);
+
+        if (!await saberMetadataCacheMigrationManager.MigrationTask)
+        {
+            Logger.Warn("Internal reload was denied because of a failure during cache migration");
+            return;
+        }
+
         LoadingProgressChanged?.Invoke(0);
 
         var installedSaberPaths = FileUtils.GetFilePaths(

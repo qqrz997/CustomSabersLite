@@ -16,6 +16,7 @@ internal class CSLAppInstaller(CSLConfig config) : Installer
 
         Container.BindInterfacesAndSelfTo<InternalResourcesProvider>().AsSingle();
 
+        Container.Bind<SaberMetadataCacheMigrationManager>().AsSingle();
         Container.BindInterfacesAndSelfTo<SaberMetadataCache>().AsSingle();
         Container.Bind<SaberListManager>().AsSingle();
 
