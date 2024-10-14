@@ -15,6 +15,6 @@ internal class NoSaberData() : ISaberData
 
     public ISaberMetadata Metadata => new NoMetadata(relativePath, loaderError);
 
-    public GameObject? GetPrefab(SaberType type) => null;
+    public GameObject? TryGetPrefab(SaberType type) => null;
     public void Dispose() { }
 }

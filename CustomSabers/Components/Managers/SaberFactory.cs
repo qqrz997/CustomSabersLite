@@ -4,6 +4,7 @@ using CustomSabersLite.Models;
 using CustomSabersLite.Utilities;
 using System.Threading.Tasks;
 using UnityEngine;
+using static UnityEngine.Object;
 
 namespace CustomSabersLite.Components.Managers;
 
@@ -16,16 +17,17 @@ internal class SaberFactory(CustomSabersLoader customSabersLoader, CSLConfig con
         config.CurrentlySelectedSaber is null ? new NoSaberData()
         : await customSabersLoader.GetSaberData(config.CurrentlySelectedSaber, true);
 
-    public LiteSaber? TryCreate(SaberType saberType, ISaberData saberData)
+    public LiteSaber? TryCreate(SaberType saberType, ISaberData saberData) =>
+        saberData.Prefab is null ? null
+        : Create(
+            saberType == SaberType.SaberA ? saberData.Prefab.Left : saberData.Prefab.Right, 
+            saberData.Metadata.FileInfo.Type);
+
+    private LiteSaber Create(GameObject prefab, CustomSaberType customSaberType)
     {
-        var original = saberData.GetPrefab(saberType);
+        var liteSaber = Instantiate(prefab).AddComponent<LiteSaber>();
+        liteSaber.Init(customSaberType);
 
-        if (original == null)
-            return null;
-
-        var newSaber = GameObject.Instantiate(original).AddComponent<LiteSaber>();
-        newSaber.Init(saberData.Metadata.FileInfo.Type);
-
-        return newSaber;
+        return liteSaber;
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEngine;
 
 namespace CustomSabersLite.Models
 {
@@ -7,6 +6,6 @@ namespace CustomSabersLite.Models
     {
         ISaberMetadata Metadata { get; }
 
-        GameObject? GetPrefab(SaberType saberType);
+        SaberPrefab? Prefab { get; }
     }
 }
