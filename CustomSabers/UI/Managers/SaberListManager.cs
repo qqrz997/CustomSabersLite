@@ -53,11 +53,13 @@ internal class SaberListManager(SaberInstanceManager saberInstances)
         if (File.Exists(destinationPath))
             File.Delete(destinationPath);
 
+        saberInstanceManager.TryGetSaber(relativePath)?.Dispose();
         File.Move(currentSaberPath, destinationPath);
 
-        var deletedData = Data.FirstOrDefault(i => i.Metadata.FileInfo.RelativePath == relativePath);
-        Data = Data.Where(i => i != deletedData);
-        return deletedData != null;
+        var deletedInfo = Data.FirstOrDefault(i => i.Metadata.FileInfo.RelativePath == relativePath);
+        Data = Data.Where(i => i != deletedInfo);
+
+        return deletedInfo != null;
     }
 
     public int IndexForPath(string? relativePath) =>
