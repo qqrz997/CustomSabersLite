@@ -10,14 +10,11 @@ internal class CustomSaberData(ISaberMetadata metadata, AssetBundle assetBundle,
 
     private AssetBundle AssetBundle { get; } = assetBundle;
 
-    private SaberPrefab? SaberPrefab { get; } = SaberPrefab.TryCreate(saberPrefab);
-
-    public GameObject? TryGetPrefab(SaberType type) =>
-        type == SaberType.SaberA ? SaberPrefab?.Left : SaberPrefab?.Right;
+    public SaberPrefab? Prefab { get; } = SaberPrefab.TryCreate(saberPrefab);
     
     public void Dispose(bool unloadAllLoadedObjects)
     {
-        if (unloadAllLoadedObjects) SaberPrefab?.Dispose();
+        if (unloadAllLoadedObjects) Prefab?.Dispose();
         if (AssetBundle) AssetBundle.Unload(unloadAllLoadedObjects);
     }
 
@@ -25,7 +22,7 @@ internal class CustomSaberData(ISaberMetadata metadata, AssetBundle assetBundle,
     {
         try
         {
-            SaberPrefab?.Dispose();
+            Prefab?.Dispose();
             if (AssetBundle) AssetBundle.Unload(true);
         }
         catch (Exception ex)
