@@ -12,15 +12,15 @@ internal class SaberListManager(SaberInstanceManager saberInstances)
 {
     private readonly SaberInstanceManager saberInstanceManager = saberInstances;
 
-    private IQueryable<SaberListCellInfo> Data { get; set; } = Array.Empty<SaberListCellInfo>().AsQueryable();
+    private List<SaberListCellInfo> Data { get; set; } = [];
     private List<SaberListCellInfo> SaberList { get; set; } = [];
 
     private SaberListCellInfo InfoForDefaultSabers { get; } = MetaToInfo(CustomSaberMetadata.Default);
 
     public void SetData(IEnumerable<CustomSaberMetadata> data) => 
-        Data = data.Select(MetaToInfo).AsQueryable();
+        Data = data.Select(MetaToInfo).ToList();
 
-    public List<SaberListCellInfo> GetList(SaberListFilterOptions? filterOptions = null)
+    public IEnumerable<SaberListCellInfo> GetList(SaberListFilterOptions? filterOptions = null)
     {
         filterOptions ??= SaberListFilterOptions.Default;
 
@@ -57,7 +57,7 @@ internal class SaberListManager(SaberInstanceManager saberInstances)
         File.Move(currentSaberPath, destinationPath);
 
         var deletedInfo = Data.FirstOrDefault(i => i.Metadata.FileInfo.RelativePath == relativePath);
-        Data = Data.Where(i => i != deletedInfo);
+        Data.Remove(deletedInfo);
 
         return deletedInfo != null;
     }
