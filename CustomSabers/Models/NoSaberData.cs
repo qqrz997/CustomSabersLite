@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-namespace CustomSabersLite.Models;
+﻿namespace CustomSabersLite.Models;
 
 internal class NoSaberData() : ISaberData
 {

@@ -21,7 +21,7 @@ internal class CSLFlowCoordinator : FlowCoordinator
     private CancellationTokenSource cancellationTokenSource = new();
 
 
-    private void Awake() => 
+    private void Awake() =>
         cacheManager.LoadingProgressChanged += LoadingProgressChanged;
 
     protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)

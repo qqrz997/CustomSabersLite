@@ -93,7 +93,7 @@ internal class WhackerLoader(BundleLoader bundleLoader, SpriteCache spriteCache)
         using var thumbStream = thumbEntry.Open();
         await thumbStream.CopyToAsync(memoryStream);
         var icon = new Texture2D(2, 2).ToSprite(memoryStream.ToArray());
-        return icon == null || icon.texture == null ? null 
+        return icon == null || icon.texture == null ? null
             : icon.texture.Downscale(128, 128).ToSprite();
     }
 }

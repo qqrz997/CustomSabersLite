@@ -1,5 +1,4 @@
-﻿using CustomSabersLite.Utilities;
-using System;
+﻿using System;
 using UnityEngine;
 
 namespace CustomSabersLite.Models;
@@ -11,7 +10,7 @@ internal class CustomSaberData(ISaberMetadata metadata, AssetBundle assetBundle,
     private AssetBundle AssetBundle { get; } = assetBundle;
 
     public SaberPrefab? Prefab { get; } = SaberPrefab.TryCreate(saberPrefab);
-    
+
     public void Dispose(bool unloadAllLoadedObjects)
     {
         if (unloadAllLoadedObjects) Prefab?.Dispose();

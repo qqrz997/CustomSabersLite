@@ -6,6 +6,6 @@ internal class PauseMenuHandlesFix(MultiplayerLocalActivePlayerInGameMenuViewCon
 {
     private readonly MultiplayerLocalActivePlayerInGameMenuViewController multiplayerLocalActivePlayerInGameMenuViewController = multiplayerLocalActivePlayerInGameMenuViewControllerAndThisIsAReallyLongNameThatMakesMyWordWrappingLookFunny;
 
-    public void Initialize() => 
+    public void Initialize() =>
         multiplayerLocalActivePlayerInGameMenuViewController._menuControllersGameObject.SetActive(false);
 }

@@ -25,7 +25,7 @@ internal class InternalResourcesProvider : IInitializable
         SaberTrailRenderer._meshFilter = SaberTrailRenderer.GetComponent<MeshFilter>();
     }
 
-    private T LoadAsset<T>(object label) where T : UnityEngine.Object => 
-        AddressablesExtensions.LoadContent<T>(label).FirstOrDefault() 
+    private T LoadAsset<T>(object label) where T : UnityEngine.Object =>
+        AddressablesExtensions.LoadContent<T>(label).FirstOrDefault()
         ?? throw new InvalidOperationException("An internal resource failed to load");
 }

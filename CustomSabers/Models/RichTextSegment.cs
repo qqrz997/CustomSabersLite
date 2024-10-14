@@ -19,7 +19,7 @@ internal record RichTextSegment : IComparable<RichTextSegment>
     public static RichTextSegment Create(string? fullText)
     {
         if (fullText is null) return Unknown;
-        
+
         var trimmed = fullText.Trim();
         if (trimmed.Length == 0) return Unknown;
 

@@ -29,7 +29,7 @@ internal class EventManagerManager(BeatmapObjectManager beatmapObjectManager, Ga
         this.eventManager = eventManager;
         this.saberType = saberType;
 
-        if (!config.EnableCustomEvents || 
+        if (!config.EnableCustomEvents ||
             eventManager && eventManager.OnLevelStart == null)
         {
             return;

@@ -41,7 +41,7 @@ internal class MenuSaber
 
         newSaber.SetParent(gameObject.transform);
         newSaber.GetComponentsInChildren<Collider>().ForEach(c => c.enabled = false);
-        
+
         trailInstances = trailFactory.CreateTrail(newSaber, saberType, TrailType.Custom);
         saberInstance = newSaber;
     }

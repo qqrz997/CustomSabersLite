@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using UnityEngine;
 using CustomSabersLite.Models;
-using UnityEngine.UIElements;
 
 namespace CustomSabersLite.Utilities;
 

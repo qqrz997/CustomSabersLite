@@ -17,7 +17,7 @@ internal class SaberListManager(SaberInstanceManager saberInstances)
 
     private SaberListCellInfo InfoForDefaultSabers { get; } = MetaToInfo(CustomSaberMetadata.Default);
 
-    public void SetData(IEnumerable<CustomSaberMetadata> data) => 
+    public void SetData(IEnumerable<CustomSaberMetadata> data) =>
         Data = data.Select(MetaToInfo).ToList();
 
     public IEnumerable<SaberListCellInfo> GetList(SaberListFilterOptions? filterOptions = null)

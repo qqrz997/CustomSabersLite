@@ -1,11 +1,10 @@
 ﻿using System;
 
-namespace CustomSabersLite.Models
-{
-    internal interface ISaberData : IDisposable
-    {
-        ISaberMetadata Metadata { get; }
+namespace CustomSabersLite.Models;
 
-        SaberPrefab? Prefab { get; }
-    }
+internal interface ISaberData : IDisposable
+{
+    ISaberMetadata Metadata { get; }
+
+    SaberPrefab? Prefab { get; }
 }

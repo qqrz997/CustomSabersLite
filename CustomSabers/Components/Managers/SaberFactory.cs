@@ -20,7 +20,7 @@ internal class SaberFactory(CustomSabersLoader customSabersLoader, CSLConfig con
     public LiteSaber? TryCreate(SaberType saberType, ISaberData saberData) =>
         saberData.Prefab is null ? null
         : Create(
-            saberType == SaberType.SaberA ? saberData.Prefab.Left : saberData.Prefab.Right, 
+            saberType == SaberType.SaberA ? saberData.Prefab.Left : saberData.Prefab.Right,
             saberData.Metadata.FileInfo.Type);
 
     private LiteSaber Create(GameObject prefab, CustomSaberType customSaberType)

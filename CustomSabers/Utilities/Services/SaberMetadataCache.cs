@@ -33,7 +33,7 @@ internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManag
     private Progress currentProgress = new(false, string.Empty, 0);
     public Progress CurrentProgress
     {
-        get => currentProgress; 
+        get => currentProgress;
         private set
         {
             currentProgress = value;
