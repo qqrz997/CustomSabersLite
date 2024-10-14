@@ -83,13 +83,14 @@ internal class SaberListViewController : BSMLAutomaticViewController
     public void HideDeleteSaberModal() => deleteSaberModal.Hide(true);
 
     [UIAction("delete-selected-saber")]
-    public void DeleteSelectedSaber()
+    public async void DeleteSelectedSaber()
     {
         HideDeleteSaberModal();
         if (saberListManager.DeleteSaber(config.CurrentlySelectedSaber ?? string.Empty))
         {
             SetupList();
             gameplaySetupTab.SetupList();
+            await GeneratePreview();
         }
     }
 
