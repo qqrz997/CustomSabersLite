@@ -88,7 +88,7 @@ internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManag
         var installedSabersMetadata = updatedCacheFile.CachedMetadata.Where(meta => installedSaberPaths.Contains(meta.RelativePath));
         var saberMetadata = installedSabersMetadata.Select(m =>
             new CustomSaberMetadata(
-                new SaberFileInfo(m.RelativePath, m.Hash, m.SaberType),
+                new SaberFileInfo(m.RelativePath, m.Hash, m.DateAdded, m.SaberType),
                 m.LoaderError,
                 new Descriptor(m.SaberName, m.AuthorName, spriteCache.GetSprite(m.RelativePath))));
 
@@ -204,7 +204,7 @@ internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManag
                 saberData.Metadata.LoaderError,
                 saberData.Metadata.Descriptor.SaberName.FullName,
                 saberData.Metadata.Descriptor.AuthorName.FullName,
-                currentTime));
+                saberData.Metadata.FileInfo.DateAdded));
 
             var currentPercent = (currentItem + 1) * 100 / itemsCount;
             if (currentPercent > lastPercent)

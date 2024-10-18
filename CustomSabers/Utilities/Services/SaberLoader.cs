@@ -9,9 +9,10 @@ namespace CustomSabersLite.Utilities;
 /// <summary>
 /// Class for loading .saber files
 /// </summary>
-internal class SaberLoader(SpriteCache spriteCache)
+internal class SaberLoader(SpriteCache spriteCache, ITimeService timeService)
 {
     private readonly SpriteCache spriteCache = spriteCache;
+    private readonly ITimeService timeService = timeService;
     private readonly string sabersPath = PluginDirs.CustomSabers.FullName;
 
     private const CustomSaberType Type = CustomSaberType.Saber;
@@ -26,7 +27,7 @@ internal class SaberLoader(SpriteCache spriteCache)
         var path = Path.Combine(sabersPath, relativePath);
 
         if (!File.Exists(path))
-            return new NoSaberData(relativePath, SaberLoaderError.FileNotFound);
+            return new NoSaberData(relativePath, timeService.GetUtcTime(), SaberLoaderError.FileNotFound);
 
         Logger.Debug($"Attempting to load saber file - {relativePath}");
 
@@ -35,14 +36,14 @@ internal class SaberLoader(SpriteCache spriteCache)
         var bundle = await BundleLoading.LoadBundle(fileStream);
 
         if (bundle == null)
-            return new NoSaberData(relativePath, SaberLoaderError.NullBundle);
+            return new NoSaberData(relativePath, timeService.GetUtcTime(), SaberLoaderError.NullBundle);
 
         var saberPrefab = await BundleLoading.LoadAsset<GameObject>(bundle, "_CustomSaber");
 
         if (saberPrefab == null)
         {
             bundle.Unload(true);
-            return new NoSaberData(relativePath, SaberLoaderError.NullAsset);
+            return new NoSaberData(relativePath, timeService.GetUtcTime(), SaberLoaderError.NullAsset);
         }
 
         var descriptor = saberPrefab.GetComponent<SaberDescriptor>();
@@ -64,7 +65,7 @@ internal class SaberLoader(SpriteCache spriteCache)
         return
             new CustomSaberData(
                 new CustomSaberMetadata(
-                    new SaberFileInfo(relativePath, assetHash, Type),
+                    new SaberFileInfo(relativePath, assetHash, timeService.GetUtcTime(), Type),
                     SaberLoaderError.None,
                     new Descriptor(descriptor.SaberName, descriptor.AuthorName, icon)),
                 bundle,

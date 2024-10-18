@@ -1,17 +1,12 @@
-﻿namespace CustomSabersLite.Models;
+﻿using System;
 
-internal class NoSaberData() : ISaberData
+namespace CustomSabersLite.Models;
+
+internal record NoSaberData(string RelativePath, DateTime DateAdded, SaberLoaderError LoaderError) : ISaberData
 {
-    private readonly string relativePath = string.Empty;
-    private readonly SaberLoaderError loaderError = SaberLoaderError.None;
+    public ISaberMetadata Metadata => new NoMetadata(RelativePath, DateAdded, LoaderError);
 
-    public NoSaberData(string relativePath, SaberLoaderError loaderError) : this()
-    {
-        this.relativePath = relativePath;
-        this.loaderError = loaderError;
-    }
-
-    public ISaberMetadata Metadata => new NoMetadata(relativePath, loaderError);
+    public static NoSaberData Value { get; } = new NoSaberData(string.Empty, DateTime.MinValue, SaberLoaderError.None);
 
     public SaberPrefab? Prefab => null;
     public void Dispose() { }

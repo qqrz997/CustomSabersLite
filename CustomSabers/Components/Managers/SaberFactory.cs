@@ -14,7 +14,7 @@ internal class SaberFactory(CustomSabersLoader customSabersLoader, CSLConfig con
     private readonly CSLConfig config = config;
 
     public async Task<ISaberData> GetCurrentSaberDataAsync() =>
-        config.CurrentlySelectedSaber is null ? new NoSaberData()
+        config.CurrentlySelectedSaber is null ? NoSaberData.Value
         : await customSabersLoader.GetSaberData(config.CurrentlySelectedSaber, true);
 
     public LiteSaber? TryCreate(SaberType saberType, ISaberData saberData) =>

@@ -5,7 +5,6 @@ using Newtonsoft.Json;
 using CustomSabersLite.Models;
 using UnityEngine;
 using System.Threading.Tasks;
-using AssetBundleLoadingTools.Utilities;
 using CustomSabersLite.Utilities.Common;
 
 namespace CustomSabersLite.Utilities;
@@ -13,9 +12,10 @@ namespace CustomSabersLite.Utilities;
 /// <summary>
 /// Class for loading .whacker files
 /// </summary>
-internal class WhackerLoader(SpriteCache spriteCache)
+internal class WhackerLoader(SpriteCache spriteCache, ITimeService timeService)
 {
     private readonly SpriteCache spriteCache = spriteCache;
+    private readonly ITimeService timeService = timeService;
     private readonly string sabersPath = PluginDirs.CustomSabers.FullName;
 
     private const CustomSaberType Type = CustomSaberType.Whacker;
@@ -30,7 +30,7 @@ internal class WhackerLoader(SpriteCache spriteCache)
         var path = Path.Combine(sabersPath, relativePath);
 
         if (!File.Exists(path))
-            return new NoSaberData(relativePath, SaberLoaderError.FileNotFound);
+            return new NoSaberData(relativePath, timeService.GetUtcTime(), SaberLoaderError.FileNotFound);
 
         Logger.Debug($"Attempting to load whacker file - {relativePath}");
 
@@ -42,10 +42,10 @@ internal class WhackerLoader(SpriteCache spriteCache)
         using var jsonStreamReader = new StreamReader(jsonStream);
 
         if (new JsonSerializer().Deserialize(jsonStreamReader, typeof(WhackerModel)) is not WhackerModel whacker)
-            return new NoSaberData(relativePath, SaberLoaderError.InvalidFileType);
+            return new NoSaberData(relativePath, timeService.GetUtcTime(), SaberLoaderError.InvalidFileType);
 
         if (whacker.config.isLegacy)
-            return new NoSaberData(relativePath, SaberLoaderError.LegacyWhacker);
+            return new NoSaberData(relativePath, timeService.GetUtcTime(), SaberLoaderError.LegacyWhacker);
 
         var bundleEntry = archive.GetEntry(whacker.pcFileName);
 
@@ -53,14 +53,14 @@ internal class WhackerLoader(SpriteCache spriteCache)
         var bundle = await BundleLoading.LoadBundle(bundleStream);
 
         if (bundle == null)
-            return new NoSaberData(relativePath, SaberLoaderError.NullBundle);
+            return new NoSaberData(relativePath, timeService.GetUtcTime(), SaberLoaderError.NullBundle);
 
         var saberPrefab = await BundleLoading.LoadAsset<GameObject>(bundle, "_Whacker");
 
         if (saberPrefab == null)
         {
             bundle.Unload(true);
-            return new NoSaberData(relativePath, SaberLoaderError.NullAsset);
+            return new NoSaberData(relativePath, timeService.GetUtcTime(), SaberLoaderError.NullAsset);
         }
 
         saberPrefab.hideFlags |= HideFlags.DontUnloadUnusedAsset;
@@ -78,7 +78,7 @@ internal class WhackerLoader(SpriteCache spriteCache)
         return
             new CustomSaberData(
                 new CustomSaberMetadata(
-                    new SaberFileInfo(relativePath, assetHash, Type),
+                    new SaberFileInfo(relativePath, assetHash, timeService.GetUtcTime(), Type),
                     SaberLoaderError.None,
                     new Descriptor(whacker.descriptor.objectName, whacker.descriptor.author, icon)),
                 bundle,

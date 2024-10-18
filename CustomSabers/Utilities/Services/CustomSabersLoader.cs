@@ -9,11 +9,12 @@ namespace CustomSabersLite.Utilities;
 /// <summary>
 /// Class for loading different kinds of custom saber assets
 /// </summary>
-internal class CustomSabersLoader(SaberInstanceManager saberInstanceManager, SaberLoader saberLoader, WhackerLoader whackerLoader)
+internal class CustomSabersLoader(SaberInstanceManager saberInstanceManager, SaberLoader saberLoader, WhackerLoader whackerLoader, ITimeService timeService)
 {
     private readonly SaberInstanceManager saberInstanceManager = saberInstanceManager;
     private readonly SaberLoader saberLoader = saberLoader;
     private readonly WhackerLoader whackerLoader = whackerLoader;
+    private readonly ITimeService timeService = timeService;
 
     public async Task<ISaberData> GetSaberData(string saberPath, bool keepSaberInstance) =>
         saberInstanceManager.TryGetSaber(saberPath) ?? await LoadNew(saberPath, keepSaberInstance);
@@ -33,19 +34,19 @@ internal class CustomSabersLoader(SaberInstanceManager saberInstanceManager, Sab
         }
         catch (DirectoryNotFoundException)
         {
-            return new NoSaberData(saberPath, SaberLoaderError.FileNotFound);
+            return new NoSaberData(saberPath, timeService.GetUtcTime(), SaberLoaderError.FileNotFound);
         }
         catch (Exception ex)
         {
             Logger.Warn($"Problem encountered when trying to load a saber\n{ex}");
         }
-        return new NoSaberData(saberPath, SaberLoaderError.Unknown);
+        return new NoSaberData(saberPath, timeService.GetUtcTime(), SaberLoaderError.Unknown);
     }
 
     private async Task<ISaberData> LoadSaberDataAsync(string relativePath) => Path.GetExtension(relativePath) switch
     {
         FileExts.Saber => await saberLoader.LoadCustomSaberAsync(relativePath),
         FileExts.Whacker => await whackerLoader.LoadWhackerAsync(relativePath),
-        _ => new NoSaberData(relativePath, SaberLoaderError.InvalidFileType)
+        _ => new NoSaberData(relativePath, timeService.GetUtcTime(), SaberLoaderError.InvalidFileType)
     };
 }

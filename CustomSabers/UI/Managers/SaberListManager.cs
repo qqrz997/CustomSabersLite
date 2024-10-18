@@ -24,6 +24,8 @@ internal class SaberListManager(SaberInstanceManager saberInstances)
     {
         filterOptions ??= SaberListFilterOptions.Default;
 
+        Logger.Info(filterOptions.OrderBy.ToString());
+
         // todo - this logic may not stay here
         var orderedData = filterOptions.OrderBy switch
         {
@@ -34,6 +36,9 @@ internal class SaberListManager(SaberInstanceManager saberInstances)
             OrderBy.Author => Data
                 .OrderBy(i => i.Metadata.Descriptor.AuthorName)
                 .ThenBy(i => i.Metadata.Descriptor.SaberName),
+
+            OrderBy.RecentlyAdded => Data
+                .OrderByDescending(i => i.Metadata.FileInfo.DateAdded),
 
             _ => throw new NotImplementedException()
         };
