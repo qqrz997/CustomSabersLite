@@ -14,13 +14,14 @@ using Zenject;
 
 namespace CustomSabersLite.Utilities;
 
-internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManager saberListManager, SpriteCache spriteCache, SaberInstanceManager saberInstances, SaberMetadataCacheMigrationManager migrationManager) : IInitializable
+internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManager saberListManager, SpriteCache spriteCache, SaberInstanceManager saberInstances, SaberMetadataCacheMigrationManager migrationManager, ITimeService timeService) : IInitializable
 {
     private readonly CustomSabersLoader customSabersLoader = saberLoader;
     private readonly SaberListManager saberListManager = saberListManager;
     private readonly SpriteCache spriteCache = spriteCache;
     private readonly SaberInstanceManager saberInstanceManager = saberInstances;
     private readonly SaberMetadataCacheMigrationManager saberMetadataCacheMigrationManager = migrationManager;
+    private readonly ITimeService timeService = timeService;
 
     private string MetadataFileName => "metadata.json";
     private string CacheArchiveFileName => "cache";
@@ -158,10 +159,19 @@ internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManag
     {
         CurrentProgress = currentProgress with { Stage = "Updating Cache" };
 
-        var cachedMetaPaths = existingCache.CachedMetadata
-            .ToDictionary(meta => meta.RelativePath);
+        var installedSaberHashes = installedSabers.Select(s => 
+            (Path: s, Hash: Hashing.MD5Checksum(Path.Combine(PluginDirs.CustomSabers.FullName, s), "x2")))
+            .ToArray();
 
-        var sabersToLoadForCaching = installedSabers.WhereNot(cachedMetaPaths.ContainsKey);
+        // todo - update cache if a file is re-added into the folder with a new date
+        /*
+        var installedMetadata = existingCache.CachedMetadata
+            .Where(m => installedSaberHashes.Any(x => m.Hash == x.Hash))
+            .ToArray();
+        */
+
+        var cachedMetaHashes = existingCache.CachedMetadata.ToDictionary(m => m.RelativePath);
+        var sabersToLoadForCaching = installedSabers.WhereNot(cachedMetaHashes.ContainsKey);
         if (!sabersToLoadForCaching.Any())
         {
             // no new sabers were found, so continue with existing cache
@@ -169,21 +179,23 @@ internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManag
         }
 
         var loadedMetadata = await LoadMetadataFromSabers(sabersToLoadForCaching);
-        loadedMetadata.ForEach(m => cachedMetaPaths.Add(m.RelativePath, m));
+        loadedMetadata.ForEach(m => cachedMetaHashes.Add(m.RelativePath, m));
 
-        return new CacheFileModel(Plugin.Version.ToString(), cachedMetaPaths.Values.ToArray());
+        return new CacheFileModel(Plugin.Version.ToString(), cachedMetaHashes.Values.ToArray());
     }
 
     private async Task<List<SaberMetadataModel>> LoadMetadataFromSabers(IEnumerable<string> sabersForCaching)
     {
         CurrentProgress = currentProgress with { Stage = "Loading Sabers" };
 
+        var relativePaths = sabersForCaching.ToArray();
         var saberMetadata = new List<SaberMetadataModel>();
-        var itemsCount = sabersForCaching.Count();
-        var lastPercent = 0;
+        var itemsCount = relativePaths.Length;
         var currentItem = 0;
+        var lastPercent = 0;
+        var currentTime = timeService.GetUtcTime();
 
-        foreach (var saber in sabersForCaching)
+        foreach (var saber in relativePaths)
         {
             using var saberData = await customSabersLoader.GetSaberData(saber, false);
 
@@ -195,7 +207,8 @@ internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManag
                 saberData.Metadata.Descriptor.SaberName.FullName,
                 saberData.Metadata.Descriptor.AuthorName.FullName,
                 saberData.Metadata.Flags.IncompatibleShaders,
-                saberData.Metadata.Flags.IncompatibleShaderNames));
+                saberData.Metadata.Flags.IncompatibleShaderNames,
+                currentTime));
 
             var currentPercent = (currentItem + 1) * 100 / itemsCount;
             if (currentPercent > lastPercent)

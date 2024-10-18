@@ -1,9 +1,10 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace CustomSabersLite.Models;
 
 [method: JsonConstructor]
-public class SaberMetadataModel(string relativePath, string hash, CustomSaberType saberType, SaberLoaderError loaderError, string saberName, string authorName, bool incompatibleShaders, string[] incompatibleShaderNames)
+public class SaberMetadataModel(string relativePath, string hash, CustomSaberType saberType, SaberLoaderError loaderError, string saberName, string authorName, bool incompatibleShaders, string[] incompatibleShaderNames, DateTime date)
 {
     [JsonProperty("path")]
     public string RelativePath { get; } = relativePath;
@@ -16,6 +17,9 @@ public class SaberMetadataModel(string relativePath, string hash, CustomSaberTyp
 
     [JsonProperty("error")]
     public SaberLoaderError LoaderError { get; } = loaderError;
+
+    [JsonProperty("date")]
+    public DateTime DateAdded { get; } = date;
 
     [JsonProperty("name")]
     public string SaberName { get; } = saberName;

@@ -14,6 +14,8 @@ internal class CSLAppInstaller(CSLConfig config) : Installer
     {
         Container.BindInstance(config);
 
+        Container.Bind<ITimeService>().To<UtcTimeService>().AsSingle();
+
         Container.BindInterfacesAndSelfTo<InternalResourcesProvider>().AsSingle();
 
         Container.Bind<SaberMetadataCacheMigrationManager>().AsSingle();
