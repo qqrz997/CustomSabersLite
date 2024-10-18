@@ -4,7 +4,7 @@ using System;
 namespace CustomSabersLite.Models;
 
 [method: JsonConstructor]
-public class SaberMetadataModel(string relativePath, string hash, CustomSaberType saberType, SaberLoaderError loaderError, string saberName, string authorName, bool incompatibleShaders, string[] incompatibleShaderNames, DateTime date)
+public class SaberMetadataModel(string relativePath, string hash, CustomSaberType saberType, SaberLoaderError loaderError, string saberName, string authorName, DateTime date)
 {
     [JsonProperty("path")]
     public string RelativePath { get; } = relativePath;
@@ -27,9 +27,9 @@ public class SaberMetadataModel(string relativePath, string hash, CustomSaberTyp
     [JsonProperty("author")]
     public string AuthorName { get; } = authorName;
 
-    [JsonProperty("hasIncompatibleShaders")]
+    /*[JsonProperty("hasIncompatibleShaders")]
     public bool IncompatibleShaders { get; } = incompatibleShaders;
 
     [JsonProperty("incompatibleShaderNames")]
-    public string[] IncompatibleShaderNames { get; } = incompatibleShaderNames;
+    public string[] IncompatibleShaderNames { get; } = incompatibleShaderNames;*/
 }

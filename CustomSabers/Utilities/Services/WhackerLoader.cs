@@ -80,8 +80,7 @@ internal class WhackerLoader(SpriteCache spriteCache)
                 new CustomSaberMetadata(
                     new SaberFileInfo(relativePath, assetHash, Type),
                     SaberLoaderError.None,
-                    new Descriptor(whacker.descriptor.objectName, whacker.descriptor.author, icon),
-                    new SaberModelFlags(missingShaders, missingShaderNames)),
+                    new Descriptor(whacker.descriptor.objectName, whacker.descriptor.author, icon)),
                 bundle,
                 saberPrefab);
     }

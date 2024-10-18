@@ -10,6 +10,4 @@ internal sealed class NoMetadata(string relativePath, SaberLoaderError loaderErr
     public SaberLoaderError LoaderError { get; } = loaderError;
 
     public Descriptor Descriptor => new(Path.GetFileName(relativePath), "Unknown", CSLResources.DefaultCoverImage);
-
-    public SaberModelFlags Flags => new(false, []);
 }

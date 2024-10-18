@@ -90,8 +90,7 @@ internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManag
             new CustomSaberMetadata(
                 new SaberFileInfo(m.RelativePath, m.Hash, m.SaberType),
                 m.LoaderError,
-                new Descriptor(m.SaberName, m.AuthorName, spriteCache.GetSprite(m.RelativePath)),
-                new SaberModelFlags(m.IncompatibleShaders, m.IncompatibleShaderNames)));
+                new Descriptor(m.SaberName, m.AuthorName, spriteCache.GetSprite(m.RelativePath))));
 
         saberListManager.SetData(saberMetadata);
     }
@@ -205,8 +204,6 @@ internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManag
                 saberData.Metadata.LoaderError,
                 saberData.Metadata.Descriptor.SaberName.FullName,
                 saberData.Metadata.Descriptor.AuthorName.FullName,
-                saberData.Metadata.Flags.IncompatibleShaders,
-                saberData.Metadata.Flags.IncompatibleShaderNames,
                 currentTime));
 
             var currentPercent = (currentItem + 1) * 100 / itemsCount;

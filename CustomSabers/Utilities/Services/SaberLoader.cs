@@ -66,8 +66,7 @@ internal class SaberLoader(SpriteCache spriteCache)
                 new CustomSaberMetadata(
                     new SaberFileInfo(relativePath, assetHash, Type),
                     SaberLoaderError.None,
-                    new Descriptor(descriptor.SaberName, descriptor.AuthorName, icon),
-                    new SaberModelFlags(missingShaders, missingShaderNames)),
+                    new Descriptor(descriptor.SaberName, descriptor.AuthorName, icon)),
                 bundle,
                 saberPrefab);
     }
