@@ -16,28 +16,20 @@ internal class SaberMetadataCacheMigrationManager
         V1 // Cache folder used by CustomSabersLite prior to v1.13.0
     }
 
-    private static CacheVersion GetCurrentCacheVersion()
-    {
-        if (Directory.Exists(Path.Combine(PluginDirs.UserData.FullName, "Cache")))
-        {
-            return CacheVersion.V1;
-        }
-
-        return CacheVersion.Current;
-    }
-
     private static bool Migrate(CacheVersion cacheVersion)
     {
         if (cacheVersion == CacheVersion.Current) return true;
+        Logger.Info("Old cache version detected, running migration for saber metadata");
 
         try
         {
-            Logger.Info("Old cache version detected, running migration for saber metadata");
-
-            if (cacheVersion == CacheVersion.V1)
+            Action? migration = cacheVersion switch
             {
-                V1Migration();
-            }
+                CacheVersion.V1 => V1Migration,
+                _ => null,
+            };
+            migration?.Invoke();
+            return true;
         }
         catch (Exception ex)
         {
@@ -45,8 +37,6 @@ internal class SaberMetadataCacheMigrationManager
             Logger.Error(ex);
             return false;
         }
-
-        return true;
     }
 
     private static void V1Migration()
@@ -61,4 +51,8 @@ internal class SaberMetadataCacheMigrationManager
                 $"Remove any personal files from {v1Dir.FullName[UnityGame.InstallPath.Length..]}");
         v1Dir.Delete();
     }
+
+    private static CacheVersion GetCurrentCacheVersion() =>
+        Directory.Exists(Path.Combine(PluginDirs.UserData.FullName, "Cache")) ? CacheVersion.V1
+        : CacheVersion.Current;
 }

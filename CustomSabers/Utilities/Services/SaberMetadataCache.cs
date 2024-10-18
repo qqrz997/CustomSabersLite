@@ -138,8 +138,7 @@ internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManag
                     continue;
 
                 var imagePath = Path.Combine(imagesDir.FullName, meta.Hash + ".png");
-                if (!File.Exists(imagePath))
-                    await File.WriteAllBytesAsync(imagePath, imageData);
+                await File.WriteAllBytesAsync(imagePath, imageData);
             }
 
             var cacheJson = JsonConvert.SerializeObject(cacheFile, Formatting.None);
