@@ -6,15 +6,15 @@ using CustomSabersLite.Models;
 using UnityEngine;
 using System.Threading.Tasks;
 using AssetBundleLoadingTools.Utilities;
+using CustomSabersLite.Utilities.Common;
 
 namespace CustomSabersLite.Utilities;
 
 /// <summary>
 /// Class for loading .whacker files
 /// </summary>
-internal class WhackerLoader(BundleLoader bundleLoader, SpriteCache spriteCache)
+internal class WhackerLoader(SpriteCache spriteCache)
 {
-    private readonly BundleLoader bundleLoader = bundleLoader;
     private readonly SpriteCache spriteCache = spriteCache;
     private readonly string sabersPath = PluginDirs.CustomSabers.FullName;
 
@@ -50,12 +50,12 @@ internal class WhackerLoader(BundleLoader bundleLoader, SpriteCache spriteCache)
         var bundleEntry = archive.GetEntry(whacker.pcFileName);
 
         using var bundleStream = bundleEntry.Open();
-        var bundle = await bundleLoader.LoadBundle(bundleStream);
+        var bundle = await BundleLoading.LoadBundle(bundleStream);
 
         if (bundle == null)
             return new NoSaberData(relativePath, SaberLoaderError.NullBundle);
 
-        var saberPrefab = await AssetBundleExtensions.LoadAssetAsync<GameObject>(bundle, "_Whacker");
+        var saberPrefab = await BundleLoading.LoadAsset<GameObject>(bundle, "_Whacker");
 
         if (saberPrefab == null)
         {

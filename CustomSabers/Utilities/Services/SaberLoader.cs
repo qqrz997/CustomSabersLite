@@ -2,15 +2,15 @@
 using System.Threading.Tasks;
 using UnityEngine;
 using CustomSabersLite.Models;
+using CustomSabersLite.Utilities.Common;
 
 namespace CustomSabersLite.Utilities;
 
 /// <summary>
 /// Class for loading .saber files
 /// </summary>
-internal class SaberLoader(BundleLoader bundleLoader, SpriteCache spriteCache)
+internal class SaberLoader(SpriteCache spriteCache)
 {
-    private readonly BundleLoader bundleLoader = bundleLoader;
     private readonly SpriteCache spriteCache = spriteCache;
     private readonly string sabersPath = PluginDirs.CustomSabers.FullName;
 
@@ -32,12 +32,12 @@ internal class SaberLoader(BundleLoader bundleLoader, SpriteCache spriteCache)
 
         using var fileStream = File.OpenRead(path);
 
-        var bundle = await bundleLoader.LoadBundle(fileStream);
+        var bundle = await BundleLoading.LoadBundle(fileStream);
 
         if (bundle == null)
             return new NoSaberData(relativePath, SaberLoaderError.NullBundle);
 
-        var saberPrefab = await bundleLoader.LoadAsset<GameObject>(bundle, "_CustomSaber");
+        var saberPrefab = await BundleLoading.LoadAsset<GameObject>(bundle, "_CustomSaber");
 
         if (saberPrefab == null)
         {

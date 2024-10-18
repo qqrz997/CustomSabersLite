@@ -22,7 +22,6 @@ internal class CSLAppInstaller(CSLConfig config) : Installer
 
         Container.Bind<SpriteCache>().AsSingle();
 
-        Container.Bind<BundleLoader>().AsSingle();
         Container.Bind<SaberLoader>().AsSingle();
         Container.Bind<WhackerLoader>().AsSingle();
         Container.Bind<CustomSabersLoader>().AsSingle();
