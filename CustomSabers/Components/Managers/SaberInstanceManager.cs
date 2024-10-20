@@ -9,8 +9,13 @@ internal class SaberInstanceManager() : IDisposable
 {
     private readonly Dictionary<string, CustomSaberData> saberInstances = [];
 
-    public void AddSaber(CustomSaberData saberData) =>
-        saberInstances.TryAdd(saberData.Metadata.FileInfo.RelativePath, saberData);
+    public void AddSaber(CustomSaberData saberData)
+    {
+        if (saberData.Metadata.FileInfo.RelativePath != null)
+        {
+            saberInstances.TryAdd(saberData.Metadata.FileInfo.RelativePath, saberData);
+        }
+    }
 
     public bool HasSaber(string saberPath) =>
         saberInstances.ContainsKey(saberPath);

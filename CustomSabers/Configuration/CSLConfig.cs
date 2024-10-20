@@ -30,6 +30,8 @@ internal class CSLConfig
 
     [Ignore] public OrderBy OrderByFilter { get; set; } = OrderBy.Name;
 
+    [Ignore] public string SearchFilter { get; set; } = string.Empty;
+
     // public virtual void OnReload() { }
 
     // public virtual void Changed() { }

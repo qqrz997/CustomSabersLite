@@ -52,7 +52,7 @@
     <Reference Include="HMRendering">
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\HMRendering.dll</HintPath>
     </Reference>
-    <Reference Include="HMUI">
+    <Reference Include="HMUI" Publicize="True">
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\HMUI.dll</HintPath>
     </Reference>
     <Reference Include="IPA.Injector">

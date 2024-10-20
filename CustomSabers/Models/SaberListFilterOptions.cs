@@ -1,6 +1,6 @@
 ﻿namespace CustomSabersLite.Models;
 
-internal record SaberListFilterOptions(OrderBy OrderBy)
+internal record SaberListFilterOptions(string SearchFilter, OrderBy OrderBy)
 {
-    public static SaberListFilterOptions Default { get; } = new(OrderBy.Name);
+    public static SaberListFilterOptions Default { get; } = new(string.Empty, OrderBy.Name);
 }

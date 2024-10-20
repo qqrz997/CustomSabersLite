@@ -2,6 +2,7 @@
 using CustomSabersLite.Utilities;
 using HMUI;
 using IPA.Utilities.Async;
+using Newtonsoft.Json.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Zenject;
@@ -15,7 +16,7 @@ internal class CSLFlowCoordinator : FlowCoordinator
     [Inject] private readonly SaberSettingsViewController saberSettings = null!;
     [Inject] private readonly SaberMetadataCache cacheManager = null!;
 
-    [InjectOptional] private readonly TabTest? tabTest;
+    [InjectOptional] private readonly TabTest? tabTest = null;
 
     private bool loadingProgressCompleted;
     private CancellationTokenSource cancellationTokenSource = new();
@@ -50,15 +51,13 @@ internal class CSLFlowCoordinator : FlowCoordinator
             cancellationTokenSource.Cancel();
             cancellationTokenSource.Dispose();
             cancellationTokenSource = new();
-            UnityMainThreadTaskScheduler.Factory.StartNew(() => DisplayLoadingCompletedMessage(cancellationTokenSource.Token));
+            UnityMainThreadTaskScheduler.Factory.StartNew(async () =>
+            {
+                SetTitle("<color=#BFB>Loading Completed!</color>");
+                await Task.Delay(3000, cancellationTokenSource.Token);
+                SetTitle("Custom Sabers");
+            });
         }
-    }
-
-    private async Task DisplayLoadingCompletedMessage(CancellationToken token)
-    {
-        SetTitle("<color=#BFB>Loading Completed!</color>");
-        await Task.Delay(3000, token);
-        SetTitle("Custom Sabers");
     }
 
     protected void OnDestroy()

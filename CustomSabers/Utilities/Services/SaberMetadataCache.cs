@@ -157,7 +157,7 @@ internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManag
     {
         CurrentProgress = currentProgress with { Stage = "Updating Cache" };
 
-        var installedSaberHashes = installedSabers.Select(s => 
+        var installedSaberHashes = installedSabers.Select(s =>
             (Path: s, Hash: Hashing.MD5Checksum(Path.Combine(PluginDirs.CustomSabers.FullName, s), "x2")))
             .ToArray();
 

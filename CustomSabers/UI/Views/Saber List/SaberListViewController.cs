@@ -27,7 +27,7 @@ namespace CustomSabersLite.UI.Views;
 internal class SaberListViewController : BSMLAutomaticViewController
 {
     [Inject] private readonly CSLConfig config = null!;
-    [Inject] private readonly SaberMetadataCache cacheManager = null!;
+    [Inject] private readonly SaberMetadataCache saberMetadataCache = null!;
     [Inject] private readonly SaberListManager saberListManager = null!;
     [Inject] private readonly SaberPreviewManager previewManager = null!;
     [Inject] private readonly GameplaySetupTab gameplaySetupTab = null!;
@@ -37,125 +37,18 @@ internal class SaberListViewController : BSMLAutomaticViewController
     [UIComponent("saber-list")] private CustomListTableData saberList = null!;
     [UIComponent("saber-list-loading")] private ImageView saberListLoadingIcon = null!;
     [UIComponent("reload-button")] private Selectable reloadButtonSelectable = null!;
+    [UIComponent("search-keyboard")] private ModalView searchKeyboard = null!;
     [UIComponent("delete-saber-modal")] private ModalView deleteSaberModal = null!;
     [UIComponent("delete-saber-modal-text")] private TextMeshProUGUI deleteSaberModalText = null!;
 
     [UIAction("#post-parse")]
     public void PostParse()
     {
-        reloadButtonSelectable.interactable = false;
-        if (cacheManager.CurrentProgress.Completed) OnCacheInitFinished();
-        else cacheManager.LoadingProgressChanged += LoadingProgressChanged;
-    }
-
-    private void LoadingProgressChanged(SaberMetadataCache.Progress progress)
-    {
-        Logger.Info("Progress changed");
-        if (progress.Completed) OnCacheInitFinished();
-    }
-
-    private void OnCacheInitFinished()
-    {
-        Logger.Notice("Cache init finished");
-        UnityMainThreadTaskScheduler.Factory.StartNew(GeneratePreview);
-        SetupList();
-        reloadButtonSelectable.interactable = true;
-    }
-
-    [UIAction("select-saber")]
-    public async void SelectSaber(TableView tableView, int row)
-    {
-        Logger.Debug($"saber selected at row {row}");
-        config.CurrentlySelectedSaber = saberListManager.Select(row)?.Metadata.FileInfo.RelativePath;
-        await GeneratePreview();
-    }
-
-    [UIAction("open-in-explorer")]
-    public void OpenInExplorer() => Process.Start(PluginDirs.CustomSabers.FullName);
-
-    [UIAction("show-delete-saber-modal")]
-    public void ShowDeleteSaberModal()
-    {
-        if (config.CurrentlySelectedSaber == null)
+        saberListManager.SaberListUpdated += RefreshList;
+        if (saberMetadataCache.CurrentProgress.Completed)
         {
-            Logger.Warn("You can't delete the default sabers! >:(");
-            return;
+            RefreshList();
         }
-
-        deleteSaberModalText.text = $"Are you sure you want to delete\n{Path.GetFileNameWithoutExtension(config.CurrentlySelectedSaber)}?";
-        deleteSaberModal.Show(true);
-    }
-
-    [UIAction("hide-delete-saber-modal")]
-    public void HideDeleteSaberModal() => deleteSaberModal.Hide(true);
-
-    [UIAction("delete-selected-saber")]
-    public async void DeleteSelectedSaber()
-    {
-        HideDeleteSaberModal();
-        if (saberListManager.DeleteSaber(config.CurrentlySelectedSaber ?? string.Empty))
-        {
-            SetupList();
-            gameplaySetupTab.SetupList();
-            await GeneratePreview();
-        }
-    }
-
-    [UIAction("reload-sabers")]
-    public async void ReloadSabers()
-    {
-        reloadButtonSelectable.interactable = false;
-        saberList.Data.Clear();
-        saberList.TableView.ReloadData();
-        saberListLoadingIcon.gameObject.SetActive(true);
-
-        await cacheManager.ReloadAsync();
-
-        SetupList();
-        gameplaySetupTab.SetupList();
-
-        saberListLoadingIcon.gameObject.SetActive(false);
-        reloadButtonSelectable.interactable = true;
-    }
-
-    private void SetupList()
-    {
-        var filterOptions = new SaberListFilterOptions(
-            config.OrderByFilter);
-
-        saberList.Data.Clear();
-        saberListManager.GetList(filterOptions)
-            .Select(i => i.ToCustomCellInfo())
-            .ForEach(saberList.Data.Add);
-
-        saberList.TableView.ReloadData();
-        StartCoroutine(ScrollToSelectedCell());
-    }
-
-    private async Task GeneratePreview()
-    {
-        if (!cacheManager.CurrentProgress.Completed) return;
-
-        try
-        {
-            Logger.Debug("Generating preview");
-
-            tokenSource?.Cancel();
-            tokenSource?.Dispose();
-            tokenSource = new();
-
-            await previewManager.GeneratePreview(tokenSource.Token);
-        }
-        catch (OperationCanceledException) { }
-    }
-
-    private IEnumerator ScrollToSelectedCell()
-    {
-        yield return new WaitUntil(() => saberList.gameObject.activeInHierarchy);
-        yield return new WaitForEndOfFrame();
-        var selectedSaberIndex = saberListManager.IndexForPath(config.CurrentlySelectedSaber);
-        saberList.TableView.SelectCellWithIdx(selectedSaberIndex);
-        saberList.TableView.ScrollToCellWithIdx(selectedSaberIndex, TableView.ScrollPositionType.Center, true);
     }
 
     [UIValue("order-by-choices")] private List<object> orderByChoices = [.. Enum.GetNames(typeof(OrderBy))];
@@ -166,7 +59,20 @@ internal class SaberListViewController : BSMLAutomaticViewController
         set
         {
             config.OrderByFilter = Enum.TryParse(value, out OrderBy orderBy) ? orderBy : config.OrderByFilter;
-            SetupList();
+            RefreshList();
+            ScrollToTop();
+        }
+    }
+
+    [UIValue("search-filter")]
+    public string SearchFilter
+    {
+        get => config.SearchFilter;
+        set
+        {
+            config.SearchFilter = value;
+            RefreshList();
+            ScrollToTop();
         }
     }
 
@@ -181,13 +87,124 @@ internal class SaberListViewController : BSMLAutomaticViewController
         }
     }
 
+    [UIAction("select-saber")]
+    public async void SelectSaber(TableView tableView, int row)
+    {
+        config.CurrentlySelectedSaber = saberListManager.Select(row)?.Metadata.FileInfo.RelativePath;
+        Logger.Debug($"Saber selected: {config.CurrentlySelectedSaber ?? "Default"}");
+        await GeneratePreview();
+    }
+
+    [UIAction("open-in-explorer")]
+    public void OpenInExplorer() => Process.Start(PluginDirs.CustomSabers.FullName);
+
+    [UIAction("show-search-keyboard")]
+    public void ShowSearchKeyboard() => searchKeyboard.Show(true);
+
+    [UIAction("show-delete-saber-modal")]
+    public void ShowDeleteSaberModal()
+    {
+        if (config.CurrentlySelectedSaber != null)
+        {
+            deleteSaberModalText.text = $"Are you sure you want to delete\n{Path.GetFileName(config.CurrentlySelectedSaber)}?";
+            deleteSaberModal.Show(true);
+        }
+    }
+
+    [UIAction("hide-delete-saber-modal")]
+    public void HideDeleteSaberModal() => deleteSaberModal.Hide(true);
+
+    [UIAction("delete-selected-saber")]
+    public void DeleteSelectedSaber()
+    {
+        HideDeleteSaberModal();
+        int selectedSaberIndex = saberListManager.IndexForPath(config.CurrentlySelectedSaber);
+
+        if (saberListManager.DeleteSaber(config.CurrentlySelectedSaber))
+        {
+            Logger.Debug("Saber deleted");
+            config.CurrentlySelectedSaber = saberListManager.Select(selectedSaberIndex - 1)?.Metadata.FileInfo.RelativePath;
+
+            RefreshList();
+            StartCoroutine(ScrollToSelectedCell());
+        }
+    }
+
+    [UIAction("reload-sabers")]
+    public async void ReloadSabers()
+    {
+        reloadButtonSelectable.interactable = false;
+        saberList.Data.Clear();
+        saberList.TableView.ReloadData();
+        saberListLoadingIcon.gameObject.SetActive(true);
+
+        await saberMetadataCache.ReloadAsync();
+
+        saberListLoadingIcon.gameObject.SetActive(false);
+        RefreshList();
+    }
+
+    private void RefreshList()
+    {
+        saberList.TableView.ClearSelection();
+
+        saberListManager.Sort(new SaberListFilterOptions(
+            config.SearchFilter,
+            config.OrderByFilter));
+
+        saberList.Data = saberListManager.List.Select(i => i.ToCustomCellInfo()).ToList();
+        saberList.TableView.ReloadData();
+
+        gameplaySetupTab.SetupList();
+
+        if (saberListManager.Contains(config.CurrentlySelectedSaber))
+        {
+            saberList.TableView.SelectCellWithIdx(saberListManager.IndexForPath(config.CurrentlySelectedSaber));
+        }
+
+        UnityMainThreadTaskScheduler.Factory.StartNew(GeneratePreview);
+        reloadButtonSelectable.interactable = true;
+    }
+
+    private void ScrollToTop(bool animated = false) =>
+        saberList.TableView.ScrollToPosition(0, animated);
+
+    private void ScrollToBottom(bool animated = false) =>
+        saberList.TableView.ScrollToPosition(
+            saberList.Data.Count * (saberList.TableView.cellSize + saberList.TableView.spacing) + saberList.TableView.paddingStart,
+            animated);
+
+    private async Task GeneratePreview()
+    {
+        Logger.Debug("Generating preview");
+        try
+        {
+            tokenSource?.Cancel();
+            tokenSource?.Dispose();
+            tokenSource = new();
+            await previewManager.GeneratePreview(tokenSource.Token);
+        }
+        catch (OperationCanceledException) { }
+    }
+
+    private IEnumerator ScrollToSelectedCell()
+    {
+        yield return new WaitUntil(() => saberList.gameObject.activeInHierarchy);
+        yield return new WaitForEndOfFrame();
+        var selectedSaberIndex = saberListManager.IndexForPath(config.CurrentlySelectedSaber);
+        saberList.TableView.SelectCellWithIdx(selectedSaberIndex);
+        saberList.TableView.ScrollToCellWithIdx(selectedSaberIndex, TableView.ScrollPositionType.Center, true);
+    }
+
     protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
     {
         base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
 
+        if (!firstActivation)
+        {
+            UnityMainThreadTaskScheduler.Factory.StartNew(GeneratePreview);
+        }
         StartCoroutine(ScrollToSelectedCell());
-        UnityMainThreadTaskScheduler.Factory.StartNew(GeneratePreview);
-
         previewManager.SetPreviewActive(true);
     }
 
@@ -200,8 +217,8 @@ internal class SaberListViewController : BSMLAutomaticViewController
 
     protected override void OnDestroy()
     {
-        base.OnDestroy();
+        saberListManager.SaberListUpdated -= RefreshList;
         tokenSource?.Dispose();
-        cacheManager.LoadingProgressChanged -= LoadingProgressChanged;
+        base.OnDestroy();
     }
 }

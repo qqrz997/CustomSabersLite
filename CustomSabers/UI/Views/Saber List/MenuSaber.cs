@@ -37,7 +37,7 @@ internal class MenuSaber
     public void ReplaceSaber(LiteSaber? newSaber)
     {
         if (saberInstance != null) saberInstance.gameObject.Destroy();
-        trailInstances.ForEach(t => t._trailRenderer.gameObject.Destroy());
+        trailInstances.ForEach(t => { if (t && t._trailRenderer) t._trailRenderer.gameObject.Destroy(); });
         if (newSaber == null) return;
 
         newSaber.SetParent(gameObject.transform);

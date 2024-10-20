@@ -5,22 +5,23 @@ using Zenject;
 
 namespace CustomSabersLite.UI.Managers;
 
-internal class GameplaySetupTabController(GameplaySetupViewController gameplaySetup, GameplaySetupTab tab) : IInitializable, IDisposable
+internal class GameplaySetupTabController(GameplaySetupViewController gameplaySetupViewController, GameplaySetup gameplaySetup, GameplaySetupTab tab) : IInitializable, IDisposable
 {
-    private readonly GameplaySetupViewController gameplaySetupViewController = gameplaySetup;
+    private readonly GameplaySetupViewController gameplaySetupViewController = gameplaySetupViewController;
+    private readonly GameplaySetup gameplaySetup = gameplaySetup;
     private readonly GameplaySetupTab gameplaySetupTab = tab;
 
     private const string ResourceName = "CustomSabersLite.UI.BSML.gameplaySetup.bsml";
 
     public void Initialize()
     {
-        GameplaySetup.Instance.AddTab("Custom Sabers", ResourceName, gameplaySetupTab);
+        gameplaySetup.AddTab("Custom Sabers", ResourceName, gameplaySetupTab);
         gameplaySetupViewController.didActivateEvent += GameplaySetupActivated;
     }
 
     public void Dispose()
     {
-        GameplaySetup.Instance.RemoveTab(ResourceName);
+        gameplaySetup.RemoveTab(ResourceName);
         gameplaySetupViewController.didActivateEvent -= GameplaySetupActivated;
     }
 

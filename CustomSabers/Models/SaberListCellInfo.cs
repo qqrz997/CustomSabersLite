@@ -1,4 +1,5 @@
 ﻿using BeatSaberMarkupLanguage.Components;
+using System;
 using UnityEngine;
 
 namespace CustomSabersLite.Models;
@@ -15,4 +16,7 @@ internal class SaberListCellInfo(CustomSaberMetadata meta, SaberListCellText inf
         var (text, subtext) = Info is SaberListCellText i ? (i.Text, i.Subtext) : ("Unknown", string.Empty);
         return new(text, subtext, Icon);
     }
+
+    public bool Contains(string value) =>
+        $"{Metadata.Descriptor.SaberName}{Metadata.Descriptor.AuthorName}".Contains(value, StringComparison.OrdinalIgnoreCase);
 }

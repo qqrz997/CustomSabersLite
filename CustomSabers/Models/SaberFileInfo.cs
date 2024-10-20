@@ -3,9 +3,9 @@ using System.IO;
 
 namespace CustomSabersLite.Models;
 
-internal class SaberFileInfo(string relativePath, string hash, DateTime dateAdded, CustomSaberType saberType)
+internal class SaberFileInfo(string? relativePath, string hash, DateTime dateAdded, CustomSaberType saberType)
 {
-    public string RelativePath { get; } = relativePath;
+    public string? RelativePath { get; } = relativePath;
 
     public string Hash { get; } = hash;
 
@@ -15,5 +15,5 @@ internal class SaberFileInfo(string relativePath, string hash, DateTime dateAdde
 
     public string FileName => Path.GetFileName(RelativePath);
 
-    public static SaberFileInfo DefaultSabers { get; } = new(string.Empty, string.Empty, DateTime.MinValue, CustomSaberType.Default);
+    public static SaberFileInfo DefaultSabers { get; } = new(null, string.Empty, DateTime.MinValue, CustomSaberType.Default);
 }

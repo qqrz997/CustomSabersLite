@@ -17,37 +17,39 @@ internal class SaberListManager(SaberInstanceManager saberInstances)
 
     private SaberListCellInfo InfoForDefaultSabers { get; } = MetaToInfo(CustomSaberMetadata.Default);
 
-    public void SetData(IEnumerable<CustomSaberMetadata> data) =>
-        Data = data.Select(MetaToInfo).ToList();
+    public event Action? SaberListUpdated;
 
-    public IEnumerable<SaberListCellInfo> GetList(SaberListFilterOptions? filterOptions = null)
+    public IEnumerable<SaberListCellInfo> List => SaberList;
+
+    public void SetData(IEnumerable<CustomSaberMetadata> data)
+    {
+        Data = data.Select(MetaToInfo).ToList();
+        SaberListUpdated?.Invoke();
+    }
+
+    public void Sort(SaberListFilterOptions? filterOptions = null)
     {
         filterOptions ??= SaberListFilterOptions.Default;
 
-        Logger.Info(filterOptions.OrderBy.ToString());
+        var filtered = string.IsNullOrEmpty(filterOptions.SearchFilter) ? Data
+            : Data.Where(i => i.Contains(filterOptions.SearchFilter));
 
-        // todo - this logic may not stay here
-        var orderedData = filterOptions.OrderBy switch
+        var ordererdData = filterOptions.OrderBy switch
         {
-            OrderBy.Name => Data
-                .OrderBy(i => i.Metadata.Descriptor.SaberName)
-                .ThenBy(i => i.Metadata.Descriptor.AuthorName),
-
-            OrderBy.Author => Data
-                .OrderBy(i => i.Metadata.Descriptor.AuthorName)
-                .ThenBy(i => i.Metadata.Descriptor.SaberName),
-
-            OrderBy.RecentlyAdded => Data
-                .OrderByDescending(i => i.Metadata.FileInfo.DateAdded),
-
+            OrderBy.Name => filtered.OrderBy(i => i.Metadata.Descriptor.SaberName).ThenBy(i => i.Metadata.Descriptor.AuthorName),
+            OrderBy.Author => filtered.OrderBy(i => i.Metadata.Descriptor.AuthorName).ThenBy(i => i.Metadata.Descriptor.SaberName),
+            OrderBy.RecentlyAdded => filtered.OrderByDescending(i => i.Metadata.FileInfo.DateAdded),
             _ => throw new NotImplementedException()
         };
 
-        return SaberList = [InfoForDefaultSabers, .. orderedData];
+        SaberList = [InfoForDefaultSabers, ..ordererdData];
     }
 
-    public bool DeleteSaber(string relativePath)
+    public bool DeleteSaber(string? relativePath)
     {
+        if (string.IsNullOrWhiteSpace(relativePath))
+            return false;
+
         var currentSaberPath = Path.Combine(PluginDirs.CustomSabers.FullName, relativePath);
 
         if (!File.Exists(currentSaberPath))
@@ -58,7 +60,7 @@ internal class SaberListManager(SaberInstanceManager saberInstances)
         if (File.Exists(destinationPath))
             File.Delete(destinationPath);
 
-        saberInstanceManager.TryGetSaber(relativePath)?.Dispose();
+        saberInstanceManager.TryGetSaber(relativePath)?.Dispose(true);
         File.Move(currentSaberPath, destinationPath);
 
         var deletedInfo = Data.FirstOrDefault(i => i.Metadata.FileInfo.RelativePath == relativePath);
@@ -74,6 +76,10 @@ internal class SaberListManager(SaberInstanceManager saberInstances)
 
     public SaberListCellInfo? Select(int row) =>
         SaberList.ElementAtOrDefault(row);
+
+    public bool Contains(string? relativePath) =>
+        !string.IsNullOrEmpty(relativePath) 
+        && Data.FirstOrDefault(i => i.Metadata.FileInfo.RelativePath == relativePath) is not null;
 
     private static SaberListCellInfo MetaToInfo(CustomSaberMetadata meta)
     {

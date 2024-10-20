@@ -2,13 +2,14 @@
 
   <horizontal child-expand-height='false' child-control-height='false' child-align='MiddleCenter' preferred-width='60'>
     <checkbox-setting text='Hold Sabers' value='toggle-menu-sabers' hover-hint='Enable to hold the selected custom saber' apply-on-change='true'/>
+    <clickable-image on-click='show-search-keyboard' src='#SearchIcon' preserve-aspect='true'/>
     <dropdown-list-setting text='Order Sabers By' value='order-by-filter' choices='order-by-choices' apply-on-change='true'/>
   </horizontal>
 
   <horizontal spacing='2' child-control-width='true'>
     <vertical child-align='MiddleCenter' horizontal-fit='Unconstrained' preferred-width='60' spacing='2'>
       <horizontal background='round-rect-panel' bg-color='#0007' pad='1'>
-        <list id='saber-list' select-cell='select-saber' visible-cells='8' expand-cell='true' min-width='90'/>
+        <list id='saber-list' select-cell='select-saber' visible-cells='7' expand-cell='true' min-width='90'/>
         <loading id='saber-list-loading' ignore-layout='true' active='false'/>
       </horizontal>
     </vertical>
@@ -20,11 +21,15 @@
 
       <vertical>
         <button on-click='open-in-explorer' text='Open Folder' vertical-fit='Unconstrained' horizontal-fit='Unconstrained'/>
-        <button on-click='reload-sabers' id='reload-button' text='Refresh' vertical-fit='Unconstrained' horizontal-fit='Unconstrained'/>
+        <button on-click='reload-sabers' id='reload-button' text='Refresh' vertical-fit='Unconstrained' horizontal-fit='Unconstrained' interactable='false'/>
         <button on-click='show-delete-saber-modal' text='Delete' face-color='#a83232' vertical-fit='Unconstrained' horizontal-fit='Unconstrained'/>
       </vertical>
     </vertical>
   </horizontal>
+
+  <modal-keyboard id='search-keyboard' value='search-filter'>
+    
+  </modal-keyboard>
     
   <modal id='delete-saber-modal' clickerino-offerino-closerino='true' size-delta-x='67' size-delta-y='29' anchor-pos-x='0' anchor-pos-y='0'>
     <vertical pad='2'>
