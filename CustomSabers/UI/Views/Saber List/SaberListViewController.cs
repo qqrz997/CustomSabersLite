@@ -41,10 +41,20 @@ internal class SaberListViewController : BSMLAutomaticViewController
     [UIComponent("delete-saber-modal")] private ModalView deleteSaberModal = null!;
     [UIComponent("delete-saber-modal-text")] private TextMeshProUGUI deleteSaberModalText = null!;
 
+    private Button upButton = null!;
+    private Button downButton = null!;
+
     [UIAction("#post-parse")]
     public void PostParse()
     {
         saberListManager.SaberListUpdated += RefreshList;
+        saberList.TableView.scrollView.scrollPositionChangedEvent += ScrollPositionChanged;
+
+        BSMLHelpers.ResizeVerticalScrollbar(saberList, -4f);
+        var buttonBase = saberList.transform.Find("ScrollBar/UpButton").GetComponent<Button>();
+        upButton = BSMLHelpers.CreateButton(buttonBase, 7f, new(0.5f, 1.0f), new(0.5f, 1.0f), new(2.5f, 2.5f), 180f, CSLResources.ExtremeArrowIcon, ScrollToTop, buttonBase.transform.parent);
+        downButton = BSMLHelpers.CreateButton(buttonBase, 7f, new(0.5f, 0f), new(0.5f, 0f), new(2.5f, 2.5f), 0f, CSLResources.ExtremeArrowIcon, ScrollToBottom, buttonBase.transform.parent);
+
         if (saberMetadataCache.CurrentProgress.Completed)
         {
             RefreshList();
@@ -76,15 +86,11 @@ internal class SaberListViewController : BSMLAutomaticViewController
         }
     }
 
-    [UIValue("toggle-menu-sabers")]
-    public bool EnableMenuSabers
+    [UIAction("toggle-menu-sabers")]
+    public void ToggleMenuSabers()
     {
-        get => config.EnableMenuSabers;
-        set
-        {
-            config.EnableMenuSabers = value;
-            previewManager.UpdateActivePreview();
-        }
+        config.EnableMenuSabers = !config.EnableMenuSabers;
+        previewManager.UpdateActivePreview();
     }
 
     [UIAction("select-saber")]
@@ -166,13 +172,21 @@ internal class SaberListViewController : BSMLAutomaticViewController
         reloadButtonSelectable.interactable = true;
     }
 
-    private void ScrollToTop(bool animated = false) =>
-        saberList.TableView.ScrollToPosition(0, animated);
+    private void ScrollToTop() =>
+        saberList.TableView.ScrollToPosition(0, false);
 
-    private void ScrollToBottom(bool animated = false) =>
+    private void ScrollToBottom() =>
         saberList.TableView.ScrollToPosition(
             saberList.Data.Count * (saberList.TableView.cellSize + saberList.TableView.spacing) + saberList.TableView.paddingStart,
-            animated);
+            false);
+
+    private void ScrollPositionChanged(float _)
+    {
+        var scrollView = saberList.TableView.scrollView;
+        var pos = scrollView._destinationPos; 
+        upButton.interactable = pos > 0.001f;
+        downButton.interactable = pos < scrollView.contentSize - scrollView.scrollPageSize - 0.001f;
+    }
 
     private async Task GeneratePreview()
     {
@@ -218,6 +232,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
     protected override void OnDestroy()
     {
         saberListManager.SaberListUpdated -= RefreshList;
+        saberList.TableView.scrollView.scrollPositionChangedEvent -= ScrollPositionChanged;
         tokenSource?.Dispose();
         base.OnDestroy();
     }

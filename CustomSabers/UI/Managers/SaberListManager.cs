@@ -83,7 +83,7 @@ internal class SaberListManager(SaberInstanceManager saberInstances)
 
     private static SaberListCellInfo MetaToInfo(CustomSaberMetadata meta)
     {
-        var text = SaberListCellText.Create(meta);
+        var text = new SaberListCellText(meta);
         var spriteIcon = meta.LoaderError switch
         {
             SaberLoaderError.None => meta.Descriptor.Icon,

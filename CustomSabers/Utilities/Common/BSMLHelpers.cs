@@ -1,7 +1,11 @@
-﻿using BeatSaberMarkupLanguage.Components.Settings;
+﻿using BeatSaberMarkupLanguage.Components;
+using BeatSaberMarkupLanguage.Components.Settings;
 using HMUI;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
+
+using static UnityEngine.Object;
 
 namespace CustomSabersLite.Utilities;
 
@@ -36,5 +40,44 @@ internal class BSMLHelpers
         var nameText = (RectTransform)list.transform.Find("NameText").transform;
         valuePicker.sizeDelta = valuePicker.sizeDelta with { x = dropdownWidth };
         nameText.sizeDelta = nameText.sizeDelta with { x = labelWidth };
+    }
+
+    public static void ResizeVerticalScrollbar(CustomListTableData customListTableData, float delta)
+    {
+        if (!customListTableData) return;
+        var scrollbar = (RectTransform)customListTableData.transform.Find("ScrollBar").transform;
+        scrollbar.offsetMax = new(scrollbar.offsetMax.x, scrollbar.offsetMax.y + delta);
+        scrollbar.offsetMin = new(scrollbar.offsetMin.x, scrollbar.offsetMin.y - delta);
+    }
+
+    // todo - try moving this to a custom tag
+    public static Button CreateButton(Button original, float size, Vector2 anchorMin, Vector2 anchorMax, Vector2 iconSize, float rotation, Sprite? icon = null, Action? onClick = null, Transform? parent = null)
+    {
+        var button = Instantiate(original);
+        if (parent != null) button.transform.SetParent(parent, false);
+        if (onClick != null) button.onClick.AddListener(onClick.Invoke);
+        button.interactable = true;
+
+        var buttonTransform = (RectTransform)button.transform;
+        buttonTransform.anchorMin = anchorMin;
+        buttonTransform.anchorMax = anchorMax;
+        buttonTransform.sizeDelta = new(size, size);
+        buttonTransform.offsetMin = new(size / -2f, size / -2f);
+        buttonTransform.offsetMax = new(size / 2f, size / 2f);
+
+        var iconImageView = button.GetComponentInChildren<ImageView>();
+        if (icon != null) iconImageView.sprite = icon;
+
+        var iconTransform = (RectTransform)iconImageView.transform;
+        iconTransform.anchorMin = Vector2.zero;
+        iconTransform.anchorMax = Vector2.one;
+        iconTransform.anchorMin = new(0.5f, 0.5f);
+        iconTransform.anchorMax = new(0.5f, 0.5f);
+        iconTransform.offsetMin = Vector2.zero;
+        iconTransform.offsetMax = Vector2.zero;
+        iconTransform.sizeDelta = iconSize;
+        iconTransform.localEulerAngles = new(0, 0, rotation);
+
+        return button;
     }
 }

@@ -26,7 +26,11 @@ internal class Logger
 
     private static void Log(object? message, Level level)
     {
-        if (message is null || IPALogger is null) return;
+        if (IPALogger is null)
+        {
+            return;
+        }
+
         Action<string> func = level switch
         {
             Level.Trace => IPALogger.Trace,
@@ -37,6 +41,7 @@ internal class Logger
             Level.Error => IPALogger.Error,
             _ => IPALogger.Critical,
         };
+        message ??= "null";
         func(message.ToString());
     }
 }
