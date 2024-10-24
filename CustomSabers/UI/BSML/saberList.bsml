@@ -1,13 +1,11 @@
-﻿<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd'>
+﻿<bg anchor-pos-x='-28' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd'>
   <horizontal spacing='2' vertical-fit='Unconstrained'>
-    <vertical horizontal-fit='Unconstrained' min-width='60' pad='1'>
-      
-    </vertical>
+    <!--<vertical horizontal-fit='Unconstrained' min-width='60' pad='1'>
+    </vertical>-->
     
-    <vertical horizontal-fit='Unconstrained' spacing='2'>
+    <vertical horizontal-fit='PreferredSize' spacing='2'>
 
       <horizontal spacing='2' preferred-height='10'>
-        <clickable-image on-click='toggle-menu-sabers' src='#AvatarHandsIcon' hover-hint='Enable to hold the selected custom saber' />
         <clickable-image on-click='show-search-keyboard' src='#SearchIcon' preserve-aspect='true'/>
         <horizontal horizontal-fit='PreferredSize' preferred-width='48'>
           <dropdown-list-setting text='Order Sabers By' value='order-by-filter' choices='order-by-choices' apply-on-change='true' word-wrapping='false' size-delta-x='32'/>
@@ -21,7 +19,8 @@
       </horizontal>
 
       <horizontal spacing='2' preferred-height='10'>
-        <button on-click='open-in-explorer' text='Open Folder' vertical-fit='Unconstrained' horizontal-fit='Unconstrained'/>
+        <icon-button on-click='toggle-menu-sabers' icon='#AvatarHandsIcon' preferred-width='12' vertical-fit='Unconstrained' horizontal-fit='Unconstrained' hover-hint='Switch between stationary and held preview' />
+        <button on-click='open-in-explorer' text='Open Folder' vertical-fit='Unconstrained' horizontal-fit='Unconstrained' hover-hint='Opens the folder from which custom sabers are loaded from'/>
         <button on-click='reload-sabers' id='reload-button' text='Refresh' vertical-fit='Unconstrained' horizontal-fit='Unconstrained' interactable='false'/>
         <button on-click='show-delete-saber-modal' text='Delete' face-color='#a83232' vertical-fit='Unconstrained' horizontal-fit='Unconstrained'/>
       </horizontal>

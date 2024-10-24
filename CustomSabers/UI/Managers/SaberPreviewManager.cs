@@ -1,5 +1,7 @@
 ﻿using CustomSabersLite.Components.Managers;
 using CustomSabersLite.Configuration;
+using CustomSabersLite.Utilities;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -7,15 +9,15 @@ using Zenject;
 
 namespace CustomSabersLite.UI.Managers;
 
-internal class SaberPreviewManager : IInitializable
+internal class SaberPreviewManager : IInitializable, IDisposable
 {
     [Inject] private readonly SaberFactory saberFactory = null!;
     [Inject] private readonly CSLConfig config = null!;
     [Inject] private readonly ColorSchemesSettings colorSchemesSettings = null!;
 
     [Inject] private readonly MenuSaberManager menuSaberManager = null!;
-    [Inject] private readonly BasicPreviewTrailManager previewTrailManager = null!;
-    [Inject] private readonly BasicPreviewSaberManager previewSaberManager = null!;
+    [Inject] private readonly BasicPreviewTrailManager basicPreviewTrailManager = null!;
+    [Inject] private readonly BasicPreviewSaberManager basicPreviewSaberManager = null!;
 
     private readonly Transform previewParent = new GameObject("CustomSabersLite Basic Preview").transform;
     private readonly Transform leftPreviewParent = new GameObject("Left").transform;
@@ -29,13 +31,13 @@ internal class SaberPreviewManager : IInitializable
         leftPreviewParent.SetParent(previewParent);
         rightPreviewParent.SetParent(previewParent);
 
-        previewParent.SetPositionAndRotation(new Vector3(1.1f, 0.8f, 1.1f), Quaternion.Euler(270f, 135f, 0f));
+        previewParent.SetPositionAndRotation(new Vector3(0.7f, 0.8f, 1.1f), Quaternion.Euler(270f, 125f, 0f));
         leftPreviewParent.localPosition = new Vector3(0f, 0.2f, 0f);
         rightPreviewParent.localPosition = new Vector3(0f, -0.2f, 0f);
         rightPreviewParent.localRotation = Quaternion.Euler(0f, 0f, 180f);
 
-        previewSaberManager.Init(leftPreviewParent, rightPreviewParent);
-        previewTrailManager.Init(leftPreviewParent, rightPreviewParent);
+        basicPreviewSaberManager.Init(leftPreviewParent, rightPreviewParent);
+        basicPreviewTrailManager.Init(leftPreviewParent, rightPreviewParent);
     }
 
     public async Task GeneratePreview(CancellationToken token)
@@ -48,8 +50,8 @@ internal class SaberPreviewManager : IInitializable
 
         var leftSaber = saberFactory.TryCreate(SaberType.SaberA, saberData);
         var rightSaber = saberFactory.TryCreate(SaberType.SaberB, saberData);
-        previewSaberManager.ReplaceSabers(leftSaber, rightSaber);
-        previewTrailManager.SetTrails(leftSaber, rightSaber);
+        basicPreviewSaberManager.ReplaceSabers(leftSaber, rightSaber);
+        basicPreviewTrailManager.SetTrails(leftSaber, rightSaber);
 
         var leftMenuSaber = saberFactory.TryCreate(SaberType.SaberA, saberData);
         var rightMenuSaber = saberFactory.TryCreate(SaberType.SaberB, saberData);
@@ -76,7 +78,7 @@ internal class SaberPreviewManager : IInitializable
 
     public void UpdateTrails()
     {
-        previewTrailManager.UpdateTrails();
+        basicPreviewTrailManager.UpdateTrails();
         menuSaberManager.UpdateTrails();
     }
 
@@ -84,8 +86,15 @@ internal class SaberPreviewManager : IInitializable
     {
         var selectedColorScheme = colorSchemesSettings.GetSelectedColorScheme();
         var (colorLeft, colorRight) = (selectedColorScheme.saberAColor, selectedColorScheme.saberBColor);
-        previewSaberManager.SetColor(colorLeft, colorRight);
+        basicPreviewSaberManager.SetColor(colorLeft, colorRight);
         menuSaberManager.SetColor(colorLeft, colorRight);
-        previewTrailManager.SetColor(colorLeft, colorRight);
+        basicPreviewTrailManager.SetColor(colorLeft, colorRight);
+    }
+
+    public void Dispose()
+    {
+        leftPreviewParent.gameObject.Destroy();
+        rightPreviewParent.gameObject.Destroy();
+        previewParent.gameObject.Destroy();
     }
 }
