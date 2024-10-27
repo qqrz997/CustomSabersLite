@@ -54,6 +54,11 @@ internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManag
             await InternalReloadAsync();
             stopwatch.Stop();
             Logger.Info($"Cache loading took {stopwatch.ElapsedMilliseconds}ms");
+
+            #if SHADER_DEBUG
+            ShaderInfoDump.Instance.DumpTo(PluginDirs.UserData.FullName);
+            #endif
+
         }
         catch (Exception ex)
         {

@@ -57,15 +57,17 @@ internal class SaberLoader(SpriteCache spriteCache, ITimeService timeService)
         spriteCache.AddSprite(relativePath, icon);
 
         var shaderInfo = await ShaderRepairUtils.RepairSaberShadersAsync(saberPrefab);
-        var missingShaders = !shaderInfo.AllShadersReplaced;
-        var missingShaderNames = shaderInfo.MissingShaderNames;
+
+        #if SHADER_DEBUG
+        shaderInfo.MissingShaderNames.ForEach(n => ShaderInfoDump.Instance.AddShader(n, descriptor.SaberName ?? "Unknown CustomSaber"));
+        #endif
 
         var assetHash = await Task.Run(() => Hashing.MD5Checksum(path, "x2")) ?? string.Empty;
 
         return
             new CustomSaberData(
                 new CustomSaberMetadata(
-                    new SaberFileInfo(relativePath, assetHash, timeService.GetUtcTime(), Type),
+                    new SaberFileInfo(path, assetHash, timeService.GetUtcTime(), Type),
                     SaberLoaderError.None,
                     new Descriptor(descriptor.SaberName, descriptor.AuthorName, icon)),
                 bundle,

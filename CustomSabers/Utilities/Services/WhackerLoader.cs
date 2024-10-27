@@ -67,8 +67,10 @@ internal class WhackerLoader(SpriteCache spriteCache, ITimeService timeService)
         saberPrefab.name += $" {whacker.descriptor.objectName}";
 
         var shaderInfo = await ShaderRepairUtils.RepairSaberShadersAsync(saberPrefab);
-        var missingShaders = !shaderInfo.AllShadersReplaced;
-        var missingShaderNames = shaderInfo.MissingShaderNames;
+
+        #if SHADER_DEBUG
+        shaderInfo.MissingShaderNames.ForEach(n => ShaderInfoDump.Instance.AddShader(n, whacker.descriptor.objectName ?? "Unknown Whacker"));
+        #endif
 
         var icon = await GetDownscaledIcon(archive.GetEntry(whacker.descriptor.coverImage));
         spriteCache.AddSprite(relativePath, icon);
@@ -78,7 +80,7 @@ internal class WhackerLoader(SpriteCache spriteCache, ITimeService timeService)
         return
             new CustomSaberData(
                 new CustomSaberMetadata(
-                    new SaberFileInfo(relativePath, assetHash, timeService.GetUtcTime(), Type),
+                    new SaberFileInfo(path, assetHash, timeService.GetUtcTime(), Type),
                     SaberLoaderError.None,
                     new Descriptor(whacker.descriptor.objectName, whacker.descriptor.author, icon)),
                 bundle,
