@@ -63,6 +63,9 @@ internal class SaberListViewController : BSMLAutomaticViewController
         downButton = BSMLHelpers.CreateButton(buttonBase, 7f, new(0.5f, 0f), new(0.5f, 0f), new(2.5f, 2.5f), 0f, CSLResources.ExtremeArrowIcon, ScrollToBottom, buttonBase.transform.parent);
 
         menuSabersToggleBackground = BSMLHelpers.CreateToggleButtonBackground(menuSabersToggleButton);
+        menuSabersToggleBackground.color1 = config.EnableMenuSabers ? new(0f, 0.753f, 1f) : Color.black;
+
+        sortDirectionIcon.rectTransform.localRotation = Quaternion.Euler(0f, 0f, config.ReverseSort ? 180f : 0f);
 
         RefreshList();
         loadingIcon.SetActive(!saberMetadataCache.CurrentProgress.Completed);
@@ -97,7 +100,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
     public void ToggleSortDirection()
     {
         config.ReverseSort = !config.ReverseSort;
-        sortDirectionIcon.rectTransform.localEulerAngles = sortDirectionIcon.rectTransform.localEulerAngles with { z = config.ReverseSort ? 180f : 0f };
+        sortDirectionIcon.rectTransform.localRotation = Quaternion.Euler(0f, 0f, config.ReverseSort ? 180f : 0f);
         RefreshList();
     }
 
