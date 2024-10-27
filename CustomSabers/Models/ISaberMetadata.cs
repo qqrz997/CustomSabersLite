@@ -2,7 +2,7 @@
 
 internal interface ISaberMetadata
 {
-    SaberFileInfo FileInfo { get; }
+    SaberFileInfo SaberFile { get; }
 
     SaberLoaderError LoaderError { get; }
 

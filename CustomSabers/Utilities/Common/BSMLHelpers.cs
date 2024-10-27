@@ -80,4 +80,16 @@ internal class BSMLHelpers
 
         return button;
     }
+
+    // todo - try moving this to a custom tag
+    public static ImageView CreateToggleButtonBackground(Button button)
+    {
+        var originalButtonBg = button.transform.Find("BG").GetComponentInChildren<ImageView>();
+        var newBackground = Instantiate(originalButtonBg, originalButtonBg.transform.parent, false);
+        newBackground.gameObject.name = "ToggleButtonBG";
+        newBackground.color = new(1f, 1f, 1f, newBackground.color.a);
+        newBackground.color0 = Color.black;
+        newBackground.color1 = Color.black;
+        return newBackground;
+    }
 }

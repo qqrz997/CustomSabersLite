@@ -21,4 +21,12 @@ internal class FileUtils
         .Where(path => path != trimPath)
         .Select(path => path.Replace(trimPath, string.Empty))
         .Select(path => path.Substring(1, path.Length - 1));
+
+    public static string TrimPath(string fullPath, string trimPath)
+    {
+        if (fullPath == trimPath) return string.Empty;
+        var trimmed = fullPath.Replace(trimPath, string.Empty);
+        var path = trimmed.Substring(1, trimmed.Length - 1);
+        return path;
+    }
 }

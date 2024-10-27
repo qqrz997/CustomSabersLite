@@ -4,8 +4,9 @@ using Zenject;
 
 namespace CustomSabersLite.UI.Managers;
 
-internal class MenuButtonManager(MainFlowCoordinator mainFlowCoordinator, CSLFlowCoordinator sabersFlowCoordinator) : IInitializable, IDisposable
+internal class MenuButtonManager(MenuButtons menuButtons, MainFlowCoordinator mainFlowCoordinator, CSLFlowCoordinator sabersFlowCoordinator) : IInitializable, IDisposable
 {
+    private readonly MenuButtons menuButtons = menuButtons;
     private readonly MainFlowCoordinator mainFlowCoordinator = mainFlowCoordinator;
     private readonly CSLFlowCoordinator sabersFlowCoordinator = sabersFlowCoordinator;
 
@@ -14,12 +15,12 @@ internal class MenuButtonManager(MainFlowCoordinator mainFlowCoordinator, CSLFlo
     public void Initialize()
     {
         button = new("Custom Sabers", "Choose your custom sabers", PresentCSLFlowCoordinator, interactable: true);
-        MenuButtons.Instance.RegisterButton(button);
+        menuButtons.RegisterButton(button);
     }
 
     private void PresentCSLFlowCoordinator() =>
         mainFlowCoordinator.PresentFlowCoordinator(sabersFlowCoordinator);
 
     public void Dispose() =>
-        MenuButtons.Instance.UnregisterButton(button);
+        menuButtons.UnregisterButton(button);
 }

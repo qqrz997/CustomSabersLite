@@ -9,6 +9,8 @@ using Zenject;
 
 namespace CustomSabersLite.UI.Managers;
 
+#pragma warning disable IDE0031 // Use null propagation
+
 internal class SaberPreviewManager : IInitializable, IDisposable
 {
     [Inject] private readonly SaberFactory saberFactory = null!;
@@ -25,7 +27,6 @@ internal class SaberPreviewManager : IInitializable, IDisposable
 
     private bool previewActive;
     private bool previewGenerating;
-
     public void Initialize()
     {
         leftPreviewParent.SetParent(previewParent);
@@ -93,8 +94,6 @@ internal class SaberPreviewManager : IInitializable, IDisposable
 
     public void Dispose()
     {
-        leftPreviewParent.gameObject.Destroy();
-        rightPreviewParent.gameObject.Destroy();
-        previewParent.gameObject.Destroy();
+        if (previewParent != null) previewParent.gameObject.Destroy();
     }
 }

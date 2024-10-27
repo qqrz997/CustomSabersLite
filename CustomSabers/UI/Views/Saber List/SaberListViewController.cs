@@ -30,35 +30,42 @@ internal class SaberListViewController : BSMLAutomaticViewController
     [Inject] private readonly SaberMetadataCache saberMetadataCache = null!;
     [Inject] private readonly SaberListManager saberListManager = null!;
     [Inject] private readonly SaberPreviewManager previewManager = null!;
-    [Inject] private readonly GameplaySetupTab gameplaySetupTab = null!;
+    [Inject] private readonly LevelSearchViewController levelSearchViewController = null!;
 
     private CancellationTokenSource? tokenSource;
 
-    [UIComponent("saber-list")] private CustomListTableData saberList = null!;
-    [UIComponent("saber-list-loading")] private ImageView saberListLoadingIcon = null!;
-    [UIComponent("reload-button")] private Selectable reloadButtonSelectable = null!;
-    [UIComponent("search-keyboard")] private ModalView searchKeyboard = null!;
-    [UIComponent("delete-saber-modal")] private ModalView deleteSaberModal = null!;
-    [UIComponent("delete-saber-modal-text")] private TextMeshProUGUI deleteSaberModalText = null!;
+    [UIComponent("saber-list")] readonly CustomListTableData saberList = null!;
+    [UIComponent("reload-button")] readonly Selectable reloadButtonSelectable = null!;
+    [UIComponent("delete-saber-modal")] readonly ModalView deleteSaberModal = null!;
+    [UIComponent("delete-saber-modal-text")] readonly TextMeshProUGUI deleteSaberModalText = null!;
+    [UIComponent("search-input-container")] readonly RectTransform searchInputContainer = null!;
+    [UIComponent("menu-sabers-toggle-button")] readonly Button menuSabersToggleButton = null!;
+    [UIComponent("sort-direction-button")] readonly ImageView sortDirectionIcon = null!;
+    [UIObject("loading-icon")] readonly GameObject loadingIcon = null!;
 
     private Button upButton = null!;
     private Button downButton = null!;
+    private ImageView menuSabersToggleBackground = null!;
 
     [UIAction("#post-parse")]
     public void PostParse()
     {
-        saberListManager.SaberListUpdated += RefreshList;
+        saberMetadataCache.LoadingProgressChanged += LoadingProgressChanged;
         saberList.TableView.scrollView.scrollPositionChangedEvent += ScrollPositionChanged;
+
+        var searchInputFieldView = Instantiate(levelSearchViewController._searchTextInputFieldView, searchInputContainer, false);
+        searchInputFieldView.text = SearchFilter;
+        searchInputFieldView.onValueChanged.AddListener(ifw => SearchFilter = ifw.text);
 
         BSMLHelpers.ResizeVerticalScrollbar(saberList, -4f);
         var buttonBase = saberList.transform.Find("ScrollBar/UpButton").GetComponent<Button>();
         upButton = BSMLHelpers.CreateButton(buttonBase, 7f, new(0.5f, 1.0f), new(0.5f, 1.0f), new(2.5f, 2.5f), 180f, CSLResources.ExtremeArrowIcon, ScrollToTop, buttonBase.transform.parent);
         downButton = BSMLHelpers.CreateButton(buttonBase, 7f, new(0.5f, 0f), new(0.5f, 0f), new(2.5f, 2.5f), 0f, CSLResources.ExtremeArrowIcon, ScrollToBottom, buttonBase.transform.parent);
 
-        if (saberMetadataCache.CurrentProgress.Completed)
-        {
-            RefreshList();
-        }
+        menuSabersToggleBackground = BSMLHelpers.CreateToggleButtonBackground(menuSabersToggleButton);
+
+        RefreshList();
+        loadingIcon.SetActive(!saberMetadataCache.CurrentProgress.Completed);
     }
 
     [UIValue("order-by-choices")] private List<object> orderByChoices = [.. Enum.GetNames(typeof(OrderBy))];
@@ -86,17 +93,26 @@ internal class SaberListViewController : BSMLAutomaticViewController
         }
     }
 
+    [UIAction("toggle-sort-direction")]
+    public void ToggleSortDirection()
+    {
+        config.ReverseSort = !config.ReverseSort;
+        sortDirectionIcon.rectTransform.localEulerAngles = sortDirectionIcon.rectTransform.localEulerAngles with { z = config.ReverseSort ? 180f : 0f };
+        RefreshList();
+    }
+
     [UIAction("toggle-menu-sabers")]
     public void ToggleMenuSabers()
     {
         config.EnableMenuSabers = !config.EnableMenuSabers;
+        menuSabersToggleBackground.color1 = config.EnableMenuSabers ? new(0f, 0.753f, 1f) : Color.black;
         previewManager.UpdateActivePreview();
     }
 
     [UIAction("select-saber")]
     public async void SelectSaber(TableView tableView, int row)
     {
-        config.CurrentlySelectedSaber = saberListManager.Select(row)?.Metadata.FileInfo.RelativePath;
+        config.CurrentlySelectedSaber = saberListManager.Select(row)?.Metadata.SaberFile.RelativePath;
         Logger.Debug($"Saber selected: {config.CurrentlySelectedSaber ?? "Default"}");
         await GeneratePreview();
     }
@@ -104,15 +120,12 @@ internal class SaberListViewController : BSMLAutomaticViewController
     [UIAction("open-in-explorer")]
     public void OpenInExplorer() => Process.Start(PluginDirs.CustomSabers.FullName);
 
-    [UIAction("show-search-keyboard")]
-    public void ShowSearchKeyboard() => searchKeyboard.Show(true);
-
     [UIAction("show-delete-saber-modal")]
     public void ShowDeleteSaberModal()
     {
         if (config.CurrentlySelectedSaber != null)
         {
-            deleteSaberModalText.text = $"Are you sure you want to delete\n{Path.GetFileName(config.CurrentlySelectedSaber)}?";
+            deleteSaberModalText.text = $"{Path.GetFileName(config.CurrentlySelectedSaber)}?";
             deleteSaberModal.Show(true);
         }
     }
@@ -129,7 +142,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
         if (saberListManager.DeleteSaber(config.CurrentlySelectedSaber))
         {
             Logger.Debug("Saber deleted");
-            config.CurrentlySelectedSaber = saberListManager.Select(selectedSaberIndex - 1)?.Metadata.FileInfo.RelativePath;
+            config.CurrentlySelectedSaber = saberListManager.Select(selectedSaberIndex - 1)?.Metadata.SaberFile.RelativePath;
 
             RefreshList();
             StartCoroutine(ScrollToSelectedCell());
@@ -142,30 +155,24 @@ internal class SaberListViewController : BSMLAutomaticViewController
         reloadButtonSelectable.interactable = false;
         saberList.Data.Clear();
         saberList.TableView.ReloadData();
-        saberListLoadingIcon.gameObject.SetActive(true);
 
+        // this will invoke an event on completion that gets used to refresh the list
         await saberMetadataCache.ReloadAsync();
-
-        saberListLoadingIcon.gameObject.SetActive(false);
-        RefreshList();
     }
 
     private void RefreshList()
     {
-        saberList.TableView.ClearSelection();
-
-        saberListManager.Sort(new SaberListFilterOptions(
-            config.SearchFilter,
-            config.OrderByFilter));
-
-        saberList.Data = saberListManager.List.Select(i => i.ToCustomCellInfo()).ToList();
+        var filterOptions = new SaberListFilterOptions(config.SearchFilter, config.OrderByFilter, config.ReverseSort);
+        saberList.Data = saberListManager.UpdateList(filterOptions).Select(i => i.ToCustomCellInfo()).ToList();
         saberList.TableView.ReloadData();
 
-        gameplaySetupTab.SetupList();
-
-        if (saberListManager.Contains(config.CurrentlySelectedSaber))
+        if (saberListManager.CurrentListContains(config.CurrentlySelectedSaber))
         {
             saberList.TableView.SelectCellWithIdx(saberListManager.IndexForPath(config.CurrentlySelectedSaber));
+        }
+        else
+        {
+            saberList.TableView.ClearSelection();
         }
 
         UnityMainThreadTaskScheduler.Factory.StartNew(GeneratePreview);
@@ -186,6 +193,12 @@ internal class SaberListViewController : BSMLAutomaticViewController
         var pos = scrollView._destinationPos; 
         upButton.interactable = pos > 0.001f;
         downButton.interactable = pos < scrollView.contentSize - scrollView.scrollPageSize - 0.001f;
+    }
+
+    private void LoadingProgressChanged(SaberMetadataCache.Progress progress)
+    {
+        if (progress.Completed) RefreshList();
+        loadingIcon.SetActive(!progress.Completed);
     }
 
     private async Task GeneratePreview()
@@ -231,7 +244,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
 
     protected override void OnDestroy()
     {
-        saberListManager.SaberListUpdated -= RefreshList;
+        saberMetadataCache.LoadingProgressChanged -= LoadingProgressChanged;
         saberList.TableView.scrollView.scrollPositionChangedEvent -= ScrollPositionChanged;
         tokenSource?.Dispose();
         base.OnDestroy();

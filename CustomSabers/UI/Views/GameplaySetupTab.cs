@@ -92,11 +92,7 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged
     [UIAction("#post-parse")]
     private void PostParse()
     {
-        saberListManager.SaberListUpdated += SetupList;
-        if (saberMetadataCache.CurrentProgress.Completed)
-        {
-            SetupList();
-        }
+        saberMetadataCache.LoadingProgressChanged += LoadingProgressChanged;
 
         BSMLHelpers.SetSliderInteractable(trailDurationSlider, OverrideTrailDuration);
         BSMLHelpers.SetSliderInteractable(trailWidthSlider, OverrideTrailWidth);
@@ -105,27 +101,30 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged
         BSMLHelpers.SetSliderWidth(trailWidthSlider, 50, 0);
 
         BSMLHelpers.SetDropDownSettingWidth(trailTypeList, 25, 0);
+
+        if (saberMetadataCache.CurrentProgress.Completed) RefreshList();
     }
 
     [UIAction("select-saber")]
     private void SelectSaber(TableView tableView, int row)
     {
-        config.CurrentlySelectedSaber = saberListManager.Select(row)?.Metadata.FileInfo.RelativePath;
+        config.CurrentlySelectedSaber = saberListManager.Select(row)?.Metadata.SaberFile.RelativePath;
         Logger.Debug($"Saber selected: {config.CurrentlySelectedSaber ?? "Default"}");
     }
 
-    public void SetupList()
+    public void RefreshList()
     {
-        saberList.Data = saberListManager.List.Select(i => i.ToCustomCellInfo()).ToList();
+        saberList.Data = saberListManager.GetListInfo().Select(i => i.ToCustomCellInfo()).ToList();
         saberList.TableView.ReloadData();
     }
 
     public void Activated(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
     {
         SharedSaberSettings.PropertyNames.ForEach(NotifyPropertyChanged);
-        coroutineStarter.StartCoroutine(ScrollToSelectedCell());
+        coroutineStarter.StartSingleCoroutine(ref scrollToSelectedCellCoroutine, ScrollToSelectedCell());
     }
 
+    private Coroutine? scrollToSelectedCellCoroutine;
     private IEnumerator ScrollToSelectedCell()
     {
         yield return new WaitUntil(() => saberList.gameObject.activeInHierarchy);
@@ -136,9 +135,14 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged
         saberList.TableView.ScrollToCellWithIdx(selectedSaberIndex, TableView.ScrollPositionType.Center, true);
     }
 
+    private void LoadingProgressChanged(SaberMetadataCache.Progress progress)
+    {
+        if (progress.Completed) RefreshList();
+    }
+
     private void NotifyPropertyChanged(string propertyName) =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
     public void Dispose() =>
-        saberListManager.SaberListUpdated -= SetupList;
+        saberMetadataCache.LoadingProgressChanged -= LoadingProgressChanged;
 }

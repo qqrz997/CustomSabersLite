@@ -1,19 +1,24 @@
-﻿using System;
+﻿using CustomSabersLite.Utilities;
+using System;
 using System.IO;
 
 namespace CustomSabersLite.Models;
 
-internal class SaberFileInfo(string? relativePath, string hash, DateTime dateAdded, CustomSaberType saberType)
+internal class SaberFileInfo(string? fullPath, string? hash, DateTime dateAdded, CustomSaberType saberType)
 {
-    public string? RelativePath { get; } = relativePath;
+    private string? relativePath = null;
 
-    public string Hash { get; } = hash;
+    public FileInfo? FileInfo { get; } = string.IsNullOrEmpty(fullPath) ? null : new FileInfo(fullPath);
+
+    public string? RelativePath => 
+        FileInfo is null || !FileInfo.Exists ? null 
+        : relativePath ??= FileUtils.TrimPath(FileInfo.FullName, PluginDirs.CustomSabers.FullName);
+
+    public string? Hash { get; } = hash;
 
     public CustomSaberType Type { get; } = saberType;
 
     public DateTime DateAdded { get; } = dateAdded;
-
-    public string FileName => Path.GetFileName(RelativePath);
 
     public static SaberFileInfo DefaultSabers { get; } = new(null, string.Empty, DateTime.MinValue, CustomSaberType.Default);
 }

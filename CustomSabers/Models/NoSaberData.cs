@@ -2,9 +2,9 @@
 
 namespace CustomSabersLite.Models;
 
-internal record NoSaberData(string RelativePath, DateTime DateAdded, SaberLoaderError LoaderError) : ISaberData
+internal record NoSaberData(string FullPath, DateTime DateAdded, SaberLoaderError LoaderError) : ISaberData
 {
-    public ISaberMetadata Metadata => new NoMetadata(RelativePath, DateAdded, LoaderError);
+    public ISaberMetadata Metadata => new NoMetadata(FullPath, DateAdded, LoaderError);
 
     public static NoSaberData Value { get; } = new NoSaberData(string.Empty, DateTime.MinValue, SaberLoaderError.None);
 

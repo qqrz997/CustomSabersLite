@@ -32,6 +32,8 @@ internal class CSLConfig
 
     [Ignore] public string SearchFilter { get; set; } = string.Empty;
 
+    [Ignore] public bool ReverseSort { get; set; } = false;
+
     // public virtual void OnReload() { }
 
     // public virtual void Changed() { }

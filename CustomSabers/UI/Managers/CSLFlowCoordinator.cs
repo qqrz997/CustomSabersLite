@@ -18,7 +18,7 @@ internal class CSLFlowCoordinator : FlowCoordinator
 
     [InjectOptional] private readonly TabTest? tabTest = null;
 
-    private bool loadingProgressCompleted;
+    private SaberMetadataCache.Progress? currentCacheProgress;
     private CancellationTokenSource cancellationTokenSource = new();
 
 
@@ -29,7 +29,10 @@ internal class CSLFlowCoordinator : FlowCoordinator
     {
         if (firstActivation)
         {
-            if (!loadingProgressCompleted) SetTitle("Custom Sabers");
+            var title = currentCacheProgress is null ? "Custom Sabers"
+                : currentCacheProgress.Completed ? "Custom Sabers"
+                : FormatProgress(currentCacheProgress);
+            SetTitle(title);
             showBackButton = true;
         }
 
@@ -41,10 +44,8 @@ internal class CSLFlowCoordinator : FlowCoordinator
 
     private void LoadingProgressChanged(SaberMetadataCache.Progress progress)
     {
-        loadingProgressCompleted = progress.Completed;
-
-        SetTitle(!progress.StagePercent.HasValue ? $"{progress.Stage}"
-            : $"{progress.Stage} {progress.StagePercent.Value}%");
+        currentCacheProgress = progress;
+        SetTitle(FormatProgress(progress));
 
         if (progress.Completed)
         {
@@ -59,6 +60,10 @@ internal class CSLFlowCoordinator : FlowCoordinator
             });
         }
     }
+
+    private string FormatProgress(SaberMetadataCache.Progress progress) => 
+        !progress.StagePercent.HasValue ? $"{progress.Stage}"
+        : $"{progress.Stage} {progress.StagePercent.Value}%";
 
     protected void OnDestroy()
     {

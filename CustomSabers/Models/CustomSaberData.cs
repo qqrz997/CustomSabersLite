@@ -26,7 +26,7 @@ internal class CustomSaberData(ISaberMetadata metadata, AssetBundle assetBundle,
         }
         catch (Exception ex)
         {
-            Logger.Error($"Couldn't dispose data for saber asset {Metadata.FileInfo}\n{ex}");
+            Logger.Error($"Couldn't dispose data for saber asset {Metadata.SaberFile}\n{ex}");
         }
     }
 
