@@ -12,6 +12,4 @@ internal class PluginDirs
     public static DirectoryInfo CustomSabers => customSabers;
     public static DirectoryInfo UserData => userData;
     public static DirectoryInfo DeletedSabers => deletedSabers;
-
-    public static FileInfo Cache => new(Path.Combine(userData.FullName, "cache"));
 }
