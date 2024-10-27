@@ -1,6 +1,8 @@
-﻿namespace CustomSabersLite.Installers;
+﻿using Zenject;
 
-internal class CSLMultiplayerInstaller : Zenject.Installer
+namespace CustomSabersLite.Installers;
+
+internal class MultiPlayerInstaller : Installer
 {
     public override void InstallBindings() =>
         Container.BindInterfacesTo<PauseMenuHandlesFix>().AsSingle();

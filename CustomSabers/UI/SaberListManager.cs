@@ -1,12 +1,12 @@
-﻿using CustomSabersLite.Components.Managers;
-using CustomSabersLite.Models;
+﻿using CustomSabersLite.Models;
 using CustomSabersLite.Utilities;
+using CustomSabersLite.Utilities.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace CustomSabersLite.UI.Managers;
+namespace CustomSabersLite.UI;
 
 internal class SaberListManager(SaberInstanceManager saberInstances)
 {
@@ -18,13 +18,13 @@ internal class SaberListManager(SaberInstanceManager saberInstances)
     private SaberListCellInfo InfoForDefaultSabers { get; } = MetaToInfo(CustomSaberMetadata.Default);
 
     public void Clear() => Data.Clear();
-    public void SetData(IEnumerable<CustomSaberMetadata> data) => 
+    public void SetData(IEnumerable<CustomSaberMetadata> data) =>
         Data = data.Select(MetaToInfo).ToList();
 
-    public IEnumerable<SaberListCellInfo> GetListInfo() => 
+    public IEnumerable<SaberListCellInfo> GetListInfo() =>
         GetSortedData(SaberListFilterOptions.Default).Prepend(InfoForDefaultSabers);
 
-    public IEnumerable<SaberListCellInfo> UpdateList(SaberListFilterOptions filterOptions) => 
+    public IEnumerable<SaberListCellInfo> UpdateList(SaberListFilterOptions filterOptions) =>
         SaberList = GetSortedData(filterOptions).Prepend(InfoForDefaultSabers).ToList();
 
     public bool DeleteSaber(string? relativePath)
@@ -64,7 +64,7 @@ internal class SaberListManager(SaberInstanceManager saberInstances)
         SaberList.ElementAtOrDefault(row);
 
     public bool CurrentListContains(string? relativePath) =>
-        !string.IsNullOrEmpty(relativePath) 
+        !string.IsNullOrEmpty(relativePath)
         && Data.FirstOrDefault(i => i.Metadata.SaberFile.RelativePath == relativePath) is not null;
 
     private IEnumerable<SaberListCellInfo> GetSortedData(SaberListFilterOptions filterOptions)

@@ -1,9 +1,9 @@
-﻿using CustomSabersLite.Components.Game;
+﻿using CustomSabersLite.Components;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Models;
 using UnityEngine;
 
-namespace CustomSabersLite.UI.Managers;
+namespace CustomSabersLite.UI;
 
 internal class BasicPreviewTrailManager(CSLConfig config)
 {

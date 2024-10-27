@@ -4,11 +4,11 @@ using System;
 using UnityEngine;
 using System.Linq;
 
-namespace CustomSabersLite.Components.Game;
+namespace CustomSabersLite.Utilities.Services;
 
 #pragma warning disable IDE0031 // Use null propagation
 
-internal class EventManagerManager(BeatmapObjectManager beatmapObjectManager, GameEnergyCounter gameEnergyCounter, ObstacleSaberSparkleEffectManager obstacleCollisionManager, RelativeScoreAndImmediateRankCounter relativeScoreCounter, IScoreController scoreController, IComboController comboController, IReadonlyBeatmapData beatmapData, CSLConfig config) : IDisposable
+internal class SaberEventService(BeatmapObjectManager beatmapObjectManager, GameEnergyCounter gameEnergyCounter, ObstacleSaberSparkleEffectManager obstacleCollisionManager, RelativeScoreAndImmediateRankCounter relativeScoreCounter, IScoreController scoreController, IComboController comboController, IReadonlyBeatmapData beatmapData, CSLConfig config) : IDisposable
 {
     private readonly BeatmapObjectManager beatmapObjectManager = beatmapObjectManager;
     private readonly GameEnergyCounter gameEnergyCounter = gameEnergyCounter;

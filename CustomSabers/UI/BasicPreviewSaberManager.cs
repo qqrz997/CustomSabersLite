@@ -1,8 +1,8 @@
-﻿using CustomSabersLite.Components.Game;
+﻿using CustomSabersLite.Components;
 using CustomSabersLite.Utilities;
 using UnityEngine;
 
-namespace CustomSabersLite.UI.Managers;
+namespace CustomSabersLite.UI;
 
 internal class BasicPreviewSaberManager
 {

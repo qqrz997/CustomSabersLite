@@ -20,16 +20,12 @@ internal class SaberPrefab : IDisposable
 
     public static SaberPrefab? TryCreate(GameObject prefab)
     {
-        if (prefab == null)
-        {
-            return null;
-        }
-
         try
         {
-            return new SaberPrefab(prefab);
+            // just in case transform.Find() fails, catch the NullReferenceException
+            return prefab == null ? null : new SaberPrefab(prefab);
         }
-        catch
+        catch (NullReferenceException)
         {
             return null;
         }

@@ -1,12 +1,12 @@
-﻿using CustomSabersLite.Components.Game;
-using CustomSabersLite.Components.Managers;
+﻿using CustomSabersLite.Components;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Models;
 using CustomSabersLite.Utilities;
+using CustomSabersLite.Utilities.Services;
 using UnityEngine;
 using Zenject;
 
-namespace CustomSabersLite.UI.Views.Saber_List;
+namespace CustomSabersLite.UI;
 
 #pragma warning disable IDE0031 // Use null propagation
 

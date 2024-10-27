@@ -4,7 +4,7 @@ using CustomSabersLite.Utilities;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace CustomSabersLite.Components.Game;
+namespace CustomSabersLite.Components;
 
 internal class LiteSaber : MonoBehaviour
 {

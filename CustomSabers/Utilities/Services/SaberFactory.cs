@@ -1,12 +1,11 @@
-﻿using CustomSabersLite.Components.Game;
+﻿using CustomSabersLite.Components;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Models;
-using CustomSabersLite.Utilities;
 using System.Threading.Tasks;
 using UnityEngine;
 using static UnityEngine.Object;
 
-namespace CustomSabersLite.Components.Managers;
+namespace CustomSabersLite.Utilities.Services;
 
 internal class SaberFactory(CustomSabersLoader customSabersLoader, CSLConfig config)
 {

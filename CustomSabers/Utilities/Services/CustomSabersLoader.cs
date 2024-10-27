@@ -1,5 +1,5 @@
-﻿using CustomSabersLite.Components.Managers;
-using CustomSabersLite.Models;
+﻿using CustomSabersLite.Models;
+using CustomSabersLite.Utilities.Services;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -45,8 +45,8 @@ internal class CustomSabersLoader(SaberInstanceManager saberInstanceManager, Sab
 
     private async Task<ISaberData> LoadSaberDataAsync(string relativePath) => Path.GetExtension(relativePath) switch
     {
-        FileExts.Saber => await saberLoader.LoadCustomSaberAsync(relativePath),
-        FileExts.Whacker => await whackerLoader.LoadWhackerAsync(relativePath),
+        ".saber" => await saberLoader.LoadCustomSaberAsync(relativePath),
+        ".whacker" => await whackerLoader.LoadWhackerAsync(relativePath),
         _ => new NoSaberData(relativePath, timeService.GetUtcTime(), SaberLoaderError.InvalidFileType)
     };
 }

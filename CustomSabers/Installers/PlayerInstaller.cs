@@ -1,11 +1,12 @@
-﻿using CustomSabersLite.Components.Game;
+﻿using CustomSabersLite.Components;
 using CustomSabersLite.Configuration;
+using CustomSabersLite.Utilities.Services;
 using SiraUtil.Sabers;
 using Zenject;
 
 namespace CustomSabersLite.Installers;
 
-internal class CSLGameInstaller : Installer
+internal class PlayerInstaller : Installer
 {
     public override void InstallBindings()
     {
@@ -17,7 +18,7 @@ internal class CSLGameInstaller : Installer
             return;
         }
 
-        Container.BindInterfacesAndSelfTo<EventManagerManager>().AsTransient();
+        Container.BindInterfacesAndSelfTo<SaberEventService>().AsTransient();
 
         if (config.CurrentlySelectedSaber != null)
         {

@@ -1,12 +1,4 @@
 ﻿using BeatSaberMarkupLanguage.Attributes;
-using BeatSaberMarkupLanguage.Components.Settings;
-using CustomSabersLite.Models;
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-using TMPro;
-using BeatSaberMarkupLanguage.Components;
-using HMUI;
 using BeatSaberMarkupLanguage.ViewControllers;
 
 namespace CustomSabersLite.UI.Views;

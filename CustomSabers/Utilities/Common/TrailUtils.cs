@@ -1,4 +1,4 @@
-﻿using CustomSabersLite.Components.Game;
+﻿using CustomSabersLite.Components;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Models;
 using UnityEngine;

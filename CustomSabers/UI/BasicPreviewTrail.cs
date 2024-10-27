@@ -3,7 +3,7 @@ using CustomSabersLite.Models;
 using CustomSabersLite.Utilities;
 using UnityEngine;
 
-namespace CustomSabersLite.UI.Managers;
+namespace CustomSabersLite.UI;
 
 internal class BasicPreviewTrail
 {

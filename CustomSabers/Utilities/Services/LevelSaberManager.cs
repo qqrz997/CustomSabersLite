@@ -1,9 +1,8 @@
-﻿using CustomSabersLite.Components.Managers;
-using CustomSabersLite.Models;
+﻿using CustomSabersLite.Models;
 using System.Threading.Tasks;
 using Zenject;
 
-namespace CustomSabersLite.Components.Game;
+namespace CustomSabersLite.Utilities.Services;
 
 internal class LevelSaberManager : IInitializable
 {

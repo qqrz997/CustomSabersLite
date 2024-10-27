@@ -6,13 +6,11 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using TMPro;
 using Zenject;
 using BeatSaberMarkupLanguage.Components;
 using HMUI;
 using System.ComponentModel;
 using System.Collections;
-using CustomSabersLite.UI.Managers;
 using CustomSabersLite.Utilities;
 
 namespace CustomSabersLite.UI.Views;

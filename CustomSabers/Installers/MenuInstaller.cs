@@ -1,6 +1,6 @@
-﻿using CustomSabersLite.UI.Managers;
+﻿using CustomSabersLite.UI;
+using CustomSabersLite.UI.Managers;
 using CustomSabersLite.UI.Views;
-using CustomSabersLite.UI.Views.Saber_List;
 using CustomSabersLite.Utilities;
 using System;
 using UnityEngine;
@@ -8,7 +8,7 @@ using Zenject;
 
 namespace CustomSabersLite.Installers;
 
-internal class CSLMenuInstaller : Installer
+internal class MenuInstaller : Installer
 {
     public override void InstallBindings()
     {

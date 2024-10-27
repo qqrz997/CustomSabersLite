@@ -2,10 +2,9 @@
 using UnityEngine;
 using CustomSabersLite.Models;
 using CustomSabersLite.Configuration;
-using CustomSabersLite.Components.Game;
-using CustomSabersLite.Utilities;
+using CustomSabersLite.Components;
 
-namespace CustomSabersLite.Components.Managers;
+namespace CustomSabersLite.Utilities.Services;
 
 internal class TrailFactory(CSLConfig config, InternalResourcesProvider resourcesProvider)
 {

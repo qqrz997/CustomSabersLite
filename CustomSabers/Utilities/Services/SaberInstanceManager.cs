@@ -1,9 +1,8 @@
 ﻿using CustomSabersLite.Models;
-using CustomSabersLite.Utilities;
 using System;
 using System.Collections.Generic;
 
-namespace CustomSabersLite.Components.Managers;
+namespace CustomSabersLite.Utilities.Services;
 
 internal class SaberInstanceManager() : IDisposable
 {

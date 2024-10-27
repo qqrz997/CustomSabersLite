@@ -1,6 +1,6 @@
-﻿using CustomSabersLite.Components.Managers;
-using CustomSabersLite.Models;
-using CustomSabersLite.UI.Managers;
+﻿using CustomSabersLite.Models;
+using CustomSabersLite.UI;
+using CustomSabersLite.Utilities.Services;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -54,7 +54,7 @@ internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManag
             var stopwatch = Stopwatch.StartNew();
 
             var installedSaberPaths = FileUtils.GetFilePaths(
-                PluginDirs.CustomSabers.FullName, [FileExts.Saber, FileExts.Whacker], SearchOption.AllDirectories, true).ToArray();
+                PluginDirs.CustomSabers.FullName, [".saber", ".whacker"], SearchOption.AllDirectories, true).ToArray();
 
             var cacheFile = await InternalReloadAsync(installedSaberPaths);
             stopwatch.Stop();

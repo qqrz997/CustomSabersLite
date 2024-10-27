@@ -2,7 +2,6 @@
 using CustomSabersLite.Utilities;
 using HMUI;
 using IPA.Utilities.Async;
-using Newtonsoft.Json.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Zenject;

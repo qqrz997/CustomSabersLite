@@ -4,7 +4,7 @@ using UnityEngine;
 namespace CustomSabersLite.Models;
 
 /// <summary>
-/// Class that declares the neccessary information to create a <see cref="Components.Game.LiteSaberTrail"/>
+/// Class that declares the neccessary information to create a <see cref="Components.LiteSaberTrail"/>
 /// </summary>
 internal class CustomTrailData(Transform top, Transform bottom, Material? material, CustomSaber.ColorType colorType, Color color, Color colorMultiplier, float length)
 {

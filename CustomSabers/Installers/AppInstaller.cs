@@ -1,12 +1,12 @@
-﻿using CustomSabersLite.Components.Managers;
-using CustomSabersLite.Configuration;
-using CustomSabersLite.UI.Managers;
+﻿using CustomSabersLite.Configuration;
+using CustomSabersLite.UI;
 using CustomSabersLite.Utilities;
+using CustomSabersLite.Utilities.Services;
 using Zenject;
 
 namespace CustomSabersLite.Installers;
 
-internal class CSLAppInstaller(CSLConfig config) : Installer
+internal class AppInstaller(CSLConfig config) : Installer
 {
     private readonly CSLConfig config = config;
 

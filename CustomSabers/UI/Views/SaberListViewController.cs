@@ -3,7 +3,6 @@ using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.ViewControllers;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Models;
-using CustomSabersLite.UI.Managers;
 using CustomSabersLite.Utilities;
 using HMUI;
 using IPA.Utilities.Async;

@@ -2,7 +2,7 @@
 using CustomSabersLite.Utilities;
 using UnityEngine;
 
-namespace CustomSabersLite.Components.Game;
+namespace CustomSabersLite.Components;
 
 internal class LiteSaberTrail : SaberTrail
 {
