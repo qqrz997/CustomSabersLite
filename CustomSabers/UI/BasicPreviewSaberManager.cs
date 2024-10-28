@@ -1,5 +1,4 @@
 ﻿using CustomSabersLite.Models;
-using CustomSabersLite.Utilities;
 using UnityEngine;
 
 namespace CustomSabersLite.UI;
@@ -20,8 +19,8 @@ internal class BasicPreviewSaberManager
 
     public void ReplaceSabers(ILiteSaber? newLeftSaber, ILiteSaber? newRightSaber)
     {
-        leftSaber?.GameObject.DestroyImmediate();
-        rightSaber?.GameObject.DestroyImmediate();
+        leftSaber?.Destroy();
+        rightSaber?.Destroy();
 
         leftSaber = newLeftSaber;
         rightSaber = newRightSaber;

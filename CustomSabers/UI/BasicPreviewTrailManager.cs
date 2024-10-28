@@ -1,16 +1,15 @@
 ﻿using CustomSabersLite.Configuration;
 using CustomSabersLite.Models;
+using CustomSabersLite.Utilities;
 using System.Linq;
 using UnityEngine;
 
 namespace CustomSabersLite.UI;
 
-internal class BasicPreviewTrailManager(CSLConfig config)
+internal class BasicPreviewTrailManager(CSLConfig config, GameResourcesProvider gameResourcesProvider)
 {
-    private readonly CSLConfig config = config;
-
-    private readonly BasicPreviewTrail leftTrail = new("Basic Preview Trail");
-    private readonly BasicPreviewTrail rightTrail = new("Basic Preview Trail");
+    private readonly BasicPreviewTrail leftTrail = new(config, gameResourcesProvider, SaberType.SaberA);
+    private readonly BasicPreviewTrail rightTrail = new(config, gameResourcesProvider, SaberType.SaberB);
 
     public void Init(Transform leftParent, Transform rightParent)
     {
@@ -26,8 +25,8 @@ internal class BasicPreviewTrailManager(CSLConfig config)
 
     public void UpdateTrails()
     {
-        leftTrail.UpdateMesh(config);
-        rightTrail.UpdateMesh(config);
+        leftTrail.UpdateMesh();
+        rightTrail.UpdateMesh();
     }
 
     public void SetColor(Color left, Color right)
@@ -36,8 +35,6 @@ internal class BasicPreviewTrailManager(CSLConfig config)
         rightTrail.UpdateColor(right);
     }
 
-    private CustomTrailData GetPrimaryTrailData(ILiteSaber? saber) =>
-        saber == null ? CustomTrailData.Default
-        : saber.TrailData.Length == 0 ? CustomTrailData.Default
-        : saber.TrailData.First();
+    private CustomTrailData? GetPrimaryTrailData(ILiteSaber? saber) =>
+        saber?.TrailData.FirstOrDefault() ?? null;
 }

@@ -1,19 +1,19 @@
-﻿using CustomSabersLite.Utilities;
-using UnityEngine;
+﻿using UnityEngine;
+using TrailColorType = CustomSaber.ColorType;
 
 namespace CustomSabersLite.Models;
 
 /// <summary>
 /// Class that declares the neccessary information to create a <see cref="Components.LiteSaberTrail"/>
 /// </summary>
-internal class CustomTrailData(Transform top, Transform bottom, Material? material, CustomSaber.ColorType colorType, Color color, Color colorMultiplier, float length)
+internal class CustomTrailData(Transform top, Transform bottom, Material? material, TrailColorType colorType, Color color, Color colorMultiplier, float length)
 {
     private readonly Transform top = top;
     private readonly Transform bottom = bottom;
 
     public Material? Material { get; } = material;
 
-    public CustomSaber.ColorType ColorType { get; } = colorType;
+    public TrailColorType ColorType { get; } = colorType;
 
     public Color Color { get; } = color;
 
@@ -28,14 +28,4 @@ internal class CustomTrailData(Transform top, Transform bottom, Material? materi
     public Vector3 TopLocalPosition => top.localPosition;
 
     public Vector3 BottomLocalPosition => bottom.localPosition;
-
-    public static CustomTrailData Default => new(
-        new GameObject().transform,
-        new GameObject().transform,
-        null,
-        CustomSaber.ColorType.CustomColor,
-        Color.white,
-        Color.white,
-        TrailUtils.DefaultDuration
-    );
 };
