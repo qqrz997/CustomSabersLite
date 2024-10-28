@@ -1,38 +1,49 @@
 ﻿using CustomSabersLite.Utilities;
-using System;
 using UnityEngine;
 
 namespace CustomSabersLite.Models;
 
-internal class SaberPrefab : IDisposable
+internal abstract class SaberPrefab
 {
-    public GameObject Prefab { get; }
+    public abstract GameObject Prefab { get; }
 
-    public GameObject Left { get; }
-    public GameObject Right { get; }
-
-    private SaberPrefab(GameObject parentPrefab)
-    {
-        Prefab = parentPrefab;
-        Left = parentPrefab.transform.Find("LeftSaber").gameObject;
-        Right = parentPrefab.transform.Find("RightSaber").gameObject;
-    }
+    public abstract GameObject? Left { get; }
+    public abstract GameObject? Right { get; }
 
     public static SaberPrefab? TryCreate(GameObject prefab)
     {
-        try
+        var left = prefab.transform.Find("LeftSaber").gameObject;
+        var right = prefab.transform.Find("RightSaber").gameObject;
+        
+        if (left != null && right != null)
         {
-            // just in case transform.Find() fails, catch the NullReferenceException
-            return prefab == null ? null : new SaberPrefab(prefab);
+            return new CustomSaberPrefab(prefab, left, right);
         }
-        catch (NullReferenceException)
+
+        return prefab.GetComponent<SaberModelController>() switch
         {
-            return null;
-        }
+            SaberModelController => new DefaultSaberPrefab(prefab),
+            _ => null
+        };
     }
 
-    public void Dispose()
+    public virtual void Dispose()
     {
         if (Prefab) Prefab.Destroy();
     }
+}
+
+internal class CustomSaberPrefab(GameObject parentPrefab, GameObject left, GameObject right) : SaberPrefab
+{
+    public override GameObject Prefab { get; } = parentPrefab;
+    public override GameObject? Left { get; } = left;
+    public override GameObject? Right { get; } = right;
+}
+
+internal class DefaultSaberPrefab(GameObject defaultSaberPrefab) : SaberPrefab
+{
+    public override GameObject Prefab { get; } = defaultSaberPrefab;
+
+    public override GameObject? Left => null;
+    public override GameObject? Right => null;
 }

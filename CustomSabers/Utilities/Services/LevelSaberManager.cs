@@ -1,27 +1,22 @@
 ﻿using CustomSabersLite.Models;
 using System.Threading.Tasks;
-using Zenject;
 
 namespace CustomSabersLite.Utilities.Services;
 
-internal class LevelSaberManager : IInitializable
+internal class LevelSaberManager
 {
     private readonly SaberFactory saberFactory;
 
-    public Task<ISaberData> SaberSetupTask { get; }
-
-    public ISaberData CurrentSaberData { get; private set; }
+    public Task<ISaberData> LevelSaberInstance { get; }
 
     public LevelSaberManager(SaberFactory saberFactory)
     {
         this.saberFactory = saberFactory;
-        SaberSetupTask = CreateLevelSaberInstance();
-        CurrentSaberData = NoSaberData.Value;
+        LevelSaberInstance = CreateLevelSaberInstance();
     }
 
-    public async void Initialize() =>
-        await SaberSetupTask;
-
-    private async Task<ISaberData> CreateLevelSaberInstance() =>
-        CurrentSaberData = await saberFactory.GetCurrentSaberDataAsync();
+    private async Task<ISaberData> CreateLevelSaberInstance()
+    {
+        return await saberFactory.GetCurrentSaberDataAsync();
+    }
 }

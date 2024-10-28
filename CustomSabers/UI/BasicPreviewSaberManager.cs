@@ -1,4 +1,4 @@
-﻿using CustomSabersLite.Components;
+﻿using CustomSabersLite.Models;
 using CustomSabersLite.Utilities;
 using UnityEngine;
 
@@ -9,8 +9,8 @@ internal class BasicPreviewSaberManager
     private readonly Transform left = new GameObject("Basic Preview Saber").transform;
     private readonly Transform right = new GameObject("Basic Preview Saber").transform;
 
-    private LiteSaber? leftSaber;
-    private LiteSaber? rightSaber;
+    private ILiteSaber? leftSaber;
+    private ILiteSaber? rightSaber;
 
     public void Init(Transform leftParent, Transform rightParent)
     {
@@ -18,10 +18,10 @@ internal class BasicPreviewSaberManager
         right.SetParent(rightParent, false);
     }
 
-    public void ReplaceSabers(LiteSaber? newLeftSaber, LiteSaber? newRightSaber)
+    public void ReplaceSabers(ILiteSaber? newLeftSaber, ILiteSaber? newRightSaber)
     {
-        leftSaber?.gameObject.DestroyImmediate();
-        rightSaber?.gameObject.DestroyImmediate();
+        leftSaber?.GameObject.DestroyImmediate();
+        rightSaber?.GameObject.DestroyImmediate();
 
         leftSaber = newLeftSaber;
         rightSaber = newRightSaber;
@@ -38,7 +38,7 @@ internal class BasicPreviewSaberManager
 
     public void SetActive(bool active)
     {
-        leftSaber?.gameObject.SetActive(active);
-        rightSaber?.gameObject.SetActive(active);
+        leftSaber?.GameObject.SetActive(active);
+        rightSaber?.GameObject.SetActive(active);
     }
 }

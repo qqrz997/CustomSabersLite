@@ -6,12 +6,12 @@ using CustomSabersLite.Components;
 
 namespace CustomSabersLite.Utilities.Services;
 
-internal class TrailFactory(CSLConfig config, InternalResourcesProvider resourcesProvider)
+internal class TrailFactory(CSLConfig config, GameResourcesProvider gameResourcesProvider)
 {
     private readonly CSLConfig config = config;
-    private readonly InternalResourcesProvider resourcesProvider = resourcesProvider;
+    private readonly GameResourcesProvider gameResourcesProvider = gameResourcesProvider;
 
-    private SaberTrailRenderer TrailRendererPrefab => resourcesProvider.SaberTrailRenderer;
+    private SaberTrailRenderer TrailRendererPrefab => gameResourcesProvider.SaberTrailRenderer;
 
     private readonly int defaultSamplingFrequency = 120;
     private readonly int defaultGranularity = 45;
@@ -20,13 +20,13 @@ internal class TrailFactory(CSLConfig config, InternalResourcesProvider resource
     /// Sets up custom trails for a custom saber
     /// </summary>
     /// <returns>if no suitable trail is created, a custom trail using the default trail material is created instead</returns>
-    public LiteSaberTrail[] CreateTrail(LiteSaber customSaber, SaberType saberType, float intensity = 1f) =>
+    public LiteSaberTrail[] CreateTrail(ILiteSaber customSaber, SaberType saberType, float intensity = 1f) =>
         CreateTrail(customSaber, saberType, config.TrailType, intensity);
 
-    public LiteSaberTrail[] CreateTrail(LiteSaber customSaber, SaberType saberType, TrailType trailType, float intensity = 1f) => trailType switch
+    public LiteSaberTrail[] CreateTrail(ILiteSaber customSaber, SaberType saberType, TrailType trailType, float intensity = 1f) => trailType switch
     {
-        TrailType.Vanilla => [CreateDefaultTrail(customSaber.gameObject, saberType, intensity)],
-        TrailType.Custom => CreateTrails(customSaber.gameObject, customSaber.InstanceTrails, saberType, intensity),
+        TrailType.Vanilla => [CreateDefaultTrail(customSaber.GameObject, saberType, intensity)],
+        TrailType.Custom => CreateTrails(customSaber.GameObject, customSaber.TrailData, saberType, intensity),
         _ => []
     };
 

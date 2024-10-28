@@ -16,7 +16,7 @@ internal class AppInstaller(CSLConfig config) : Installer
 
         Container.Bind<ITimeService>().To<UtcTimeService>().AsSingle();
 
-        Container.BindInterfacesAndSelfTo<InternalResourcesProvider>().AsSingle();
+        Container.BindInterfacesAndSelfTo<GameResourcesProvider>().AsSingle();
 
         Container.Bind<SaberMetadataCacheMigrationManager>().AsSingle();
         Container.BindInterfacesAndSelfTo<SaberMetadataCache>().AsSingle();

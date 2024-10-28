@@ -3,6 +3,7 @@ using UnityEngine;
 using Zenject;
 using CustomSabersLite.Utilities;
 using CustomSabersLite.Utilities.Services;
+using CustomSabersLite.Models;
 
 namespace CustomSabersLite.Components;
 
@@ -17,7 +18,7 @@ internal class LiteSaberModelController : SaberModelController, IColorable, IPre
     [Inject] private readonly ColorManager colorManager = null!;
     [Inject] private readonly GameplayCoreSceneSetupData gameplaySetupData = null!;
 
-    private LiteSaber? customSaberInstance;
+    private ILiteSaber? liteSaberInstance;
     private LiteSaberTrail[] customTrailInstances = [];
 
     private Color? color;
@@ -27,7 +28,7 @@ internal class LiteSaberModelController : SaberModelController, IColorable, IPre
         set
         {
             color = value;
-            if (customSaberInstance != null) customSaberInstance.SetColor(value);
+            if (liteSaberInstance != null) liteSaberInstance.SetColor(value);
             customTrailInstances?.ForEach(t => t.SetColor(value));
         }
     }
@@ -42,20 +43,24 @@ internal class LiteSaberModelController : SaberModelController, IColorable, IPre
     {
         transform.SetParent(parent, false);
 
-        var saberData = await levelSaberManager.SaberSetupTask;
-        customSaberInstance = saberFactory.TryCreate(saber.saberType, saberData);
+        var saberData = await levelSaberManager.LevelSaberInstance;
+        liteSaberInstance = saberFactory.Create(saber.saberType, saberData);
 
-        if (customSaberInstance == null)
+        if (liteSaberInstance == null)
         {
             Logger.Error("Something went wrong when getting the custom saber instance");
             return;
         }
 
         var intensity = gameplaySetupData.playerSpecificSettings.saberTrailIntensity;
-        customTrailInstances = trailFactory.CreateTrail(customSaberInstance, saber.saberType, intensity);
+        customTrailInstances = trailFactory.CreateTrail(liteSaberInstance, saber.saberType, intensity);
 
-        customSaberInstance.SetParent(transform);
-        saberEventService.InitializeEventManager(customSaberInstance.EventManager, saber.saberType);
+        liteSaberInstance.SetParent(transform);
+        
+        if (liteSaberInstance.EventManager != null)
+        {
+            saberEventService.InitializeEventManager(liteSaberInstance.EventManager, saber.saberType);
+        }
 
         Color = colorManager.ColorForSaberType(saber.saberType);
     }

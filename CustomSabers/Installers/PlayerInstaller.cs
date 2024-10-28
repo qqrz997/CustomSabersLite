@@ -19,12 +19,9 @@ internal class PlayerInstaller : Installer
         }
 
         Container.BindInterfacesAndSelfTo<SaberEventService>().AsTransient();
+        Container.Bind<LevelSaberManager>().AsSingle();
 
-        if (config.CurrentlySelectedSaber != null)
-        {
-            // This replaces the default sabers
-            Container.BindInterfacesAndSelfTo<LevelSaberManager>().AsSingle();
-            Container.BindInstance(SaberModelRegistration.Create<LiteSaberModelController>(5));
-        }
+        // This replaces the default sabers
+        Container.BindInstance(SaberModelRegistration.Create<LiteSaberModelController>(5));
     }
 }

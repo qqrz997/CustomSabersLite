@@ -50,13 +50,13 @@ internal class SaberPreviewManager : IInitializable, IDisposable
         var saberData = await saberFactory.GetCurrentSaberDataAsync();
         token.ThrowIfCancellationRequested();
 
-        var leftSaber = saberFactory.TryCreate(SaberType.SaberA, saberData);
-        var rightSaber = saberFactory.TryCreate(SaberType.SaberB, saberData);
+        var leftSaber = saberFactory.Create(SaberType.SaberA, saberData);
+        var rightSaber = saberFactory.Create(SaberType.SaberB, saberData);
         basicPreviewSaberManager.ReplaceSabers(leftSaber, rightSaber);
         basicPreviewTrailManager.SetTrails(leftSaber, rightSaber);
 
-        var leftMenuSaber = saberFactory.TryCreate(SaberType.SaberA, saberData);
-        var rightMenuSaber = saberFactory.TryCreate(SaberType.SaberB, saberData);
+        var leftMenuSaber = saberFactory.Create(SaberType.SaberA, saberData);
+        var rightMenuSaber = saberFactory.Create(SaberType.SaberB, saberData);
         menuSaberManager.ReplaceSabers(leftMenuSaber, rightMenuSaber);
 
         UpdateTrails();

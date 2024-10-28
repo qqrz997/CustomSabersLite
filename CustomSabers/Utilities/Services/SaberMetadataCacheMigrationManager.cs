@@ -19,7 +19,7 @@ internal class SaberMetadataCacheMigrationManager
     private static bool Migrate(CacheVersion cacheVersion)
     {
         if (cacheVersion == CacheVersion.Current) return true;
-        Logger.Info("Old cache version detected, running migration for saber metadata");
+        Logger.Notice("Old cache version detected, running migration for saber metadata");
 
         try
         {

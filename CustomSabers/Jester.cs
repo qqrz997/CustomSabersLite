@@ -1,4 +1,5 @@
 ﻿using CustomSabersLite.Utilities;
+using CustomSabersLite.Utilities.Extensions;
 using UnityEngine;
 using Zenject;
 
@@ -7,9 +8,9 @@ using static UnityEngine.Random;
 
 namespace CustomSabersLite;
 
-internal class Jester(InternalResourcesProvider resources) : IInitializable
+internal class Jester(GameResourcesProvider gameResourcesProvider) : IInitializable
 {
-    private GameObject SaberModel { get; } = Instantiate(resources.SaberModelPrefab);
+    private GameObject SaberModel { get; } = Instantiate(gameResourcesProvider.SaberModelPrefab);
 
     public void Initialize()
     {
@@ -36,16 +37,8 @@ internal class Jester(InternalResourcesProvider resources) : IInitializable
     {
         var saber = Instantiate(SaberModel);
 
-        foreach (var setSaberGlowColor in saber.GetComponentsInChildren<SetSaberGlowColor>())
-        {
-            var materialPropertyBlock = setSaberGlowColor._materialPropertyBlock ?? new MaterialPropertyBlock();
-
-            setSaberGlowColor._propertyTintColorPairs.ForEach(pair =>
-                materialPropertyBlock.SetColor(pair.property, color * pair.tintColor));
-
-            setSaberGlowColor._meshRenderer.SetPropertyBlock(materialPropertyBlock);
-        }
-
+        saber.GetComponentsInChildren<SetSaberGlowColor>().ForEach(x => x.SetNewColor(color));
+        saber.GetComponentsInChildren<SetSaberFakeGlowColor>().ForEach(x => x.SetNewColor(color));
         saber.transform.position = pos;
         saber.transform.rotation = rot;
     }

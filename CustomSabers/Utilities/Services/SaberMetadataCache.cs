@@ -36,8 +36,11 @@ internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManag
         get => currentProgress;
         private set
         {
-            currentProgress = value;
-            LoadingProgressChanged?.Invoke(value);
+            if (currentProgress != value)
+            {
+                currentProgress = value;
+                LoadingProgressChanged?.Invoke(value);
+            }
         }
     }
 
@@ -58,7 +61,7 @@ internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManag
 
             var cacheFile = await InternalReloadAsync(installedSaberPaths);
             stopwatch.Stop();
-            Logger.Info($"Cache loading took {stopwatch.ElapsedMilliseconds}ms");
+            Logger.Notice($"Cache loading took {stopwatch.ElapsedMilliseconds}ms");
 
 
             var installedSabersMetadata = cacheFile.CachedMetadata.Where(meta => installedSaberPaths.Contains(meta.RelativePath));
@@ -198,8 +201,7 @@ internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManag
 
         var relativePaths = sabersForCaching.ToArray();
         var loadedSaberMetadata = new List<SaberMetadataModel>();
-        var currentItem = 0;
-        var lastPercent = 0;
+        int currentItem = 1;
 
         foreach (var relativePath in relativePaths)
         {
@@ -208,16 +210,10 @@ internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManag
 
             if (metadata.SaberFile.Hash != null)
             {
-                Logger.Info(relativePath);
                 loadedSaberMetadata.Add(new SaberMetadataModel(relativePath, metadata.SaberFile.Hash, metadata.SaberFile.Type, metadata.LoaderError, metadata.Descriptor.SaberName.FullName, metadata.Descriptor.AuthorName.FullName, metadata.SaberFile.DateAdded));
             }
 
-            var currentPercent = (currentItem + 1) * 100 / relativePaths.Length;
-            if (currentPercent > lastPercent)
-            {
-                CurrentProgress = currentProgress with { StagePercent = currentPercent };
-                lastPercent = currentPercent;
-            }
+            CurrentProgress = currentProgress with { StagePercent = currentItem * 100 / relativePaths.Length };
             currentItem++;
         }
 

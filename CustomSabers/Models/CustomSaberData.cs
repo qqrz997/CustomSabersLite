@@ -11,6 +11,10 @@ internal class CustomSaberData(ISaberMetadata metadata, AssetBundle assetBundle,
 
     public SaberPrefab? Prefab { get; } = SaberPrefab.TryCreate(saberPrefab);
 
+    public GameObject? GetPrefab(SaberType saberType) =>
+        Prefab == null ? null
+        : saberType == SaberType.SaberA ? Prefab.Left : Prefab.Right;
+
     public void Dispose(bool unloadAllLoadedObjects)
     {
         if (unloadAllLoadedObjects) Prefab?.Dispose();
@@ -26,8 +30,7 @@ internal class CustomSaberData(ISaberMetadata metadata, AssetBundle assetBundle,
         }
         catch (Exception ex)
         {
-            Logger.Error($"Couldn't dispose data for saber asset {Metadata.SaberFile}\n{ex}");
+            Logger.Error($"Couldn't dispose data for saber asset\n{ex}");
         }
     }
-
 }

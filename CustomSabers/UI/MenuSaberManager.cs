@@ -1,4 +1,4 @@
-﻿using CustomSabersLite.Components;
+﻿using CustomSabersLite.Models;
 using CustomSabersLite.Utilities;
 using UnityEngine;
 
@@ -10,7 +10,7 @@ internal class MenuSaberManager(MenuPointers menuPointers, MenuSaber.Factory men
     private readonly MenuSaber leftSaber = menuSaberFactory.Create(menuPointers.LeftParent, SaberType.SaberA);
     private readonly MenuSaber rightSaber = menuSaberFactory.Create(menuPointers.RightParent, SaberType.SaberB);
 
-    public void ReplaceSabers(LiteSaber? newLeftSaber, LiteSaber? newRightSaber)
+    public void ReplaceSabers(ILiteSaber? newLeftSaber, ILiteSaber? newRightSaber)
     {
         leftSaber?.ReplaceSaber(newLeftSaber);
         rightSaber?.ReplaceSaber(newRightSaber);

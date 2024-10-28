@@ -31,17 +31,17 @@ internal class MenuSaber
         defaultTrail = trailFactory.CreateDefaultTrail(gameObject, saberType, 1f);
     }
 
-    private LiteSaber? saberInstance;
+    private ILiteSaber? saberInstance;
     private LiteSaberTrail[] trailInstances = [];
 
-    public void ReplaceSaber(LiteSaber? newSaber)
+    public void ReplaceSaber(ILiteSaber? newSaber)
     {
-        if (saberInstance != null) saberInstance.gameObject.Destroy();
+        if (saberInstance != null) saberInstance.GameObject.Destroy();
         trailInstances.ForEach(t => { if (t && t._trailRenderer) t._trailRenderer.gameObject.Destroy(); });
         if (newSaber == null) return;
 
         newSaber.SetParent(gameObject.transform);
-        newSaber.GetComponentsInChildren<Collider>().ForEach(c => c.enabled = false);
+        newSaber.GameObject.GetComponentsInChildren<Collider>().ForEach(c => c.enabled = false);
 
         trailInstances = trailFactory.CreateTrail(newSaber, saberType, TrailType.Custom);
         saberInstance = newSaber;
@@ -72,7 +72,7 @@ internal class MenuSaber
     }
 
     public void SetActive(bool active) =>
-        gameObject.SetActive(saberInstance && active);
+        gameObject.SetActive(saberInstance != null && active);
 
     public class Factory : PlaceholderFactory<Transform, SaberType, MenuSaber> { }
 }
