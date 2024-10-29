@@ -7,7 +7,7 @@ internal class CSLResources
 {
     public static Sprite NullCoverImage { get; } = LoadSpriteResource("CustomSabersLite.Resources.null-image.png");
 
-    public static Sprite DefaultCoverImage { get; } = LoadSpriteResource("CustomSabersLite.Resources.defaultsabers-image.png");
+    public static Sprite DefaultCoverImage { get; } = LoadSpriteResource("CustomSabersLite.Resources.defaultsabers-image.jpg");
 
     public static Sprite ExtremeArrowIcon { get; } = LoadSpriteResource("CustomSabersLite.Resources.extreme-arrow-icon.png");
 
