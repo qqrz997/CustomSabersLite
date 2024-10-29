@@ -111,6 +111,10 @@ internal class SaberListViewController : BSMLAutomaticViewController
         previewManager.UpdateActivePreview();
     }
 
+    [UIAction("scroll-to-selected-cell")]
+    private void ScrollToSelectedCell() => 
+        saberList.TableView.ScrollToCellWithIdx(saberListManager.IndexForPath(config.CurrentlySelectedSaber), TableView.ScrollPositionType.Center, true);
+
     [UIAction("select-saber")]
     public async void SelectSaber(TableView tableView, int row)
     {
@@ -147,7 +151,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
             config.CurrentlySelectedSaber = saberListManager.Select(selectedSaberIndex - 1)?.Metadata.SaberFile.RelativePath;
 
             RefreshList();
-            StartCoroutine(ScrollToSelectedCell());
+            StartCoroutine(SelectSelectedAndScrollTo());
         }
     }
 
@@ -216,7 +220,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
         catch (OperationCanceledException) { }
     }
 
-    private IEnumerator ScrollToSelectedCell()
+    private IEnumerator SelectSelectedAndScrollTo()
     {
         yield return new WaitUntil(() => saberList.gameObject.activeInHierarchy);
         yield return new WaitForEndOfFrame();
@@ -233,7 +237,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
         {
             UnityMainThreadTaskScheduler.Factory.StartNew(GeneratePreview);
         }
-        StartCoroutine(ScrollToSelectedCell());
+        StartCoroutine(SelectSelectedAndScrollTo());
         previewManager.SetPreviewActive(true);
     }
 

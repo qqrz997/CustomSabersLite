@@ -19,8 +19,8 @@ internal class BasicPreviewTrailManager(CSLConfig config, GameResourcesProvider 
 
     public void SetTrails(ILiteSaber? leftSaber, ILiteSaber? rightSaber)
     {
-        leftTrail.ReplaceTrail(GetPrimaryTrailData(leftSaber));
-        rightTrail.ReplaceTrail(GetPrimaryTrailData(rightSaber));
+        leftTrail.ReplaceTrail(leftSaber?.TrailData.FirstOrDefault());
+        rightTrail.ReplaceTrail(rightSaber?.TrailData.FirstOrDefault());
     }
 
     public void UpdateTrails()
@@ -34,7 +34,4 @@ internal class BasicPreviewTrailManager(CSLConfig config, GameResourcesProvider 
         leftTrail.UpdateColor(left);
         rightTrail.UpdateColor(right);
     }
-
-    private CustomTrailData? GetPrimaryTrailData(ILiteSaber? saber) =>
-        saber?.TrailData.FirstOrDefault() ?? null;
 }

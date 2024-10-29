@@ -107,7 +107,6 @@ internal class BasicPreviewTrail
         {
             return;
         }
-        Logger.Info("Updating color");
         var trailColor = CurrentTrailData.ColorType == TrailColorType.CustomColor
             ? CurrentTrailData.Color * CurrentTrailData.ColorMultiplier
             : color * CurrentTrailData.ColorMultiplier;

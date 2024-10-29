@@ -28,14 +28,15 @@ internal class SaberPreviewManager : IInitializable, IDisposable
 
     private bool previewActive;
     private bool previewGenerating;
+
     public void Initialize()
     {
         leftPreviewParent.SetParent(previewParent);
         rightPreviewParent.SetParent(previewParent);
 
         previewParent.SetPositionAndRotation(new Vector3(0.7f, 0.8f, 1.1f), Quaternion.Euler(270f, 125f, 0f));
-        leftPreviewParent.localPosition = new Vector3(0f, 0.2f, 0f);
-        rightPreviewParent.localPosition = new Vector3(0f, -0.2f, 0f);
+        leftPreviewParent.localPosition = new Vector3(0f, 0.17f, 0f);
+        rightPreviewParent.localPosition = new Vector3(0f, -0.17f, 0f);
         rightPreviewParent.localRotation = Quaternion.Euler(0f, 0f, 180f);
 
         basicPreviewSaberManager.Init(leftPreviewParent, rightPreviewParent);

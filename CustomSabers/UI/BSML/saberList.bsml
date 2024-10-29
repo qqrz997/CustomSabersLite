@@ -1,11 +1,12 @@
 ﻿<vertical spacing='2' anchor-pos-x='-21' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd'>
   <!--top bar (search, sort)-->
-  <horizontal spacing='2' preferred-height='10'>
-    <vertical name='SearchContainer' id='search-input-container' preferred-width='62'/>
-    <horizontal horizontal-fit='PreferredSize' preferred-width='45'>
+  <horizontal spacing='4' preferred-height='10'>
+    <vertical name='SearchContainer' id='search-input-container' preferred-width='50'/>
+    <horizontal horizontal-fit='PreferredSize' preferred-width='38'>
       <dropdown-list-setting text='Sort' value='order-by-filter' choices='order-by-choices' apply-on-change='true' word-wrapping='false' size-delta-x='32'/>
-      <clickable-image on-click='toggle-sort-direction' id='sort-direction-button' src='#HeightIcon' preserve-aspect='true' />
     </horizontal>
+    <clickable-image on-click='toggle-sort-direction' id='sort-direction-button' src='#HeightIcon' preserve-aspect='true' pref-width='6'/>
+    <clickable-image on-click='scroll-to-selected-cell' src='#SmallNotesIcon' preserve-aspect='true' pref-width='6'/>
   </horizontal>
     
   <!--saber list-->

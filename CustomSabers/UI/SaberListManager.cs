@@ -55,17 +55,19 @@ internal class SaberListManager(SaberInstanceManager saberInstances)
         return deletedInfo != null;
     }
 
-    public int IndexForPath(string? relativePath) =>
-        string.IsNullOrEmpty(relativePath) ? 0
-        : SaberList.FirstOrDefault(i => i.Metadata.SaberFile.RelativePath == relativePath) is not SaberListCellInfo i ? 0
-        : SaberList.IndexOf(i);
+    public int IndexForPath(string? relativePath)
+    {
+        if (string.IsNullOrWhiteSpace(relativePath)) return 0;
+        var index = SaberList.IndexOf(SaberList.FirstOrDefault(i => i.Metadata.SaberFile.RelativePath == relativePath));
+        return index != -1 ? index : 0;
+    }
 
     public SaberListCellInfo? Select(int row) =>
         SaberList.ElementAtOrDefault(row);
 
     public bool CurrentListContains(string? relativePath) =>
         !string.IsNullOrEmpty(relativePath)
-        && Data.FirstOrDefault(i => i.Metadata.SaberFile.RelativePath == relativePath) is not null;
+        && SaberList.FirstOrDefault(i => i.Metadata.SaberFile.RelativePath == relativePath) is not null;
 
     private IEnumerable<SaberListCellInfo> GetSortedData(SaberListFilterOptions filterOptions)
     {
