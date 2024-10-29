@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using Zenject;
 
 namespace CustomSabersLite;
@@ -12,7 +12,6 @@ internal class PauseMenuHandlesFix(MultiplayerLocalActivePlayerInGameMenuViewCon
 
     public void Initialize() => coroutineStarter.StartCoroutine(DisableMenuControllersAfterFrames(5));
         
-
     private IEnumerator DisableMenuControllersAfterFrames(int frames)
     {
         for (int i = 0; i < frames; i++)
