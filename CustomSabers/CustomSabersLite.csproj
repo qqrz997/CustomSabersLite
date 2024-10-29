@@ -2,13 +2,12 @@
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
     <LangVersion>12</LangVersion>
+    <Nullable>Enable</Nullable>
     <OutputType>Library</OutputType>
-    <RootNamespace>$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
-    <AssemblyName>$(MSBuildProjectName)</AssemblyName>
     <LocalRefsDir Condition="Exists('..\Refs')">..\Refs</LocalRefsDir>
     <BeatSaberDir>$(LocalRefsDir)</BeatSaberDir>
     <AppOutputBase>$(MSBuildProjectDirectory)\</AppOutputBase>
-    <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
+    <Configurations>Debug;Release;Shader Debug</Configurations>
   </PropertyGroup>
   <PropertyGroup Condition="$(DefineConstants.Contains('CIBuild')) OR '$(NCrunch)' == '1'">
     <DisableCopyToPlugins>True</DisableCopyToPlugins>
@@ -54,7 +53,7 @@
     <Reference Include="HMRendering">
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\HMRendering.dll</HintPath>
     </Reference>
-    <Reference Include="HMUI">
+    <Reference Include="HMUI" Publicize="True">
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\HMUI.dll</HintPath>
     </Reference>
     <Reference Include="IPA.Injector">
@@ -65,6 +64,12 @@
     </Reference>
     <Reference Include="Main" publicize="True">
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Main.dll</HintPath>
+    </Reference>
+    <Reference Include="mscorlib">
+      <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="netstandard">
+      <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\netstandard.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>$(BeatSaberDir)\Libs\Newtonsoft.Json.dll</HintPath>
@@ -110,9 +115,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="manifest.json" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="CustomSabers.csproj.user" Condition="Exists('CustomSabers.csproj.user')" />
   </ItemGroup>
   <ItemGroup>
@@ -128,13 +130,8 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="manifest.json" />
     <EmbeddedResource Include="UI\BSML\*.bsml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\null-image.png" />
-    <EmbeddedResource Include="Resources\defaultsabers-image.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\CustomSaber.dll" />
+    <EmbeddedResource Include="Resources\*" />
   </ItemGroup>
 </Project>

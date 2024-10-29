@@ -1,19 +1,29 @@
 ﻿using UnityEngine;
 
-namespace CustomSabersLite.Utilities.Extensions;
+namespace CustomSabersLite.Utilities;
 
 internal static class GameObjectExtensions
 {
-    public static T TryGetComponentOrDefault<T>(this GameObject obj) where T : MonoBehaviour => 
+    public static T TryGetComponentOrAdd<T>(this GameObject obj) where T : MonoBehaviour =>
         obj.GetComponent<T>() ?? obj.AddComponent<T>();
 
-    public static void Destroy(this GameObject obj)
+    public static void Destroy(this GameObject? obj)
     {
-        if (obj) Object.Destroy(obj);
+        if (obj != null && obj) Object.Destroy(obj);
     }
 
-    public static void DestroyImmediate(this GameObject obj)
+    public static void DestroyImmediate(this GameObject? obj)
     {
-        if (obj) Object.DestroyImmediate(obj);
+        if (obj != null && obj) Object.DestroyImmediate(obj);
+    }
+
+    public static void SetLayerRecursively(this GameObject obj, int layer) => SetLayer(obj, layer);
+    private static void SetLayer(GameObject gameObject, int layer)
+    {
+        gameObject.layer = layer;
+        for (var i = 0; i < gameObject.transform.childCount; i++)
+        {
+            SetLayer(gameObject.transform.GetChild(i).gameObject, layer);
+        }
     }
 }

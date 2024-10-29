@@ -17,12 +17,15 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+		Shader Debug|Any CPU = Shader Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{D0C9A074-9512-4949-A730-4F63A51C8F61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D0C9A074-9512-4949-A730-4F63A51C8F61}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0C9A074-9512-4949-A730-4F63A51C8F61}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D0C9A074-9512-4949-A730-4F63A51C8F61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0C9A074-9512-4949-A730-4F63A51C8F61}.Shader Debug|Any CPU.ActiveCfg = Shader Debug|Any CPU
+		{D0C9A074-9512-4949-A730-4F63A51C8F61}.Shader Debug|Any CPU.Build.0 = Shader Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

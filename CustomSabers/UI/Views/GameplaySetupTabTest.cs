@@ -1,13 +1,4 @@
 ﻿using BeatSaberMarkupLanguage.Attributes;
-using BeatSaberMarkupLanguage.Components.Settings;
-using CustomSabersLite.Data;
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-using System.Linq;
-using TMPro;
-using BeatSaberMarkupLanguage.Components;
-using HMUI;
 using BeatSaberMarkupLanguage.ViewControllers;
 
 namespace CustomSabersLite.UI.Views;
@@ -16,7 +7,7 @@ namespace CustomSabersLite.UI.Views;
 [ViewDefinition("CustomSabersLite.UI.BSML.gameplaySetup.bsml")]
 internal class TabTest : BSMLAutomaticViewController
 {
-    [UIAction("#post-parse")]
+    /*[UIAction("#post-parse")]
     public void PostParse()
     {
         // Saber Trail Type list setting 
@@ -48,10 +39,10 @@ internal class TabTest : BSMLAutomaticViewController
     public int TrailWidth;
 
     [UIValue("trail-type")]
-    public string TrailType;
+    public string TrailType = null!;
 
     [UIValue("trail-type-list")]
-    public List<object> trailTypeList = Enum.GetNames(typeof(TrailType)).ToList<object>();
+    public List<object> trailTypeList = [.. Enum.GetNames(typeof(TrailType))];
 
     [UIValue("enable-custom-events")]
     public bool EnableCustomEvents;
@@ -60,26 +51,26 @@ internal class TabTest : BSMLAutomaticViewController
     public bool ForcefullyFoolish;
 
     [UIComponent("trail-duration")]
-    private GenericInteractableSetting trailDurationInteractable;
+    private GenericInteractableSetting trailDurationInteractable = null!;
 
     [UIComponent("trail-duration")]
-    private TextMeshProUGUI trailDurationText;
+    private TextMeshProUGUI trailDurationText = null!;
 
     [UIComponent("trail-width")]
-    private GenericInteractableSetting trailWidthInteractable;
+    private GenericInteractableSetting trailWidthInteractable = null!;
 
     [UIComponent("trail-width")]
-    private TextMeshProUGUI trailWidthText;
+    private TextMeshProUGUI trailWidthText = null!;
 
     [UIComponent("trail-type")]
-    private RectTransform trailTypeRT;
+    private RectTransform trailTypeRT = null!;
 
     [UIComponent("saber-list")]
-    public CustomListTableData saberList;
+    public CustomListTableData saberList = null!;
 
     [UIComponent("saber-list-loading")]
-    public ImageView saberListLoadingIcon;
+    public ImageView saberListLoadingIcon = null!;
 
     [UIAction("select-saber")]
-    public void Select(TableView _, int row) { }
+    public void Select(TableView _, int row) { }*/
 }

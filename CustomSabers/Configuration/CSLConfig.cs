@@ -1,8 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using IPA.Config.Stores;
-using CustomSabersLite.Data;
+using CustomSabersLite.Models;
 using IPA.Config.Stores.Attributes;
-using UnityEngine;
 
 [assembly: InternalsVisibleTo(GeneratedStore.AssemblyVisibilityTarget)]
 namespace CustomSabersLite.Configuration;
@@ -11,7 +10,7 @@ internal class CSLConfig
 {
     public virtual bool Enabled { get; set; } = true;
 
-    public virtual string CurrentlySelectedSaber { get; set; } = null;
+    public virtual string? CurrentlySelectedSaber { get; set; } = null;
 
     public virtual bool DisableWhiteTrail { get; set; } = true;
 
@@ -27,13 +26,13 @@ internal class CSLConfig
 
     public virtual bool EnableCustomEvents { get; set; } = true;
 
-    [Ignore] public virtual bool EnableMenuSabers { get; set; } = false;
+    [Ignore] public bool EnableMenuSabers { get; set; } = false;
 
-    [Ignore] public virtual bool ForcefullyFoolish { get; set; } = false;
+    [Ignore] public OrderBy OrderByFilter { get; set; } = OrderBy.Name;
 
-    [Ignore] public virtual bool Fooled { get; set; } = false;
+    [Ignore] public string SearchFilter { get; set; } = string.Empty;
 
-    public virtual string PluginVer { get; set; } = string.Empty;
+    [Ignore] public bool ReverseSort { get; set; } = false;
 
     // public virtual void OnReload() { }
 

@@ -1,95 +1,69 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components.Settings;
 using BeatSaberMarkupLanguage.ViewControllers;
 using CustomSabersLite.Configuration;
-using CustomSabersLite.Data;
-using UnityEngine;
-using TMPro;
+using CustomSabersLite.Models;
 using Zenject;
-using System.ComponentModel;
-using CustomSabersLite.Utilities.UI;
-using CustomSabersLite.UI.Managers;
+using CustomSabersLite.Utilities;
 
 namespace CustomSabersLite.UI.Views;
 
 [HotReload(RelativePathToLayout = "../BSML/saberSettings.bsml")]
 [ViewDefinition("CustomSabersLite.UI.BSML.saberSettings.bsml")]
-internal class SaberSettingsViewController : BSMLAutomaticViewController, INotifyPropertyChanged
+internal class SaberSettingsViewController : BSMLAutomaticViewController
 {
-    private CSLConfig config;
-    private SaberPreviewManager previewManager;
+    [Inject] private readonly CSLConfig config = null!;
+    [Inject] private readonly SaberPreviewManager previewManager = null!;
 
-    [Inject]
-    public void Construct(CSLConfig config, SaberPreviewManager previewManager)
-    {
-        this.config = config;
-        this.previewManager = previewManager;
-    }
-
-    private bool parsed;
-    
-    [UIComponent("trail-duration")]
-    private GenericInteractableSetting trailDurationInteractable;
-
-    [UIComponent("trail-duration")]
-    private TextMeshProUGUI trailDurationText;
-
-    [UIComponent("trail-width")]
-    private GenericInteractableSetting trailWidthInteractable;
-
-    [UIComponent("trail-width")]
-    private TextMeshProUGUI trailWidthText;
-
-    [UIComponent("forcefully-foolish")]
-    private Transform foolishSetting;
+    [UIComponent("trail-duration")] private SliderSetting trailDurationSlider = null!;
+    [UIComponent("trail-width")] private SliderSetting trailWidthSlider = null!;
 
     [UIValue("enabled")]
-    public bool Enabled
+    private bool Enabled
     {
-        get => config.Enabled; 
+        get => config.Enabled;
         set => config.Enabled = value;
     }
 
     [UIValue("disable-white-trail")]
-    public bool DisableWhiteTrail
+    private bool DisableWhiteTrail
     {
         get => config.DisableWhiteTrail;
         set
         {
-            config.DisableWhiteTrail = value; 
+            config.DisableWhiteTrail = value;
             previewManager.UpdateTrails();
         }
     }
 
     [UIValue("override-trail-duration")]
-    public bool OverrideTrailDuration
+    private bool OverrideTrailDuration
     {
         get => config.OverrideTrailDuration;
         set
         {
             config.OverrideTrailDuration = value;
             previewManager.UpdateTrails();
-            if (parsed) BSMLHelpers.SetSliderInteractable(trailDurationInteractable, value, trailDurationText);
+            BSMLHelpers.SetSliderInteractable(trailDurationSlider, value);
         }
     }
 
     [UIValue("override-trail-width")]
-    public bool OverrideTrailWidth
+    private bool OverrideTrailWidth
     {
         get => config.OverrideTrailWidth;
         set
         {
             config.OverrideTrailWidth = value;
             previewManager.UpdateTrails();
-            if (parsed) BSMLHelpers.SetSliderInteractable(trailWidthInteractable, value, trailWidthText);
+            BSMLHelpers.SetSliderInteractable(trailWidthSlider, value);
         }
     }
 
     [UIValue("trail-duration")]
-    public int TrailDuration
+    private int TrailDuration
     {
         get => config.TrailDuration;
         set
@@ -100,7 +74,7 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController, INotif
     }
 
     [UIValue("trail-width")]
-    public int TrailWidth
+    private int TrailWidth
     {
         get => config.TrailWidth;
         set
@@ -110,8 +84,9 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController, INotif
         }
     }
 
+    [UIValue("trail-type-choices")] private List<object> trailTypeChoices = [.. Enum.GetNames(typeof(TrailType))];
     [UIValue("trail-type")]
-    public string TrailType
+    private string TrailType
     {
         get => config.TrailType.ToString();
         set
@@ -121,38 +96,23 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController, INotif
         }
     }
 
-    [UIValue("trail-type-list")]
-    public List<object> trailTypeList = Enum.GetNames(typeof(TrailType)).ToList<object>();
-
     [UIValue("enable-custom-events")]
-    public bool EnableCustomEvents
+    private bool EnableCustomEvents
     {
         get => config.EnableCustomEvents;
         set => config.EnableCustomEvents = value;
     }
 
-    [UIValue("forcefully-foolish")]
-    public bool ForcefullyFoolish
-    {
-        get => config.ForcefullyFoolish;
-        set => config.ForcefullyFoolish = value;
-    }
-
     [UIAction("#post-parse")]
     private void PostParse()
     {
-        parsed = true;
-        BSMLHelpers.SetSliderInteractable(trailDurationInteractable, OverrideTrailDuration, trailDurationText);
-        BSMLHelpers.SetSliderInteractable(trailWidthInteractable, OverrideTrailWidth, trailWidthText);
+        BSMLHelpers.SetSliderInteractable(trailDurationSlider, OverrideTrailDuration);
+        BSMLHelpers.SetSliderInteractable(trailWidthSlider, OverrideTrailWidth);
     }
 
-    public void Activated()
+    protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
     {
-        foreach (var name in SharedSaberSettings.PropertyNames)
-        {
-            NotifyPropertyChanged(name);
-        }
-
-        foolishSetting.gameObject.SetActive(config.Fooled);
+        base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
+        SharedSaberSettings.PropertyNames.ForEach(NotifyPropertyChanged);
     }
 }
