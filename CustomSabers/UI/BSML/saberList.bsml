@@ -6,7 +6,7 @@
       <dropdown-list-setting text='Sort' value='order-by-filter' choices='order-by-choices' apply-on-change='true' word-wrapping='false' size-delta-x='32'/>
     </horizontal>
     <clickable-image on-click='toggle-sort-direction' id='sort-direction-button' src='#HeightIcon' preserve-aspect='true' pref-width='6'/>
-    <clickable-image on-click='scroll-to-selected-cell' src='#SmallNotesIcon' preserve-aspect='true' pref-width='6'/>
+    <clickable-image on-click='scroll-to-selected-cell' src='#SmallNotesIcon' preserve-aspect='true' pref-width='6' hover-hint='Go to selected saber'/>
   </horizontal>
     
   <!--saber list-->
