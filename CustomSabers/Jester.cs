@@ -1,5 +1,5 @@
-﻿using CustomSabersLite.Utilities;
-using CustomSabersLite.Utilities.Extensions;
+﻿using CustomSabersLite.Components;
+using CustomSabersLite.Utilities;
 using UnityEngine;
 using Zenject;
 
@@ -16,30 +16,24 @@ internal class Jester(GameResourcesProvider gameResourcesProvider) : IInitializa
     {
         SaberModel.name = "<color=yellow>Very funny saber</color>";
         SaberModel.SetActive(false);
-        SaberModel.GetComponentsInChildren<MonoBehaviour>().ForEach(Object.Destroy);
 
         for (var i = 0; i < 100; i++)
         {
-            var position = new Vector3(
+            var saber = Instantiate(SaberModel);
+            saber.SetActive(true);
+            var colorer = saber.AddComponent<DefaultSaberColorer>();
+
+            saber.transform.position = new Vector3(
                 Range(-20f, 20f),
                 Range(0.4f, 10f),
                 Range(-20f, 20f)
             );
-            var color = new Color(
+            saber.transform.rotation = rotation;
+            colorer.SetColor(new Color(
                 Range(0f, 1f),
                 Range(0f, 1f),
                 Range(0f, 1f)
-            );
-            CreateNewSaber(position, rotation, color);
+            ));
         }
-    }
-    private void CreateNewSaber(Vector3 pos, Quaternion rot, Color color)
-    {
-        var saber = Instantiate(SaberModel);
-
-        saber.GetComponentsInChildren<SetSaberGlowColor>().ForEach(x => x.SetNewColor(color));
-        saber.GetComponentsInChildren<SetSaberFakeGlowColor>().ForEach(x => x.SetNewColor(color));
-        saber.transform.position = pos;
-        saber.transform.rotation = rot;
     }
 }
