@@ -26,13 +26,18 @@ internal class CustomLiteSaber : ILiteSaber
 
     public void SetColor(Color color)
     {
-        for (int i = 0; i < ColorableMaterials.Length; i++)
+        foreach (var colorableMaterial in ColorableMaterials)
         {
-            ColorableMaterials[i].SetColor(MaterialProperties.Color, color);
+            colorableMaterial.SetColor(MaterialProperties.Color, color);
         }
     }
 
-    public void SetParent(Transform parent) => Transform.SetParent(parent, false);
+    public void SetParent(Transform parent)
+    {
+        Transform.SetParent(parent, false);
+        Transform.position = parent.position;
+        Transform.rotation = parent.rotation;
+    }
 
     public void Destroy()
     {
@@ -42,7 +47,7 @@ internal class CustomLiteSaber : ILiteSaber
         }
     }
 
-    private Material[] GetColorableMaterials(GameObject gameObject)
+    private static Material[] GetColorableMaterials(GameObject gameObject)
     {
         var colorableMaterials = new List<Material>();
         foreach (var renderer in gameObject.GetComponentsInChildren<Renderer>(true))

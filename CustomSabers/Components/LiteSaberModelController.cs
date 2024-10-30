@@ -28,7 +28,7 @@ internal class LiteSaberModelController : SaberModelController, IColorable, IPre
         set
         {
             color = value;
-            if (liteSaberInstance != null) liteSaberInstance.SetColor(value);
+            liteSaberInstance?.SetColor(value);
             customTrailInstances?.ForEach(t => t.SetColor(value));
         }
     }
@@ -42,6 +42,8 @@ internal class LiteSaberModelController : SaberModelController, IColorable, IPre
     private async void CustomSaberInit(Transform parent, Saber saber)
     {
         transform.SetParent(parent, false);
+        transform.position = parent.position;
+        transform.rotation = parent.rotation;
 
         var saberData = await levelSaberManager.LevelSaberInstance;
         liteSaberInstance = saberFactory.Create(saber.saberType, saberData);
