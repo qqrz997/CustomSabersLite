@@ -1,5 +1,8 @@
 # changelog
 
+## 0.13.1
+- Fix sabers potentially being mispositioned in the hands
+
 ## 0.13.0
 ### New
 - Added saber list sorting; you can now sort by Saber Name, Author Name, and by the most recently added sabers
@@ -108,11 +111,11 @@
 
 ## 0.8.1
 - Added a toggle to disable the mod during gameplay
-- Fixed saber list in gamplay setup not refreshing
+- Fixed saber list in gameplay setup not refreshing
 - Fixed saber list not scrolling to the selected saber correctly
 
 ## 0.8.0
-- Added the ability to change saber colors seperately from the selected color scheme
+- Added the ability to change saber colors separately from the selected color scheme
 - Fixed default trail settings when using default trails with custom sabers
 - Small UI tweaks
 
@@ -155,7 +158,7 @@
 - Fixed trails that used their own custom colours
 
 ## 0.4.4
-- Fixed a major gameplay breaking bug where custom trails would interfere with the hitbox of the sabers
+- Fixed a major gameplay breaking bug where custom trails would interfere with the hit-box of the sabers
 
 ## 0.4.3
 - Cached metadata is now automatically replaced when the mod is updated to make sure the new flags are included
@@ -179,7 +182,7 @@ note: multiplayer support is planned but is not of high priority
 ## 0.3.7
 - Most sabers, and their trails, should now be coloured correctly
 - Fix for most saber trails not using Vertex Colors now have the correct colour 
-- Fix for sabers with sharedmaterials not applying the right colour to both sabers
+- Fix for sabers with shared materials not applying the right colour to both sabers
 - UI adjustments (WIP)
 - Basic asynchronous loading
 
