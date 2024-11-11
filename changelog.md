@@ -1,5 +1,9 @@
 # changelog
 
+## 0.13.2
+- Fixed the saber list in the gameplay setup tab not being able to select any sabers
+- Fixed the saber list in the main menu sometimes not being ordered as it is supposed to be
+
 ## 0.13.1
 - Fix sabers potentially being mispositioned in the hands
 
