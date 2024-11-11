@@ -88,7 +88,7 @@ internal class BasicPreviewTrail
 
         var top = CurrentTrailData.TopLocalPosition;
         var bottom = config.OverrideTrailWidth ? CurrentTrailData.GetOverrideWidthBottom(config.TrailWidth, true) : CurrentTrailData.BottomLocalPosition;
-        var length = config.OverrideTrailDuration ? (config.TrailDuration / 250f) : Mathf.Clamp(CurrentTrailData.Length, 0f, 0.4f);
+        float length = config.OverrideTrailDuration ? (config.TrailDuration / 250f) : Mathf.Clamp(CurrentTrailData.Length, 0f, 0.4f);
 
         vertices[0] = bottom;
         vertices[1] = top;

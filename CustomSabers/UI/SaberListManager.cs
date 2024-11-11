@@ -18,11 +18,7 @@ internal class SaberListManager(SaberInstanceManager saberInstances)
     private SaberListCellInfo InfoForDefaultSabers { get; } = MetaToInfo(CustomSaberMetadata.Default);
 
     public void Clear() => Data.Clear();
-    public void SetData(IEnumerable<CustomSaberMetadata> data)
-    {
-        Data = data.Select(MetaToInfo).ToList();
-        UpdateList(SaberListFilterOptions.Default);
-    }
+    public void SetData(IEnumerable<CustomSaberMetadata> data) => Data = data.Select(MetaToInfo).ToList();
 
     public IEnumerable<SaberListCellInfo> UpdateList(SaberListFilterOptions filterOptions) =>
         SaberList = GetSortedData(filterOptions).Prepend(InfoForDefaultSabers).ToList();
@@ -34,13 +30,13 @@ internal class SaberListManager(SaberInstanceManager saberInstances)
             return false;
         }
 
-        var currentSaberPath = Path.Combine(PluginDirs.CustomSabers.FullName, relativePath);
+        string currentSaberPath = Path.Combine(PluginDirs.CustomSabers.FullName, relativePath);
         if (!File.Exists(currentSaberPath))
         {
             return false;
         }
 
-        var destinationPath = Path.Combine(PluginDirs.DeletedSabers.FullName, relativePath);
+        string destinationPath = Path.Combine(PluginDirs.DeletedSabers.FullName, relativePath);
         if (File.Exists(destinationPath))
         {
             File.Delete(destinationPath);
@@ -58,7 +54,7 @@ internal class SaberListManager(SaberInstanceManager saberInstances)
     public int IndexForPath(string? relativePath)
     {
         if (string.IsNullOrWhiteSpace(relativePath)) return 0;
-        var index = SaberList.IndexOf(SaberList.FirstOrDefault(i => i.Metadata.SaberFile.RelativePath == relativePath));
+        int index = SaberList.IndexOf(SaberList.FirstOrDefault(i => i.Metadata.SaberFile.RelativePath == relativePath));
         return index != -1 ? index : 0;
     }
 

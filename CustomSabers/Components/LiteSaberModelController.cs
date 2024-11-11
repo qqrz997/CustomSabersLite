@@ -54,7 +54,7 @@ internal class LiteSaberModelController : SaberModelController, IColorable, IPre
             return;
         }
 
-        var intensity = gameplaySetupData.playerSpecificSettings.saberTrailIntensity;
+        float intensity = gameplaySetupData.playerSpecificSettings.saberTrailIntensity;
         customTrailInstances = trailFactory.CreateTrail(liteSaberInstance, saber.saberType, intensity);
 
         liteSaberInstance.SetParent(transform);

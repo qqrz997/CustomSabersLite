@@ -27,7 +27,7 @@ internal class WhackerLoader(SpriteCache spriteCache, ITimeService timeService)
     /// <returns><seealso cref="NoSaberData"/> if a custom saber failed to load</returns>
     public async Task<ISaberData> LoadWhackerAsync(string relativePath)
     {
-        var path = Path.Combine(sabersPath, relativePath);
+        string? path = Path.Combine(sabersPath, relativePath);
 
         if (!File.Exists(path))
             return new NoSaberData(relativePath, timeService.GetUtcTime(), SaberLoaderError.FileNotFound);
@@ -75,7 +75,7 @@ internal class WhackerLoader(SpriteCache spriteCache, ITimeService timeService)
         var icon = await GetDownscaledIcon(archive.GetEntry(whacker.descriptor.coverImage));
         spriteCache.AddSprite(relativePath, icon);
 
-        var assetHash = await Task.Run(() => Hashing.MD5Checksum(path, "x2")) ?? string.Empty;
+        string? assetHash = await Task.Run(() => Hashing.MD5Checksum(path, "x2")) ?? string.Empty;
 
         return
             new CustomSaberData(

@@ -56,7 +56,7 @@ internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManag
         {
             var stopwatch = Stopwatch.StartNew();
 
-            var installedSaberPaths = FileUtils.GetFilePaths(
+            string[]? installedSaberPaths = FileUtils.GetFilePaths(
                 PluginDirs.CustomSabers.FullName, [".saber", ".whacker"], SearchOption.AllDirectories, true).ToArray();
 
             var cacheFile = await InternalReloadAsync(installedSaberPaths);
@@ -140,16 +140,16 @@ internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManag
         {
             foreach (var meta in cacheFile.CachedMetadata)
             {
-                var imageData = spriteCache.GetSprite(meta.RelativePath)?.texture.EncodeToPNG();
+                byte[]? imageData = spriteCache.GetSprite(meta.RelativePath)?.texture.EncodeToPNG();
                 if (imageData == null)
                     continue;
 
-                var imagePath = Path.Combine(imagesDir.FullName, meta.Hash + ".png");
+                string? imagePath = Path.Combine(imagesDir.FullName, meta.Hash + ".png");
                 await File.WriteAllBytesAsync(imagePath, imageData);
             }
 
-            var cacheJson = JsonConvert.SerializeObject(cacheFile, Formatting.None);
-            var metadataFilePath = Path.Combine(tempCacheDir.FullName, MetadataFileName);
+            string? cacheJson = JsonConvert.SerializeObject(cacheFile, Formatting.None);
+            string? metadataFilePath = Path.Combine(tempCacheDir.FullName, MetadataFileName);
             await File.WriteAllTextAsync(metadataFilePath, cacheJson);
 
             if (File.Exists(CacheArchiveFilePath)) File.Delete(CacheArchiveFilePath);
@@ -199,11 +199,11 @@ internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManag
     {
         CurrentProgress = currentProgress with { Stage = "Loading Sabers" };
 
-        var relativePaths = sabersForCaching.ToArray();
+        string[]? relativePaths = sabersForCaching.ToArray();
         var loadedSaberMetadata = new List<SaberMetadataModel>();
         int currentItem = 1;
 
-        foreach (var relativePath in relativePaths)
+        foreach (string? relativePath in relativePaths)
         {
             using var saberData = await customSabersLoader.GetSaberData(relativePath, false);
             var metadata = saberData.Metadata;

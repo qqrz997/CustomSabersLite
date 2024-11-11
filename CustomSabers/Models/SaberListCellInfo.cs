@@ -13,7 +13,7 @@ internal class SaberListCellInfo(CustomSaberMetadata meta, SaberListCellText inf
 
     public CustomListTableData.CustomCellInfo ToCustomCellInfo()
     {
-        var (text, subtext) = Info is SaberListCellText i ? (i.Text, i.Subtext) : ("Unknown", string.Empty);
+        (string? text, string? subtext) = Info is SaberListCellText i ? (i.Text, i.Subtext) : ("Unknown", string.Empty);
         return new(text, subtext, Icon);
     }
 

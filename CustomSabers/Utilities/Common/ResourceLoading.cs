@@ -16,7 +16,7 @@ internal class ResourceLoading
     private static byte[] GetResource(Assembly assembly, string resourcePath)
     {
         using var stream = assembly.GetManifestResourceStream(resourcePath);
-        var data = new byte[stream.Length];
+        byte[]? data = new byte[stream.Length];
         stream.Read(data, 0, (int)stream.Length);
         return data;
     }
@@ -24,7 +24,7 @@ internal class ResourceLoading
     private static async Task<byte[]> GetResourceAsync(Assembly assembly, string resourcePath)
     {
         using var stream = assembly.GetManifestResourceStream(resourcePath);
-        var data = new byte[stream.Length];
+        byte[]? data = new byte[stream.Length];
         await stream.ReadAsync(data, 0, (int)stream.Length);
         return data;
     }

@@ -8,7 +8,7 @@ internal class SaberListCellText
 
     public SaberListCellText(CustomSaberMetadata meta)
     {
-        var saberFileName = meta.SaberFile.FileInfo?.Name ?? "?";
+        string? saberFileName = meta.SaberFile.FileInfo?.Name ?? "?";
         (Text, Subtext) = meta.LoaderError switch
         {
             SaberLoaderError.None => (meta.Descriptor.SaberName.FullName, meta.Descriptor.AuthorName.FullName),

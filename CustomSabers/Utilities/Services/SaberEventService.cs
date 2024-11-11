@@ -147,7 +147,7 @@ internal class SaberEventService(BeatmapObjectManager beatmapObjectManager, Game
 
     private void ScoreChangedEvent()
     {
-        var relativeScore = relativeScoreCounter.relativeScore;
+        float relativeScore = relativeScoreCounter.relativeScore;
         if (Math.Abs(previousScore - relativeScore) > 0f)
         {
             if (eventManager != null) eventManager.OnAccuracyChanged?.Invoke(relativeScore);

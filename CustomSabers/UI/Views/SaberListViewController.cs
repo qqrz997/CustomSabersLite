@@ -196,7 +196,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
     private void ScrollPositionChanged(float _)
     {
         var scrollView = saberList.TableView.scrollView;
-        var pos = scrollView._destinationPos; 
+        float pos = scrollView._destinationPos; 
         upButton.interactable = pos > 0.001f;
         downButton.interactable = pos < scrollView.contentSize - scrollView.scrollPageSize - 0.001f;
     }
@@ -224,7 +224,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
     {
         yield return new WaitUntil(() => saberList.gameObject.activeInHierarchy);
         yield return new WaitForEndOfFrame();
-        var selectedSaberIndex = saberListManager.IndexForPath(config.CurrentlySelectedSaber);
+        int selectedSaberIndex = saberListManager.IndexForPath(config.CurrentlySelectedSaber);
         saberList.TableView.SelectCellWithIdx(selectedSaberIndex);
         saberList.TableView.ScrollToCellWithIdx(selectedSaberIndex, TableView.ScrollPositionType.Center, true);
     }

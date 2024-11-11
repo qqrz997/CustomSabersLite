@@ -53,7 +53,7 @@ internal class MenuSaber
         defaultTrail.enabled = !config.OverrideTrailDuration ? config.TrailType == TrailType.Vanilla
             : config.TrailDuration > 0 && config.TrailType == TrailType.Vanilla;
 
-        for (var i = 0; i < trailInstances.Length; i++)
+        for (int i = 0; i < trailInstances.Length; i++)
         {
             if (trailInstances[i])
             {

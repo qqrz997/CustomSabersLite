@@ -17,7 +17,7 @@ internal class Jester(GameResourcesProvider gameResourcesProvider) : IInitializa
         SaberModel.name = "<color=yellow>Very funny saber</color>";
         SaberModel.SetActive(false);
 
-        for (var i = 0; i < 100; i++)
+        for (int i = 0; i < 100; i++)
         {
             var saber = Instantiate(SaberModel);
             saber.SetActive(true);

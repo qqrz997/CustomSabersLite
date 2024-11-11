@@ -33,7 +33,7 @@ internal class TrailFactory(CSLConfig config, GameResourcesProvider gameResource
     private LiteSaberTrail[] CreateTrails(GameObject saberObject, CustomTrailData[] trailsData, SaberType saberType, float intensity)
     {
         var trails = new List<LiteSaberTrail>();
-        for (var i = 0; i < trailsData.Length; i++)
+        for (int i = 0; i < trailsData.Length; i++)
         {
             var trail = CreateTrail(saberObject, trailsData[i], intensity);
             trail.ConfigureTrail(config, i == 0);

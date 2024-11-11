@@ -21,7 +21,7 @@ internal static class GameObjectExtensions
     private static void SetLayer(GameObject gameObject, int layer)
     {
         gameObject.layer = layer;
-        for (var i = 0; i < gameObject.transform.childCount; i++)
+        for (int i = 0; i < gameObject.transform.childCount; i++)
         {
             SetLayer(gameObject.transform.GetChild(i).gameObject, layer);
         }

@@ -28,7 +28,7 @@ internal class CSLFlowCoordinator : FlowCoordinator
     {
         if (firstActivation)
         {
-            var title = currentCacheProgress is null ? "Custom Sabers"
+            string title = currentCacheProgress is null ? "Custom Sabers"
                 : currentCacheProgress.Completed ? "Custom Sabers"
                 : FormatProgress(currentCacheProgress);
             SetTitle(title);

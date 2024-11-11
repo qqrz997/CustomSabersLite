@@ -14,7 +14,7 @@ internal class BSMLHelpers
     public static void SetSliderInteractable(SliderSetting slider, bool interactable)
     {
         if (!slider) return;
-        var alpha = interactable ? 1f : 0.5f;
+        float alpha = interactable ? 1f : 0.5f;
         var sliderText = slider.transform.Find("Title").GetComponent<CurvedTextMeshPro>();
         var valueText = slider.transform.Find("BSMLSlider/SlidingArea/Value").GetComponent<CurvedTextMeshPro>();
         sliderText.color = sliderText.color with { a = alpha };

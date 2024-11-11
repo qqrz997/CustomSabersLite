@@ -36,7 +36,7 @@ internal static class TrailUtils
 
         if (trail is LiteSaberTrail customTrail && customTrail.InstanceTrailData != null)
         {
-            var duration = config.OverrideTrailDuration ? config.TrailDuration / 250f
+            float duration = config.OverrideTrailDuration ? config.TrailDuration / 250f
                 : customTrail.InstanceTrailData.Length;
             customTrail.OverrideWidth = config.TrailWidth;
             customTrail.UseWidthOverride = config.OverrideTrailWidth && useOverrideWidth;
@@ -45,7 +45,7 @@ internal static class TrailUtils
         }
         else if (trail is SaberTrail defaultTrail)
         {
-            var duration = config.OverrideTrailDuration ? config.TrailDuration / 250f : DefaultDuration;
+            float duration = config.OverrideTrailDuration ? config.TrailDuration / 250f : DefaultDuration;
             defaultTrail._trailDuration = duration;
             if (config.TrailType == TrailType.None || Mathf.Approximately(duration, 0f))
             {
