@@ -11,18 +11,18 @@ namespace CustomSabersLite.UI;
 internal class SaberListManager(SaberInstanceManager saberInstances)
 {
     private readonly SaberInstanceManager saberInstanceManager = saberInstances;
-
+ 
     private List<SaberListCellInfo> Data { get; set; } = [];
     private List<SaberListCellInfo> SaberList { get; set; } = [];
 
     private SaberListCellInfo InfoForDefaultSabers { get; } = MetaToInfo(CustomSaberMetadata.Default);
 
     public void Clear() => Data.Clear();
-    public void SetData(IEnumerable<CustomSaberMetadata> data) =>
+    public void SetData(IEnumerable<CustomSaberMetadata> data)
+    {
         Data = data.Select(MetaToInfo).ToList();
-
-    public IEnumerable<SaberListCellInfo> GetListInfo() =>
-        GetSortedData(SaberListFilterOptions.Default).Prepend(InfoForDefaultSabers);
+        UpdateList(SaberListFilterOptions.Default);
+    }
 
     public IEnumerable<SaberListCellInfo> UpdateList(SaberListFilterOptions filterOptions) =>
         SaberList = GetSortedData(filterOptions).Prepend(InfoForDefaultSabers).ToList();
@@ -74,7 +74,7 @@ internal class SaberListManager(SaberInstanceManager saberInstances)
         var filtered = string.IsNullOrEmpty(filterOptions.SearchFilter) ? Data
             : Data.Where(i => i.Contains(filterOptions.SearchFilter));
 
-        var ordererdData = filterOptions.OrderBy switch
+        var orderedData = filterOptions.OrderBy switch
         {
             OrderBy.Name => filtered.OrderBy(i => i.Metadata.Descriptor.SaberName).ThenBy(i => i.Metadata.Descriptor.AuthorName),
             OrderBy.Author => filtered.OrderBy(i => i.Metadata.Descriptor.AuthorName).ThenBy(i => i.Metadata.Descriptor.SaberName),
@@ -82,7 +82,7 @@ internal class SaberListManager(SaberInstanceManager saberInstances)
             _ => throw new NotImplementedException()
         };
 
-        return filterOptions.ReverseOrder ? ordererdData.Reverse() : ordererdData;
+        return filterOptions.ReverseOrder ? orderedData.Reverse() : orderedData;
     }
 
     private static SaberListCellInfo MetaToInfo(CustomSaberMetadata meta)

@@ -99,8 +99,8 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged
         BSMLHelpers.SetSliderWidth(trailWidthSlider, 50, 0);
 
         BSMLHelpers.SetDropDownSettingWidth(trailTypeList, 25, 0);
-
-        if (saberMetadataCache.CurrentProgress.Completed) RefreshList();
+        
+        RefreshList();
     }
 
     [UIAction("select-saber")]
@@ -112,13 +112,19 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged
 
     public void RefreshList()
     {
-        saberList.Data = saberListManager.GetListInfo().Select(i => i.ToCustomCellInfo()).ToList();
+        if (!saberMetadataCache.CurrentProgress.Completed)
+        {
+            return;
+        }
+        
+        saberList.Data = saberListManager.UpdateList(SaberListFilterOptions.Default).Select(i => i.ToCustomCellInfo()).ToList();
         saberList.TableView.ReloadData();
     }
 
     public void Activated(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
     {
         SharedSaberSettings.PropertyNames.ForEach(NotifyPropertyChanged);
+        RefreshList();
         coroutineStarter.StartSingleCoroutine(ref scrollToSelectedCellCoroutine, ScrollToSelectedCell());
     }
 
@@ -126,9 +132,8 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged
     private IEnumerator ScrollToSelectedCell()
     {
         yield return new WaitUntil(() => saberList.gameObject.activeInHierarchy);
-        yield return null;
-        yield return null;
-        var selectedSaberIndex = saberListManager.IndexForPath(config.CurrentlySelectedSaber);
+        /* wait for some frames */ for (int i = 0; i < 2; i++) yield return null;
+        int selectedSaberIndex = saberListManager.IndexForPath(config.CurrentlySelectedSaber);
         saberList.TableView.SelectCellWithIdx(selectedSaberIndex);
         saberList.TableView.ScrollToCellWithIdx(selectedSaberIndex, TableView.ScrollPositionType.Center, true);
     }

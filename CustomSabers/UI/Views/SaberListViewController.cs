@@ -237,6 +237,8 @@ internal class SaberListViewController : BSMLAutomaticViewController
         {
             UnityMainThreadTaskScheduler.Factory.StartNew(GeneratePreview);
         }
+
+        RefreshList();
         StartCoroutine(SelectSelectedAndScrollTo());
         previewManager.SetPreviewActive(true);
     }
