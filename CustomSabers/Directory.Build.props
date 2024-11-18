@@ -1,8 +1,34 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!-- This file contains project properties used by the build. -->
 <Project>
+
+	<!-- Plugin Metadata -->
 	<PropertyGroup>
-		<ImportBSMTTargets>True</ImportBSMTTargets>
-		<BSMTProjectType>BSIPA</BSMTProjectType>
+		<PluginId>CustomSabersLite</PluginId>
+		<PluginName>CustomSabersLite</PluginName>
+		<Authors>CustomSabersLite</Authors>
+		<Version>1.0.0</Version>
+		<GameVersion>1.39.0</GameVersion>
+		<Description>No description.</Description>
 	</PropertyGroup>
+
+	<!-- Plugin Dependencies -->
+	<ItemGroup>
+		<DependsOn Include="BSIPA" Version="^4.3.5"/>
+		<DependsOn Include="BeatSaberMarkupLanguage" Version="^1.12.0"/>
+		<DependsOn Include="AssetBundleLoadingTools" Version="^1.1.9"/>
+		<DependsOn Include="SiraUtil" Version="^3.1.12"/>
+		<DependsOn Include="System.IO.Compression" Version="^4.6.57"/>
+		<DependsOn Include="System.IO.Compression.FileSystem" Version="^4.7.3056"/>
+	</ItemGroup>
+	
+	<PropertyGroup>
+		<BSMTProjectType>BSIPA</BSMTProjectType>
+		<GenerateManifest>true</GenerateManifest>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' != 'Release'">
+		<DisableZipRelease>true</DisableZipRelease>
+	</PropertyGroup>
+
 </Project>
