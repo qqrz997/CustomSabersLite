@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Parser;
 using BeatSaberMarkupLanguage.TypeHandlers;
@@ -20,10 +21,13 @@ public class ToggleableSliderHandler : TypeHandler<ToggleableSlider>
         { "sliderValue", ["slider-value"] },
         // Toggle props
         { "toggleValue", ["toggle-value"] },
-        { "setEvent", ["set-event"] },
-        { "getEvent", ["get-event"] },
+        // Image props
+        { "imageSource", ["image-source", "img-source", "img-src", "source", "src"] },
+        { "imageColor", ["image-color", "img-color"] },
         // Props
         { "bindValues", ["bind-values"] },
+        { "setEvent", ["set-event"] },
+        { "getEvent", ["get-event"] },
     };
 
     public override Dictionary<string, Action<ToggleableSlider, string>> Setters { get; } = [];
@@ -74,6 +78,19 @@ public class ToggleableSliderHandler : TypeHandler<ToggleableSlider>
                 BindValue(componentType, parserParams, toggleBsmlValue, _ => toggleableSlider.ReceiveToggleValue());
             }
         }
+
+        if (componentType.Data.TryGetValue("imageSource", out string imageSource))
+        {
+            toggleableSlider.Icon.SetImageAsync(imageSource)
+                .ContinueWith(t => 
+                    Logger.Error($"Failed to load image\n{t.Exception}"), TaskContinuationOptions.OnlyOnFaulted);
+        }
+
+        if (componentType.Data.TryGetValue("imageColor", out string imageColor))
+        {
+            toggleableSlider.Icon.color = Parse.Color(imageColor);
+        }
+            
         
         parserParams.AddEvent(componentType.Data.GetValueOrDefault("setEvent", "apply"), toggleableSlider.ApplyValue);
         parserParams.AddEvent(componentType.Data.GetValueOrDefault("getEvent", "apply"), toggleableSlider.ReceiveValues);
