@@ -36,6 +36,8 @@ public sealed class ToggleableSlider : MonoBehaviour
     public float Increment { get; set; }
     public bool IntOnly { get; set; }
 
+    public ImageView Icon { get; set; } = null!;
+
     public void Setup()
     {
         if (Slider == null) throw new NullReferenceException($"{nameof(Slider)} is not set");
