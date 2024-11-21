@@ -1,17 +1,24 @@
 ﻿using CustomSabersLite.Components;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Utilities.Services;
+using JetBrains.Annotations;
 using SiraUtil.Sabers;
 using Zenject;
 
 namespace CustomSabersLite.Installers;
 
+[UsedImplicitly]
 internal class PlayerInstaller : Installer
 {
+    private readonly CSLConfig config;
+
+    private PlayerInstaller(CSLConfig config)
+    {
+        this.config = config;
+    }
+    
     public override void InstallBindings()
     {
-        var config = Container.Resolve<CSLConfig>();
-
         if (!config.Enabled)
         {
             Logger.Debug("Custom Sabers is disabled - will not run");

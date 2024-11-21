@@ -3,6 +3,9 @@ using CustomSabersLite.UI.Managers;
 using CustomSabersLite.UI.Views;
 using CustomSabersLite.Utilities;
 using System;
+using BeatSaberMarkupLanguage.Tags;
+using BeatSaberMarkupLanguage.TypeHandlers;
+using CustomSabersLite.UI.CustomTags;
 using UnityEngine;
 using Zenject;
 
@@ -13,7 +16,11 @@ internal class MenuInstaller : Installer
     public override void InstallBindings()
     {
         Container.BindInterfacesAndSelfTo<MenuPointers>().AsSingle();
-
+        
+        // Custom tags
+        Container.Bind<BSMLTag>().To<ToggleableSliderTag>().AsSingle();
+        Container.Bind<TypeHandler>().To<ToggleableSliderHandler>().AsSingle();
+        
         // View controllers
         Container.Bind<SaberListViewController>().FromNewComponentAsViewController().AsSingle();
         Container.Bind<SaberSettingsViewController>().FromNewComponentAsViewController().AsSingle();
