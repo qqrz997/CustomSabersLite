@@ -24,7 +24,7 @@ internal class CSLFlowCoordinator : FlowCoordinator
     private void Awake() =>
         cacheManager.LoadingProgressChanged += LoadingProgressChanged;
 
-    protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
+    public override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
     {
         if (firstActivation)
         {
@@ -70,6 +70,6 @@ internal class CSLFlowCoordinator : FlowCoordinator
         cancellationTokenSource.Dispose();
     }
 
-    protected override void BackButtonWasPressed(ViewController topViewController) =>
+    public override void BackButtonWasPressed(ViewController topViewController) =>
         mainFlowCoordinator.DismissFlowCoordinator(this);
 }
