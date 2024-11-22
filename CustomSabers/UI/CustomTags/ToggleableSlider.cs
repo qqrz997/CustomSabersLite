@@ -1,6 +1,8 @@
 using System;
+using System.Threading.Tasks;
 using BeatSaberMarkupLanguage.Parser;
 using HMUI;
+using IPA.Utilities.Async;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,7 +24,12 @@ public sealed class ToggleableSlider : MonoBehaviour
     public float SliderValue
     {
         get => Slider.value;
-        set => Slider.value = value;
+        set
+        {
+            Slider.value = value;
+            sliderValueLabel.text = FormatSliderValue(value);
+            ApplySliderValue();
+        }
     }
 
     public Toggle Toggle { get; set; } = null!;
@@ -30,7 +37,16 @@ public sealed class ToggleableSlider : MonoBehaviour
     public bool ToggleValue
     {
         get => Toggle.isOn;
-        set => Toggle.isOn = value;
+        set
+        {
+            Toggle.isOn = value;
+            increaseButton.interactable = ToggleValue;
+            decreaseButton.interactable = ToggleValue;
+            Slider.interactable = ToggleValue;
+            sliderHandleImage.color = ToggleValue ? sliderHandleImageDefaultColor : Color.white with { a = 0.2f };
+            sliderValueLabel.color = ToggleValue ? Color.white : Color.white with { a = 0.2f };
+            ApplyToggleValue();
+        }
     }
 
     public float Increment { get; set; }
@@ -65,12 +81,16 @@ public sealed class ToggleableSlider : MonoBehaviour
         Toggle.onValueChanged.AddListener(ToggleValueChanged);
         
         ReceiveValues();
-        
-        ToggleValueChanged(ToggleValue);
-        SliderValueChanged(Slider, SliderValue);
-    }
 
-    public void ApplyValue()
+        // TODO: what the fuck
+        UnityMainThreadTaskScheduler.Factory.StartNew(async () =>
+        {
+            await Task.Delay(25);
+            SliderValueChanged(Slider, Slider.value);
+        });
+    }
+    
+    public void ApplyValues()
     {
         ApplySliderValue();
         ApplyToggleValue();
@@ -86,7 +106,7 @@ public sealed class ToggleableSlider : MonoBehaviour
     {
         if (SliderAssociatedValue != null)
         {
-            Slider.value = IntOnly ? (int)SliderAssociatedValue.GetValue() : (float)SliderAssociatedValue.GetValue();
+            SliderValue = IntOnly ? (int)SliderAssociatedValue.GetValue() : (float)SliderAssociatedValue.GetValue();
         }
     }
     
@@ -97,6 +117,14 @@ public sealed class ToggleableSlider : MonoBehaviour
             ToggleValue = (bool)ToggleAssociatedValue.GetValue();
         }
     }
+    
+    private string FormatSliderValue(float value) => IntOnly switch
+    {
+        true when Formatter != null => (string)Formatter.Invoke((int)Math.Round(value)),
+        false when Formatter != null => (string)Formatter.Invoke(value),
+        true => ((int)Math.Round(value)).ToString(),
+        false => value.ToString("N2"),
+    };
 
     private void ApplySliderValue()
     {
@@ -104,36 +132,14 @@ public sealed class ToggleableSlider : MonoBehaviour
         else SliderAssociatedValue?.SetValue(SliderValue);
     }
     
-    private void ApplyToggleValue()
-    {
+    private void ApplyToggleValue() =>
         ToggleAssociatedValue?.SetValue(ToggleValue);
-    }
 
-    private void ToggleValueChanged(bool value)
-    {
+    private void ToggleValueChanged(bool value) =>
         ToggleValue = value;
-        increaseButton.interactable = ToggleValue;
-        decreaseButton.interactable = ToggleValue;
-        Slider.interactable = ToggleValue;
-        sliderHandleImage.color = ToggleValue ? sliderHandleImageDefaultColor : Color.white with { a = 0.2f };
-        sliderValueLabel.color = ToggleValue ? Color.white : Color.white with { a = 0.2f };
-        ApplyToggleValue();
-    }
-    
-    private void SliderValueChanged(RangeValuesTextSlider slider, float value)
-    {
-        if (IntOnly) value = MathF.Round(value);
-        
-        sliderValueLabel.text = IntOnly switch
-        {
-            true when Formatter != null => (string)Formatter.Invoke((int)Math.Round(value)),
-            false when Formatter != null => (string)Formatter.Invoke(value),
-            true => ((int)Math.Round(value)).ToString(),
-            false => value.ToString("N2"),
-        };
-        
-        ApplySliderValue();
-    }
+
+    private void SliderValueChanged(RangeValuesTextSlider slider, float value) =>
+        SliderValue = !IntOnly ? value : (int)Math.Round(value);
 
     private void OnDestroy()
     {
