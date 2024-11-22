@@ -5,6 +5,7 @@ using BGLib.Polyglot;
 using CustomSabersLite.Utilities;
 using HMUI;
 using JetBrains.Annotations;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -70,9 +71,9 @@ public class ToggleableSliderTag : BSMLTag
         // Label
         var labelObject = new GameObject("Label") { layer = 5 };
         var labelLayoutElement = labelObject.AddComponent<LayoutElement>();
-        labelLayoutElement.preferredWidth = 16f;
+        labelLayoutElement.preferredWidth = 28f;
         toggleableSlider.Label = Object.Instantiate(labelTemplate, labelObject.transform, false);
-        toggleableSlider.GetComponent<LocalizedTextMeshProUGUI>().DestroyComponent();
+        toggleableSlider.Label.GetComponent<LocalizedTextMeshProUGUI>().DestroyComponent();
         toggleableSlider.Label.enableWordWrapping = false;
         toggleableSlider.Label.fontSize = 4;
         toggleableSlider.Label.color = Color.white;
@@ -82,6 +83,8 @@ public class ToggleableSliderTag : BSMLTag
         
         // Slider
         var sliderObject = Object.Instantiate(sliderTemplate);
+        sliderObject.GetComponentInChildren<LocalizedTextMeshProUGUI>().DestroyComponent();
+        sliderObject.GetComponentInChildren<TextMeshProUGUI>().DestroyComponent();
         sliderObject.name = "SliderSetting";
         toggleableSlider.Slider = sliderObject.GetComponentInChildren<CustomFormatRangeValuesSlider>();
         toggleableSlider.Slider.name = "Slider";

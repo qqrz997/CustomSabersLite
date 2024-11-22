@@ -12,6 +12,8 @@ internal class CSLResources
     public static Sprite ExtremeArrowIcon { get; } = LoadSpriteResource("extreme-arrow-icon.png");
     public static Sprite TrailDurationIcon { get; } = LoadSpriteResource("trail-duration.png");
     public static Sprite TrailWidthIcon { get; } = LoadSpriteResource("trail-width.png");
+    public static Sprite SaberLengthIcon { get; } = LoadSpriteResource("saber-length.png");
+    public static Sprite SaberWidthIcon { get; } = LoadSpriteResource("saber-width.png");
 
     private static Sprite LoadSpriteResource(string resourceName) =>
         new Texture2D(2, 2).ToSprite(ResourceLoading.GetResource(ResourcesPath + resourceName))
