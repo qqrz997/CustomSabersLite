@@ -36,7 +36,7 @@ public sealed class ToggleableSlider : MonoBehaviour
     public float Increment { get; set; }
     public bool IntOnly { get; set; }
 
-    public ImageView Icon { get; set; } = null!;
+    public ImageView? Icon { get; set; }
     
     public TextMeshProUGUI Label { get; set; } = null!;
 

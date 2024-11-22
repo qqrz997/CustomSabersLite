@@ -1,4 +1,4 @@
-<vertical anchor-pos-x='0' child-control-height='false' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd'>
+<vertical anchor-pos-x='0' preferred-width="120" child-control-height='false' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd'>
 
   <vertical spacing='1' horizontal-fit='Unconstrained'>
 
@@ -22,13 +22,23 @@
       
       <!--Trail duration-->
       <toggleable-slider text="Trail Length" id="trail-duration" slider-value="trail-duration" toggle-value="override-trail-duration" 
-                         min="0" max="100" increment="1" integer-only="true" apply-on-change="true" bind-values="true" formatter="trail-slider-formatter"
-                         src="#LockIcon" hover-hint="Modify the duration, or lifetime, of saber trails"/>
+                         min="0" max="100" increment="1" integer-only="true" apply-on-change="true" bind-values="true" formatter="percent-slider-formatter"
+                         hover-hint="Modify the duration, or lifetime, of saber trails"/>
       
       <!--Trail width-->
       <toggleable-slider text="Trail Width" id="trail-width" slider-value="trail-width" toggle-value="override-trail-width"
-                         min="0" max="100" increment="1" integer-only="true" apply-on-change="true" bind-values="true" formatter="trail-slider-formatter"
-                         src="#AvatarHandsIcon" hover-hint="Modify the width of saber trails"/>
+                         min="0" max="100" increment="1" integer-only="true" apply-on-change="true" bind-values="true" formatter="percent-slider-formatter"
+                         hover-hint="Modify the width of saber trails"/>
+      
+      <!--Saber length-->
+      <toggleable-slider text="Saber Length" id="saber-length" slider-value="saber-length" toggle-value="override-saber-length"
+                         min="50" max="150" increment="10" integer-only="true" apply-on-change="true" bind-values="true" formatter="percent-slider-formatter"
+                         hover-hint="Modify the length of the saber model - has no affect on hit box"/>
+      
+      <!--Saber length-->
+      <toggleable-slider text="Saber Width" id="saber-width" slider-value="saber-width" toggle-value="override-saber-width"
+                         min="0" max="200" increment="10" integer-only="true" apply-on-change="true" bind-values="true" formatter="percent-slider-formatter"
+                         hover-hint="Modify the girth of the saber model - has no affect on hit box"/>
     </vertical>
 
     <vertical horizontal-fit='Unconstrained' child-control-height='false' child-expand-height='false' background='round-rect-panel' bg-color='#00000077' pad='1' pad-left='2' pad-right='2' bg='round-rect-panel'>

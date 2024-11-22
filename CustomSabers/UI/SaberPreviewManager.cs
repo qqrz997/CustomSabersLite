@@ -98,4 +98,9 @@ internal class SaberPreviewManager : IInitializable, IDisposable
     {
         if (previewParent != null) previewParent.gameObject.Destroy();
     }
+
+    public void UpdateSaberModels()
+    {
+        
+    }
 }

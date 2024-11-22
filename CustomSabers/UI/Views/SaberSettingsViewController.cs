@@ -19,6 +19,8 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController
 
     [UIComponent("trail-duration")] private readonly ImageView trailDurationIcon = null!; 
     [UIComponent("trail-width")] private readonly ImageView trailWidthIcon = null!;
+    [UIComponent("saber-length")] private readonly ImageView saberLengthIcon = null!;
+    [UIComponent("saber-width")] private readonly ImageView saberWidthIcon = null!;
 
     [UIValue("enabled")]
     private bool Enabled
@@ -81,7 +83,51 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController
             previewManager.UpdateTrails();
         }
     }
-
+    
+    [UIValue("override-saber-length")]
+    private bool OverrideSaberLength
+    {
+        get => config.OverrideSaberLength;
+        set
+        {
+            config.OverrideSaberLength = value;
+            previewManager.UpdateSaberModels();
+        }
+    }
+    
+    [UIValue("saber-length")]
+    private int SaberLength
+    {
+        get => config.SaberLength;
+        set
+        {
+            config.SaberLength = value;
+            previewManager.UpdateSaberModels();
+        }
+    }
+    
+    [UIValue("override-saber-width")]
+    private bool OverrideSaberWidth
+    {
+        get => config.OverrideSaberWidth;
+        set
+        {
+            config.OverrideSaberWidth = value;
+            previewManager.UpdateSaberModels();
+        }
+    }
+    
+    [UIValue("saber-width")]
+    private int SaberWidth
+    {
+        get => config.SaberWidth;
+        set
+        {
+            config.SaberWidth = value;
+            previewManager.UpdateSaberModels();
+        }
+    }
+    
     [UIValue("trail-type-choices")] private List<object> trailTypeChoices = [.. Enum.GetNames(typeof(TrailType))];
     [UIValue("trail-type")]
     private string TrailType
@@ -106,10 +152,12 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController
     {
         trailDurationIcon.sprite = CSLResources.TrailDurationIcon;
         trailWidthIcon.sprite = CSLResources.TrailWidthIcon;
+        saberLengthIcon.sprite = CSLResources.SaberLengthIcon;
+        saberWidthIcon.sprite = CSLResources.SaberWidthIcon;
     }
     
-    [UIAction("trail-slider-formatter")]
-    private string TrailSliderFormatter(object value) => $"{value}%";
+    [UIAction("percent-slider-formatter")]
+    private string PercentSliderFormatter(object value) => $"{value}%";
 
     protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
     {
