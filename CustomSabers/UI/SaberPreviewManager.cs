@@ -61,6 +61,7 @@ internal class SaberPreviewManager : IInitializable, IDisposable
         menuSaberManager.ReplaceSabers(leftMenuSaber, rightMenuSaber);
 
         UpdateTrails();
+        UpdateSaberModels();
         UpdateColor();
 
         previewGenerating = false;
@@ -85,6 +86,14 @@ internal class SaberPreviewManager : IInitializable, IDisposable
         menuSaberManager.UpdateTrails();
     }
 
+    public void UpdateSaberModels()
+    {
+        float length = config.OverrideSaberLength ? config.SaberLength / 100f : 1f;
+        float width = config.OverrideSaberWidth ? config.SaberWidth / 100f : 1f;
+        basicPreviewSaberManager.UpdateSaberScale(length, width);
+        menuSaberManager.UpdateSaberScale(length, width);
+    }
+
     public void UpdateColor()
     {
         var selectedColorScheme = colorSchemesSettings.GetSelectedColorScheme();
@@ -97,10 +106,5 @@ internal class SaberPreviewManager : IInitializable, IDisposable
     public void Dispose()
     {
         if (previewParent != null) previewParent.gameObject.Destroy();
-    }
-
-    public void UpdateSaberModels()
-    {
-        
     }
 }
