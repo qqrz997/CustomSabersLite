@@ -29,6 +29,7 @@ public class ToggleableSliderHandler : TypeHandler<ToggleableSlider>
         { "bindValues", ["bind-values"] },
         { "setEvent", ["set-event"] },
         { "getEvent", ["get-event"] },
+        { "text", ["text"] }
     };
 
     public override Dictionary<string, Action<ToggleableSlider, string>> Setters { get; } = [];
@@ -101,6 +102,11 @@ public class ToggleableSliderHandler : TypeHandler<ToggleableSlider>
             
         parserParams.AddEvent(componentType.Data.GetValueOrDefault("setEvent", "apply"), toggleableSlider.ApplyValues);
         parserParams.AddEvent(componentType.Data.GetValueOrDefault("getEvent", "apply"), toggleableSlider.ReceiveValues);
+
+        if (componentType.Data.TryGetValue("text", out string text) && string.IsNullOrWhiteSpace(text))
+        {
+            toggleableSlider.Label.transform.parent.gameObject.SetActive(false);
+        }
     }
 
     public override void HandleTypeAfterChildren(BSMLParser.ComponentTypeWithData componentType, BSMLParserParams p) =>
