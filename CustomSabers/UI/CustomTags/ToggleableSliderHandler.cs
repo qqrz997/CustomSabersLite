@@ -99,7 +99,7 @@ public class ToggleableSliderHandler : TypeHandler<ToggleableSlider>
             if (toggleableSlider.Icon != null) toggleableSlider.Icon.color = Parse.Color(imageColor);
         }
             
-        parserParams.AddEvent(componentType.Data.GetValueOrDefault("setEvent", "apply"), toggleableSlider.ApplyValue);
+        parserParams.AddEvent(componentType.Data.GetValueOrDefault("setEvent", "apply"), toggleableSlider.ApplyValues);
         parserParams.AddEvent(componentType.Data.GetValueOrDefault("getEvent", "apply"), toggleableSlider.ReceiveValues);
     }
 
