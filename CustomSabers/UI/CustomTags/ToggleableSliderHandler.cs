@@ -19,6 +19,7 @@ public class ToggleableSliderHandler : TypeHandler<ToggleableSlider>
         { "increment", ["increment"] },
         { "intOnly", ["int-only", "integer-only"] },
         { "sliderValue", ["slider-value"] },
+        { "formatter", ["formatter"] },
         // Toggle props
         { "toggleValue", ["toggle-value"] },
         // Image props
@@ -77,6 +78,13 @@ public class ToggleableSliderHandler : TypeHandler<ToggleableSlider>
                 BindValue(componentType, parserParams, sliderBsmlValue, _ => toggleableSlider.ReceiveSliderValue());
                 BindValue(componentType, parserParams, toggleBsmlValue, _ => toggleableSlider.ReceiveToggleValue());
             }
+        }
+
+        if (componentType.Data.TryGetValue("formatter", out string formatter))
+        {
+            if (!parserParams.Actions.TryGetValue(formatter, out var bsmlFormatterFunc)) 
+                throw new("Formatter not found on BSML host");    
+            toggleableSlider.Formatter = bsmlFormatterFunc;
         }
 
         if (componentType.Data.TryGetValue("imageSource", out string imageSource))

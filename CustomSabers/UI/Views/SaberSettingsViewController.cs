@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using BeatSaberMarkupLanguage.Attributes;
-using BeatSaberMarkupLanguage.Components.Settings;
 using BeatSaberMarkupLanguage.ViewControllers;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Models;
 using Zenject;
 using CustomSabersLite.Utilities;
+using HMUI;
 
 namespace CustomSabersLite.UI.Views;
 
@@ -17,8 +17,8 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController
     [Inject] private readonly CSLConfig config = null!;
     [Inject] private readonly SaberPreviewManager previewManager = null!;
 
-    [UIComponent("trail-duration")] private SliderSetting trailDurationSlider = null!;
-    [UIComponent("trail-width")] private SliderSetting trailWidthSlider = null!;
+    [UIComponent("trail-duration")] private readonly ImageView trailDurationIcon = null!; 
+    [UIComponent("trail-width")] private readonly ImageView trailWidthIcon = null!;
 
     [UIValue("enabled")]
     private bool Enabled
@@ -46,7 +46,6 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController
         {
             config.OverrideTrailDuration = value;
             previewManager.UpdateTrails();
-            BSMLHelpers.SetSliderInteractable(trailDurationSlider, value);
         }
     }
 
@@ -58,7 +57,6 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController
         {
             config.OverrideTrailWidth = value;
             previewManager.UpdateTrails();
-            BSMLHelpers.SetSliderInteractable(trailWidthSlider, value);
         }
     }
 
@@ -106,9 +104,12 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController
     [UIAction("#post-parse")]
     private void PostParse()
     {
-        BSMLHelpers.SetSliderInteractable(trailDurationSlider, OverrideTrailDuration);
-        BSMLHelpers.SetSliderInteractable(trailWidthSlider, OverrideTrailWidth);
+        trailDurationIcon.sprite = CSLResources.TrailDurationIcon;
+        trailWidthIcon.sprite = CSLResources.TrailWidthIcon;
     }
+    
+    [UIAction("trail-slider-formatter")]
+    private string TrailSliderFormatter(object value) => $"{value}%";
 
     protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
     {

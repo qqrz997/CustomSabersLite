@@ -27,6 +27,11 @@ internal static class GameObjectExtensions
         if (t != null && t.gameObject != null) Object.DestroyImmediate(t.gameObject);
     }
 
+    public static void DestroyComponent(this Component? component)
+    {
+        if (component != null) Object.Destroy(component);
+    }
+
     public static void SetLayerRecursively(this GameObject obj, int layer) => SetLayer(obj, layer);
     private static void SetLayer(GameObject gameObject, int layer)
     {
