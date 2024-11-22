@@ -12,9 +12,11 @@ using HMUI;
 using System.ComponentModel;
 using System.Collections;
 using CustomSabersLite.Utilities;
+using JetBrains.Annotations;
 
 namespace CustomSabersLite.UI.Views;
 
+[UsedImplicitly]
 internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged
 {
     [Inject] private readonly CSLConfig config = null!;
@@ -24,8 +26,10 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    [UIComponent("trail-duration")] private readonly SliderSetting trailDurationSlider = null!;
-    [UIComponent("trail-width")] private readonly SliderSetting trailWidthSlider = null!;
+    [UIComponent("trail-duration")] private readonly ImageView trailDurationIcon = null!; 
+    [UIComponent("trail-width")] private readonly ImageView trailWidthIcon = null!;
+    [UIComponent("saber-length")] private readonly ImageView saberLengthIcon = null!;
+    [UIComponent("saber-width")] private readonly ImageView saberWidthIcon = null!;
     [UIComponent("trail-type")] private readonly ListSetting trailTypeList = null!;
     [UIComponent("saber-list")] private readonly CustomListTableData saberList = null!;
 
@@ -40,11 +44,7 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged
     private bool OverrideTrailDuration
     {
         get => config.OverrideTrailDuration;
-        set
-        {
-            config.OverrideTrailDuration = value;
-            BSMLHelpers.SetSliderInteractable(trailDurationSlider, value);
-        }
+        set => config.OverrideTrailDuration = value;
     }
 
     [UIValue("trail-duration")]
@@ -58,11 +58,7 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged
     private bool OverrideTrailWidth
     {
         get => config.OverrideTrailWidth;
-        set
-        {
-            config.OverrideTrailWidth = value;
-            BSMLHelpers.SetSliderInteractable(trailWidthSlider, value);
-        }
+        set => config.OverrideTrailWidth = value;
     }
 
     [UIValue("trail-width")]
@@ -70,6 +66,34 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged
     {
         get => config.TrailWidth;
         set => config.TrailWidth = value;
+    }
+    
+    [UIValue("override-saber-length")]
+    private bool OverrideSaberLength
+    {
+        get => config.OverrideSaberLength;
+        set => config.OverrideSaberLength = value;
+    }
+    
+    [UIValue("saber-length")]
+    private int SaberLength
+    {
+        get => config.SaberLength;
+        set => config.SaberLength = value;
+    }
+    
+    [UIValue("override-saber-width")]
+    private bool OverrideSaberWidth
+    {
+        get => config.OverrideSaberWidth;
+        set => config.OverrideSaberWidth = value;
+    }
+    
+    [UIValue("saber-width")]
+    private int SaberWidth
+    {
+        get => config.SaberWidth;
+        set => config.SaberWidth = value;
     }
 
     [UIValue("trail-type-choices")] private List<object> trailTypeChoices = [.. Enum.GetNames(typeof(TrailType))];
@@ -91,12 +115,11 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged
     private void PostParse()
     {
         saberMetadataCache.LoadingProgressChanged += LoadingProgressChanged;
-
-        BSMLHelpers.SetSliderInteractable(trailDurationSlider, OverrideTrailDuration);
-        BSMLHelpers.SetSliderInteractable(trailWidthSlider, OverrideTrailWidth);
-
-        BSMLHelpers.SetSliderWidth(trailDurationSlider, 50, 0);
-        BSMLHelpers.SetSliderWidth(trailWidthSlider, 50, 0);
+        
+        trailDurationIcon.sprite = CSLResources.TrailDurationIcon;
+        trailWidthIcon.sprite = CSLResources.TrailWidthIcon;
+        saberLengthIcon.sprite = CSLResources.SaberLengthIcon;
+        saberWidthIcon.sprite = CSLResources.SaberWidthIcon;
 
         BSMLHelpers.SetDropDownSettingWidth(trailTypeList, 25, 0);
         
@@ -109,6 +132,9 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged
         config.CurrentlySelectedSaber = saberListManager.Select(row)?.Metadata.SaberFile.RelativePath;
         Logger.Debug($"Saber selected: {config.CurrentlySelectedSaber ?? "Default"}");
     }
+    
+    [UIAction("percent-slider-formatter")]
+    private string PercentSliderFormatter(object value) => $"{value}%";
 
     public void RefreshList()
     {

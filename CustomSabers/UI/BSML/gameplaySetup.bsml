@@ -1,24 +1,32 @@
-﻿<vertical preferred-width="110" anchor-min-y="-1" anchor-max-y="1" anchored-position-y="1" child-control-height="false" xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd'>
-  <horizontal spacing='2'>
+﻿<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd'>
+  <horizontal spacing='4' preferred-width="115">
     <!--Settings container-->
-    <vertical vertical-fit='Unconstrained' child-expand-height='false' preferred-width='49' child-align='MiddleCenter'>
-      <text text='more settings in main menu' font-size='3' color='grey' align='Center'/>
+    <vertical child-expand-height='false' child-control-height="false" horizontal-fit="Unconstrained">
+      <text text='more settings in main menu' font-size='3' color='grey' align='Center' size-delta-y="7"/>
       
       <checkbox-setting value='disable-white-trail' text='Disable White Trail' hover-hint='Toggles the initial white part of trails'
                         apply-on-change='true' bind-value='true'/>
 
-      <checkbox-setting value='override-trail-duration' text='Override Trail Length' hover-hint='Allows you to set the length of trails'
-                        apply-on-change='true' bind-value='true'/>
+      <!--Trail duration-->
+      <toggleable-slider text="" id="trail-duration" slider-value="trail-duration" toggle-value="override-trail-duration"
+                         min="0" max="100" increment="1" integer-only="true" apply-on-change="true" bind-values="true" formatter="percent-slider-formatter"
+                         hover-hint="Modify the duration, or lifetime, of saber trails"/>
 
-      <slider-setting value='trail-duration' text='' hover-hint='Tune the duration/length of sabers&apos; trails'
-                      min='0' max='100' increment='1' integer-only='true' show-buttons='true'  apply-on-change='true' bind-value='true' id='trail-duration'/>
+      <!--Trail width-->
+      <toggleable-slider text="" id="trail-width" slider-value="trail-width" toggle-value="override-trail-width"
+                         min="0" max="100" increment="1" integer-only="true" apply-on-change="true" bind-values="true" formatter="percent-slider-formatter"
+                         hover-hint="Modify the width of saber trails"/>
 
-      <checkbox-setting value='override-trail-width' text='Override Trail Width' hover-hint='Allows you to set the width of trails' 
-                        apply-on-change='true' bind-value='true'/>
+      <!--Saber length-->
+      <toggleable-slider text="" id="saber-length" slider-value="saber-length" toggle-value="override-saber-length"
+                         min="50" max="150" increment="10" integer-only="true" apply-on-change="true" bind-values="true" formatter="percent-slider-formatter"
+                         hover-hint="Modify the length of the saber model - has no affect on hit box"/>
 
-      <slider-setting value='trail-width' text='' hover-hint='Tune the width of sabers&apos; trails'
-                      id='trail-width' min='0' max='100' increment='1' integer-only='true' show-buttons='true' apply-on-change='true' bind-value='true'/>
-
+      <!--Saber length-->
+      <toggleable-slider text="" id="saber-width" slider-value="saber-width" toggle-value="override-saber-width"
+                         min="0" max="200" increment="10" integer-only="true" apply-on-change="true" bind-values="true" formatter="percent-slider-formatter"
+                         hover-hint="Modify the girth of the saber model - has no affect on hit box"/>
+      
       <list-setting value='trail-type' text='Saber Trail Type' hover-hint='Select the type of trail you want to use' 
                     options='trail-type-choices' apply-on-change='true' bind-value='true' id='trail-type'/>
 
@@ -27,7 +35,7 @@
     </vertical>
   
     <!--Saber list container-->
-    <vertical child-control-height='false' spacing='2' preferred-width='54' child-align='MiddleCenter'>
+    <vertical child-control-height='false' spacing='2' preferred-width='40' child-align='MiddleCenter'>
       <horizontal background='round-rect-panel' bg-color='#000000AA' pad='1'>
         <list list-style='Simple' visible-cells='5' select-cell='select-saber' id='saber-list' />
       </horizontal>
@@ -37,4 +45,4 @@
       </horizontal>
     </vertical>
   </horizontal>
-</vertical>
+</bg>
