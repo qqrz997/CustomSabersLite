@@ -22,6 +22,12 @@ internal class MenuSaberManager(MenuPointers menuPointers, MenuSaber.Factory men
         rightSaber?.UpdateTrails();
     }
 
+    public void UpdateSaberScale(float length, float width)
+    {
+        leftSaber?.UpdateSaberScale(length, width);
+        rightSaber?.UpdateSaberScale(length, width);
+    }
+
     public void SetColor(Color left, Color right)
     {
         leftSaber?.SetColor(left);

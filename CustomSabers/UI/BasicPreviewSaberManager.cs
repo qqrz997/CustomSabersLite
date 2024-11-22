@@ -40,4 +40,18 @@ internal class BasicPreviewSaberManager
         leftSaber?.GameObject.SetActive(active);
         rightSaber?.GameObject.SetActive(active);
     }
+
+    public void UpdateSaberScale(float length, float width)
+    {
+        if (leftSaber != null)
+        {
+            leftSaber.SetLength(length);
+            leftSaber.SetWidth(width);   
+        }
+        if (rightSaber != null)
+        {
+            rightSaber.SetLength(length);
+            rightSaber.SetWidth(width);
+        }
+    }
 }

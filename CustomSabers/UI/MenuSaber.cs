@@ -64,6 +64,13 @@ internal class MenuSaber
         }
     }
 
+    public void UpdateSaberScale(float length, float width)
+    {
+        if (liteSaberInstance == null) return;
+        liteSaberInstance.SetLength(length);
+        liteSaberInstance.SetWidth(width);
+    }
+
     public void SetColor(Color color)
     {
         defaultTrail.SetColor(color);
