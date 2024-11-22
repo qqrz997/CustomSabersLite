@@ -1,4 +1,5 @@
-﻿using SiraUtil.Interfaces;
+﻿using CustomSabersLite.Configuration;
+using SiraUtil.Interfaces;
 using UnityEngine;
 using Zenject;
 using CustomSabersLite.Utilities;
@@ -18,6 +19,8 @@ internal class LiteSaberModelController : SaberModelController, IColorable, IPre
     [Inject] private readonly ColorManager colorManager = null!;
     [Inject] private readonly GameplayCoreSceneSetupData gameplaySetupData = null!;
 
+    [Inject] private readonly CSLConfig config = null!;
+    
     private ILiteSaber? liteSaberInstance;
     private LiteSaberTrail[] customTrailInstances = [];
 
@@ -58,6 +61,8 @@ internal class LiteSaberModelController : SaberModelController, IColorable, IPre
         customTrailInstances = trailFactory.CreateTrail(liteSaberInstance, saber.saberType, intensity);
 
         liteSaberInstance.SetParent(transform);
+        liteSaberInstance.SetLength(config.SaberLength / 100f);
+        liteSaberInstance.SetWidth(config.SaberWidth / 100f);
         
         if (liteSaberInstance.EventManager != null)
         {
