@@ -37,6 +37,8 @@ public sealed class ToggleableSlider : MonoBehaviour
     public bool IntOnly { get; set; }
 
     public ImageView Icon { get; set; } = null!;
+    
+    public TextMeshProUGUI Label { get; set; } = null!;
 
     public void Setup()
     {
