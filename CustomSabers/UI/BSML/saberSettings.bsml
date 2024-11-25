@@ -32,10 +32,11 @@
       
       <!--Saber length-->
       <toggleable-slider text="Saber Length" id="saber-length" slider-value="saber-length" toggle-value="override-saber-length"
-                         min="50" max="150" increment="10" integer-only="true" apply-on-change="true" bind-values="true" formatter="percent-slider-formatter"
+                         min="25" max="150" increment="5" integer-only="true" apply-on-change="true" 
+                         bind-values="true" formatter="percent-slider-formatter"
                          hover-hint="Modify the length of the saber model - has no affect on hit box"/>
       
-      <!--Saber length-->
+      <!--Saber width-->
       <toggleable-slider text="Saber Width" id="saber-width" slider-value="saber-width" toggle-value="override-saber-width"
                          min="0" max="200" increment="10" integer-only="true" apply-on-change="true" bind-values="true" formatter="percent-slider-formatter"
                          hover-hint="Modify the girth of the saber model - has no affect on hit box"/>
