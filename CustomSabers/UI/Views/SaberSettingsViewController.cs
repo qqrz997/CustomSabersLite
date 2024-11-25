@@ -12,7 +12,7 @@ namespace CustomSabersLite.UI.Views;
 
 [HotReload(RelativePathToLayout = "../BSML/saberSettings.bsml")]
 [ViewDefinition("CustomSabersLite.UI.BSML.saberSettings.bsml")]
-internal class SaberSettingsViewController : BSMLAutomaticViewController
+internal class SaberSettingsViewController : BSMLAutomaticViewController, ISharedSaberSettings
 {
     [Inject] private readonly CSLConfig config = null!;
     [Inject] private readonly SaberPreviewManager previewManager = null!;
@@ -30,7 +30,7 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController
     }
 
     [UIValue("disable-white-trail")]
-    private bool DisableWhiteTrail
+    public bool DisableWhiteTrail
     {
         get => config.DisableWhiteTrail;
         set
@@ -41,7 +41,7 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController
     }
 
     [UIValue("override-trail-duration")]
-    private bool OverrideTrailDuration
+    public bool OverrideTrailDuration
     {
         get => config.OverrideTrailDuration;
         set
@@ -52,7 +52,7 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController
     }
 
     [UIValue("override-trail-width")]
-    private bool OverrideTrailWidth
+    public bool OverrideTrailWidth
     {
         get => config.OverrideTrailWidth;
         set
@@ -63,7 +63,7 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController
     }
 
     [UIValue("trail-duration")]
-    private int TrailDuration
+    public int TrailDuration
     {
         get => config.TrailDuration;
         set
@@ -74,7 +74,7 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController
     }
 
     [UIValue("trail-width")]
-    private int TrailWidth
+    public int TrailWidth
     {
         get => config.TrailWidth;
         set
@@ -85,7 +85,7 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController
     }
     
     [UIValue("override-saber-length")]
-    private bool OverrideSaberLength
+    public bool OverrideSaberLength
     {
         get => config.OverrideSaberLength;
         set
@@ -96,7 +96,7 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController
     }
     
     [UIValue("saber-length")]
-    private int SaberLength
+    public int SaberLength
     {
         get => config.SaberLength;
         set
@@ -107,7 +107,7 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController
     }
     
     [UIValue("override-saber-width")]
-    private bool OverrideSaberWidth
+    public bool OverrideSaberWidth
     {
         get => config.OverrideSaberWidth;
         set
@@ -118,7 +118,7 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController
     }
     
     [UIValue("saber-width")]
-    private int SaberWidth
+    public int SaberWidth
     {
         get => config.SaberWidth;
         set
@@ -130,7 +130,7 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController
     
     [UIValue("trail-type-choices")] private List<object> trailTypeChoices = [.. Enum.GetNames(typeof(TrailType))];
     [UIValue("trail-type")]
-    private string TrailType
+    public string TrailType
     {
         get => config.TrailType.ToString();
         set
@@ -141,7 +141,7 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController
     }
 
     [UIValue("enable-custom-events")]
-    private bool EnableCustomEvents
+    public bool EnableCustomEvents
     {
         get => config.EnableCustomEvents;
         set => config.EnableCustomEvents = value;
@@ -162,6 +162,6 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController
     protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
     {
         base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
-        SharedSaberSettings.PropertyNames.ForEach(NotifyPropertyChanged);
+        ISharedSaberSettings.PropertyNames.ForEach(NotifyPropertyChanged);
     }
 }
