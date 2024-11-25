@@ -1,4 +1,4 @@
-<vertical anchor-pos-x='0' preferred-width="120" child-control-height='false' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd'>
+<vertical anchor-pos-x='0' preferred-width="120" child-control-height='false' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd'>
 
   <vertical spacing='1' horizontal-fit='Unconstrained'>
 
