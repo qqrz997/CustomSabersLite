@@ -16,8 +16,6 @@ public sealed class ToggleableSlider : MonoBehaviour
     private TextMeshProUGUI sliderValueLabel = null!;
     private ImageView sliderHandleImage = null!;
     private Color sliderHandleImageDefaultColor; 
-    
-    public BSMLAction? Formatter { get; set; }
 
     public RangeValuesTextSlider Slider { get; set; } = null!;
     public BSMLValue? SliderAssociatedValue { get; set; } 
@@ -27,7 +25,6 @@ public sealed class ToggleableSlider : MonoBehaviour
         set
         {
             Slider.value = value;
-            sliderValueLabel.text = FormatSliderValue(value);
             ApplySliderValue();
         }
     }
@@ -118,14 +115,6 @@ public sealed class ToggleableSlider : MonoBehaviour
         }
     }
     
-    private string FormatSliderValue(float value) => IntOnly switch
-    {
-        true when Formatter != null => (string)Formatter.Invoke((int)Math.Round(value)),
-        false when Formatter != null => (string)Formatter.Invoke(value),
-        true => ((int)Math.Round(value)).ToString(),
-        false => value.ToString("N2"),
-    };
-
     private void ApplySliderValue()
     {
         if (IntOnly) SliderAssociatedValue?.SetValue((int)Math.Round(SliderValue));
