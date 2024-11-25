@@ -37,7 +37,8 @@ public class ToggleableSliderTag : BSMLTag
             .gameObject;
         
         // Parent
-        var gameObject = new GameObject($"CustomSabersLiteToggleableSlider") { layer = 5 };
+        var gameObject = new GameObject("CustomSabersLiteToggleableSlider") { layer = 5 };
+        gameObject.transform.SetParent(parent, false);  
         gameObject.SetActive(false);
         
         var toggleableSlider = gameObject.AddComponent<ToggleableSlider>();
@@ -49,12 +50,13 @@ public class ToggleableSliderTag : BSMLTag
         
         var rectTransform = gameObject.GetComponent<RectTransform>();
         rectTransform.anchoredPosition = new(0f, 0f);
-        rectTransform.anchorMin = new (0f, 0f);
-        rectTransform.anchorMax = new (1f, 1f);
-        rectTransform.sizeDelta = new (70f, 7f);
+        rectTransform.anchorMin = new(0f, 0f);
+        rectTransform.anchorMax = new(1f, 1f);
+        rectTransform.sizeDelta = new(70f, 7f);
         
         // Icon
         var iconObject = new GameObject("Icon") { layer = 5 };
+        iconObject.transform.SetParent(gameObject.transform, false);
         var iconLayoutElement = iconObject.AddComponent<LayoutElement>();
         iconLayoutElement.preferredWidth = 7f;
         var imageObject = new GameObject("Image") { layer = 5 };
@@ -70,6 +72,7 @@ public class ToggleableSliderTag : BSMLTag
         
         // Label
         var labelObject = new GameObject("Label") { layer = 5 };
+        labelObject.transform.SetParent(gameObject.transform, false);
         var labelLayoutElement = labelObject.AddComponent<LayoutElement>();
         labelLayoutElement.preferredWidth = 28f;
         toggleableSlider.Label = Object.Instantiate(labelTemplate, labelObject.transform, false);
@@ -82,11 +85,14 @@ public class ToggleableSliderTag : BSMLTag
         toggleableSlider.Label.rectTransform.anchorMax = Vector2.one;
         
         // Slider
-        var sliderObject = Object.Instantiate(sliderTemplate);
+        var sliderObject = Object.Instantiate(sliderTemplate, gameObject.transform, false);
         sliderObject.GetComponentInChildren<LocalizedTextMeshProUGUI>().DestroyComponent();
         sliderObject.GetComponentInChildren<TextMeshProUGUI>().DestroyComponent();
         sliderObject.name = "SliderSetting";
-        toggleableSlider.Slider = sliderObject.GetComponentInChildren<CustomFormatRangeValuesSlider>();
+
+        var customFormatRangeValuesSlider = sliderObject.GetComponentInChildren<CustomFormatRangeValuesSlider>();
+        customFormatRangeValuesSlider._formatString = "{0} %";
+        toggleableSlider.Slider = customFormatRangeValuesSlider;
         toggleableSlider.Slider.name = "Slider";
         toggleableSlider.Slider._enableDragging = true;
         
@@ -98,6 +104,7 @@ public class ToggleableSliderTag : BSMLTag
         
         // Toggle
         var toggleObject = new GameObject("ToggleSetting") { layer = 5 };
+        toggleObject.transform.SetParent(gameObject.transform, false);
         toggleableSlider.Toggle = Object.Instantiate(toggleTemplate, toggleObject.transform, false).GetComponent<Toggle>();
         toggleableSlider.Toggle.interactable = true;
         
@@ -112,13 +119,6 @@ public class ToggleableSliderTag : BSMLTag
         var toggleRectTransform = toggleableSlider.Toggle.GetComponent<RectTransform>();
         toggleRectTransform.anchorMin = new(1f, 0.5f);
         toggleRectTransform.anchorMax = new(1f, 0.5f);
-        
-        // Set layout group order
-        gameObject.transform.SetParent(parent, false);  
-        iconObject.transform.SetParent(gameObject.transform, false);
-        labelObject.transform.SetParent(gameObject.transform, false);
-        sliderObject.transform.SetParent(gameObject.transform, false);
-        toggleObject.transform.SetParent(gameObject.transform, false);
         
         var externalComponents = gameObject.AddComponent<ExternalComponents>();
         externalComponents.Components.Add(toggleableSlider.Icon);
