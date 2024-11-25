@@ -17,7 +17,7 @@ using JetBrains.Annotations;
 namespace CustomSabersLite.UI.Views;
 
 [UsedImplicitly]
-internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged
+internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSaberSettings
 {
     [Inject] private readonly CSLConfig config = null!;
     [Inject] private readonly SaberMetadataCache saberMetadataCache = null!;
@@ -34,63 +34,63 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged
     [UIComponent("saber-list")] private readonly CustomListTableData saberList = null!;
 
     [UIValue("disable-white-trail")]
-    private bool DisableWhiteTrail
+    public bool DisableWhiteTrail
     {
         get => config.DisableWhiteTrail;
         set => config.DisableWhiteTrail = value;
     }
 
     [UIValue("override-trail-duration")]
-    private bool OverrideTrailDuration
+    public bool OverrideTrailDuration
     {
         get => config.OverrideTrailDuration;
         set => config.OverrideTrailDuration = value;
     }
 
     [UIValue("trail-duration")]
-    private int TrailDuration
+    public int TrailDuration
     {
         get => config.TrailDuration;
         set => config.TrailDuration = value;
     }
 
     [UIValue("override-trail-width")]
-    private bool OverrideTrailWidth
+    public bool OverrideTrailWidth
     {
         get => config.OverrideTrailWidth;
         set => config.OverrideTrailWidth = value;
     }
 
     [UIValue("trail-width")]
-    private int TrailWidth
+    public int TrailWidth
     {
         get => config.TrailWidth;
         set => config.TrailWidth = value;
     }
     
     [UIValue("override-saber-length")]
-    private bool OverrideSaberLength
+    public bool OverrideSaberLength
     {
         get => config.OverrideSaberLength;
         set => config.OverrideSaberLength = value;
     }
     
     [UIValue("saber-length")]
-    private int SaberLength
+    public int SaberLength
     {
         get => config.SaberLength;
         set => config.SaberLength = value;
     }
     
     [UIValue("override-saber-width")]
-    private bool OverrideSaberWidth
+    public bool OverrideSaberWidth
     {
         get => config.OverrideSaberWidth;
         set => config.OverrideSaberWidth = value;
     }
     
     [UIValue("saber-width")]
-    private int SaberWidth
+    public int SaberWidth
     {
         get => config.SaberWidth;
         set => config.SaberWidth = value;
@@ -98,14 +98,14 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged
 
     [UIValue("trail-type-choices")] private List<object> trailTypeChoices = [.. Enum.GetNames(typeof(TrailType))];
     [UIValue("trail-type")]
-    private string TrailType
+    public string TrailType
     {
         get => config.TrailType.ToString();
         set => config.TrailType = Enum.TryParse(value, out TrailType trailType) ? trailType : config.TrailType;
     }
 
     [UIValue("enable-custom-events")]
-    private bool EnableCustomEvents
+    public bool EnableCustomEvents
     {
         get => config.EnableCustomEvents;
         set => config.EnableCustomEvents = value;
@@ -149,7 +149,7 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged
 
     public void Activated(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
     {
-        SharedSaberSettings.PropertyNames.ForEach(NotifyPropertyChanged);
+        ISharedSaberSettings.PropertyNames.ForEach(NotifyPropertyChanged);
         RefreshList();
         coroutineStarter.StartSingleCoroutine(ref scrollToSelectedCellCoroutine, ScrollToSelectedCell());
     }
