@@ -17,16 +17,16 @@ internal class CSLConfig
     public virtual bool DisableWhiteTrail { get; set; } = true;
 
     public virtual bool OverrideTrailDuration { get; set; } = false;
-    public virtual int TrailDuration { get; set; } = 100;
+    public virtual float TrailDuration { get; set; } = 1f;
 
     public virtual bool OverrideTrailWidth { get; set; } = false;
-    public virtual int TrailWidth { get; set; } = 100;
+    public virtual float TrailWidth { get; set; } = 1f;
 
     public virtual bool OverrideSaberLength { get; set; } = false;
-    public virtual int SaberLength { get; set; } = 100;
+    public virtual float SaberLength { get; set; } = 1f;
     
     public virtual bool OverrideSaberWidth { get; set; } = false;
-    public virtual int SaberWidth { get; set; } = 100;
+    public virtual float SaberWidth { get; set; } = 1f;
         
     public virtual TrailType TrailType { get; set; } = TrailType.Custom;
 

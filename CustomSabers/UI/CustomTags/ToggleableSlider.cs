@@ -1,8 +1,6 @@
 using System;
-using System.Threading.Tasks;
 using BeatSaberMarkupLanguage.Parser;
 using HMUI;
-using IPA.Utilities.Async;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -78,13 +76,6 @@ public sealed class ToggleableSlider : MonoBehaviour
         Toggle.onValueChanged.AddListener(ToggleValueChanged);
         
         ReceiveValues();
-
-        // TODO: what the fuck
-        UnityMainThreadTaskScheduler.Factory.StartNew(async () =>
-        {
-            await Task.Delay(25);
-            SliderValueChanged(Slider, Slider.value);
-        });
     }
     
     public void ApplyValues()
