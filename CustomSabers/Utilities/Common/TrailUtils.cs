@@ -24,7 +24,7 @@ internal static class TrailUtils
     /// </summary>
     public static void ConfigureTrail(this SaberTrail trail, CSLConfig config, bool useOverrideWidth = false)
     {
-        if (!trail._trailRenderer)
+        if (trail == null || trail._trailRenderer == null)
         {
             return;
         }
@@ -34,22 +34,22 @@ internal static class TrailUtils
         trail._framesToScaleCheck = 0;
         trail._inited = false;
 
-        if (trail is LiteSaberTrail customTrail && customTrail.InstanceTrailData != null)
+        if (trail is LiteSaberTrail { InstanceTrailData: not null } customTrail)
         {
-            float duration = config.OverrideTrailDuration ? config.TrailDuration / 250f
+            float duration = config.OverrideTrailDuration ? config.TrailDuration * DefaultDuration
                 : customTrail.InstanceTrailData.Length;
             customTrail.OverrideWidth = config.TrailWidth;
             customTrail.UseWidthOverride = config.OverrideTrailWidth && useOverrideWidth;
             customTrail._trailDuration = duration;
             customTrail.enabled = config.TrailType != TrailType.None && !Mathf.Approximately(duration, 0f);
         }
-        else if (trail is SaberTrail defaultTrail)
+        else
         {
-            float duration = config.OverrideTrailDuration ? config.TrailDuration / 250f : DefaultDuration;
-            defaultTrail._trailDuration = duration;
+            float duration = config.OverrideTrailDuration ? config.TrailDuration * DefaultDuration : DefaultDuration;
+            trail._trailDuration = duration;
             if (config.TrailType == TrailType.None || Mathf.Approximately(duration, 0f))
             {
-                defaultTrail._color.a = 0f;
+                trail._color.a = 0f;
             }
         }
     }
