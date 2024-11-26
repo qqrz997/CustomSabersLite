@@ -48,7 +48,7 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
     }
 
     [UIValue("trail-duration")]
-    public int TrailDuration
+    public float TrailDuration
     {
         get => config.TrailDuration;
         set => config.TrailDuration = value;
@@ -62,7 +62,7 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
     }
 
     [UIValue("trail-width")]
-    public int TrailWidth
+    public float TrailWidth
     {
         get => config.TrailWidth;
         set => config.TrailWidth = value;
@@ -76,7 +76,7 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
     }
     
     [UIValue("saber-length")]
-    public int SaberLength
+    public float SaberLength
     {
         get => config.SaberLength;
         set => config.SaberLength = value;
@@ -90,7 +90,7 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
     }
     
     [UIValue("saber-width")]
-    public int SaberWidth
+    public float SaberWidth
     {
         get => config.SaberWidth;
         set => config.SaberWidth = value;

@@ -6,13 +6,13 @@ internal interface ISharedSaberSettings
 {
     public bool DisableWhiteTrail { get; set; }
     public bool OverrideTrailDuration { get; set; }
-    public int TrailDuration { get; set; }
+    public float TrailDuration { get; set; }
     public bool OverrideTrailWidth { get; set; }
-    public int TrailWidth { get; set; }
+    public float TrailWidth { get; set; }
     public bool OverrideSaberLength { get; set; }
-    public int SaberLength { get; set; }
+    public float SaberLength { get; set; }
     public bool OverrideSaberWidth { get; set; }
-    public int SaberWidth { get; set; }
+    public float SaberWidth { get; set; }
     public string TrailType { get; set; }
     public bool EnableCustomEvents { get; set; }
 

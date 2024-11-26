@@ -88,8 +88,8 @@ internal class SaberPreviewManager : IInitializable, IDisposable
 
     public void UpdateSaberModels()
     {
-        float length = config.OverrideSaberLength ? config.SaberLength / 100f : 1f;
-        float width = config.OverrideSaberWidth ? config.SaberWidth / 100f : 1f;
+        float length = config.OverrideSaberLength ? config.SaberLength : 1f;
+        float width = config.OverrideSaberWidth ? config.SaberWidth : 1f;
         basicPreviewSaberManager.UpdateSaberScale(length, width);
         menuSaberManager.UpdateSaberScale(length, width);
     }

@@ -49,9 +49,8 @@ public class ToggleableSliderHandler : TypeHandler<ToggleableSlider>
         if (componentType.Data.TryGetValue("increment", out string increment))
             toggleableSlider.Increment = Parse.Float(increment);
 
-        if (componentType.Data.TryGetValue("intOnly", out string intOnly))
-            toggleableSlider.IntOnly = Parse.Bool(intOnly);
-    
+        toggleableSlider.IntOnly = componentType.Data.TryGetValue("intOnly", out string intOnly) && Parse.Bool(intOnly);
+        
         BSMLValue? sliderBsmlValue = null;
         BSMLValue? toggleBsmlValue = null;
         

@@ -63,7 +63,7 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController, IShare
     }
 
     [UIValue("trail-duration")]
-    public int TrailDuration
+    public float TrailDuration
     {
         get => config.TrailDuration;
         set
@@ -74,7 +74,7 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController, IShare
     }
 
     [UIValue("trail-width")]
-    public int TrailWidth
+    public float TrailWidth
     {
         get => config.TrailWidth;
         set
@@ -96,7 +96,7 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController, IShare
     }
     
     [UIValue("saber-length")]
-    public int SaberLength
+    public float SaberLength
     {
         get => config.SaberLength;
         set
@@ -118,7 +118,7 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController, IShare
     }
     
     [UIValue("saber-width")]
-    public int SaberWidth
+    public float SaberWidth
     {
         get => config.SaberWidth;
         set
