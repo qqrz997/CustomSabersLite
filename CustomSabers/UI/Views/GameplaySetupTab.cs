@@ -133,9 +133,6 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
         Logger.Debug($"Saber selected: {config.CurrentlySelectedSaber ?? "Default"}");
     }
     
-    [UIAction("percent-slider-formatter")]
-    private string PercentSliderFormatter(object value) => $"{value}%";
-
     public void RefreshList()
     {
         if (!saberMetadataCache.CurrentProgress.Completed)

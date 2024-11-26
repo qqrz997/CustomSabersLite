@@ -156,9 +156,6 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController, IShare
         saberWidthIcon.sprite = CSLResources.SaberWidthIcon;
     }
     
-    [UIAction("percent-slider-formatter")]
-    private string PercentSliderFormatter(object value) => $"{value}%";
-
     protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
     {
         base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
