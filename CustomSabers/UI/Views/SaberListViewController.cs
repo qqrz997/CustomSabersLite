@@ -66,7 +66,6 @@ internal class SaberListViewController : BSMLAutomaticViewController
 
         sortDirectionIcon.rectTransform.localRotation = Quaternion.Euler(0f, 0f, config.ReverseSort ? 180f : 0f);
 
-        RefreshList();
         loadingIcon.SetActive(!saberMetadataCache.CurrentProgress.Completed);
     }
 
