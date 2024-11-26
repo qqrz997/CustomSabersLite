@@ -1,14 +1,29 @@
 ﻿using CustomSaber;
 using CustomSabersLite.Components;
+using CustomSabersLite.Utilities;
 using UnityEngine;
 
 namespace CustomSabersLite.Models;
 
-internal class DefaultSaber(GameObject basicSaberModel) : ILiteSaber
+internal class DefaultSaber : ILiteSaber
 {
-    private readonly DefaultSaberColorer defaultSaberColorer = basicSaberModel.AddComponent<DefaultSaberColorer>();
+    private readonly DefaultSaberColorer defaultSaberColorer;
+    
+    private DefaultSaber(GameObject defaultSaberPrefab)
+    {
+        GameObject = Object.Instantiate(defaultSaberPrefab);
+        GameObject.transform.position = Vector3.zero;
+        GameObject.GetComponentsInChildren<SetSaberGlowColor>().ForEach(x => x.enabled = false);
+        GameObject.GetComponentsInChildren<SetSaberFakeGlowColor>().ForEach(x => x.enabled = false);
+        GameObject.GetComponent<SaberTrail>().enabled = false;
+        GameObject.SetActive(true);
+        
+        defaultSaberColorer = GameObject.AddComponent<DefaultSaberColorer>();
+    }
 
-    public GameObject GameObject { get; } = basicSaberModel;
+    public static DefaultSaber Create(GameObject defaultSaberPrefab) => new(defaultSaberPrefab);
+
+    public GameObject GameObject { get; }
     public EventManager? EventManager => null;
     public CustomTrailData[] TrailData { get; } = [];
 
