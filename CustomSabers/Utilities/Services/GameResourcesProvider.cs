@@ -9,9 +9,8 @@ namespace CustomSabersLite.Utilities;
 
 internal class GameResourcesProvider : IInitializable
 {
-    public SaberTrailRenderer SaberTrailRenderer { get; private set; }
-
-    public GameObject SaberModelPrefab { get; private set; }
+    public SaberTrailRenderer SaberTrailRenderer { get; }
+    public GameObject SaberModelPrefab { get; }
 
     private GameResourcesProvider()
     {
@@ -23,14 +22,9 @@ internal class GameResourcesProvider : IInitializable
     {
         SaberTrailRenderer._meshRenderer = SaberTrailRenderer.GetComponent<MeshRenderer>();
         SaberTrailRenderer._meshFilter = SaberTrailRenderer.GetComponent<MeshFilter>();
-
-        SaberModelPrefab.transform.position = Vector3.zero;
-        SaberModelPrefab.GetComponentsInChildren<SetSaberGlowColor>().ForEach(x => x.enabled = false);
-        SaberModelPrefab.GetComponentsInChildren<SetSaberFakeGlowColor>().ForEach(x => x.enabled = false);
-        SaberModelPrefab.GetComponent<SaberTrail>().enabled = false;
     }
 
-    private T LoadAsset<T>(object label) where T : UnityEngine.Object => 
+    private static T LoadAsset<T>(object label) where T : UnityEngine.Object => 
         AddressablesExtensions.LoadContent<T>(label).FirstOrDefault() 
         ?? throw new InvalidOperationException("An internal resource failed to load");
 }
