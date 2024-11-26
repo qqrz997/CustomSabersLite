@@ -17,7 +17,7 @@ public sealed class ToggleableSlider : MonoBehaviour
     private ImageView sliderHandleImage = null!;
     private Color sliderHandleImageDefaultColor; 
 
-    public RangeValuesTextSlider Slider { get; set; } = null!;
+    public CustomFormatRangeValuesSlider Slider { get; set; } = null!;
     public BSMLValue? SliderAssociatedValue { get; set; } 
     public float SliderValue
     {
