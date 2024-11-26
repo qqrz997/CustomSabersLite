@@ -33,6 +33,13 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
     [UIComponent("trail-type")] private readonly ListSetting trailTypeList = null!;
     [UIComponent("saber-list")] private readonly CustomListTableData saberList = null!;
 
+    [UIValue("enabled")]
+    private bool Enabled
+    {
+        get => config.Enabled;
+        set => config.Enabled = value;
+    }
+    
     [UIValue("disable-white-trail")]
     public bool DisableWhiteTrail
     {
