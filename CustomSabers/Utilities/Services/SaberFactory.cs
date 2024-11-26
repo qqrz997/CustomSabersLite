@@ -32,7 +32,7 @@ internal class SaberFactory(CustomSabersLoader customSabersLoader, GameResources
         var prefab = saberData.GetPrefab(saberType);
 
         return prefab == null ? CreateDefaultLiteSaber(saberType)
-            : new CustomLiteSaber(Instantiate(prefab), saberData.Metadata.SaberFile.Type);
+            : CustomLiteSaber.Create(prefab, saberData.Metadata.SaberFile.Type);
     }
 
     private DefaultSaber CreateDefaultLiteSaber(SaberType saberType)

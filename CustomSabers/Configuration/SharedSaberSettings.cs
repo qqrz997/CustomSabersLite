@@ -1,6 +1,4 @@
-﻿using CustomSabersLite.Models;
-
-namespace CustomSabersLite.Configuration;
+﻿namespace CustomSabersLite.Configuration;
 
 internal interface ISharedSaberSettings
 {

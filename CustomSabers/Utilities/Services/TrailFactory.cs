@@ -13,8 +13,8 @@ internal class TrailFactory(CSLConfig config, GameResourcesProvider gameResource
 
     private SaberTrailRenderer TrailRendererPrefab => gameResourcesProvider.SaberTrailRenderer;
 
-    private readonly int defaultSamplingFrequency = 120;
-    private readonly int defaultGranularity = 45;
+    private const int DefaultSamplingFrequency = 120;
+    private const int DefaultGranularity = 45;
 
     /// <summary>
     /// Sets up custom trails for a custom saber
@@ -49,8 +49,8 @@ internal class TrailFactory(CSLConfig config, GameResourcesProvider gameResource
         var baseColor = trailData.Color.ColorWithAlpha(intensity) * trailData.ColorMultiplier;
 
         trail._trailDuration = trailData.Length;
-        trail._samplingFrequency = defaultSamplingFrequency;
-        trail._granularity = defaultGranularity;
+        trail._samplingFrequency = DefaultSamplingFrequency;
+        trail._granularity = DefaultGranularity;
         trail._trailRenderer = Object.Instantiate(TrailRendererPrefab, Vector3.zero, Quaternion.identity);
         if (trail._trailRenderer != null)
         {
