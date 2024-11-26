@@ -19,6 +19,7 @@ public class ToggleableSliderHandler : TypeHandler<ToggleableSlider>
         { "increment", ["increment"] },
         { "intOnly", ["int-only", "integer-only"] },
         { "sliderValue", ["slider-value"] },
+        { "format-string", ["format-string"] },
         // Toggle props
         { "toggleValue", ["toggle-value"] },
         // Image props
@@ -98,6 +99,11 @@ public class ToggleableSliderHandler : TypeHandler<ToggleableSlider>
         if (componentType.Data.TryGetValue("text", out string text) && string.IsNullOrWhiteSpace(text))
         {
             toggleableSlider.Label.transform.parent.gameObject.SetActive(false);
+        }
+
+        if (componentType.Data.TryGetValue("format-string", out string formatString))
+        {
+            toggleableSlider.Slider._formatString = formatString;
         }
     }
 

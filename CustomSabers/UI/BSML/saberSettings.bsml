@@ -22,23 +22,26 @@
       
       <!--Trail duration-->
       <toggleable-slider text="Trail Length" id="trail-duration" slider-value="trail-duration" toggle-value="override-trail-duration" 
-                         min="0" max="100" increment="1" integer-only="true" apply-on-change="true" bind-values="true" formatter="percent-slider-formatter"
+                         min="0" max="100" increment="1" integer-only="true" 
+                         apply-on-change="true" bind-values="true" format-string="{0}%"
                          hover-hint="Modify the duration, or lifetime, of saber trails"/>
       
       <!--Trail width-->
       <toggleable-slider text="Trail Width" id="trail-width" slider-value="trail-width" toggle-value="override-trail-width"
-                         min="0" max="100" increment="1" integer-only="true" apply-on-change="true" bind-values="true" formatter="percent-slider-formatter"
+                         min="0" max="100" increment="1" integer-only="true" 
+                         apply-on-change="true" bind-values="true" format-string="{0}%"
                          hover-hint="Modify the width of saber trails"/>
       
       <!--Saber length-->
       <toggleable-slider text="Saber Length" id="saber-length" slider-value="saber-length" toggle-value="override-saber-length"
-                         min="25" max="150" increment="5" integer-only="true" apply-on-change="true" 
-                         bind-values="true" formatter="percent-slider-formatter"
+                         min="25" max="150" increment="5" integer-only="true" 
+                         apply-on-change="true" bind-values="true" format-string="{0}%"
                          hover-hint="Modify the length of the saber model - has no affect on hit box"/>
       
       <!--Saber width-->
       <toggleable-slider text="Saber Width" id="saber-width" slider-value="saber-width" toggle-value="override-saber-width"
-                         min="0" max="200" increment="10" integer-only="true" apply-on-change="true" bind-values="true" formatter="percent-slider-formatter"
+                         min="0" max="200" increment="10" integer-only="true"
+                         apply-on-change="true" bind-values="true" format-string="{0}%"
                          hover-hint="Modify the girth of the saber model - has no affect on hit box"/>
     </vertical>
 
