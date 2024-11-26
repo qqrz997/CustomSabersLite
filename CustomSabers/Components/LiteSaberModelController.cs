@@ -61,8 +61,8 @@ internal class LiteSaberModelController : SaberModelController, IColorable, IPre
         customTrailInstances = trailFactory.CreateTrail(liteSaberInstance, saber.saberType, intensity);
 
         liteSaberInstance.SetParent(transform);
-        liteSaberInstance.SetLength(config.SaberLength);
-        liteSaberInstance.SetWidth(config.SaberWidth);
+        if (config.OverrideSaberLength) liteSaberInstance.SetLength(config.SaberLength);
+        if (config.OverrideSaberWidth) liteSaberInstance.SetWidth(config.SaberWidth);
         
         if (liteSaberInstance.EventManager != null)
         {
