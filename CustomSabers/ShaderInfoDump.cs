@@ -4,63 +4,78 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using AssetBundleLoadingTools.Utilities;
+using CustomSaber;
+using CustomSabersLite.Utilities;
+using UnityEngine;
 
 namespace CustomSabersLite;
 
 internal class ShaderInfoDump
 {
-    private record MissingShaderInfo(string ModelName, string ShaderName);
-
+    private record ShaderInfo(string ModelName, string ShaderName);
+    private record ShaderCounts(string ShaderName, int Count);
+    private record ShadersWithModels(string ShaderName, string[] ModelNames);
+    
     public static ShaderInfoDump Instance { get; } = new();
 
-    private List<MissingShaderInfo> MissingShaderInfos { get; } = [];
+    private HashSet<ShaderInfo> MissingShaderInfos { get; } = [];
+    private HashSet<ShaderInfo> ShaderInfos { get; } = [];
 
-    private IEnumerable<string> MissingShaderNames =>
-        MissingShaderInfos.GroupBy(i => i.ShaderName).OrderBy(i => i.Count()).Select(i => i.Key).Distinct();
+    public async Task RegisterModelShaders(GameObject model, string modelName)
+    { 
+        var allMaterials = ShaderRepair.GetMaterialsFromGameObjectRenderers(model);
+        allMaterials.AddRange(model.GetComponentsInChildren<CustomTrail>().Select(t => t.TrailMaterial)
+            .Where(m => m != null && m.shader != null && !allMaterials.Contains(m)));
+        allMaterials.ForEach(m => ShaderInfos.Add(new(modelName, m.shader.name)));
 
-    private IEnumerable<(string shaderName, int appearances)> MissingShaderCounts =>
-        MissingShaderInfos.GroupBy(i => i.ShaderName).Select(i => (i.Key, i.Count()));
-
-    public void AddShader(string shaderName, string modelName)
-    {
-        var shaderInfo = new MissingShaderInfo(modelName, shaderName);
-        if (!MissingShaderInfos.Contains(shaderInfo))
-        {
-            MissingShaderInfos.Add(shaderInfo);
-        }
+        (await ShaderRepairUtils.RepairSaberShadersAsync(model))
+            .MissingShaderNames.ForEach(n => MissingShaderInfos.Add(new(modelName, n)));
     }
-
+    
     public void DumpTo(string dir)
     {
+        var shaderInfosDir = Directory.CreateDirectory(Path.Combine(dir, "ShaderInfos"));
+        var missingShadersDir = Directory.CreateDirectory(Path.Combine(dir, "MissingShaders"));
+        DumpShaderCollection(ShaderInfos, shaderInfosDir.FullName);
+        DumpShaderCollection(MissingShaderInfos, missingShadersDir.FullName);
+    }
+
+    private static void DumpShaderCollection(IEnumerable<ShaderInfo> source, string dir)
+    {
+        var shaderInfos = source.ToList();
+
         try
         {
-            var missingShaderCounts = MissingShaderCounts.Select(x => new { Name = x.shaderName, Count = x.appearances });
-            var byCount = missingShaderCounts.OrderBy(i => i.Count);
-            var byShaderName = missingShaderCounts.OrderBy(i => i.Name);
-            File.WriteAllText(Path.Combine(dir, "byCount.json"), JsonConvert.SerializeObject(byCount, Formatting.Indented));
-            File.WriteAllText(Path.Combine(dir, "byShaderName.json"), JsonConvert.SerializeObject(byShaderName, Formatting.Indented));
+            var missingShaderCounts = shaderInfos
+                .GroupBy(i => i.ShaderName)
+                .Select(i => new ShaderCounts(i.Key, i.Count()))
+                .ToList();
+            
+            var byCount = missingShaderCounts.OrderByDescending(i => i.Count);
+            var byShaderName = missingShaderCounts.OrderBy(i => i.ShaderName);
 
-
-            var missingShaderNames = MissingShaderNames;
-            File.WriteAllText(Path.Combine(dir, "names.json"), JsonConvert.SerializeObject(missingShaderNames, Formatting.Indented));
-
-            var list = new List<(string Shader, int Count, string[] Models)>();
-            var q = MissingShaderInfos
+            var allShaderNames = shaderInfos
+                .GroupBy(i => i.ShaderName)
+                .OrderByDescending(i => i.Count())
+                .Select(i => i.Key)
+                .Distinct();
+            
+            var shaderNamesWithModelNames = shaderInfos
                 .GroupBy(info => info.ShaderName)
-                .Select((group, count) => new
-                {
-                    ShaderName = group.Key,
-                    Count = group.Select(info => info.ModelName).Count(),
-                    Models = group.Select(info => info.ModelName).ToArray()
-                })
-                .OrderByDescending(x => x.Count)
+                .Select(group => new ShadersWithModels(group.Key, group.Select(i => i.ModelName).ToArray()))
+                .OrderByDescending(x => x.ModelNames.Length)
                 .ToList();
 
-            File.WriteAllText(Path.Combine(dir, "namesWithModels.json"), JsonConvert.SerializeObject(q, Formatting.Indented));
+            File.WriteAllText(Path.Combine(dir, "byCount.json"), JsonConvert.SerializeObject(byCount, Formatting.Indented));
+            File.WriteAllText(Path.Combine(dir, "byShaderName.json"), JsonConvert.SerializeObject(byShaderName, Formatting.Indented));
+            File.WriteAllText(Path.Combine(dir, "allShaderNames.json"), JsonConvert.SerializeObject(allShaderNames, Formatting.Indented));
+            File.WriteAllText(Path.Combine(dir, "shaderNamesWithModelNames.json"), JsonConvert.SerializeObject(shaderNamesWithModelNames, Formatting.Indented));
         }
         catch (Exception e)
         {
-            Logger.Debug(e);
+            Logger.Error(e);
         }
     }
 }

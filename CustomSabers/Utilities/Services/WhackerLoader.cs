@@ -66,10 +66,10 @@ internal class WhackerLoader(SpriteCache spriteCache, ITimeService timeService)
         saberPrefab.hideFlags |= HideFlags.DontUnloadUnusedAsset;
         saberPrefab.name += $" {whacker.descriptor.objectName}";
 
-        var shaderInfo = await ShaderRepairUtils.RepairSaberShadersAsync(saberPrefab);
-
         #if SHADER_DEBUG
-        shaderInfo.MissingShaderNames.ForEach(n => ShaderInfoDump.Instance.AddShader(n, whacker.descriptor.objectName ?? "Unknown Whacker"));
+        await ShaderInfoDump.Instance.RegisterModelShaders(saberPrefab, whacker.descriptor.objectName ?? "Unknown Whacker");
+        #else
+        await ShaderRepairUtils.RepairSaberShadersAsync(saberPrefab);
         #endif
 
         var icon = await GetDownscaledIcon(archive.GetEntry(whacker.descriptor.coverImage));
