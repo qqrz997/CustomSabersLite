@@ -1,8 +1,8 @@
 ﻿using CustomSaber;
 using CustomSabersLite.Configuration;
 using System;
-using UnityEngine;
 using System.Linq;
+using CustomSabersLite.Utilities.Extensions;
 
 namespace CustomSabersLite.Utilities.Services;
 
@@ -94,7 +94,7 @@ internal class SaberEventService(BeatmapObjectManager beatmapObjectManager, Game
             eventManager.OnSlice?.Invoke();
         }
 
-        if (Mathf.Approximately(noteController.noteData.time, lastNoteTime.Value))
+        if (noteController.noteData.time.Approximately(lastNoteTime.Value))
         {
             lastNoteTime = 0;
             eventManager.OnLevelEnded?.Invoke();
@@ -110,7 +110,7 @@ internal class SaberEventService(BeatmapObjectManager beatmapObjectManager, Game
             eventManager.OnComboBreak?.Invoke();
         }
 
-        if (Mathf.Approximately(noteController.noteData.time, lastNoteTime.Value))
+        if (noteController.noteData.time.Approximately(lastNoteTime.Value))
         {
             lastNoteTime = 0;
             eventManager.OnLevelEnded?.Invoke();

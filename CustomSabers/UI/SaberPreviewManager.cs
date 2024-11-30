@@ -76,8 +76,9 @@ internal class SaberPreviewManager : IInitializable, IDisposable
 
     public void UpdateActivePreview()
     {
-        previewParent.gameObject.SetActive(previewActive && !previewGenerating && !config.EnableMenuSabers);
-        menuSaberManager.SetActive(previewActive && !previewGenerating && config.EnableMenuSabers);
+        bool previewIsActive = previewActive && !previewGenerating;
+        previewParent.gameObject.SetActive(previewIsActive && !config.EnableMenuSabers);
+        menuSaberManager.SetActive(previewIsActive && config.EnableMenuSabers);
     }
 
     public void UpdateTrails()
@@ -92,6 +93,7 @@ internal class SaberPreviewManager : IInitializable, IDisposable
         float width = config.OverrideSaberWidth ? config.SaberWidth : 1f;
         basicPreviewSaberManager.UpdateSaberScale(length, width);
         menuSaberManager.UpdateSaberScale(length, width);
+        basicPreviewTrailManager.UpdateTrails();
     }
 
     public void UpdateColor()
