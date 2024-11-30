@@ -1,7 +1,7 @@
 ﻿using CustomSabersLite.Components;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Models;
-using UnityEngine;
+using CustomSabersLite.Utilities.Extensions;
 
 namespace CustomSabersLite.Utilities;
 
@@ -41,13 +41,13 @@ internal static class TrailUtils
             customTrail.OverrideWidth = config.TrailWidth;
             customTrail.UseWidthOverride = config.OverrideTrailWidth && useOverrideWidth;
             customTrail._trailDuration = duration;
-            customTrail.enabled = config.TrailType != TrailType.None && !Mathf.Approximately(duration, 0f);
+            customTrail.enabled = config.TrailType != TrailType.None && !duration.Approximately(0f);
         }
         else
         {
             float duration = config.OverrideTrailDuration ? config.TrailDuration * DefaultDuration : DefaultDuration;
             trail._trailDuration = duration;
-            if (config.TrailType == TrailType.None || Mathf.Approximately(duration, 0f))
+            if (config.TrailType == TrailType.None || duration.Approximately(0f))
             {
                 trail._color.a = 0f;
             }

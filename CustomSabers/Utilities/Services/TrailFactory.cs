@@ -46,7 +46,7 @@ internal class TrailFactory(CSLConfig config, GameResourcesProvider gameResource
     private LiteSaberTrail CreateTrail(GameObject saberObject, CustomTrailData trailData, float intensity)
     {
         var trail = saberObject.AddComponent<LiteSaberTrail>();
-        var baseColor = trailData.Color.ColorWithAlpha(intensity) * trailData.ColorMultiplier;
+        var baseColor = trailData.GetTrailColor() with { a = intensity };
 
         trail._trailDuration = trailData.Length;
         trail._samplingFrequency = DefaultSamplingFrequency;
