@@ -40,7 +40,7 @@
       
       <!--Saber width-->
       <toggleable-slider text="Saber Width" id="saber-width" slider-value="saber-width" toggle-value="override-saber-width"
-                         min="0" max="2" increment="0.1"
+                         min="0" max="2" increment="0.01"
                          apply-on-change="true" bind-values="true" format-string="{0:##0%}"
                          hover-hint="Modify the girth of the saber model - has no affect on hit box"/>
     </vertical>
