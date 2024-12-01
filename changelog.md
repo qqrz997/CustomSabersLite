@@ -1,5 +1,17 @@
 # changelog
 
+## 0.14.0
+### New
+- Added a setting to change the length of the saber model
+- Added a setting to change the width of the saber model
+### Changes
+- Added icons to each saber setting
+- Added a % symbol to each saber setting slider
+- Reduced the amount of vertical space that saber settings take u
+### Fixes
+- Fixed the preview not showing the selected custom saber on first menu activation
+- Fixed the default saber's trail disappearing when disabling the "Mod Enabled" setting
+
 ## 0.13.2
 - Fixed the saber list in the gameplay setup tab not being able to select any sabers
 - Fixed the saber list in the main menu sometimes not being ordered as it is supposed to be
