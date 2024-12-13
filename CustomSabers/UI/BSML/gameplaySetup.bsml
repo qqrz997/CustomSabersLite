@@ -3,8 +3,8 @@
     <!--Settings container-->
     <vertical child-expand-height='false' child-control-height="false" horizontal-fit="Unconstrained">
       <text text='more settings in main menu' font-size='3' color='grey' align='Center' size-delta-y="7"/>
-      <checkbox-setting text='Enabled' value='enabled' apply-on-change='true' 
-                        hover-hint='Disable this to stop the mod from running in maps'/>
+      <checkbox-setting text='Enabled' value='enabled' hover-hint='Disable this to stop the mod from running in maps'
+                        apply-on-change='true' bind-value="true"/>
       
       <checkbox-setting value='disable-white-trail' text='Disable White Trail' hover-hint='Toggles the initial white part of trails'
                         apply-on-change='true' bind-value='true'/>
