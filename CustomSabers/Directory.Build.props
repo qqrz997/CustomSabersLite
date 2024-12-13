@@ -18,8 +18,6 @@
 		<DependsOn Include="BeatSaberMarkupLanguage" Version="^1.12.0"/>
 		<DependsOn Include="AssetBundleLoadingTools" Version="^1.1.9"/>
 		<DependsOn Include="SiraUtil" Version="^3.1.12"/>
-		<DependsOn Include="System.IO.Compression" Version="^4.6.57"/>
-		<DependsOn Include="System.IO.Compression.FileSystem" Version="^4.7.3056"/>
 	</ItemGroup>
 	
 	<PropertyGroup>
