@@ -1,4 +1,5 @@
 using System.Linq;
+using BeatSaber.GameSettings;
 using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.Tags;
 using BGLib.Polyglot;
@@ -22,10 +23,9 @@ public class ToggleableSliderTag : BSMLTag
     {
         var settingsSubMenuInfos = DiContainer.Resolve<MainSettingsMenuViewController>()._settingsSubMenuInfos;
 
-        var sliderTemplate = settingsSubMenuInfos
-            .First(x => x.viewController is ControllersTransformSettingsViewController)
-            .viewController
-            .transform.Find("Content/PositionX")
+        var sliderTemplate = Object.FindObjectsOfType<ViewController>(true)
+            .First(x => x is ControllerProfilesSettingsViewController)
+            .transform.Find("Content/MainContent/Sliders/PositionX")
             .gameObject;
         
         var labelTemplate = sliderTemplate.transform.Find("Title").GetComponent<CurvedTextMeshPro>();
@@ -49,9 +49,9 @@ public class ToggleableSliderTag : BSMLTag
         layoutElement.preferredHeight = 7f;
         
         var rectTransform = gameObject.GetComponent<RectTransform>();
-        rectTransform.anchoredPosition = new(0f, 0f);
-        rectTransform.anchorMin = new(0f, 0f);
-        rectTransform.anchorMax = new(1f, 1f);
+        rectTransform.anchoredPosition = Vector2.zero;
+        rectTransform.anchorMin = Vector2.zero;
+        rectTransform.anchorMax = Vector2.one;
         rectTransform.sizeDelta = new(70f, 7f);
         
         // Icon
@@ -79,15 +79,20 @@ public class ToggleableSliderTag : BSMLTag
         toggleableSlider.Label.GetComponent<LocalizedTextMeshProUGUI>().DestroyComponent();
         toggleableSlider.Label.enableWordWrapping = false;
         toggleableSlider.Label.fontSize = 4;
+        toggleableSlider.Label.alignment = TextAlignmentOptions.CaplineLeft;
         toggleableSlider.Label.color = Color.white;
         toggleableSlider.Label.text = "Default Text";
-        toggleableSlider.Label.rectTransform.anchorMin = Vector2.zero;
-        toggleableSlider.Label.rectTransform.anchorMax = Vector2.one;
+        toggleableSlider.Label.rectTransform.anchorMin = Vector3.zero;
+        toggleableSlider.Label.rectTransform.anchorMax = Vector3.one;
+        toggleableSlider.Label.rectTransform.offsetMin = Vector3.zero;
+        toggleableSlider.Label.rectTransform.offsetMax = new(-52, 0);
         
         // Slider
         var sliderObject = Object.Instantiate(sliderTemplate, gameObject.transform, false);
         sliderObject.GetComponentInChildren<LocalizedTextMeshProUGUI>().DestroyComponent();
         sliderObject.GetComponentInChildren<TextMeshProUGUI>().DestroyComponent();
+        sliderObject.GetComponentInChildren<CanvasGroup>().DestroyComponent();
+        sliderObject.transform.Find("SliderLeft").Destroy();
         sliderObject.name = "SliderSetting";
 
         var customFormatRangeValuesSlider = sliderObject.GetComponentInChildren<CustomFormatRangeValuesSlider>();
@@ -97,10 +102,11 @@ public class ToggleableSliderTag : BSMLTag
         toggleableSlider.Slider._enableDragging = true;
         
         var sliderRectTransform = toggleableSlider.Slider.GetComponent<RectTransform>();
-        sliderRectTransform.anchorMin = new(0f, 0f);
-        sliderRectTransform.anchorMax = new(1f, 1f);
-        sliderRectTransform.offsetMin = new(0f, 0f);
-        sliderRectTransform.offsetMax = new(0f, 0f);
+        sliderRectTransform.anchoredPosition = Vector2.zero;
+        sliderRectTransform.anchorMin = Vector2.zero;
+        sliderRectTransform.anchorMax = Vector2.one;
+        sliderRectTransform.offsetMin = Vector2.zero;
+        sliderRectTransform.offsetMax = Vector2.zero;
         
         // Toggle
         var toggleObject = new GameObject("ToggleSetting") { layer = 5 };
