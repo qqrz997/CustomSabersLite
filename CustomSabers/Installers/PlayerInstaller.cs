@@ -26,7 +26,7 @@ internal class PlayerInstaller : Installer
         }
 
         Container.BindInterfacesAndSelfTo<SaberEventService>().AsTransient();
-        Container.Bind<LevelSaberManager>().AsSingle();
+        Container.Bind<GameplaySaber>().AsSingle();
 
         // This replaces the default sabers
         Container.BindInstance(SaberModelRegistration.Create<LiteSaberModelController>(5));

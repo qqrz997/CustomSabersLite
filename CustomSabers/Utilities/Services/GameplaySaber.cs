@@ -3,16 +3,16 @@ using System.Threading.Tasks;
 
 namespace CustomSabersLite.Utilities.Services;
 
-internal class LevelSaberManager
+internal class GameplaySaber
 {
     private readonly SaberFactory saberFactory;
 
-    public Task<ISaberData> LevelSaberInstance { get; }
+    public Task<ISaberData> CreateTask { get; }
 
-    public LevelSaberManager(SaberFactory saberFactory)
+    public GameplaySaber(SaberFactory saberFactory)
     {
         this.saberFactory = saberFactory;
-        LevelSaberInstance = CreateLevelSaberInstance();
+        CreateTask = CreateLevelSaberInstance();
     }
 
     private async Task<ISaberData> CreateLevelSaberInstance()

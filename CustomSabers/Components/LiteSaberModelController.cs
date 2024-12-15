@@ -12,7 +12,7 @@ namespace CustomSabersLite.Components;
 
 internal class LiteSaberModelController : SaberModelController, IColorable, IPreSaberModelInit
 {
-    [Inject] private readonly LevelSaberManager levelSaberManager = null!;
+    [Inject] private readonly GameplaySaber gameplaySaber = null!;
     [Inject] private readonly TrailFactory trailFactory = null!;
     [Inject] private readonly SaberFactory saberFactory = null!;
     [Inject] private readonly SaberEventService saberEventService = null!;
@@ -48,8 +48,7 @@ internal class LiteSaberModelController : SaberModelController, IColorable, IPre
         transform.position = parent.position;
         transform.rotation = parent.rotation;
 
-        var saberData = await levelSaberManager.LevelSaberInstance;
-        liteSaberInstance = saberFactory.Create(saber.saberType, saberData);
+        liteSaberInstance = saberFactory.Create(saber.saberType, await gameplaySaber.CreateTask);
 
         if (liteSaberInstance == null)
         {
