@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace CustomSabersLite.Utilities;
+namespace CustomSabersLite.Utilities.Extensions;
 
 internal static class TextureExtensions
 {

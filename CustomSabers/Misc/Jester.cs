@@ -1,5 +1,5 @@
 ﻿using CustomSabersLite.Components;
-using CustomSabersLite.Utilities;
+using CustomSabersLite.Utilities.Services;
 using UnityEngine;
 using Zenject;
 

@@ -1,7 +1,5 @@
-﻿using System.Threading.Tasks;
-using CustomSabersLite.Components;
+﻿using CustomSabersLite.Components;
 using CustomSabersLite.Configuration;
-using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Services;
 using JetBrains.Annotations;
 using SiraUtil.Sabers;

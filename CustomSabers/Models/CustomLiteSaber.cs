@@ -1,6 +1,7 @@
 ﻿using CustomSaber;
-using CustomSabersLite.Utilities;
 using System.Collections.Generic;
+using CustomSabersLite.Utilities.Common;
+using CustomSabersLite.Utilities.Extensions;
 using UnityEngine;
 
 namespace CustomSabersLite.Models;

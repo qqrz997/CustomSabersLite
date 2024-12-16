@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace CustomSabersLite.Utilities;
+namespace CustomSabersLite.Utilities.Services;
 
 internal class SpriteCache
 {

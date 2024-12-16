@@ -1,18 +1,19 @@
-﻿using CustomSabersLite.Models;
-using CustomSabersLite.UI;
-using CustomSabersLite.Utilities.Services;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
+using CustomSabersLite.Models;
+using CustomSabersLite.UI;
+using CustomSabersLite.Utilities.Common;
+using CustomSabersLite.Utilities.Extensions;
+using Newtonsoft.Json;
 using UnityEngine;
 using Zenject;
 
-namespace CustomSabersLite.Utilities;
+namespace CustomSabersLite.Utilities.Services;
 
 internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManager saberListManager, SpriteCache spriteCache, SaberPrefabCache saberInstances, SaberMetadataCacheMigrationManager migrationManager) : IInitializable
 {

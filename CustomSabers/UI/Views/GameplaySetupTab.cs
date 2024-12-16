@@ -11,7 +11,9 @@ using BeatSaberMarkupLanguage.Components;
 using HMUI;
 using System.ComponentModel;
 using System.Collections;
-using CustomSabersLite.Utilities;
+using CustomSabersLite.Utilities.Common;
+using CustomSabersLite.Utilities.Extensions;
+using CustomSabersLite.Utilities.Services;
 using JetBrains.Annotations;
 
 namespace CustomSabersLite.UI.Views;

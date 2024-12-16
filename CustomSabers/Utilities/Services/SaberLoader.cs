@@ -1,14 +1,12 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
-using UnityEngine;
 using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Common;
+using CustomSabersLite.Utilities.Extensions;
+using UnityEngine;
 
-namespace CustomSabersLite.Utilities;
+namespace CustomSabersLite.Utilities.Services;
 
-/// <summary>
-/// Class for loading .saber files
-/// </summary>
 internal class SaberLoader(SpriteCache spriteCache, ITimeService timeService)
 {
     private readonly SpriteCache spriteCache = spriteCache;
@@ -20,8 +18,6 @@ internal class SaberLoader(SpriteCache spriteCache, ITimeService timeService)
     /// <summary>
     /// Loads a custom saber from a .saber file
     /// </summary>
-    /// <param name="relativePath">Path to the .saber file in the CustomSabers folder</param>
-    /// <returns><seealso cref="NoSaberData"/> if a custom saber failed to load</returns>
     public async Task<ISaberData> LoadCustomSaberAsync(string relativePath)
     {
         string path = Path.Combine(sabersPath, relativePath);

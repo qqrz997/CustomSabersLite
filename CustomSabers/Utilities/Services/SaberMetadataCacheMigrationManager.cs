@@ -1,10 +1,11 @@
-﻿using IPA.Utilities;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using CustomSabersLite.Utilities.Extensions;
+using IPA.Utilities;
 
-namespace CustomSabersLite.Utilities;
+namespace CustomSabersLite.Utilities.Services;
 
 internal class SaberMetadataCacheMigrationManager
 {

@@ -1,11 +1,12 @@
-﻿using BGLib.UnityExtension;
-using System;
+﻿using System;
 using System.Linq;
+using BGLib.UnityExtension;
+using CustomSabersLite.Utilities.Extensions;
 using UnityEngine;
 using Zenject;
 using Object = UnityEngine.Object;
 
-namespace CustomSabersLite.Utilities;
+namespace CustomSabersLite.Utilities.Services;
 
 
 internal class GameResourcesProvider : IInitializable

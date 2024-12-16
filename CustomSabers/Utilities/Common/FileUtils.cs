@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace CustomSabersLite.Utilities;
+namespace CustomSabersLite.Utilities.Common;
 
 internal class FileUtils
 {

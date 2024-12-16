@@ -1,12 +1,12 @@
-﻿using CustomSabersLite.UI.Views;
-using CustomSabersLite.Utilities;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using CustomSabersLite.UI.Views;
+using CustomSabersLite.Utilities.Services;
 using HMUI;
 using IPA.Utilities.Async;
-using System.Threading;
-using System.Threading.Tasks;
 using Zenject;
 
-namespace CustomSabersLite.UI.Managers;
+namespace CustomSabersLite.UI;
 
 internal class CSLFlowCoordinator : FlowCoordinator
 {

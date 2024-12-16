@@ -1,11 +1,10 @@
 ﻿using CustomSabersLite.UI;
-using CustomSabersLite.UI.Managers;
 using CustomSabersLite.UI.Views;
-using CustomSabersLite.Utilities;
 using System;
 using BeatSaberMarkupLanguage.Tags;
 using BeatSaberMarkupLanguage.TypeHandlers;
 using CustomSabersLite.UI.CustomTags;
+using CustomSabersLite.Utilities.Services;
 using UnityEngine;
 using Zenject;
 

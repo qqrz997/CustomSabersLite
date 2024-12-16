@@ -3,7 +3,7 @@ using BeatSaber.GameSettings;
 using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.Tags;
 using BGLib.Polyglot;
-using CustomSabersLite.Utilities;
+using CustomSabersLite.Utilities.Extensions;
 using HMUI;
 using JetBrains.Annotations;
 using TMPro;

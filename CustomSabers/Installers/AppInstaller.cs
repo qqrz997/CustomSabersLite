@@ -1,6 +1,5 @@
 ﻿using CustomSabersLite.Configuration;
 using CustomSabersLite.UI;
-using CustomSabersLite.Utilities;
 using CustomSabersLite.Utilities.Services;
 using Zenject;
 

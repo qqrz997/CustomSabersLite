@@ -3,9 +3,9 @@ using CustomSabersLite.Configuration;
 using SiraUtil.Interfaces;
 using UnityEngine;
 using Zenject;
-using CustomSabersLite.Utilities;
 using CustomSabersLite.Utilities.Services;
 using CustomSabersLite.Models;
+using CustomSabersLite.Utilities.Extensions;
 
 namespace CustomSabersLite.Components;
 

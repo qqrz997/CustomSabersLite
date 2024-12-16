@@ -1,17 +1,15 @@
 ﻿using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using Newtonsoft.Json;
-using CustomSabersLite.Models;
-using UnityEngine;
 using System.Threading.Tasks;
+using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Common;
+using CustomSabersLite.Utilities.Extensions;
+using Newtonsoft.Json;
+using UnityEngine;
 
-namespace CustomSabersLite.Utilities;
+namespace CustomSabersLite.Utilities.Services;
 
-/// <summary>
-/// Class for loading .whacker files
-/// </summary>
 internal class WhackerLoader(SpriteCache spriteCache, ITimeService timeService)
 {
     private readonly SpriteCache spriteCache = spriteCache;
@@ -23,8 +21,6 @@ internal class WhackerLoader(SpriteCache spriteCache, ITimeService timeService)
     /// <summary>
     /// Loads a custom saber from a .whacker file
     /// </summary>
-    /// <param name="relativePath">Path to the .whacker file in the CustomSabers folder</param>
-    /// <returns><seealso cref="NoSaberData"/> if a custom saber failed to load</returns>
     public async Task<ISaberData> LoadWhackerAsync(string relativePath)
     {
         string path = Path.Combine(sabersPath, relativePath);

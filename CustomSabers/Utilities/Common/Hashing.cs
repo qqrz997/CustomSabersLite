@@ -2,8 +2,9 @@
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using CustomSabersLite.Utilities.Extensions;
 
-namespace CustomSabersLite.Utilities;
+namespace CustomSabersLite.Utilities.Common;
 
 internal class Hashing
 {
@@ -32,7 +33,7 @@ internal class Hashing
     {
         var sb = new StringBuilder();
         hashBytes.Select(b => b.ToString(format))
-            .ForEach(s => sb.Append(s));
+            .ForEach(s => sb.Append((string)s));
         return sb.ToString();
     }
 }

@@ -8,7 +8,7 @@ using SiraUtil.Zenject;
 using IPA.Loader;
 using Hive.Versioning;
 using System.Threading.Tasks;
-using CustomSabersLite.Utilities;
+using CustomSabersLite.Utilities.Common;
 
 namespace CustomSabersLite;
 

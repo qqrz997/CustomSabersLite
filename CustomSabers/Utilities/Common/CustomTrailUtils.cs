@@ -1,12 +1,11 @@
-﻿using CustomSaber;
+﻿using System.Linq;
+using CustomSaber;
 using CustomSabersLite.Models;
 using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace CustomSabersLite.Utilities;
+namespace CustomSabersLite.Utilities.Common;
 
 // TODO: use polymorphism instead of the CustomSaberType to get trails from the saber
 internal class CustomTrailUtils

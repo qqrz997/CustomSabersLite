@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace CustomSabersLite.Utilities;
+namespace CustomSabersLite.Utilities.Common;
 
 internal class MaterialProperties
 {

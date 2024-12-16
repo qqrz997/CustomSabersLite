@@ -1,10 +1,9 @@
-﻿using CustomSabersLite.Models;
-using CustomSabersLite.Utilities.Services;
-using System;
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using CustomSabersLite.Models;
 
-namespace CustomSabersLite.Utilities;
+namespace CustomSabersLite.Utilities.Services;
 
 /// <summary>
 /// Class for loading different kinds of custom saber assets

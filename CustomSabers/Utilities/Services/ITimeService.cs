@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CustomSabersLite.Utilities;
+namespace CustomSabersLite.Utilities.Services;
 
 internal interface ITimeService
 {

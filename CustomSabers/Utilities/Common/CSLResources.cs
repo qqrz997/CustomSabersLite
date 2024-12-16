@@ -1,7 +1,8 @@
 ﻿using System;
+using CustomSabersLite.Utilities.Extensions;
 using UnityEngine;
 
-namespace CustomSabersLite.Utilities;
+namespace CustomSabersLite.Utilities.Common;
 
 internal class CSLResources
 {

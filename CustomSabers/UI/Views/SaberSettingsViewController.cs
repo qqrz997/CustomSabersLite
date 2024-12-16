@@ -5,7 +5,8 @@ using BeatSaberMarkupLanguage.ViewControllers;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Models;
 using Zenject;
-using CustomSabersLite.Utilities;
+using CustomSabersLite.Utilities.Common;
+using CustomSabersLite.Utilities.Extensions;
 using HMUI;
 
 namespace CustomSabersLite.UI.Views;
