@@ -47,7 +47,7 @@ internal class SaberMetadataCacheMigrationManager
 
         v1Dir.EnumerateFiles("*.meta", SearchOption.TopDirectoryOnly).ForEach(f => f.Delete());
         if (v1Dir.EnumerateFiles("*", SearchOption.AllDirectories).Any())
-            throw new Exception(
+            throw new(
                 "Version 1 cache folder contains alien files.\n" +
                 $"Remove any personal files from {v1Dir.FullName[UnityGame.InstallPath.Length..]}");
         v1Dir.Delete();

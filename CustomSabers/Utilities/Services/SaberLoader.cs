@@ -63,9 +63,9 @@ internal class SaberLoader(SpriteCache spriteCache, ITimeService timeService)
         return
             new CustomSaberData(
                 new CustomSaberMetadata(
-                    new SaberFileInfo(path, assetHash, timeService.GetUtcTime(), Type),
+                    new(path, assetHash, timeService.GetUtcTime(), Type),
                     SaberLoaderError.None,
-                    new Descriptor(descriptor.SaberName, descriptor.AuthorName, icon)),
+                    new(descriptor.SaberName, descriptor.AuthorName, icon)),
                 bundle,
                 new(saberPrefab, Type));
     }

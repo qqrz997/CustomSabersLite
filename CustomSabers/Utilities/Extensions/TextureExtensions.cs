@@ -14,7 +14,7 @@ internal static class TextureExtensions
         var previous = RenderTexture.active;
         RenderTexture.active = renderTex;
         var readableText = new Texture2D(source.width, source.height);
-        readableText.ReadPixels(new Rect(0, 0, renderTex.width, renderTex.height), 0, 0);
+        readableText.ReadPixels(new(0, 0, renderTex.width, renderTex.height), 0, 0);
         readableText.Apply();
         RenderTexture.active = previous;
         RenderTexture.ReleaseTemporary(renderTex);
@@ -38,7 +38,7 @@ internal static class TextureExtensions
         Graphics.SetRenderTarget(renderTexture);
         GL.LoadPixelMatrix(0, 1, 1, 0);
         GL.Clear(true, true, Color.clear);
-        Graphics.DrawTexture(new Rect(0, 0, 1, 1), origTexture);
+        Graphics.DrawTexture(new(0, 0, 1, 1), origTexture);
 
         origTexture.Reinitialize(width, height);
         origTexture.ReadPixels(textureRect, 0, 0, true);
@@ -52,12 +52,12 @@ internal static class TextureExtensions
     /// </summary>
     public static Sprite? ToSprite(this Texture2D tex, byte[] imageData, float pixelsPerUnit = 100) =>
         !tex.LoadImage(imageData) ? null
-        : Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), pixelsPerUnit);
+        : Sprite.Create(tex, new(0, 0, tex.width, tex.height), new(0.5f, 0.5f), pixelsPerUnit);
 
     /// <summary>
     /// Creates a <seealso cref="Sprite"/> from an existing texture
     /// </summary>
     public static Sprite? ToSprite(this Texture2D? tex, float pixelsPerUnit = 100) =>
         !tex || tex is null ? null
-        : Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), pixelsPerUnit);
+        : Sprite.Create(tex, new(0, 0, tex.width, tex.height), new(0.5f, 0.5f), pixelsPerUnit);
 }

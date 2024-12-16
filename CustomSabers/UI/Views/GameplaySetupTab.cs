@@ -176,7 +176,7 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
     }
 
     private void NotifyPropertyChanged(string propertyName) =>
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        PropertyChanged?.Invoke(this, new(propertyName));
 
     public void Dispose() =>
         saberMetadataCache.LoadingProgressChanged -= LoadingProgressChanged;

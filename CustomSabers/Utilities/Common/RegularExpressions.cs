@@ -4,5 +4,5 @@ namespace CustomSabersLite.Utilities.Common;
 
 internal class RegularExpressions
 {
-    public static Regex RichTextRegex { get; } = new Regex(@"<[^>]*>");
+    public static Regex RichTextRegex { get; } = new("<[^>]*>");
 }

@@ -93,6 +93,6 @@ internal class SaberListManager(SaberPrefabCache saberPrefabCache)
             SaberLoaderError.None => meta.Descriptor.Icon,
             _ => CSLResources.DefaultCoverImage
         };
-        return new SaberListCellInfo(meta, text, spriteIcon);
+        return new(meta, text, spriteIcon);
     }
 }

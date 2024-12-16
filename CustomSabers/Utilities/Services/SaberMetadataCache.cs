@@ -68,9 +68,9 @@ internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManag
             var installedSabersMetadata = cacheFile.CachedMetadata.Where(meta => installedSaberPaths.Contains(meta.RelativePath));
             var saberMetadata = installedSabersMetadata.Select(m =>
                 new CustomSaberMetadata(
-                    new SaberFileInfo(Path.Combine(PluginDirs.CustomSabers.FullName, m.RelativePath), m.Hash, m.DateAdded, m.SaberType),
+                    new(Path.Combine(PluginDirs.CustomSabers.FullName, m.RelativePath), m.Hash, m.DateAdded, m.SaberType),
                     m.LoaderError,
-                    new Descriptor(m.SaberName, m.AuthorName, spriteCache.GetSprite(m.RelativePath))));
+                    new(m.SaberName, m.AuthorName, spriteCache.GetSprite(m.RelativePath))));
 
             #if SHADER_DEBUG
             ShaderInfoDump.Instance.DumpTo(PluginDirs.UserData.FullName);
@@ -193,7 +193,7 @@ internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManag
 
         // no new sabers were found, so continue with existing cache, otherwise update it
         return !loadedMetadata.Any() ? existingCache
-            : new CacheFileModel(Plugin.Version.ToString(), [..loadedMetadata, ..existingCache.CachedMetadata]);
+            : new(Plugin.Version.ToString(), [..loadedMetadata, ..existingCache.CachedMetadata]);
     }
 
     private async Task<List<SaberMetadataModel>> LoadMetadataFromSabers(IEnumerable<string> sabersForCaching)
@@ -211,7 +211,7 @@ internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManag
 
             if (metadata.SaberFile.Hash != null)
             {
-                loadedSaberMetadata.Add(new SaberMetadataModel(relativePath, metadata.SaberFile.Hash, metadata.SaberFile.Type, metadata.LoaderError, metadata.Descriptor.SaberName.FullName, metadata.Descriptor.AuthorName.FullName, metadata.SaberFile.DateAdded));
+                loadedSaberMetadata.Add(new(relativePath, metadata.SaberFile.Hash, metadata.SaberFile.Type, metadata.LoaderError, metadata.Descriptor.SaberName.FullName, metadata.Descriptor.AuthorName.FullName, metadata.SaberFile.DateAdded));
             }
 
             CurrentProgress = currentProgress with { StagePercent = currentItem * 100 / relativePaths.Length };
