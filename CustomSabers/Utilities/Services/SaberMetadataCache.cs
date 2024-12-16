@@ -14,17 +14,17 @@ using Zenject;
 
 namespace CustomSabersLite.Utilities;
 
-internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManager saberListManager, SpriteCache spriteCache, SaberInstanceManager saberInstances, SaberMetadataCacheMigrationManager migrationManager) : IInitializable
+internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManager saberListManager, SpriteCache spriteCache, SaberPrefabCache saberInstances, SaberMetadataCacheMigrationManager migrationManager) : IInitializable
 {
     private readonly CustomSabersLoader customSabersLoader = saberLoader;
     private readonly SaberListManager saberListManager = saberListManager;
     private readonly SpriteCache spriteCache = spriteCache;
-    private readonly SaberInstanceManager saberInstanceManager = saberInstances;
+    private readonly SaberPrefabCache saberPrefabCache = saberInstances;
     private readonly SaberMetadataCacheMigrationManager saberMetadataCacheMigrationManager = migrationManager;
 
-    private string MetadataFileName => "metadata.json";
-    private string CacheArchiveFileName => "cache";
-    private string CacheArchiveFilePath => Path.Combine(PluginDirs.UserData.FullName, CacheArchiveFileName);
+    private const string MetadataFileName = "metadata.json";
+    private const string CacheArchiveFileName = "cache";
+    private static string CacheArchiveFilePath => Path.Combine(PluginDirs.UserData.FullName, CacheArchiveFileName);
 
     internal record Progress(bool Completed, string Stage, int? StagePercent = null);
 
@@ -48,7 +48,7 @@ internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManag
 
     public async Task ReloadAsync()
     {
-        saberInstanceManager.Clear(false);
+        saberPrefabCache.Clear(false);
         saberListManager.Clear();
         CurrentProgress = new(false, "Reloading");
 
@@ -56,7 +56,7 @@ internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManag
         {
             var stopwatch = Stopwatch.StartNew();
 
-            string[]? installedSaberPaths = FileUtils.GetFilePaths(
+            string[] installedSaberPaths = FileUtils.GetFilePaths(
                 PluginDirs.CustomSabers.FullName, [".saber", ".whacker"], SearchOption.AllDirectories, true).ToArray();
 
             var cacheFile = await InternalReloadAsync(installedSaberPaths);
@@ -144,12 +144,12 @@ internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManag
                 if (imageData == null)
                     continue;
 
-                string? imagePath = Path.Combine(imagesDir.FullName, meta.Hash + ".png");
+                string imagePath = Path.Combine(imagesDir.FullName, meta.Hash + ".png");
                 await File.WriteAllBytesAsync(imagePath, imageData);
             }
 
-            string? cacheJson = JsonConvert.SerializeObject(cacheFile, Formatting.None);
-            string? metadataFilePath = Path.Combine(tempCacheDir.FullName, MetadataFileName);
+            string cacheJson = JsonConvert.SerializeObject(cacheFile, Formatting.None);
+            string metadataFilePath = Path.Combine(tempCacheDir.FullName, MetadataFileName);
             await File.WriteAllTextAsync(metadataFilePath, cacheJson);
 
             if (File.Exists(CacheArchiveFilePath)) File.Delete(CacheArchiveFilePath);
@@ -199,7 +199,7 @@ internal class SaberMetadataCache(CustomSabersLoader saberLoader, SaberListManag
     {
         CurrentProgress = currentProgress with { Stage = "Loading Sabers" };
 
-        string[]? relativePaths = sabersForCaching.ToArray();
+        string[] relativePaths = sabersForCaching.ToArray();
         var loadedSaberMetadata = new List<SaberMetadataModel>();
         int currentItem = 1;
 

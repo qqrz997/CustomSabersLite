@@ -27,7 +27,7 @@ internal class WhackerLoader(SpriteCache spriteCache, ITimeService timeService)
     /// <returns><seealso cref="NoSaberData"/> if a custom saber failed to load</returns>
     public async Task<ISaberData> LoadWhackerAsync(string relativePath)
     {
-        string? path = Path.Combine(sabersPath, relativePath);
+        string path = Path.Combine(sabersPath, relativePath);
 
         if (!File.Exists(path))
             return new NoSaberData(relativePath, timeService.GetUtcTime(), SaberLoaderError.FileNotFound);
@@ -75,25 +75,33 @@ internal class WhackerLoader(SpriteCache spriteCache, ITimeService timeService)
         var icon = await GetDownscaledIcon(archive.GetEntry(whacker.descriptor.coverImage));
         spriteCache.AddSprite(relativePath, icon);
 
-        string? assetHash = await Task.Run(() => Hashing.MD5Checksum(path, "x2")) ?? string.Empty;
+        string assetHash = await Task.Run(() => Hashing.MD5Checksum(path, "x2")) ?? string.Empty;
 
         return
             new CustomSaberData(
                 new CustomSaberMetadata(
-                    new SaberFileInfo(path, assetHash, timeService.GetUtcTime(), Type),
+                    new(path, assetHash, timeService.GetUtcTime(), Type),
                     SaberLoaderError.None,
-                    new Descriptor(whacker.descriptor.objectName, whacker.descriptor.author, icon)),
+                    new(whacker.descriptor.objectName, whacker.descriptor.author, icon)),
                 bundle,
-                saberPrefab);
+                new(saberPrefab, Type));
     }
 
-    private async Task<Sprite?> GetDownscaledIcon(ZipArchiveEntry? thumbEntry)
+    private static async Task<Sprite?> GetDownscaledIcon(ZipArchiveEntry? thumbEntry)
     {
-        if (thumbEntry is null) return null;
+        if (thumbEntry is null)
+        {
+            return null;
+        }
+
         using var memoryStream = new MemoryStream();
-        using var thumbStream = thumbEntry.Open();
+        // TODO: test await using doesn't break unity
+        await using var thumbStream = thumbEntry.Open();
+        
         await thumbStream.CopyToAsync(memoryStream);
+        
         var icon = new Texture2D(2, 2).ToSprite(memoryStream.ToArray());
+        
         return icon == null || icon.texture == null ? null
             : icon.texture.Downscale(128, 128).ToSprite();
     }

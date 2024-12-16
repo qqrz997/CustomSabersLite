@@ -9,15 +9,16 @@ namespace CustomSabersLite.Utilities;
 /// <summary>
 /// Class for loading different kinds of custom saber assets
 /// </summary>
-internal class CustomSabersLoader(SaberInstanceManager saberInstanceManager, SaberLoader saberLoader, WhackerLoader whackerLoader, ITimeService timeService)
+internal class CustomSabersLoader(SaberPrefabCache saberPrefabCache, SaberLoader saberLoader, WhackerLoader whackerLoader, ITimeService timeService)
 {
-    private readonly SaberInstanceManager saberInstanceManager = saberInstanceManager;
+    private readonly SaberPrefabCache saberPrefabCache = saberPrefabCache;
     private readonly SaberLoader saberLoader = saberLoader;
     private readonly WhackerLoader whackerLoader = whackerLoader;
     private readonly ITimeService timeService = timeService;
 
     public async Task<ISaberData> GetSaberData(string saberPath, bool keepSaberInstance) =>
-        saberInstanceManager.TryGetSaber(saberPath) ?? await LoadNew(saberPath, keepSaberInstance);
+        saberPrefabCache.TryGetSaber(saberPath, out var saberData) ? saberData 
+            : await LoadNew(saberPath, keepSaberInstance);
 
     private async Task<ISaberData> LoadNew(string saberPath, bool keepSaberInstance)
     {
@@ -27,7 +28,7 @@ internal class CustomSabersLoader(SaberInstanceManager saberInstanceManager, Sab
 
             if (keepSaberInstance && saberData is CustomSaberData customSaber)
             {
-                saberInstanceManager.AddSaber(customSaber);
+                saberPrefabCache.AddSaber(customSaber);
             }
 
             return saberData;

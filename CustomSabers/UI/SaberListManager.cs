@@ -8,9 +8,9 @@ using System.Linq;
 
 namespace CustomSabersLite.UI;
 
-internal class SaberListManager(SaberInstanceManager saberInstances)
+internal class SaberListManager(SaberPrefabCache saberPrefabCache)
 {
-    private readonly SaberInstanceManager saberInstanceManager = saberInstances;
+    private readonly SaberPrefabCache saberPrefabCache = saberPrefabCache;
  
     private List<SaberListCellInfo> Data { get; set; } = [];
     private List<SaberListCellInfo> SaberList { get; set; } = [];
@@ -42,7 +42,11 @@ internal class SaberListManager(SaberInstanceManager saberInstances)
             File.Delete(destinationPath);
         }
 
-        saberInstanceManager.TryGetSaber(relativePath)?.Dispose(true);
+        if (saberPrefabCache.TryGetSaber(relativePath, out var saberData))
+        {
+            saberData.Dispose(true);
+        }
+
         File.Move(currentSaberPath, destinationPath);
 
         var deletedInfo = Data.FirstOrDefault(i => i.Metadata.SaberFile.RelativePath == relativePath);

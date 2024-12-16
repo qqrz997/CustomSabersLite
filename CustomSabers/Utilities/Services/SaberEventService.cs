@@ -1,14 +1,11 @@
 ﻿using CustomSaber;
-using CustomSabersLite.Configuration;
 using System;
 using System.Linq;
 using CustomSabersLite.Utilities.Extensions;
 
 namespace CustomSabersLite.Utilities.Services;
 
-#pragma warning disable IDE0031 // Use null propagation
-
-internal class SaberEventService(BeatmapObjectManager beatmapObjectManager, GameEnergyCounter gameEnergyCounter, ObstacleSaberSparkleEffectManager obstacleCollisionManager, RelativeScoreAndImmediateRankCounter relativeScoreCounter, IScoreController scoreController, IComboController comboController, IReadonlyBeatmapData beatmapData, CSLConfig config) : IDisposable
+internal class SaberEventService(BeatmapObjectManager beatmapObjectManager, GameEnergyCounter gameEnergyCounter, ObstacleSaberSparkleEffectManager obstacleCollisionManager, RelativeScoreAndImmediateRankCounter relativeScoreCounter, IScoreController scoreController, IComboController comboController, IReadonlyBeatmapData beatmapData) : IDisposable
 {
     private readonly BeatmapObjectManager beatmapObjectManager = beatmapObjectManager;
     private readonly GameEnergyCounter gameEnergyCounter = gameEnergyCounter;
@@ -17,23 +14,21 @@ internal class SaberEventService(BeatmapObjectManager beatmapObjectManager, Game
     private readonly IScoreController scoreController = scoreController;
     private readonly IComboController comboController = comboController;
     private readonly IReadonlyBeatmapData beatmapData = beatmapData;
-    private readonly CSLConfig config = config;
 
     private EventManager? eventManager;
     private float? lastNoteTime;
     private float previousScore;
     private SaberType saberType;
 
-    public void InitializeEventManager(EventManager eventManager, SaberType saberType)
+    public void InitializeEventManager(EventManager? eventManager, SaberType saberType)
     {
-        this.eventManager = eventManager;
-        this.saberType = saberType;
-
-        if (!config.EnableCustomEvents ||
-            eventManager && eventManager.OnLevelStart == null)
+        if (eventManager == null || eventManager.OnLevelStart == null)
         {
             return;
         }
+        
+        this.eventManager = eventManager;
+        this.saberType = saberType;
 
         Logger.Debug("Adding events");
 

@@ -1,5 +1,7 @@
-﻿using CustomSabersLite.Components;
+﻿using System.Threading.Tasks;
+using CustomSabersLite.Components;
 using CustomSabersLite.Configuration;
+using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Services;
 using JetBrains.Annotations;
 using SiraUtil.Sabers;
@@ -11,10 +13,12 @@ namespace CustomSabersLite.Installers;
 internal class PlayerInstaller : Installer
 {
     private readonly CSLConfig config;
-
-    private PlayerInstaller(CSLConfig config)
+    private readonly SaberFactory saberFactory;
+    
+    private PlayerInstaller(CSLConfig config, SaberFactory saberFactory)
     {
         this.config = config;
+        this.saberFactory = saberFactory;
     }
     
     public override void InstallBindings()
@@ -26,8 +30,8 @@ internal class PlayerInstaller : Installer
         }
 
         Container.BindInterfacesAndSelfTo<SaberEventService>().AsTransient();
-        Container.Bind<GameplaySaber>().AsSingle();
-
+        Container.BindInstance(saberFactory.InstantiateCurrentSabers()).AsSingle();
+        
         // This replaces the default sabers
         Container.BindInstance(SaberModelRegistration.Create<LiteSaberModelController>(5));
     }

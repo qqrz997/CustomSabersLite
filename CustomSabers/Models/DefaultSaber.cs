@@ -9,19 +9,13 @@ internal class DefaultSaber : ILiteSaber
 {
     private readonly DefaultSaberColorer defaultSaberColorer;
     
-    private DefaultSaber(GameObject defaultSaberPrefab)
+    private DefaultSaber(GameObject defaultSaberObject)
     {
-        GameObject = Object.Instantiate(defaultSaberPrefab);
-        GameObject.transform.position = Vector3.zero;
-        GameObject.GetComponentsInChildren<SetSaberGlowColor>().ForEach(x => x.enabled = false);
-        GameObject.GetComponentsInChildren<SetSaberFakeGlowColor>().ForEach(x => x.enabled = false);
-        GameObject.GetComponent<SaberTrail>().enabled = false;
-        GameObject.SetActive(true);
-        
+        GameObject = Object.Instantiate(defaultSaberObject);
         defaultSaberColorer = GameObject.AddComponent<DefaultSaberColorer>();
     }
 
-    public static DefaultSaber Create(GameObject defaultSaberPrefab) => new(defaultSaberPrefab);
+    public static DefaultSaber Create(GameObject defaultSaberObject) => new(defaultSaberObject);
 
     public GameObject GameObject { get; }
     public EventManager? EventManager => null;

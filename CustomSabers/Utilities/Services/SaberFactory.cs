@@ -12,14 +12,16 @@ internal class SaberFactory(CustomSabersLoader customSabersLoader, GameResources
 {
     private readonly CustomSabersLoader customSabersLoader = customSabersLoader;
     private readonly CSLConfig config = config;
-    private readonly GameObject defaultSaberPrefab = gameResourcesProvider.SaberModelPrefab;
+    private readonly GameResourcesProvider gameResourcesProvider = gameResourcesProvider;
 
-    public async Task<ISaberData> GetCurrentSaberDataAsync() =>
-        config.CurrentlySelectedSaber is null ? NoSaberData.Value
+    public async Task<SaberInstanceSet> InstantiateCurrentSabers() => 
+        (await GetCurrentSaberDataAsync()).Prefab?.Instantiate() ?? CreateDefaultSaberSet();
+    
+    private async Task<ISaberData> GetCurrentSaberDataAsync() =>
+        config.CurrentlySelectedSaber is null or [] ? NoSaberData.Value
         : await customSabersLoader.GetSaberData(config.CurrentlySelectedSaber, true);
 
-    public ILiteSaber Create(SaberType saberType, ISaberData saberData) => 
-        saberData is CustomSaberData && saberData.GetPrefab(saberType) is GameObject prefab 
-            ? CustomLiteSaber.Create(prefab, saberData.Metadata.SaberFile.Type) 
-            : DefaultSaber.Create(defaultSaberPrefab); 
+    private SaberInstanceSet CreateDefaultSaberSet() =>
+        new(DefaultSaber.Create(gameResourcesProvider.CreateNewDefaultSaber()), 
+            DefaultSaber.Create(gameResourcesProvider.CreateNewDefaultSaber()));
 }

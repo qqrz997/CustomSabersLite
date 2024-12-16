@@ -8,6 +8,4 @@ internal interface ISaberData : IDisposable
     ISaberMetadata Metadata { get; }
 
     SaberPrefab? Prefab { get; }
-
-    GameObject? GetPrefab(SaberType saberType);
 }

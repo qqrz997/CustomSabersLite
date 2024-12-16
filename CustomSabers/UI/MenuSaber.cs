@@ -8,8 +8,6 @@ using Zenject;
 
 namespace CustomSabersLite.UI;
 
-#pragma warning disable IDE0031 // Use null propagation
-
 internal class MenuSaber
 {
     private readonly CSLConfig config;

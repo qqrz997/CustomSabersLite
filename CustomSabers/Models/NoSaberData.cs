@@ -10,6 +10,5 @@ internal record NoSaberData(string FullPath, DateTime DateAdded, SaberLoaderErro
     public static NoSaberData Value { get; } = new NoSaberData(string.Empty, DateTime.MinValue, SaberLoaderError.None);
 
     public SaberPrefab? Prefab => null;
-    public GameObject? GetPrefab(SaberType saberType) => null;
     public void Dispose() { }
 }

@@ -45,10 +45,8 @@ internal class BasicPreviewTrail
         defaultBottom.transform.SetParent(defaultTrailObject.transform, false);
         defaultTop.localPosition = Vector3.forward;
 
-        var defaultTrailMaterial = gameResourcesProvider.SaberTrailRenderer._meshRenderer.material;
-        
         customTrailData = defaultTrailData = new(
-            defaultTop, defaultBottom, defaultTrailMaterial,
+            defaultTop, defaultBottom, gameResourcesProvider.DefaultTrailMaterial,
             saberType == SaberType.SaberA ? TrailColorType.LeftSaber : TrailColorType.RightSaber, 
             Color.white, Color.white, TrailUtils.DefaultDuration);
     }

@@ -13,7 +13,7 @@ internal class CustomLiteSaber : ILiteSaber
     public EventManager? EventManager { get; }
     public CustomTrailData[] TrailData { get; }
 
-    private CustomLiteSaber(GameObject gameObject, CustomSaberType customSaberType)
+    public CustomLiteSaber(GameObject gameObject, CustomSaberType customSaberType)
     {
         GameObject = gameObject;
         GameObject.SetLayerRecursively(12);
@@ -21,9 +21,6 @@ internal class CustomLiteSaber : ILiteSaber
         TrailData = CustomTrailUtils.GetTrailFromCustomSaber(gameObject, customSaberType);
         ColorableMaterials = GetColorableMaterials(gameObject);
     }
-    
-    public static CustomLiteSaber Create(GameObject prefab, CustomSaberType customSaberType) =>
-        new(Object.Instantiate(prefab), customSaberType);
 
     public void SetColor(Color color)
     {

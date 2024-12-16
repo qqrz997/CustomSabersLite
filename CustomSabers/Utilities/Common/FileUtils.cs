@@ -25,8 +25,8 @@ internal class FileUtils
     public static string TrimPath(string fullPath, string trimPath)
     {
         if (fullPath == trimPath) return string.Empty;
-        string? trimmed = fullPath.Replace(trimPath, string.Empty);
-        string? path = trimmed.Substring(1, trimmed.Length - 1);
+        string trimmed = fullPath.Replace(trimPath, string.Empty);
+        string path = trimmed.Substring(1, trimmed.Length - 1);
         return path;
     }
 }

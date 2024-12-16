@@ -3,21 +3,15 @@ using UnityEngine;
 
 namespace CustomSabersLite.Models;
 
-internal class CustomSaberData(ISaberMetadata metadata, AssetBundle assetBundle, GameObject saberPrefab) : ISaberData
+internal class CustomSaberData(ISaberMetadata metadata, AssetBundle assetBundle, SaberPrefab saberPrefab) : ISaberData
 {
     public ISaberMetadata Metadata { get; } = metadata;
-
     private AssetBundle AssetBundle { get; } = assetBundle;
-
-    public SaberPrefab? Prefab { get; } = SaberPrefab.TryCreate(saberPrefab);
-
-    public GameObject? GetPrefab(SaberType saberType) =>
-        Prefab == null ? null
-        : saberType == SaberType.SaberA ? Prefab.Left : Prefab.Right;
+    public SaberPrefab Prefab { get; } = saberPrefab;
 
     public void Dispose(bool unloadAllLoadedObjects)
     {
-        if (unloadAllLoadedObjects) Prefab?.Dispose();
+        if (unloadAllLoadedObjects) Prefab.Dispose();
         if (AssetBundle) AssetBundle.Unload(unloadAllLoadedObjects);
     }
 
@@ -25,8 +19,8 @@ internal class CustomSaberData(ISaberMetadata metadata, AssetBundle assetBundle,
     {
         try
         {
-            Prefab?.Dispose();
-            if (AssetBundle) AssetBundle.Unload(true);
+            Prefab.Dispose();
+            if (AssetBundle != null) AssetBundle.Unload(true);
         }
         catch (Exception ex)
         {

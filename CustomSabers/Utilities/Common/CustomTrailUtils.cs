@@ -8,6 +8,7 @@ using UnityEngine.UI;
 
 namespace CustomSabersLite.Utilities;
 
+// TODO: use polymorphism instead of the CustomSaberType to get trails from the saber
 internal class CustomTrailUtils
 {
     public static CustomTrailData[] GetTrailFromCustomSaber(GameObject saberObject, CustomSaberType customSaberType) => customSaberType switch
@@ -44,15 +45,16 @@ internal class CustomTrailUtils
                 Text: text, 
                 Data: JsonConvert.DeserializeObject<WhackerTrailTransform>(text.text)))
             .ToList();
-        
-        // search the transform data for each trail and find the matching transform data,
-        // and take the transform from which that transform data originated from
-        return texts
+        var trailData = texts
             .Where(t => t.text.Contains("\"trailColor\":"))
             .Select(text => (
                 Text: text,
                 Data: JsonConvert.DeserializeObject<WhackerTrail>(text.text)))
-            .Where(td => td.Data is not null)
+            .Where(td => td.Data is not null);
+        
+        // search the transform data for each trail and find the matching transform data,
+        // and take the transform from which that transform data originated from
+        return trailData
             .Select(trail => new CustomTrailData(
                 transformData.Where(transform => transform.Data.isTop)
                     .FirstOrDefault(transform => transform.Data.trailId == trail.Data!.trailId)

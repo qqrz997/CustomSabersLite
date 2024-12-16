@@ -5,12 +5,11 @@ using CustomSabersLite.Utilities.Services;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using CustomSabersLite.Models;
 using UnityEngine;
 using Zenject;
 
 namespace CustomSabersLite.UI;
-
-#pragma warning disable IDE0031 // Use null propagation
 
 internal class SaberPreviewManager : IInitializable, IDisposable
 {
@@ -29,6 +28,9 @@ internal class SaberPreviewManager : IInitializable, IDisposable
     private bool previewActive;
     private bool previewGenerating;
 
+    private SaberInstanceSet? basicPreviewSaberSet;
+    private SaberInstanceSet? heldPreviewSaberSet;
+    
     public void Initialize()
     {
         leftPreviewParent.SetParent(previewParent);
@@ -47,18 +49,18 @@ internal class SaberPreviewManager : IInitializable, IDisposable
     {
         previewGenerating = true;
         UpdateActivePreview();
+        
+        basicPreviewSaberSet?.Dispose();
+        heldPreviewSaberSet?.Dispose();
 
-        var saberData = await saberFactory.GetCurrentSaberDataAsync();
+        basicPreviewSaberSet = await saberFactory.InstantiateCurrentSabers();
+        heldPreviewSaberSet = await saberFactory.InstantiateCurrentSabers();
         token.ThrowIfCancellationRequested();
 
-        var leftSaber = saberFactory.Create(SaberType.SaberA, saberData);
-        var rightSaber = saberFactory.Create(SaberType.SaberB, saberData);
-        basicPreviewSaberManager.ReplaceSabers(leftSaber, rightSaber);
-        basicPreviewTrailManager.SetTrails(leftSaber, rightSaber);
+        basicPreviewSaberManager.ReplaceSabers(basicPreviewSaberSet.LeftSaber, basicPreviewSaberSet.RightSaber);
+        basicPreviewTrailManager.SetTrails(basicPreviewSaberSet.LeftSaber, basicPreviewSaberSet.RightSaber);
 
-        var leftMenuSaber = saberFactory.Create(SaberType.SaberA, saberData);
-        var rightMenuSaber = saberFactory.Create(SaberType.SaberB, saberData);
-        menuSaberManager.ReplaceSabers(leftMenuSaber, rightMenuSaber);
+        menuSaberManager.ReplaceSabers(heldPreviewSaberSet.LeftSaber, heldPreviewSaberSet.RightSaber);
 
         UpdateTrails();
         UpdateSaberModels();

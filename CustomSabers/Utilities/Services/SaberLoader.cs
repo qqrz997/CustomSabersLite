@@ -24,7 +24,7 @@ internal class SaberLoader(SpriteCache spriteCache, ITimeService timeService)
     /// <returns><seealso cref="NoSaberData"/> if a custom saber failed to load</returns>
     public async Task<ISaberData> LoadCustomSaberAsync(string relativePath)
     {
-        string? path = Path.Combine(sabersPath, relativePath);
+        string path = Path.Combine(sabersPath, relativePath);
 
         if (!File.Exists(path))
             return new NoSaberData(relativePath, timeService.GetUtcTime(), SaberLoaderError.FileNotFound);
@@ -62,7 +62,7 @@ internal class SaberLoader(SpriteCache spriteCache, ITimeService timeService)
         await ShaderRepairUtils.RepairSaberShadersAsync(saberPrefab);
         #endif
 
-        string? assetHash = await Task.Run(() => Hashing.MD5Checksum(path, "x2")) ?? string.Empty;
+        string? assetHash = await Task.Run(() => Hashing.MD5Checksum(path, "x2"));
 
         return
             new CustomSaberData(
@@ -71,6 +71,6 @@ internal class SaberLoader(SpriteCache spriteCache, ITimeService timeService)
                     SaberLoaderError.None,
                     new Descriptor(descriptor.SaberName, descriptor.AuthorName, icon)),
                 bundle,
-                saberPrefab);
+                new(saberPrefab, Type));
     }
 }
