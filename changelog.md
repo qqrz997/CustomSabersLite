@@ -1,7 +1,10 @@
 # changelog
 
+## 0.14.2
+- Changed the way that saber objects are created so that GameObjects not parented to the left/right sabers such as events are included 
+
 ## 0.14.1
-- Changed the saber width increments from 10~~~~% to 1%
+- Changed the saber width increments from 10% to 1%
 
 ## 0.14.0
 ### New

@@ -7,8 +7,8 @@
 		<PluginId>CustomSabersLite</PluginId>
 		<PluginName>CustomSabersLite</PluginName>
 		<Authors>CustomSabersLite</Authors>
-		<Version>0.14.1</Version>
-		<GameVersion>1.39.0</GameVersion>
+		<Version>0.14.2</Version>
+		<GameVersion>1.40.0</GameVersion>
 		<Description>No description.</Description>
 	</PropertyGroup>
 
