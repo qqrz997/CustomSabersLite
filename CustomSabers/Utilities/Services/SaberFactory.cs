@@ -18,6 +18,6 @@ internal class SaberFactory(CustomSabersLoader customSabersLoader, GameResources
         : await customSabersLoader.GetSaberData(config.CurrentlySelectedSaber, true);
 
     private SaberInstanceSet CreateDefaultSaberSet() =>
-        new(DefaultSaber.Create(gameResourcesProvider.CreateNewDefaultSaber()), 
-            DefaultSaber.Create(gameResourcesProvider.CreateNewDefaultSaber()));
+        new(new DefaultSaber(gameResourcesProvider.CreateNewDefaultSaber()), 
+            new DefaultSaber(gameResourcesProvider.CreateNewDefaultSaber()));
 }

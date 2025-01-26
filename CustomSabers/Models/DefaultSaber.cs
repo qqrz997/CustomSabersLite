@@ -8,13 +8,11 @@ internal class DefaultSaber : ILiteSaber
 {
     private readonly DefaultSaberColorer defaultSaberColorer;
     
-    private DefaultSaber(GameObject defaultSaberObject)
+    public DefaultSaber(GameObject defaultSaberObject)
     {
-        GameObject = Object.Instantiate(defaultSaberObject);
+        GameObject = defaultSaberObject;
         defaultSaberColorer = GameObject.AddComponent<DefaultSaberColorer>();
     }
-
-    public static DefaultSaber Create(GameObject defaultSaberObject) => new(defaultSaberObject);
 
     public GameObject GameObject { get; }
     public EventManager? EventManager => null;
