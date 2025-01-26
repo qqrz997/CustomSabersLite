@@ -29,5 +29,8 @@ internal record RichTextSegment : IComparable<RichTextSegment>
         return new(fullText, replaced);
     }
 
-    public int CompareTo(RichTextSegment other) => Value.CompareTo(other.Value);
+    public int CompareTo(RichTextSegment other) => string.Compare(Value, other.Value, StringComparison.Ordinal);
+    
+    public bool Contains(string value, StringComparison comparison = StringComparison.CurrentCulture) => 
+        Value.Contains(value, comparison);
 }

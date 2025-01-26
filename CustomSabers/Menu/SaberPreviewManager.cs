@@ -1,19 +1,20 @@
-﻿using CustomSabersLite.Configuration;
-using CustomSabersLite.Utilities.Services;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using CustomSabersLite.Configuration;
 using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Extensions;
+using CustomSabersLite.Utilities.Services;
 using UnityEngine;
 using Zenject;
+using Logger = CustomSabersLite.Logger;
 
-namespace CustomSabersLite.UI;
+namespace CustomSabersLite.Menu;
 
 internal class SaberPreviewManager : IInitializable, IDisposable
 {
     [Inject] private readonly SaberFactory saberFactory = null!;
-    [Inject] private readonly CSLConfig config = null!;
+    [Inject] private readonly CslConfig config = null!;
     [Inject] private readonly ColorSchemesSettings colorSchemesSettings = null!;
 
     [Inject] private readonly MenuSaberManager menuSaberManager = null!;
@@ -35,9 +36,9 @@ internal class SaberPreviewManager : IInitializable, IDisposable
         leftPreviewParent.SetParent(previewParent);
         rightPreviewParent.SetParent(previewParent);
 
-        previewParent.SetPositionAndRotation(new(0.7f, 0.8f, 1.1f), Quaternion.Euler(270f, 125f, 0f));
-        leftPreviewParent.localPosition = new(0f, 0.17f, 0f);
-        rightPreviewParent.localPosition = new(0f, -0.17f, 0f);
+        previewParent.SetPositionAndRotation(new(0.8f, 0.8f, 1.1f), Quaternion.Euler(270f, 125f, 0f));
+        leftPreviewParent.localPosition = new(0f, 0.16f, 0f);
+        rightPreviewParent.localPosition = new(0f, -0.16f, 0f);
         rightPreviewParent.localRotation = Quaternion.Euler(0f, 0f, 180f);
 
         basicPreviewSaberManager.Init(leftPreviewParent, rightPreviewParent);
@@ -46,6 +47,7 @@ internal class SaberPreviewManager : IInitializable, IDisposable
 
     public async Task GeneratePreview(CancellationToken token)
     {
+        Logger.Debug("Generating preview");
         previewGenerating = true;
         UpdateActivePreview();
         

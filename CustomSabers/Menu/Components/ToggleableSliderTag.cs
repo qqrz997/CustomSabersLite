@@ -9,10 +9,9 @@ using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-
 using static BeatSaberMarkupLanguage.Utilities.ImageResources;
 
-namespace CustomSabersLite.UI.CustomTags;
+namespace CustomSabersLite.Menu.Components;
 
 [UsedImplicitly]
 public class ToggleableSliderTag : BSMLTag

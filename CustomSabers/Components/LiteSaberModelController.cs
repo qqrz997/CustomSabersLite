@@ -11,7 +11,7 @@ namespace CustomSabersLite.Components;
 
 internal class LiteSaberModelController : SaberModelController, IColorable, IPreSaberModelInit
 {
-    [Inject] private readonly CSLConfig config = null!;
+    [Inject] private readonly CslConfig config = null!;
     [Inject] private readonly Task<SaberInstanceSet> saberInstanceSet = null!;
     [Inject] private readonly TrailFactory trailFactory = null!;
     [Inject] private readonly SaberEventService saberEventService = null!;

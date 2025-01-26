@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using CustomSabersLite.Utilities.Common;
 using CustomSabersLite.Utilities.Extensions;
 using IPA.Utilities;
 
@@ -14,7 +15,7 @@ internal class SaberMetadataCacheMigrationManager
     private enum CacheVersion
     {
         Current = 0,
-        V1 // Cache folder used by CustomSabersLite prior to v1.13.0
+        V1 // Cache folder used by CustomSabersLite prior to v0.13.0
     }
 
     private static bool Migrate(CacheVersion cacheVersion)

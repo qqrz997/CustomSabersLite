@@ -86,6 +86,10 @@
         <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\HMUI.dll</HintPath>
           <Private>false</Private>
       </Reference>
+      <Reference Include="Interactable">
+          <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Interactable.dll</HintPath>
+          <Private>false</Private>
+      </Reference>
       <Reference Include="IPA.Injector">
         <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\IPA.Injector.dll</HintPath>
           <Private>false</Private>
@@ -168,6 +172,10 @@
       </Reference>
       <Reference Include="UnityEngine.UIModule">
         <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.UIModule.dll</HintPath>
+          <Private>false</Private>
+      </Reference>
+      <Reference Include="VRUI">
+          <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\VRUI.dll</HintPath>
           <Private>false</Private>
       </Reference>
       <Reference Include="Zenject">

@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using Logger = CustomSabersLite.Logger;
 
 namespace CustomSabersLite.Models;
 

@@ -1,7 +1,7 @@
 using System.Collections;
 using Zenject;
 
-namespace CustomSabersLite;
+namespace CustomSabersLite.Misc;
 
 internal class PauseMenuHandlesFix(MultiplayerLocalActivePlayerInGameMenuViewController multiplayerLocalActivePlayerInGameMenuViewControllerAndThisIsAReallyLongNameThatMakesMyWordWrappingLookFunny, ICoroutineStarter coroutineStarter) : IInitializable
 {

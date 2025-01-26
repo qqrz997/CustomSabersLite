@@ -3,7 +3,6 @@
 internal class SaberListCellText
 {
     public string Text { get; }
-
     public string Subtext { get; }
 
     public SaberListCellText(CustomSaberMetadata meta)

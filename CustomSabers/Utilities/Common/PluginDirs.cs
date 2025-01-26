@@ -1,7 +1,7 @@
-﻿using IPA.Utilities;
-using System.IO;
+﻿using System.IO;
+using IPA.Utilities;
 
-namespace CustomSabersLite;
+namespace CustomSabersLite.Utilities.Common;
 
 internal class PluginDirs
 {

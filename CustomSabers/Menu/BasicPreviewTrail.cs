@@ -6,11 +6,11 @@ using CustomSabersLite.Utilities.Services;
 using UnityEngine;
 using TrailColorType = CustomSaber.ColorType;
 
-namespace CustomSabersLite.UI;
+namespace CustomSabersLite.Menu;
 
 internal class BasicPreviewTrail
 {
-    private readonly CSLConfig config;
+    private readonly CslConfig config;
 
     private readonly GameObject gameObject;
     private readonly GameObject defaultTrailObject;
@@ -29,7 +29,7 @@ internal class BasicPreviewTrail
     
     private Vector3 SaberPosition => gameObject.transform.position;
     
-    public BasicPreviewTrail(CSLConfig config, GameResourcesProvider gameResourcesProvider, SaberType saberType)
+    public BasicPreviewTrail(CslConfig config, GameResourcesProvider gameResourcesProvider, SaberType saberType)
     {
         this.config = config;
         

@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace CustomSabersLite.UI.CustomTags;
+namespace CustomSabersLite.Menu.Components;
 
 public sealed class ToggleableSlider : MonoBehaviour
 {

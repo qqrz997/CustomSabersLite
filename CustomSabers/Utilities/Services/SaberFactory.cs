@@ -4,10 +4,10 @@ using System.Threading.Tasks;
 
 namespace CustomSabersLite.Utilities.Services;
 
-internal class SaberFactory(CustomSabersLoader customSabersLoader, GameResourcesProvider gameResourcesProvider, CSLConfig config)
+internal class SaberFactory(CustomSabersLoader customSabersLoader, GameResourcesProvider gameResourcesProvider, CslConfig config)
 {
     private readonly CustomSabersLoader customSabersLoader = customSabersLoader;
-    private readonly CSLConfig config = config;
+    private readonly CslConfig config = config;
     private readonly GameResourcesProvider gameResourcesProvider = gameResourcesProvider;
 
     public async Task<SaberInstanceSet> InstantiateCurrentSabers() => 

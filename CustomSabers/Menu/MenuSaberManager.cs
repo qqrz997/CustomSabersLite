@@ -2,7 +2,7 @@
 using CustomSabersLite.Utilities.Services;
 using UnityEngine;
 
-namespace CustomSabersLite.UI;
+namespace CustomSabersLite.Menu;
 
 internal class MenuSaberManager(MenuPointers menuPointers, MenuSaber.Factory menuSaberFactory)
 {

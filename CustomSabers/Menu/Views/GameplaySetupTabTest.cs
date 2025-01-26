@@ -1,10 +1,10 @@
 ﻿using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.ViewControllers;
 
-namespace CustomSabersLite.UI.Views;
+namespace CustomSabersLite.Menu.Views;
 
 [HotReload(RelativePathToLayout = "../BSML/gameplaySetup.bsml")]
-[ViewDefinition("CustomSabersLite.UI.BSML.gameplaySetup.bsml")]
+[ViewDefinition("CustomSabersLite.Menu.BSML.gameplaySetup.bsml")]
 internal class TabTest : BSMLAutomaticViewController
 {
     /*[UIAction("#post-parse")]

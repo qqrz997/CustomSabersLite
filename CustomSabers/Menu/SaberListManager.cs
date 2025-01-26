@@ -1,12 +1,12 @@
-﻿using CustomSabersLite.Models;
-using CustomSabersLite.Utilities.Services;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Common;
+using CustomSabersLite.Utilities.Services;
 
-namespace CustomSabersLite.UI;
+namespace CustomSabersLite.Menu;
 
 internal class SaberListManager(SaberPrefabCache saberPrefabCache)
 {
@@ -15,13 +15,13 @@ internal class SaberListManager(SaberPrefabCache saberPrefabCache)
     private List<SaberListCellInfo> Data { get; set; } = [];
     private List<SaberListCellInfo> SaberList { get; set; } = [];
 
-    private SaberListCellInfo InfoForDefaultSabers { get; } = MetaToInfo(CustomSaberMetadata.Default);
+    private SaberListCellInfo DefaultSabersInfo { get; } = MetaToInfo(CustomSaberMetadata.Default);
 
     public void Clear() => Data.Clear();
     public void SetData(IEnumerable<CustomSaberMetadata> data) => Data = data.Select(MetaToInfo).ToList();
 
     public IEnumerable<SaberListCellInfo> UpdateList(SaberListFilterOptions filterOptions) =>
-        SaberList = GetSortedData(filterOptions).Prepend(InfoForDefaultSabers).ToList();
+        SaberList = GetSortedData(filterOptions).Prepend(DefaultSabersInfo).ToList();
 
     public bool DeleteSaber(string? relativePath)
     {
@@ -69,20 +69,19 @@ internal class SaberListManager(SaberPrefabCache saberPrefabCache)
         !string.IsNullOrEmpty(relativePath)
         && SaberList.FirstOrDefault(i => i.Metadata.SaberFile.RelativePath == relativePath) is not null;
 
-    private IEnumerable<SaberListCellInfo> GetSortedData(SaberListFilterOptions filterOptions)
+    private IEnumerable<SaberListCellInfo> GetSortedData(SaberListFilterOptions filter)
     {
-        var filtered = string.IsNullOrEmpty(filterOptions.SearchFilter) ? Data
-            : Data.Where(i => i.Contains(filterOptions.SearchFilter));
+        var filtered = filter.SearchFilter is null or [] ? Data : Data.Where(i => i.Contains(filter.SearchFilter));
 
-        var orderedData = filterOptions.OrderBy switch
+        var orderedData = filter.OrderBy switch
         {
             OrderBy.Name => filtered.OrderBy(i => i.Metadata.Descriptor.SaberName).ThenBy(i => i.Metadata.Descriptor.AuthorName),
             OrderBy.Author => filtered.OrderBy(i => i.Metadata.Descriptor.AuthorName).ThenBy(i => i.Metadata.Descriptor.SaberName),
             OrderBy.RecentlyAdded => filtered.OrderByDescending(i => i.Metadata.SaberFile.DateAdded),
-            _ => throw new NotImplementedException()
+            _ => throw new ArgumentOutOfRangeException(nameof(filter.OrderBy))
         };
 
-        return filterOptions.ReverseOrder ? orderedData.Reverse() : orderedData;
+        return filter.ReverseOrder ? orderedData.Reverse() : orderedData;
     }
 
     private static SaberListCellInfo MetaToInfo(CustomSaberMetadata meta)

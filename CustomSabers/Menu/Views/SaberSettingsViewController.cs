@@ -4,18 +4,18 @@ using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.ViewControllers;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Models;
-using Zenject;
 using CustomSabersLite.Utilities.Common;
 using CustomSabersLite.Utilities.Extensions;
 using HMUI;
+using Zenject;
 
-namespace CustomSabersLite.UI.Views;
+namespace CustomSabersLite.Menu.Views;
 
 [HotReload(RelativePathToLayout = "../BSML/saberSettings.bsml")]
-[ViewDefinition("CustomSabersLite.UI.BSML.saberSettings.bsml")]
+[ViewDefinition("CustomSabersLite.Menu.BSML.saberSettings.bsml")]
 internal class SaberSettingsViewController : BSMLAutomaticViewController, ISharedSaberSettings
 {
-    [Inject] private readonly CSLConfig config = null!;
+    [Inject] private readonly CslConfig config = null!;
     [Inject] private readonly SaberPreviewManager previewManager = null!;
 
     [UIComponent("trail-duration")] private readonly ImageView trailDurationIcon = null!; 

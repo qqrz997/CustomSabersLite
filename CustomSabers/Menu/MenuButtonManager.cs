@@ -2,7 +2,7 @@
 using BeatSaberMarkupLanguage.MenuButtons;
 using Zenject;
 
-namespace CustomSabersLite.UI;
+namespace CustomSabersLite.Menu;
 
 internal class MenuButtonManager(MenuButtons menuButtons, MainFlowCoordinator mainFlowCoordinator, CSLFlowCoordinator sabersFlowCoordinator) : IInitializable, IDisposable
 {

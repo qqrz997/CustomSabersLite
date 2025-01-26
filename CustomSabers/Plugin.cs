@@ -9,6 +9,7 @@ using IPA.Loader;
 using Hive.Versioning;
 using System.Threading.Tasks;
 using CustomSabersLite.Utilities.Common;
+using CustomSabersLite.Utilities.Services;
 
 namespace CustomSabersLite;
 
@@ -34,7 +35,7 @@ internal class Plugin
 
         zenjector.UseLogger(logger);
 
-        zenjector.Install<AppInstaller>(Location.App, config.Generated<CSLConfig>());
+        zenjector.Install<AppInstaller>(Location.App, config.Generated<CslConfig>());
         zenjector.Install<MenuInstaller>(Location.Menu);
         zenjector.Install<PlayerInstaller>(Location.Player);
         zenjector.Install<MultiPlayerInstaller>(Location.MultiPlayer);

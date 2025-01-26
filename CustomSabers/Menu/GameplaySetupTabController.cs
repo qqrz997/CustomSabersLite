@@ -1,9 +1,9 @@
 ﻿using System;
 using BeatSaberMarkupLanguage.GameplaySetup;
-using CustomSabersLite.UI.Views;
+using CustomSabersLite.Menu.Views;
 using Zenject;
 
-namespace CustomSabersLite.UI;
+namespace CustomSabersLite.Menu;
 
 internal class GameplaySetupTabController(GameplaySetupViewController gameplaySetupViewController, GameplaySetup gameplaySetup, GameplaySetupTab tab) : IInitializable, IDisposable
 {
@@ -11,7 +11,7 @@ internal class GameplaySetupTabController(GameplaySetupViewController gameplaySe
     private readonly GameplaySetup gameplaySetup = gameplaySetup;
     private readonly GameplaySetupTab gameplaySetupTab = tab;
 
-    private const string ResourceName = "CustomSabersLite.UI.BSML.gameplaySetup.bsml";
+    private const string ResourceName = "CustomSabersLite.Menu.BSML.gameplaySetup.bsml";
 
     public void Initialize()
     {

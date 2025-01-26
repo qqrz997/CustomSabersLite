@@ -1,13 +1,13 @@
 ﻿using CustomSabersLite.Configuration;
-using CustomSabersLite.UI;
+using CustomSabersLite.Menu;
 using CustomSabersLite.Utilities.Services;
 using Zenject;
 
 namespace CustomSabersLite.Installers;
 
-internal class AppInstaller(CSLConfig config) : Installer
+internal class AppInstaller(CslConfig config) : Installer
 {
-    private readonly CSLConfig config = config;
+    private readonly CslConfig config = config;
 
     public override void InstallBindings()
     {

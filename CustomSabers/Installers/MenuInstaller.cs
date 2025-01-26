@@ -1,9 +1,11 @@
-﻿using CustomSabersLite.UI;
-using CustomSabersLite.UI.Views;
-using System;
+﻿using System;
 using BeatSaberMarkupLanguage.Tags;
 using BeatSaberMarkupLanguage.TypeHandlers;
-using CustomSabersLite.UI.CustomTags;
+using CustomSabersLite.Menu;
+using CustomSabersLite.Menu.Components;
+using CustomSabersLite.Menu.Views;
+using CustomSabersLite.Misc;
+using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Services;
 using UnityEngine;
 using Zenject;
@@ -18,7 +20,12 @@ internal class MenuInstaller : Installer
         
         // Custom tags
         Container.Bind<BSMLTag>().To<ToggleableSliderTag>().AsSingle();
+        Container.Bind<BSMLTag>().To<ToggleButtonTag>().AsSingle();
+        Container.Bind<BSMLTag>().To<BsInputFieldTag>().AsSingle();
+        Container.Bind<BSMLTag>().To<SaberListTag>().AsSingle();
         Container.Bind<TypeHandler>().To<ToggleableSliderHandler>().AsSingle();
+        Container.Bind<TypeHandler>().To<ToggleButtonHandler>().AsSingle();
+        Container.Bind<TypeHandler>().To<SaberListTableDataHandler>().AsSingle();
         
         // View controllers
         Container.Bind<SaberListViewController>().FromNewComponentAsViewController().AsSingle();
@@ -28,7 +35,7 @@ internal class MenuInstaller : Installer
         Container.BindInterfacesAndSelfTo<GameplaySetupTab>().AsSingle();
         //Container.Bind<TabTest>().FromNewComponentAsViewController().AsSingle();
 
-        // UI managers
+        // Menu managers
         Container.BindInterfacesTo<GameplaySetupTabController>().AsSingle();
         Container.BindInterfacesTo<MenuButtonManager>().AsSingle();
         Container.BindInterfacesAndSelfTo<SaberPreviewManager>().AsSingle();
@@ -40,7 +47,7 @@ internal class MenuInstaller : Installer
         Container.Bind<BasicPreviewTrailManager>().AsSingle();
 
         var time = IPA.Utilities.Utils.CanUseDateTimeNowSafely ? DateTime.Now : DateTime.UtcNow;
-        if (time.Month == 4 && time.Day == 1)
+        if (time is { Month: 4, Day: 1 })
         {
             Container.BindInterfacesTo<Jester>().AsSingle();
         }

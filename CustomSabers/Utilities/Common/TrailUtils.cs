@@ -20,9 +20,9 @@ internal static class TrailUtils
         customTrailLength / (float)LegacyDuration * DefaultDuration;
 
     /// <summary>
-    /// Uses the current <seealso cref="CSLConfig"/> to decide the <seealso cref="SaberTrail"/>'s length, whitestep, and visibility
+    /// Uses the current <seealso cref="CslConfig"/> to decide the <seealso cref="SaberTrail"/>'s length, whitestep, and visibility
     /// </summary>
-    public static void ConfigureTrail(this SaberTrail trail, CSLConfig config, bool useOverrideWidth = false)
+    public static void ConfigureTrail(this SaberTrail trail, CslConfig config, bool useOverrideWidth = false)
     {
         if (trail == null || trail._trailRenderer == null)
         {

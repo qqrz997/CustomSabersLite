@@ -1,7 +1,7 @@
 ﻿using CustomSabersLite.Models;
 using UnityEngine;
 
-namespace CustomSabersLite.UI;
+namespace CustomSabersLite.Menu;
 
 internal class BasicPreviewSaberManager
 {
@@ -33,12 +33,6 @@ internal class BasicPreviewSaberManager
     {
         leftSaber?.SetColor(left);
         rightSaber?.SetColor(right);
-    }
-
-    public void SetActive(bool active)
-    {
-        leftSaber?.GameObject.SetActive(active);
-        rightSaber?.GameObject.SetActive(active);
     }
 
     public void UpdateSaberScale(float length, float width)

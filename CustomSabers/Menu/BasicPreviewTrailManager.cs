@@ -1,12 +1,12 @@
-﻿using CustomSabersLite.Configuration;
+﻿using System.Linq;
+using CustomSabersLite.Configuration;
 using CustomSabersLite.Models;
-using System.Linq;
 using CustomSabersLite.Utilities.Services;
 using UnityEngine;
 
-namespace CustomSabersLite.UI;
+namespace CustomSabersLite.Menu;
 
-internal class BasicPreviewTrailManager(CSLConfig config, GameResourcesProvider gameResourcesProvider)
+internal class BasicPreviewTrailManager(CslConfig config, GameResourcesProvider gameResourcesProvider)
 {
     private readonly BasicPreviewTrail leftTrail = new(config, gameResourcesProvider, SaberType.SaberA);
     private readonly BasicPreviewTrail rightTrail = new(config, gameResourcesProvider, SaberType.SaberB);

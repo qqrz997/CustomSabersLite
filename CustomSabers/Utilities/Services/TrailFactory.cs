@@ -7,9 +7,9 @@ using CustomSabersLite.Utilities.Common;
 
 namespace CustomSabersLite.Utilities.Services;
 
-internal class TrailFactory(CSLConfig config, GameResourcesProvider gameResourcesProvider)
+internal class TrailFactory(CslConfig config, GameResourcesProvider gameResourcesProvider)
 {
-    private readonly CSLConfig config = config;
+    private readonly CslConfig config = config;
     private readonly GameResourcesProvider gameResourcesProvider = gameResourcesProvider;
 
     private const int DefaultSamplingFrequency = 120;

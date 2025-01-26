@@ -8,10 +8,11 @@ using JetBrains.Annotations;
 namespace CustomSabersLite.Configuration;
 
 [UsedImplicitly]
-internal class CSLConfig
+internal class CslConfig
 {
     public virtual bool Enabled { get; set; } = true;
-
+    
+    // TODO: use file hash as the key for saber data
     public virtual string? CurrentlySelectedSaber { get; set; } = null;
 
     public virtual bool DisableWhiteTrail { get; set; } = true;

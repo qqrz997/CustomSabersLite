@@ -4,9 +4,10 @@ using System.Threading.Tasks;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Parser;
 using BeatSaberMarkupLanguage.TypeHandlers;
+using CustomSabersLite.Utilities.Services;
 using JetBrains.Annotations;
 
-namespace CustomSabersLite.UI.CustomTags;
+namespace CustomSabersLite.Menu.Components;
 
 [ComponentHandler(typeof(ToggleableSlider)), UsedImplicitly]
 public class ToggleableSliderHandler : TypeHandler<ToggleableSlider>

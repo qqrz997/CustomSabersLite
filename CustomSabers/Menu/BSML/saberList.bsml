@@ -1,0 +1,68 @@
+﻿<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd'>
+    <vertical spacing='2' anchor-pos-x='-21'>
+        <!--top bar (search, sort)-->
+        <horizontal>
+            <input-field id='search-input' preferred-width='50'/>
+            <horizontal horizontal-fit='PreferredSize' preferred-width='38'>
+                <dropdown-list-setting text='Sort'
+                                       value='OrderByFilter'
+                                       choices='orderByChoices'
+                                       apply-on-change='true'
+                                       word-wrapping='false'
+                                       size-delta-x='32'/>
+            </horizontal>
+            <clickable-image on-click='ScrollToSelectedCell' src='#SmallNotesIcon'
+                             hover-hint='Go to selected saber'
+                             preserve-aspect='true'
+                             pref-width='6'/>
+            <clickable-image on-click='ToggleSortDirection' src='#HeightIcon'
+                             id='sort-direction-button'
+                             preserve-aspect='true'
+                             pref-width='6'/>
+        </horizontal>
+
+        <!--saber list-->
+        <horizontal>
+            <saber-list id='saber-list' show-scrollbar='true' extra-buttons='true' scrollbar-delta='-3'/>
+            <loading id='loading-icon' ignore-layout='true'/>
+        </horizontal>
+
+        <!--bottom bar (buttons)-->
+        <horizontal spacing='1' pref-height="9">
+            <toggle-button value="EnableMenuSabers"
+                           icon="#AvatarHandsIcon"
+                           vertical-fit="Unconstrained" horizontal-fit="Unconstrained"/>
+            <button on-click='OpenSabersFolder'
+                    text='Open Folder' hover-hint='Opens the folder from which custom sabers are loaded from'
+                    vertical-fit='Unconstrained' horizontal-fit='Unconstrained'/>
+            <button on-click='ReloadSabers' id='reload-button'
+                    text='Refresh'
+                    vertical-fit='Unconstrained' horizontal-fit='Unconstrained'/>
+            <button on-click='ShowDeleteSaberModal' 
+                    text='Delete'
+                    face-color='#a83232'
+                    vertical-fit='Unconstrained' horizontal-fit='Unconstrained'>
+                <!--deletion modal-->
+                <modal id='delete-saber-modal' click-off-closes='true'
+                       size-delta-x='69' size-delta-y='26' anchor-pos-x='0' anchor-pos-y='20'>
+                    <vertical pad='1' horizontal-fit='Unconstrained'>
+                        <text text='Are you sure you want to &lt;color=red&gt;delete&lt;/color&gt;'
+                              align='Center' font-size='5'/>
+                        <text id='delete-saber-modal-text'
+                              text='cyan is a furry'
+                              word-wrapping='false' overflow-mode='Ellipsis' align='Center' font-size='4'/>
+                        <horizontal preferred-height='8' spacing='2' pad-left='3' pad-right='3'>
+                            <action-button on-click='DeleteSelectedSaber' 
+                                           text='Confirm' 
+                                           face-color='red'
+                                           horizontal-fit='Unconstrained' vertical-fit='Unconstrained'/>
+                            <button on-click='HideDeleteSaberModal'
+                                    text='Cancel'
+                                    horizontal-fit='Unconstrained' vertical-fit='Unconstrained'/>
+                        </horizontal>
+                    </vertical>
+                </modal>
+            </button>
+        </horizontal>
+    </vertical>
+</bg>

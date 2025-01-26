@@ -7,11 +7,11 @@ using CustomSabersLite.Utilities.Services;
 using UnityEngine;
 using Zenject;
 
-namespace CustomSabersLite.UI;
+namespace CustomSabersLite.Menu;
 
 internal class MenuSaber
 {
-    private readonly CSLConfig config;
+    private readonly CslConfig config;
     private readonly TrailFactory trailFactory;
     private readonly SaberType saberType;
 
@@ -19,7 +19,7 @@ internal class MenuSaber
     private readonly GameObject defaultTrailObject;
     private readonly LiteSaberTrail defaultTrail;
 
-    private MenuSaber(CSLConfig config, TrailFactory trailFactory, Transform saberParent, SaberType saberType)
+    private MenuSaber(CslConfig config, TrailFactory trailFactory, Transform saberParent, SaberType saberType)
     {
         this.config = config;
         this.trailFactory = trailFactory;

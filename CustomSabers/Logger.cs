@@ -6,9 +6,9 @@ namespace CustomSabersLite;
 
 internal class Logger
 {
-    private static IPALogger? IPALogger { get; set; }
+    private static IPALogger? IpaLogger { get; set; }
 
-    internal static void SetLogger(IPALogger logger) => IPALogger ??= logger;
+    internal static void SetLogger(IPALogger logger) => IpaLogger ??= logger;
 
     internal static void Trace(string? message) => Log(message, Level.Trace);
 
@@ -26,20 +26,20 @@ internal class Logger
 
     private static void Log(object? message, Level level)
     {
-        if (IPALogger is null)
+        if (IpaLogger is null)
         {
             return;
         }
 
         Action<string> func = level switch
         {
-            Level.Trace => IPALogger.Trace,
-            Level.Debug => IPALogger.Debug,
-            Level.Info => IPALogger.Info,
-            Level.Notice => IPALogger.Notice,
-            Level.Warning => IPALogger.Warn,
-            Level.Error => IPALogger.Error,
-            _ => IPALogger.Critical,
+            Level.Trace => IpaLogger.Trace,
+            Level.Debug => IpaLogger.Debug,
+            Level.Info => IpaLogger.Info,
+            Level.Notice => IpaLogger.Notice,
+            Level.Warning => IpaLogger.Warn,
+            Level.Error => IpaLogger.Error,
+            _ => IpaLogger.Critical,
         };
         message ??= "null";
         func(message.ToString());

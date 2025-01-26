@@ -1,27 +1,27 @@
-﻿using BeatSaberMarkupLanguage.Attributes;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using BeatSaberMarkupLanguage.Attributes;
+using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.Components.Settings;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Models;
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-using System.Linq;
-using Zenject;
-using BeatSaberMarkupLanguage.Components;
-using HMUI;
-using System.ComponentModel;
-using System.Collections;
 using CustomSabersLite.Utilities.Common;
 using CustomSabersLite.Utilities.Extensions;
 using CustomSabersLite.Utilities.Services;
+using HMUI;
 using JetBrains.Annotations;
+using UnityEngine;
+using Zenject;
+using Logger = CustomSabersLite.Logger;
 
-namespace CustomSabersLite.UI.Views;
+namespace CustomSabersLite.Menu.Views;
 
 [UsedImplicitly]
 internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSaberSettings
 {
-    [Inject] private readonly CSLConfig config = null!;
+    [Inject] private readonly CslConfig config = null!;
     [Inject] private readonly SaberMetadataCache saberMetadataCache = null!;
     [Inject] private readonly ICoroutineStarter coroutineStarter = null!;
     [Inject] private readonly SaberListManager saberListManager = null!;
@@ -130,7 +130,7 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
         saberLengthIcon.sprite = CSLResources.SaberLengthIcon;
         saberWidthIcon.sprite = CSLResources.SaberWidthIcon;
 
-        BSMLHelpers.SetDropDownSettingWidth(trailTypeList, 25, 0);
+        trailTypeList.SetDropDownSettingWidth(25, 0);
         
         RefreshList();
     }
@@ -149,7 +149,6 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
             return;
         }
         
-        saberList.Data = saberListManager.UpdateList(SaberListFilterOptions.Default).Select(i => i.ToCustomCellInfo()).ToList();
         saberList.TableView.ReloadData();
     }
 
