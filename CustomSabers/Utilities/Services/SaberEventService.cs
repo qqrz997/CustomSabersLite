@@ -1,6 +1,6 @@
-﻿using CustomSaber;
-using System;
+﻿using System;
 using System.Linq;
+using CustomSaber;
 using CustomSabersLite.Utilities.Extensions;
 
 namespace CustomSabersLite.Utilities.Services;

@@ -1,6 +1,6 @@
-﻿using CustomSabersLite.Configuration;
+﻿using System.Threading.Tasks;
+using CustomSabersLite.Configuration;
 using CustomSabersLite.Models;
-using System.Threading.Tasks;
 
 namespace CustomSabersLite.Utilities.Services;
 

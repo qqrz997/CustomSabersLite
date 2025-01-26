@@ -1,15 +1,15 @@
-﻿using IPA;
-using IPA.Config.Stores;
-using IPALogger = IPA.Logging.Logger;
-using Config = IPA.Config.Config;
+﻿using System.Threading.Tasks;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Installers;
-using SiraUtil.Zenject;
-using IPA.Loader;
-using Hive.Versioning;
-using System.Threading.Tasks;
 using CustomSabersLite.Utilities.Common;
 using CustomSabersLite.Utilities.Services;
+using Hive.Versioning;
+using IPA;
+using IPA.Config.Stores;
+using IPA.Loader;
+using SiraUtil.Zenject;
+using Config = IPA.Config.Config;
+using IPALogger = IPA.Logging.Logger;
 
 namespace CustomSabersLite;
 

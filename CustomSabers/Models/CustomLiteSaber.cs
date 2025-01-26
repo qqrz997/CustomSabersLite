@@ -1,5 +1,5 @@
-﻿using CustomSaber;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using CustomSaber;
 using CustomSabersLite.Utilities.Common;
 using CustomSabersLite.Utilities.Extensions;
 using UnityEngine;

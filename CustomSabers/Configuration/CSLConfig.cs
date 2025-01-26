@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
-using IPA.Config.Stores;
 using CustomSabersLite.Models;
+using IPA.Config.Stores;
 using IPA.Config.Stores.Attributes;
 using JetBrains.Annotations;
 
