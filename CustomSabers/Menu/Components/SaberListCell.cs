@@ -84,6 +84,7 @@ internal class SaberListCell : TableCell
         saberListCell.subText.alpha = 0.75f;
 
         saberListCell.favoriteImage = saberListCell.transform.Find("FavoritesIcon").GetComponent<ImageView>();
+        saberListCell.favoriteImage.enabled = false;
         var favouriteIconTransform = (RectTransform)saberListCell.favoriteImage.transform;
         favouriteIconTransform.offsetMin = new(-6.5f, -1.9f);
         favouriteIconTransform.offsetMax = new(-2.7f, 1.9f);
