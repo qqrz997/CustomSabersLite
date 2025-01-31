@@ -4,18 +4,36 @@ using CustomSabersLite.Models;
 
 namespace CustomSabersLite.Utilities.Services;
 
-internal class SaberFactory(CustomSabersLoader customSabersLoader, GameResourcesProvider gameResourcesProvider, CslConfig config)
+internal class SaberFactory
 {
-    private readonly CustomSabersLoader customSabersLoader = customSabersLoader;
-    private readonly CslConfig config = config;
-    private readonly GameResourcesProvider gameResourcesProvider = gameResourcesProvider;
+    private readonly CustomSabersLoader customSabersLoader;
+    private readonly CslConfig config;
+    private readonly GameResourcesProvider gameResourcesProvider;
+    private readonly SaberMetadataCache saberMetadataCache;
+
+    public SaberFactory(CustomSabersLoader customSabersLoader, GameResourcesProvider gameResourcesProvider, CslConfig config, SaberMetadataCache saberMetadataCache)
+    {
+        this.customSabersLoader = customSabersLoader;
+        this.config = config;
+        this.saberMetadataCache = saberMetadataCache;
+        this.gameResourcesProvider = gameResourcesProvider;
+    }
 
     public async Task<SaberInstanceSet> InstantiateCurrentSabers() => 
         (await GetCurrentSaberDataAsync()).Prefab?.Instantiate() ?? CreateDefaultSaberSet();
     
-    private async Task<ISaberData> GetCurrentSaberDataAsync() =>
-        config.CurrentlySelectedSaber is null or [] ? NoSaberData.Value
-        : await customSabersLoader.GetSaberData(config.CurrentlySelectedSaber, true);
+    private async Task<ISaberData> GetCurrentSaberDataAsync()
+    {
+        if (config.CurrentlySelectedSaber is null)
+        {
+            return NoSaberData.Value;
+        }
+
+        var meta = saberMetadataCache.GetOrDefault(config.CurrentlySelectedSaber);
+        
+        return meta is null || !meta.SaberFile.FileInfo.Exists ? NoSaberData.Value
+            : await customSabersLoader.GetSaberData(meta.SaberFile, true);
+    }
 
     private SaberInstanceSet CreateDefaultSaberSet() =>
         new(new DefaultSaber(gameResourcesProvider.CreateNewDefaultSaber()), 

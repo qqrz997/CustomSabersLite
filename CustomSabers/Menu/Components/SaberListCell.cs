@@ -21,8 +21,8 @@ internal class SaberListCell : TableCell
 
     public void SetInfo(SaberListCellInfo info)
     {
-        mainText.text = info.Text;
-        subText.text = info.Subtext;
+        mainText.text = info.Text.FullName;
+        subText.text = info.Subtext.FullName;
         icon.sprite = info.Icon;
         
         RefreshVisuals();

@@ -5,11 +5,20 @@ using Zenject;
 
 namespace CustomSabersLite.Menu;
 
-internal class GameplaySetupTabController(GameplaySetupViewController gameplaySetupViewController, GameplaySetup gameplaySetup, GameplaySetupTab tab) : IInitializable, IDisposable
+internal class GameplaySetupTabController : IInitializable, IDisposable
 {
-    private readonly GameplaySetupViewController gameplaySetupViewController = gameplaySetupViewController;
-    private readonly GameplaySetup gameplaySetup = gameplaySetup;
-    private readonly GameplaySetupTab gameplaySetupTab = tab;
+    private readonly GameplaySetupViewController gameplaySetupViewController;
+    private readonly GameplaySetup gameplaySetup;
+    private readonly GameplaySetupTab gameplaySetupTab;
+
+    public GameplaySetupTabController(GameplaySetupViewController gameplaySetupViewController,
+        GameplaySetup gameplaySetup,
+        GameplaySetupTab gameplaySetupTab)
+    {
+        this.gameplaySetupViewController = gameplaySetupViewController;
+        this.gameplaySetup = gameplaySetup;
+        this.gameplaySetupTab = gameplaySetupTab;
+    }
 
     private const string ResourceName = "CustomSabersLite.Menu.BSML.gameplaySetup.bsml";
 

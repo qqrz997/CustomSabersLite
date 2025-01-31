@@ -43,7 +43,7 @@
     <!--Saber list container-->
     <vertical child-control-height='false' spacing='2' preferred-width='40' child-align='MiddleCenter'>
       <horizontal background='round-rect-panel' bg-color='#000000AA' pad='1'>
-        <list list-style='Simple' visible-cells='6' select-cell='select-saber' id='saber-list' />
+        <list list-style='Simple' visible-cells='6' select-cell='select-saber' id='saber-list'/>
       </horizontal>
       <horizontal>
         <page-button event-click='saber-list#PageUp' direction='Up' preferred-width='25'/>

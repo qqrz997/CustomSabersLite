@@ -56,16 +56,16 @@ internal class CustomTrailUtils
         return trailData
             .Select(trail => new CustomTrailData(
                 transformData.Where(transform => transform.Data.isTop)
-                    .FirstOrDefault(transform => transform.Data.trailId == trail.Data!.trailId)
+                    .FirstOrDefault(transform => transform.Data.trailId == trail.Data!.TrailId)
                     .Text.transform,
                 transformData.Where(transform => !transform.Data.isTop)
-                    .FirstOrDefault(transform => transform.Data.trailId == trail.Data!.trailId)
+                    .FirstOrDefault(transform => transform.Data.trailId == trail.Data!.TrailId)
                     .Text.transform,
                 trail.Text.GetComponent<MeshRenderer>().material,
-                trail.Data!.colorType,
-                trail.Data.trailColor,
-                trail.Data.multiplierColor,
-                TrailUtils.ConvertLegacyLength(trail.Data.length)))
+                trail.Data!.ColorType,
+                trail.Data.TrailColor,
+                trail.Data.MultiplierColor,
+                TrailUtils.ConvertLegacyLength(trail.Data.Length)))
             .ToArray();
     }
 }

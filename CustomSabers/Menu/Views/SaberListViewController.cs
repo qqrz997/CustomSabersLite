@@ -18,7 +18,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
-using Logger = CustomSabersLite.Logger;
 
 namespace CustomSabersLite.Menu.Views;
 
@@ -27,7 +26,7 @@ namespace CustomSabersLite.Menu.Views;
 internal class SaberListViewController : BSMLAutomaticViewController
 {
     [Inject] private readonly CslConfig config = null!;
-    [Inject] private readonly SaberMetadataCache saberMetadataCache = null!;
+    [Inject] private readonly MetadataCacheLoader metadataCacheLoader = null!;
     [Inject] private readonly SaberListManager saberListManager = null!;
     [Inject] private readonly SaberPreviewManager previewManager = null!;
     
@@ -44,7 +43,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
     [UIAction("#post-parse")]
     public void PostParse()
     {
-        saberMetadataCache.LoadingProgressChanged += LoadingProgressChanged;
+        metadataCacheLoader.LoadingProgressChanged += LoadingProgressChanged;
         saberList.DidSelectCellWithIdxEvent += SelectSaber;
 
         searchBsInputField.Text = SearchFilter;
@@ -52,7 +51,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
 
         sortDirectionIcon.rectTransform.localRotation = Quaternion.Euler(0f, 0f, config.ReverseSort ? 180f : 0f);
 
-        loadingIcon.SetActive(!saberMetadataCache.CurrentProgress.Completed);
+        loadingIcon.SetActive(!metadataCacheLoader.CurrentProgress.Completed);
     }
 
     private List<object> orderByChoices = [.. Enum.GetNames(typeof(OrderBy))];
@@ -97,13 +96,13 @@ internal class SaberListViewController : BSMLAutomaticViewController
 
     public void ScrollToSelectedCell()
     {
-        var selectedCellIdx = saberListManager.IndexForPath(config.CurrentlySelectedSaber);
+        var selectedCellIdx = saberListManager.IndexForSaberHash(config.CurrentlySelectedSaber);
         saberList.ScrollToCellWithIdx(selectedCellIdx, TableView.ScrollPositionType.Center, true);
     }
 
     public async void SelectSaber(TableView tableView, int row)
     {
-        config.CurrentlySelectedSaber = saberListManager.Select(row)?.Metadata.SaberFile.RelativePath;
+        config.CurrentlySelectedSaber = saberListManager.SelectFromCurrentList(row)?.SaberHash;
         Logger.Debug($"Saber selected: {config.CurrentlySelectedSaber ?? "Default"}");
         await GeneratePreview();
     }
@@ -124,16 +123,15 @@ internal class SaberListViewController : BSMLAutomaticViewController
     public void DeleteSelectedSaber()
     {
         HideDeleteSaberModal();
-        int selectedSaberIndex = saberListManager.IndexForPath(config.CurrentlySelectedSaber);
+        if (config.CurrentlySelectedSaber is null) return;
+        
+        int selectedSaberIndex = saberListManager.IndexForSaberHash(config.CurrentlySelectedSaber);
+        saberListManager.DeleteSaber(config.CurrentlySelectedSaber);
+        
+        config.CurrentlySelectedSaber = saberListManager.SelectFromCurrentList(selectedSaberIndex - 1)?.SaberHash;
 
-        if (saberListManager.DeleteSaber(config.CurrentlySelectedSaber))
-        {
-            Logger.Debug("Saber deleted");
-            config.CurrentlySelectedSaber = saberListManager.Select(selectedSaberIndex - 1)?.Metadata.SaberFile.RelativePath;
-
-            RefreshList();
-            StartCoroutine(SelectSelectedAndScrollTo());
-        }
+        RefreshList();
+        StartCoroutine(SelectSelectedAndScrollTo());
     }
 
     public async void ReloadSabers()
@@ -142,8 +140,10 @@ internal class SaberListViewController : BSMLAutomaticViewController
         saberList.Data.Clear();
         saberList.ReloadDataKeepingPosition();
 
+        saberListManager.Clear();
+        
         // this will invoke an event on completion that gets used to refresh the list
-        await saberMetadataCache.ReloadAsync();
+        await metadataCacheLoader.ReloadAsync();
     }
 
     private void RefreshList()
@@ -155,7 +155,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
 
         if (saberListManager.CurrentListContains(config.CurrentlySelectedSaber))
         {
-            saberList.SelectCellWithIdx(saberListManager.IndexForPath(config.CurrentlySelectedSaber));
+            saberList.SelectCellWithIdx(saberListManager.IndexForSaberHash(config.CurrentlySelectedSaber));
         }
         else
         {
@@ -166,7 +166,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
         reloadButtonSelectable.interactable = true;
     }
 
-    private void LoadingProgressChanged(SaberMetadataCache.Progress progress)
+    private void LoadingProgressChanged(MetadataCacheLoader.Progress progress)
     {
         if (progress.Completed) RefreshList();
         loadingIcon.SetActive(!progress.Completed);
@@ -188,7 +188,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
     {
         yield return new WaitUntil(() => saberList.IsActive);
         yield return new WaitForEndOfFrame();
-        int selectedSaberIndex = saberListManager.IndexForPath(config.CurrentlySelectedSaber);
+        int selectedSaberIndex = saberListManager.IndexForSaberHash(config.CurrentlySelectedSaber);
         saberList.SelectCellWithIdx(selectedSaberIndex);
         saberList.ScrollToCellWithIdx(selectedSaberIndex, TableView.ScrollPositionType.Center, true);
     }
@@ -216,7 +216,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
 
     protected override void OnDestroy()
     {
-        saberMetadataCache.LoadingProgressChanged -= LoadingProgressChanged;
+        metadataCacheLoader.LoadingProgressChanged -= LoadingProgressChanged;
         saberPreviewTokenSource?.Dispose();
         base.OnDestroy();
     }

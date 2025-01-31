@@ -7,39 +7,42 @@ using UnityEngine;
 
 namespace CustomSabersLite.Utilities.Services;
 
-internal class SaberLoader(SpriteCache spriteCache, ITimeService timeService)
+internal class SaberLoader
 {
-    private readonly SpriteCache spriteCache = spriteCache;
-    private readonly ITimeService timeService = timeService;
-    private readonly string sabersPath = PluginDirs.CustomSabers.FullName;
+    private readonly SpriteCache spriteCache;
+    private readonly ITimeService timeService;
+
+    public SaberLoader(SpriteCache spriteCache, ITimeService timeService)
+    {
+        this.spriteCache = spriteCache;
+        this.timeService = timeService;
+    }
 
     private const CustomSaberType Type = CustomSaberType.Saber;
 
     /// <summary>
     /// Loads a custom saber from a .saber file
     /// </summary>
-    public async Task<ISaberData> LoadCustomSaberAsync(string relativePath)
+    public async Task<ISaberData> LoadCustomSaberAsync(SaberFileInfo saberFile)
     {
-        string path = Path.Combine(sabersPath, relativePath);
+        if (!saberFile.FileInfo.Exists)
+            return new NoSaberData(saberFile.FileInfo.Name, timeService.GetUtcTime(), SaberLoaderError.FileNotFound);
 
-        if (!File.Exists(path))
-            return new NoSaberData(relativePath, timeService.GetUtcTime(), SaberLoaderError.FileNotFound);
+        Logger.Debug($"Attempting to load saber file - {saberFile.FileInfo.Name}");
 
-        Logger.Debug($"Attempting to load saber file - {relativePath}");
-
-        using var fileStream = File.OpenRead(path);
+        using var fileStream = File.OpenRead(saberFile.FileInfo.FullName);
 
         var bundle = await BundleLoading.LoadBundle(fileStream);
 
         if (bundle == null)
-            return new NoSaberData(relativePath, timeService.GetUtcTime(), SaberLoaderError.NullBundle);
+            return new NoSaberData(saberFile.FileInfo.Name, timeService.GetUtcTime(), SaberLoaderError.NullBundle);
 
         var saberPrefab = await BundleLoading.LoadAsset<GameObject>(bundle, "_CustomSaber");
 
         if (saberPrefab == null)
         {
             bundle.Unload(true);
-            return new NoSaberData(relativePath, timeService.GetUtcTime(), SaberLoaderError.NullAsset);
+            return new NoSaberData(saberFile.FileInfo.Name, timeService.GetUtcTime(), SaberLoaderError.NullAsset);
         }
 
         var descriptor = saberPrefab.GetComponent<SaberDescriptor>();
@@ -50,7 +53,7 @@ internal class SaberLoader(SpriteCache spriteCache, ITimeService timeService)
         var icon = descriptor.CoverImage;
         if (icon != null && icon.texture != null)
             icon = icon.texture.DuplicateTexture().Downscale(128, 128).ToSprite();
-        spriteCache.AddSprite(relativePath, icon);
+        spriteCache.AddSprite(saberFile.Hash, icon);
 
         #if SHADER_DEBUG
         await ShaderInfoDump.Instance.RegisterModelShaders(saberPrefab, descriptor.SaberName ?? "Unknown Saber");
@@ -58,14 +61,14 @@ internal class SaberLoader(SpriteCache spriteCache, ITimeService timeService)
         await ShaderRepairUtils.RepairSaberShadersAsync(saberPrefab);
         #endif
 
-        string? assetHash = await Task.Run(() => Hashing.MD5Checksum(path, "x2"));
-
         return
             new CustomSaberData(
                 new CustomSaberMetadata(
-                    new(path, assetHash, timeService.GetUtcTime(), Type),
+                    saberFile,
                     SaberLoaderError.None,
-                    new(descriptor.SaberName, descriptor.AuthorName, icon)),
+                    new(RichTextString.Create(descriptor.SaberName),
+                        RichTextString.Create(descriptor.AuthorName),
+                        icon != null ? icon : CSLResources.NullCoverImage)),
                 bundle,
                 new(saberPrefab, Type));
     }

@@ -5,17 +5,15 @@ namespace CustomSabersLite.Utilities.Services;
 
 internal class SpriteCache
 {
-    private readonly Dictionary<string, Sprite> sprites = [];
+    private readonly Dictionary<string, Sprite> cache = [];
 
-    public void AddSprite(string relativePath, Sprite? sprite)
+    public void AddSprite(string saberHash, Sprite? sprite)
     {
-        if (sprite == null) return;
-        sprites.TryAdd(relativePath, sprite);
+        if (sprite != null)
+        {
+            cache.TryAdd(saberHash, sprite);
+        }
     }
 
-    public Sprite? GetSprite(string relativePath) =>
-        sprites.TryGetValue(relativePath, out var sprite) ? sprite : null;
-
-    public bool HasSprite(string relativePath) =>
-        sprites.ContainsKey(relativePath);
+    public Sprite? GetSprite(string relativePath) => cache.GetValueOrDefault(relativePath);
 }

@@ -13,16 +13,16 @@ internal class CSLFlowCoordinator : FlowCoordinator
     [Inject] private readonly MainFlowCoordinator mainFlowCoordinator = null!;
     [Inject] private readonly SaberListViewController saberList = null!;
     [Inject] private readonly SaberSettingsViewController saberSettings = null!;
-    [Inject] private readonly SaberMetadataCache cacheManager = null!;
+    [Inject] private readonly MetadataCacheLoader cacheLoaderManager = null!;
 
     [InjectOptional] private readonly TabTest? tabTest = null;
 
-    private SaberMetadataCache.Progress? currentCacheProgress;
+    private MetadataCacheLoader.Progress? currentCacheProgress;
     private CancellationTokenSource cancellationTokenSource = new();
 
 
     private void Awake() =>
-        cacheManager.LoadingProgressChanged += LoadingProgressChanged;
+        cacheLoaderManager.LoadingProgressChanged += LoadingProgressChanged;
 
     public override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
     {
@@ -41,7 +41,7 @@ internal class CSLFlowCoordinator : FlowCoordinator
         }
     }
 
-    private void LoadingProgressChanged(SaberMetadataCache.Progress progress)
+    private void LoadingProgressChanged(MetadataCacheLoader.Progress progress)
     {
         currentCacheProgress = progress;
         SetTitle(FormatProgress(progress));
@@ -60,13 +60,13 @@ internal class CSLFlowCoordinator : FlowCoordinator
         }
     }
 
-    private string FormatProgress(SaberMetadataCache.Progress progress) => 
+    private string FormatProgress(MetadataCacheLoader.Progress progress) => 
         !progress.StagePercent.HasValue ? $"{progress.Stage}"
         : $"{progress.Stage} {progress.StagePercent.Value}%";
 
     protected void OnDestroy()
     {
-        cacheManager.LoadingProgressChanged -= LoadingProgressChanged;
+        cacheLoaderManager.LoadingProgressChanged -= LoadingProgressChanged;
         cancellationTokenSource.Dispose();
     }
 

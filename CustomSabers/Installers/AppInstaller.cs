@@ -11,24 +11,20 @@ internal class AppInstaller(CslConfig config) : Installer
 
     public override void InstallBindings()
     {
-        Container.BindInstance(config);
-
-        Container.Bind<ITimeService>().To<UtcTimeService>().AsSingle();
-
         Container.BindInterfacesAndSelfTo<GameResourcesProvider>().AsSingle();
-
+        Container.BindInterfacesAndSelfTo<MetadataCacheLoader>().AsSingle();
         Container.Bind<SaberMetadataCacheMigrationManager>().AsSingle();
-        Container.BindInterfacesAndSelfTo<SaberMetadataCache>().AsSingle();
-        Container.Bind<SaberListManager>().AsSingle();
-
-        Container.Bind<SpriteCache>().AsSingle();
-
-        Container.Bind<SaberLoader>().AsSingle();
-        Container.Bind<WhackerLoader>().AsSingle();
+        Container.Bind<ITimeService>().To<UtcTimeService>().AsSingle();
         Container.Bind<CustomSabersLoader>().AsSingle();
-
-        Container.BindInterfacesAndSelfTo<SaberPrefabCache>().AsSingle();
+        Container.Bind<SaberMetadataCache>().AsSingle();
+        Container.Bind<SaberListManager>().AsSingle();
+        Container.Bind<SaberPrefabCache>().AsSingle();
+        Container.Bind<WhackerLoader>().AsSingle();
         Container.Bind<SaberFactory>().AsSingle();
         Container.Bind<TrailFactory>().AsSingle();
+        Container.Bind<SaberLoader>().AsSingle();
+        Container.Bind<SpriteCache>().AsSingle();
+        Container.Bind<FileManager>().AsSingle();
+        Container.BindInstance(config);
     }
 }

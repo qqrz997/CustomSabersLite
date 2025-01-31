@@ -1,16 +1,40 @@
 ﻿using System;
+using CustomSabersLite.Utilities.Common;
+using CustomSabersLite.Utilities.Extensions;
 using UnityEngine;
 
 namespace CustomSabersLite.Models;
 
-internal class SaberListCellInfo(CustomSaberMetadata meta, SaberListCellText info, Sprite icon)
+internal class SaberListCellInfo
 {
-    public string Text { get; } = info.Text;
-    public string Subtext { get; } = info.Subtext;
-    public Sprite Icon { get; } = icon;
-    public CustomSaberMetadata Metadata { get; } = meta;
-
-    public bool Contains(string value) => 
-        Metadata.Descriptor.SaberName.Contains(value, StringComparison.OrdinalIgnoreCase) 
-        || Metadata.Descriptor.AuthorName.Contains(value, StringComparison.OrdinalIgnoreCase);
+    public RichTextString Text { get; }
+    public RichTextString Subtext { get; }
+    public Sprite Icon { get; }
+    public string? SaberHash { get; }
+    public DateTime DateAdded { get; }
+    
+    public SaberListCellInfo(CustomSaberMetadata meta)
+    {
+        SaberHash = meta.SaberFile.Hash;
+        DateAdded = meta.SaberFile.DateAdded;
+        if (meta.LoaderError == SaberLoaderError.None)
+        {
+            Text = meta.Descriptor.SaberName;
+            Subtext = meta.Descriptor.AuthorName;
+            Icon = meta.Descriptor.Icon;
+        }
+        else
+        {
+            Text = RichTextString.Create(meta.LoaderError.GetErrorMessage());
+            Subtext = RichTextString.Create(meta.SaberFile.FileInfo.Name);
+            Icon = CSLResources.DefaultCoverImage;
+        }
+    }
+    
+    public SaberListCellInfo(string text, string subtext, Sprite icon) =>
+        (Text, Subtext, Icon) = (RichTextString.Create(text), RichTextString.Create(subtext), icon);
+    
+    public bool TextContains(string value) => 
+        Text.Contains(value, StringComparison.OrdinalIgnoreCase) 
+        || Subtext.Contains(value, StringComparison.OrdinalIgnoreCase);
 }

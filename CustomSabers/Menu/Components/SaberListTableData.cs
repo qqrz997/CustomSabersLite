@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
 using BeatSaberMarkupLanguage.Tags;
 using CustomSabersLite.Menu.Views;
 using CustomSabersLite.Utilities.Common;
@@ -7,8 +6,6 @@ using CustomSabersLite.Utilities.Extensions;
 using HMUI;
 using UnityEngine;
 using UnityEngine.UI;
-using static CustomSabersLite.Utilities.Common.BSMLHelpers;
-using Logger = CustomSabersLite.Logger;
 
 namespace CustomSabersLite.Models;
 

@@ -9,7 +9,6 @@ internal class JsonReading
     {
         using var streamReader = new StreamReader(stream);
         using var jsonTextReader = new JsonTextReader(streamReader);
-        T? obj = new JsonSerializer().Deserialize<T>(jsonTextReader);
-        return obj;
+        return new JsonSerializer().Deserialize<T>(jsonTextReader);
     }
 }

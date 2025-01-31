@@ -4,7 +4,6 @@ using HMUI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using Logger = CustomSabersLite.Logger;
 
 namespace CustomSabersLite.Menu.Components;
 

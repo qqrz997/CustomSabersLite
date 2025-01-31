@@ -7,7 +7,6 @@ using CustomSabersLite.Utilities.Extensions;
 using CustomSabersLite.Utilities.Services;
 using UnityEngine;
 using Zenject;
-using Logger = CustomSabersLite.Logger;
 
 namespace CustomSabersLite.Menu;
 

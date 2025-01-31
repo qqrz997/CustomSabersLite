@@ -5,7 +5,6 @@ using CustomSabersLite.Menu;
 using CustomSabersLite.Menu.Components;
 using CustomSabersLite.Menu.Views;
 using CustomSabersLite.Misc;
-using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Services;
 using UnityEngine;
 using Zenject;

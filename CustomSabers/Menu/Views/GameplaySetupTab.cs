@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.Components.Settings;
@@ -14,7 +15,6 @@ using HMUI;
 using JetBrains.Annotations;
 using UnityEngine;
 using Zenject;
-using Logger = CustomSabersLite.Logger;
 
 namespace CustomSabersLite.Menu.Views;
 
@@ -22,7 +22,7 @@ namespace CustomSabersLite.Menu.Views;
 internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSaberSettings
 {
     [Inject] private readonly CslConfig config = null!;
-    [Inject] private readonly SaberMetadataCache saberMetadataCache = null!;
+    [Inject] private readonly MetadataCacheLoader metadataCacheLoader = null!;
     [Inject] private readonly ICoroutineStarter coroutineStarter = null!;
     [Inject] private readonly SaberListManager saberListManager = null!;
 
@@ -123,7 +123,7 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
     [UIAction("#post-parse")]
     private void PostParse()
     {
-        saberMetadataCache.LoadingProgressChanged += LoadingProgressChanged;
+        metadataCacheLoader.LoadingProgressChanged += LoadingProgressChanged;
         
         trailDurationIcon.sprite = CSLResources.TrailDurationIcon;
         trailWidthIcon.sprite = CSLResources.TrailWidthIcon;
@@ -138,17 +138,21 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
     [UIAction("select-saber")]
     private void SelectSaber(TableView tableView, int row)
     {
-        config.CurrentlySelectedSaber = saberListManager.Select(row)?.Metadata.SaberFile.RelativePath;
+        config.CurrentlySelectedSaber = saberListManager.SelectFromUnsortedData(row)?.SaberHash;
         Logger.Debug($"Saber selected: {config.CurrentlySelectedSaber ?? "Default"}");
     }
     
     public void RefreshList()
     {
-        if (!saberMetadataCache.CurrentProgress.Completed)
+        if (!metadataCacheLoader.CurrentProgress.Completed)
         {
             return;
         }
         
+        saberList.Data.Clear();
+        saberListManager.GetUnsortedData()
+            .Select(info => new CustomListTableData.CustomCellInfo(info.Text.FullName))
+            .ForEach(saberList.Data.Add);
         saberList.TableView.ReloadData();
     }
 
@@ -164,12 +168,12 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
     {
         yield return new WaitUntil(() => saberList.gameObject.activeInHierarchy);
         /* wait for some frames */ for (int i = 0; i < 2; i++) yield return null;
-        int selectedSaberIndex = saberListManager.IndexForPath(config.CurrentlySelectedSaber);
+        int selectedSaberIndex = saberListManager.IndexForSaberHash(config.CurrentlySelectedSaber);
         saberList.TableView.SelectCellWithIdx(selectedSaberIndex);
         saberList.TableView.ScrollToCellWithIdx(selectedSaberIndex, TableView.ScrollPositionType.Center, true);
     }
 
-    private void LoadingProgressChanged(SaberMetadataCache.Progress progress)
+    private void LoadingProgressChanged(MetadataCacheLoader.Progress progress)
     {
         if (progress.Completed) RefreshList();
     }
@@ -178,5 +182,5 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
         PropertyChanged?.Invoke(this, new(propertyName));
 
     public void Dispose() =>
-        saberMetadataCache.LoadingProgressChanged -= LoadingProgressChanged;
+        metadataCacheLoader.LoadingProgressChanged -= LoadingProgressChanged;
 }

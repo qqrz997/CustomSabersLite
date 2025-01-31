@@ -1,8 +1,11 @@
 ﻿namespace CustomSabersLite.Models;
 
-internal struct WhackerConfig
+internal class WhackerConfig
 {
-    public bool hasTrail;
-    public bool keepFakeGlow;
-    public bool isLegacy;
+    public bool IsLegacy { get; }
+
+    public WhackerConfig(bool isLegacy)
+    {
+        IsLegacy = isLegacy;
+    }
 }

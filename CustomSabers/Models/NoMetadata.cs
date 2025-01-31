@@ -1,14 +1,15 @@
 ﻿using System;
-using System.IO;
 using CustomSabersLite.Utilities.Common;
 
 namespace CustomSabersLite.Models;
 
-internal sealed class NoMetadata(string fullPath, DateTime date, SaberLoaderError loaderError) : ISaberMetadata
+internal sealed record NoMetadata(string FileName, DateTime Date, SaberLoaderError LoaderError) : ISaberMetadata
 {
-    public SaberFileInfo SaberFile => new(fullPath, string.Empty, date, CustomSaberType.Default);
+    // TODO: is there a better null pattern?
+    public SaberFileInfo SaberFile => new(new(""), "", DateTime.MinValue, CustomSaberType.Default);
 
-    public SaberLoaderError LoaderError { get; } = loaderError;
-
-    public Descriptor Descriptor => new(Path.GetFileName(fullPath), "Unknown", CSLResources.DefaultCoverImage);
+    public Descriptor Descriptor => 
+        new(RichTextString.Create(FileName),
+            RichTextString.Create("Unknown"), 
+            CSLResources.DefaultCoverImage);
 }

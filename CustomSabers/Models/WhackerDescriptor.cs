@@ -2,11 +2,17 @@
 
 namespace CustomSabersLite.Models;
 
-[method: JsonConstructor]
-internal class WhackerDescriptor(string? objectName, string? author, string? description, string? coverImage)
+internal class WhackerDescriptor
 {
-    public string? objectName = objectName;
-    public string? author = author;
-    public string? description = description;
-    public string? coverImage = coverImage;
+    public string? Name { get; }
+    public string? Author { get; }
+    public string? IconFileName { get; }
+
+    [JsonConstructor]
+    public WhackerDescriptor(string? objectName, string? author, string? coverImage)
+    {
+        Name = objectName;
+        Author = author;
+        IconFileName = coverImage;
+    }
 }

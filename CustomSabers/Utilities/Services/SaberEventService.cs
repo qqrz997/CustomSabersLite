@@ -5,15 +5,32 @@ using CustomSabersLite.Utilities.Extensions;
 
 namespace CustomSabersLite.Utilities.Services;
 
-internal class SaberEventService(BeatmapObjectManager beatmapObjectManager, GameEnergyCounter gameEnergyCounter, ObstacleSaberSparkleEffectManager obstacleCollisionManager, RelativeScoreAndImmediateRankCounter relativeScoreCounter, IScoreController scoreController, IComboController comboController, IReadonlyBeatmapData beatmapData) : IDisposable
+internal class SaberEventService : IDisposable
 {
-    private readonly BeatmapObjectManager beatmapObjectManager = beatmapObjectManager;
-    private readonly GameEnergyCounter gameEnergyCounter = gameEnergyCounter;
-    private readonly ObstacleSaberSparkleEffectManager obstacleCollisionManager = obstacleCollisionManager;
-    private readonly RelativeScoreAndImmediateRankCounter relativeScoreCounter = relativeScoreCounter;
-    private readonly IScoreController scoreController = scoreController;
-    private readonly IComboController comboController = comboController;
-    private readonly IReadonlyBeatmapData beatmapData = beatmapData;
+    private readonly BeatmapObjectManager beatmapObjectManager;
+    private readonly GameEnergyCounter gameEnergyCounter;
+    private readonly ObstacleSaberSparkleEffectManager obstacleCollisionManager;
+    private readonly RelativeScoreAndImmediateRankCounter relativeScoreCounter;
+    private readonly IScoreController scoreController;
+    private readonly IComboController comboController;
+    private readonly IReadonlyBeatmapData beatmapData;
+
+    public SaberEventService(BeatmapObjectManager beatmapObjectManager,
+        GameEnergyCounter gameEnergyCounter,
+        ObstacleSaberSparkleEffectManager obstacleCollisionManager,
+        RelativeScoreAndImmediateRankCounter relativeScoreCounter,
+        IScoreController scoreController,
+        IComboController comboController,
+        IReadonlyBeatmapData beatmapData)
+    {
+        this.beatmapObjectManager = beatmapObjectManager;
+        this.gameEnergyCounter = gameEnergyCounter;
+        this.obstacleCollisionManager = obstacleCollisionManager;
+        this.relativeScoreCounter = relativeScoreCounter;
+        this.scoreController = scoreController;
+        this.comboController = comboController;
+        this.beatmapData = beatmapData;
+    }
 
     private EventManager? eventManager;
     private float? lastNoteTime;

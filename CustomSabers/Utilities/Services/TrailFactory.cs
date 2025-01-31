@@ -7,10 +7,16 @@ using UnityEngine;
 
 namespace CustomSabersLite.Utilities.Services;
 
-internal class TrailFactory(CslConfig config, GameResourcesProvider gameResourcesProvider)
+internal class TrailFactory
 {
-    private readonly CslConfig config = config;
-    private readonly GameResourcesProvider gameResourcesProvider = gameResourcesProvider;
+    private readonly CslConfig config;
+    private readonly GameResourcesProvider gameResourcesProvider;
+
+    public TrailFactory(CslConfig config, GameResourcesProvider gameResourcesProvider)
+    {
+        this.config = config;
+        this.gameResourcesProvider = gameResourcesProvider;
+    }
 
     private const int DefaultSamplingFrequency = 120;
     private const int DefaultGranularity = 45;

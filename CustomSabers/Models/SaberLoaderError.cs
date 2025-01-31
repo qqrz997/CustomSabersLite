@@ -1,5 +1,7 @@
 ﻿namespace CustomSabersLite.Models;
 
+// TODO: make strongly typed errors
+
 public enum SaberLoaderError
 {
     None = 0,

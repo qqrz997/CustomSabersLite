@@ -10,57 +10,67 @@ using UnityEngine;
 
 namespace CustomSabersLite.Utilities.Services;
 
-internal class WhackerLoader(SpriteCache spriteCache, ITimeService timeService)
+internal class WhackerLoader
 {
-    private readonly SpriteCache spriteCache = spriteCache;
-    private readonly ITimeService timeService = timeService;
-    private readonly string sabersPath = PluginDirs.CustomSabers.FullName;
+    private readonly SpriteCache spriteCache;
+    private readonly ITimeService timeService;
+
+    public WhackerLoader(SpriteCache spriteCache, ITimeService timeService)
+    {
+        this.spriteCache = spriteCache;
+        this.timeService = timeService;
+    }
 
     private const CustomSaberType Type = CustomSaberType.Whacker;
 
     /// <summary>
     /// Loads a custom saber from a .whacker file
     /// </summary>
-    public async Task<ISaberData> LoadWhackerAsync(string relativePath)
+    public async Task<ISaberData> LoadWhackerAsync(SaberFileInfo saberFile)
     {
-        string path = Path.Combine(sabersPath, relativePath);
+        if (!saberFile.FileInfo.Exists)
+            return new NoSaberData(saberFile.FileInfo.Name, timeService.GetUtcTime(), SaberLoaderError.FileNotFound);
 
-        if (!File.Exists(path))
-            return new NoSaberData(relativePath, timeService.GetUtcTime(), SaberLoaderError.FileNotFound);
+        Logger.Debug($"Attempting to load whacker file - {saberFile.FileInfo.Name}");
 
-        Logger.Debug($"Attempting to load whacker file - {relativePath}");
-
-        using var fileStream = File.OpenRead(path);
+        using var fileStream = saberFile.FileInfo.OpenRead();
         using var archive = new ZipArchive(fileStream, ZipArchiveMode.Read);
 
-        var json = archive.Entries.Where(x => x.FullName.EndsWith(".json")).FirstOrDefault();
-        using var jsonStream = json.Open();
+        var jsonEntry = archive.Entries.FirstOrDefault(x => x.FullName.EndsWith(".json"));
+        
+        if (jsonEntry is null)
+            return new NoSaberData(saberFile.FileInfo.Name, timeService.GetUtcTime(), SaberLoaderError.FileNotFound);
+        
+        using var jsonStream = jsonEntry.Open();
         using var jsonStreamReader = new StreamReader(jsonStream);
 
         if (new JsonSerializer().Deserialize(jsonStreamReader, typeof(WhackerModel)) is not WhackerModel whacker)
-            return new NoSaberData(relativePath, timeService.GetUtcTime(), SaberLoaderError.InvalidFileType);
+            return new NoSaberData(saberFile.FileInfo.Name, timeService.GetUtcTime(), SaberLoaderError.InvalidFileType);
 
-        if (whacker.config.isLegacy)
-            return new NoSaberData(relativePath, timeService.GetUtcTime(), SaberLoaderError.LegacyWhacker);
+        if (whacker.Config.IsLegacy)
+            return new NoSaberData(saberFile.FileInfo.Name, timeService.GetUtcTime(), SaberLoaderError.LegacyWhacker);
 
-        var bundleEntry = archive.GetEntry(whacker.pcFileName);
+        var bundleEntry = archive.GetEntry(whacker.FileName);
 
+        if (bundleEntry is null)
+            return new NoSaberData(saberFile.FileInfo.Name, timeService.GetUtcTime(), SaberLoaderError.FileNotFound);
+        
         using var bundleStream = bundleEntry.Open();
         var bundle = await BundleLoading.LoadBundle(bundleStream);
 
         if (bundle == null)
-            return new NoSaberData(relativePath, timeService.GetUtcTime(), SaberLoaderError.NullBundle);
+            return new NoSaberData(saberFile.FileInfo.Name, timeService.GetUtcTime(), SaberLoaderError.NullBundle);
 
         var saberPrefab = await BundleLoading.LoadAsset<GameObject>(bundle, "_Whacker");
 
         if (saberPrefab == null)
         {
             bundle.Unload(true);
-            return new NoSaberData(relativePath, timeService.GetUtcTime(), SaberLoaderError.NullAsset);
+            return new NoSaberData(saberFile.FileInfo.Name, timeService.GetUtcTime(), SaberLoaderError.NullAsset);
         }
 
         saberPrefab.hideFlags |= HideFlags.DontUnloadUnusedAsset;
-        saberPrefab.name += $" {whacker.descriptor.objectName}";
+        saberPrefab.name += $" {whacker.Descriptor.Name}";
 
         #if SHADER_DEBUG
         await ShaderInfoDump.Instance.RegisterModelShaders(saberPrefab, whacker.descriptor.objectName ?? "Unknown Whacker");
@@ -68,31 +78,31 @@ internal class WhackerLoader(SpriteCache spriteCache, ITimeService timeService)
         await ShaderRepairUtils.RepairSaberShadersAsync(saberPrefab);
         #endif
 
-        var icon = await GetDownscaledIcon(archive.GetEntry(whacker.descriptor.coverImage));
-        spriteCache.AddSprite(relativePath, icon);
-
-        string assetHash = await Task.Run(() => Hashing.MD5Checksum(path, "x2")) ?? string.Empty;
-
+        var icon = await GetDownscaledIcon(archive, whacker);
+        spriteCache.AddSprite(saberFile.Hash, icon);
+        Logger.Debug("Whacker loaded");
         return
             new CustomSaberData(
                 new CustomSaberMetadata(
-                    new(path, assetHash, timeService.GetUtcTime(), Type),
+                    saberFile,
                     SaberLoaderError.None,
-                    new(whacker.descriptor.objectName, whacker.descriptor.author, icon)),
+                    new(RichTextString.Create(whacker.Descriptor.Name),
+                        RichTextString.Create(whacker.Descriptor.Author),
+                        icon != null ? icon : CSLResources.NullCoverImage)),
                 bundle,
                 new(saberPrefab, Type));
     }
 
-    private static async Task<Sprite?> GetDownscaledIcon(ZipArchiveEntry? thumbEntry)
+    private static async Task<Sprite?> GetDownscaledIcon(ZipArchive archive, WhackerModel whacker)
     {
-        if (thumbEntry is null)
-        {
-            return null;
-        }
+        if (whacker.Descriptor.IconFileName is null) return null;
+
+        var iconEntry = archive.GetEntry(whacker.Descriptor.IconFileName);
+
+        if (iconEntry is null) return null;
 
         using var memoryStream = new MemoryStream();
-        // TODO: test await using doesn't break unity
-        await using var thumbStream = thumbEntry.Open();
+        using var thumbStream = iconEntry.Open();
         
         await thumbStream.CopyToAsync(memoryStream);
         

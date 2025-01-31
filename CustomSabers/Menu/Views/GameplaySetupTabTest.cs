@@ -72,5 +72,5 @@ internal class TabTest : BSMLAutomaticViewController
     public ImageView saberListLoadingIcon = null!;
 
     [UIAction("select-saber")]
-    public void Select(TableView _, int row) { }*/
+    public void SelectFromCurrentList(TableView _, int row) { }*/
 }
