@@ -6,6 +6,7 @@ using BeatSaberMarkupLanguage.TypeHandlers;
 
 namespace CustomSabersLite.Menu.Components;
 
+// unused
 [ComponentHandler(typeof(ToggleButton))]
 public class ToggleButtonHandler : TypeHandler<ToggleButton>
 {

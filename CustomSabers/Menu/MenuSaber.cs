@@ -1,12 +1,10 @@
-﻿using System.Linq;
-using CustomSabersLite.Components;
+﻿using CustomSabersLite.Components;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Common;
 using CustomSabersLite.Utilities.Extensions;
 using CustomSabersLite.Utilities.Services;
 using UnityEngine;
-using Zenject;
 
 namespace CustomSabersLite.Menu;
 

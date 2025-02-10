@@ -78,7 +78,7 @@ internal class WhackerLoader
 
         var icon = await GetDownscaledIcon(archive, whacker);
         spriteCache.AddSprite(saberFile.Hash, icon);
-        Logger.Debug("Whacker loaded");
+
         return
             new CustomSaberData(
                 new(saberFile,
@@ -87,7 +87,7 @@ internal class WhackerLoader
                         RichTextString.Create(whacker.Descriptor.Author),
                         icon != null ? icon : CSLResources.NullCoverImage),
                     new(// todo: replace with efficient method and don't inline
-                        CustomTrailUtils.GetTrailsFromCustomSaber(saberPrefab).Any())),
+                        CustomTrailUtils.GetTrailsFromWhacker(saberPrefab).Any())),
                 bundle,
                 new WhackerPrefab(saberPrefab));
     }

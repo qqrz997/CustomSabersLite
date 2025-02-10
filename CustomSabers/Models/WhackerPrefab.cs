@@ -1,25 +1,25 @@
-﻿using CustomSabersLite.Utilities.Extensions;
+using CustomSabersLite.Utilities.Extensions;
 using UnityEngine;
 using static CustomSabersLite.Utilities.Common.CustomTrailUtils;
 
 namespace CustomSabersLite.Models;
 
-internal class CustomSaberPrefab : ISaberPrefab
+internal class WhackerPrefab : ISaberPrefab
 {
     private readonly GameObject prefab;
     private readonly ITrailData[] leftTrails = [];
     private readonly ITrailData[] rightTrails = [];
 
-    public CustomSaberPrefab(GameObject prefab)
+    public WhackerPrefab(GameObject prefab)
     {
         this.prefab = prefab;
 
         var leftSaber = prefab.transform.Find("LeftSaber");
-        if (leftSaber != null) leftTrails = GetTrailsFromCustomSaber(leftSaber.gameObject);
+        if (leftSaber != null) leftTrails = GetTrailsFromWhacker(leftSaber.gameObject);
         else Logger.Warn($"Prefab \"{prefab.name}\" is missing a LeftSaber GameObject");
         
         var rightSaber = prefab.transform.Find("RightSaber");
-        if (rightSaber != null) rightTrails = GetTrailsFromCustomSaber(rightSaber.gameObject); 
+        if (rightSaber != null) rightTrails = GetTrailsFromWhacker(rightSaber.gameObject); 
         else Logger.Warn($"Prefab \"{prefab.name}\" is missing a RightSaber GameObject");
     }
 

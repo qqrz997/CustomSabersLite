@@ -15,8 +15,6 @@ internal class CslFlowCoordinator : FlowCoordinator
     [Inject] private readonly SaberSettingsViewController saberSettings = null!;
     [Inject] private readonly MetadataCacheLoader metadataCacheLoader = null!;
 
-    [InjectOptional] private readonly TabTest? tabTest = null;
-
     private CancellationTokenSource titleTokenSource = new();
 
     public event Action? DidFinish;
@@ -24,7 +22,7 @@ internal class CslFlowCoordinator : FlowCoordinator
     public override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
     {
         if (firstActivation) showBackButton = true;
-        if (addedToHierarchy) ProvideInitialViewControllers(saberList, saberSettings, tabTest);
+        if (addedToHierarchy) ProvideInitialViewControllers(saberList, saberSettings);
         
         SetTitle(metadataCacheLoader.CurrentProgress switch
         {

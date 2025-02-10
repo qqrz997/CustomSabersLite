@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 namespace CustomSabersLite.Menu.Components;
 
+// unused
 public class ToggleButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     // Should only be used as a BSML component

@@ -26,17 +26,17 @@
                                        word-wrapping='false'/>
             </horizontal>
             <favorite-toggle icon-size="9"/>
-            <custom-clickable-image on-click="ToggleHeldSabers"
-                                    hover-hint="Something"
-                                    src="#AvatarHandsIcon" icon-size="9"/>
-            <custom-clickable-image on-click='OpenSabersFolder'
-                                    src="#MusicPacksIcon" icon-size="9"/>
-            <custom-clickable-image on-click='ReloadSabers' id='reload-button'
-                                    src="#ResetIcon" icon-size="9"/>
-            <custom-clickable-image on-click='ShowDeleteSaberModal'
-                                    src="#CloseIcon" icon-size="9"/>
-            <custom-clickable-image on-click="ToggleSortDirection"
-                                    src="#LockIcon" icon-size="9"/>
+            <clickable-icon on-click="ToggleHeldSabers"
+                            hover-hint="Something"
+                            src="#AvatarHandsIcon" icon-size="9"/>
+            <clickable-icon on-click='OpenSabersFolder'
+                            src="#MusicPacksIcon" icon-size="9"/>
+            <clickable-icon on-click='ReloadSabers' id='reload-button'
+                            src="#ResetIcon" icon-size="9"/>
+            <clickable-icon on-click='ShowDeleteSaberModal'
+                            src="#CloseIcon" icon-size="9"/>
+            <clickable-icon on-click="ToggleSortDirection"
+                            src="#LockIcon" icon-size="9"/>
         </horizontal>
     </vertical>
 

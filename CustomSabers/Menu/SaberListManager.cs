@@ -39,7 +39,6 @@ internal class SaberListManager
     public void DeleteSaber(string saberHash)
     {
         var saberFile = saberMetadataCache.GetOrDefault(saberHash)?.SaberFile;
-        
         if (saberFile is null || !saberFile.FileInfo.Exists)
         {
             return;
@@ -77,7 +76,6 @@ internal class SaberListManager
         list.Clear();
         list.Add(new("Default", "Beat Games", DefaultCoverImage, null));
         list.AddRange(saberMetadataCache.GetSortedData(filterOptions));
-        Logger.Info(list.Count);
         return list;
     }
 
@@ -88,7 +86,6 @@ internal class SaberListManager
         list.Add(new("Default", "Beat Games", DefaultCoverImage, "default"));
         list.Add(new("None", "Use no trail", BlankSprite, null));
         list.AddRange(saberMetadataCache.GetSortedData(filterOptions));
-        Logger.Info(list.Count);
         return list;
     }
 }

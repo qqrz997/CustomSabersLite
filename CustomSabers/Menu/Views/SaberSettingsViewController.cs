@@ -20,14 +20,21 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController, IShare
     [UIComponent("saber-length")] private readonly ImageView saberLengthIcon = null!;
     [UIComponent("saber-width")] private readonly ImageView saberWidthIcon = null!;
 
-    [UIValue("enabled")]
-    private bool Enabled
+    [UIAction("#post-parse")]
+    private void PostParse()
+    {
+        trailDurationIcon.sprite = CSLResources.TrailDurationIcon;
+        trailWidthIcon.sprite = CSLResources.TrailWidthIcon;
+        saberLengthIcon.sprite = CSLResources.SaberLengthIcon;
+        saberWidthIcon.sprite = CSLResources.SaberWidthIcon;
+    }
+    
+    public bool Enabled
     {
         get => config.Enabled;
         set => config.Enabled = value;
     }
 
-    [UIValue("disable-white-trail")]
     public bool DisableWhiteTrail
     {
         get => config.DisableWhiteTrail;
@@ -38,7 +45,6 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController, IShare
         }
     }
 
-    [UIValue("override-trail-duration")]
     public bool OverrideTrailDuration
     {
         get => config.OverrideTrailDuration;
@@ -49,7 +55,6 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController, IShare
         }
     }
 
-    [UIValue("override-trail-width")]
     public bool OverrideTrailWidth
     {
         get => config.OverrideTrailWidth;
@@ -60,7 +65,6 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController, IShare
         }
     }
 
-    [UIValue("trail-duration")]
     public float TrailDuration
     {
         get => config.TrailDuration;
@@ -71,7 +75,6 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController, IShare
         }
     }
 
-    [UIValue("trail-width")]
     public float TrailWidth
     {
         get => config.TrailWidth;
@@ -82,7 +85,6 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController, IShare
         }
     }
     
-    [UIValue("override-saber-length")]
     public bool OverrideSaberLength
     {
         get => config.OverrideSaberLength;
@@ -93,7 +95,6 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController, IShare
         }
     }
     
-    [UIValue("saber-length")]
     public float SaberLength
     {
         get => config.SaberLength;
@@ -104,7 +105,6 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController, IShare
         }
     }
     
-    [UIValue("override-saber-width")]
     public bool OverrideSaberWidth
     {
         get => config.OverrideSaberWidth;
@@ -115,7 +115,6 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController, IShare
         }
     }
     
-    [UIValue("saber-width")]
     public float SaberWidth
     {
         get => config.SaberWidth;
@@ -125,33 +124,11 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController, IShare
             previewManager.UpdateSaberModels();
         }
     }
-    
-    // [UIValue("trail-type-choices")] private List<object> trailTypeChoices = [.. Enum.GetNames(typeof(TrailType))];
-    // [UIValue("trail-type")]
-    // public string TrailType
-    // {
-    //     get => config.TrailType.ToString();
-    //     set
-    //     {
-    //         config.TrailType = Enum.TryParse(value, out TrailType trailType) ? trailType : config.TrailType;
-    //         previewManager.UpdateTrails();
-    //     }
-    // }
 
-    [UIValue("enable-custom-events")]
     public bool EnableCustomEvents
     {
         get => config.EnableCustomEvents;
         set => config.EnableCustomEvents = value;
-    }
-
-    [UIAction("#post-parse")]
-    private void PostParse()
-    {
-        trailDurationIcon.sprite = CSLResources.TrailDurationIcon;
-        trailWidthIcon.sprite = CSLResources.TrailWidthIcon;
-        saberLengthIcon.sprite = CSLResources.SaberLengthIcon;
-        saberWidthIcon.sprite = CSLResources.SaberWidthIcon;
     }
     
     protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)

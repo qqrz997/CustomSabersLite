@@ -2,9 +2,7 @@
 using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Common;
 using CustomSabersLite.Utilities.Extensions;
-using CustomSabersLite.Utilities.Services;
 using UnityEngine;
-using TrailColorType = CustomSaber.ColorType;
 
 namespace CustomSabersLite.Menu;
 
@@ -26,8 +24,7 @@ internal class BasicPreviewTrail
         
         gameObject = new("BasicPreviewTrail");
         meshRenderer = gameObject.AddComponent<MeshRenderer>();
-        var meshFilter = gameObject.AddComponent<MeshFilter>();
-        meshFilter.mesh = mesh;
+        gameObject.AddComponent<MeshFilter>().mesh = mesh;
         mesh.MarkDynamic();
     }
 

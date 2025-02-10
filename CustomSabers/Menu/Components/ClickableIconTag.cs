@@ -7,9 +7,9 @@ using static BeatSaberMarkupLanguage.Utilities.ImageResources;
 
 namespace CustomSabersLite.Menu.Components;
 
-internal class CustomClickableImageTag : BSMLTag
+internal class ClickableIconTag : BSMLTag
 {
-    public override string[] Aliases => ["custom-clickable-image"];
+    public override string[] Aliases => ["clickable-icon"];
 
     public override GameObject CreateObject(Transform parent)
     {

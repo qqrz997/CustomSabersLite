@@ -53,26 +53,11 @@ internal static class CustomTrailUtils
     /// Searches a CustomSaber's GameObject for any custom trails.
     /// </summary>
     /// <param name="saberObject">The GameObject of the custom saber</param>
-    public static ITrailData[] GetTrailsFromCustomSaber(GameObject saberObject)
-    {
-        Logger.Notice("Getting trails from Saber");
-        var customTrails = saberObject.GetComponentsInChildren<CustomTrail>();
-        return customTrails.Length == 0 ? []
-            : customTrails.Where(IsCustomTrailValid)
-            .Select(ct => new CustomTrailData(
-                material: ct.TrailMaterial,
-                lengthSeconds: ConvertLegacyLength(ct.Length),
-                colorType: ct.colorType,
-                customColor: ct.TrailColor,
-                colorMultiplier: ct.MultiplierColor,
-                saberObjectRoot: saberObject,
-                trailTop: ct.PointEnd,
-                trailBottom: ct.PointStart))
-            .Cast<ITrailData>()
-            .ToArray();
-        
-        static bool IsCustomTrailValid(CustomTrail ct) => ct.PointEnd != null && ct.PointStart != null;
-    }
+    public static ITrailData[] GetTrailsFromCustomSaber(GameObject saberObject) => saberObject
+        .GetComponentsInChildren<CustomTrail>()
+        .Where(IsCustomTrailValid)
+        .Select(trail => trail.ToTrailData(saberObject))
+        .ToArray();
     
     /// <summary>
     /// Searches a Whacker's GameObject for any custom trails.
@@ -113,4 +98,15 @@ internal static class CustomTrailUtils
             .Cast<ITrailData>()
             .ToArray();
     }
+    
+    private static bool IsCustomTrailValid(CustomTrail ct) => ct.PointEnd != null && ct.PointStart != null;
+    
+    private static ITrailData ToTrailData(this CustomTrail ct, GameObject saberObject) => new CustomTrailData(
+        material: ct.TrailMaterial,
+        lengthSeconds: ConvertLegacyLength(ct.Length),
+        colorType: ct.colorType,
+        customColor: ct.TrailColor,
+        colorMultiplier: ct.MultiplierColor,
+        trailTopOffset: ct.PointEnd.position - saberObject.transform.position,
+        trailBottomOffset: ct.PointStart.position - saberObject.transform.position);
 }

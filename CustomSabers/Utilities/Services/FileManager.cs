@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,9 +12,6 @@ internal class FileManager
     private readonly ITimeService timeService;
     private readonly string[] saberFileTypes = ["saber", "whacker"];
 
-    // Key is file hash
-    // private readonly Dictionary<string, SaberFileInfo> saberFileInfos = [];
-
     public FileManager(ITimeService timeService)
     {
         this.timeService = timeService;
@@ -22,14 +20,17 @@ internal class FileManager
     public async Task<SaberFileInfo[]> GetSaberFilesAsync() => await Task.Run(GetSaberFiles);
    
     private SaberFileInfo[] GetSaberFiles() => saberFileTypes
-        .SelectMany(t => PluginDirs.CustomSabers.GetFiles($"*.{t}", SearchOption.AllDirectories))
-        .Select(FileInfoToSaberFileInfo)
+        .SelectMany(GetSaberFilesForType)
+        .Select(ToSaberFileInfo)
         .ToArray();
 
-    private SaberFileInfo FileInfoToSaberFileInfo(FileInfo info) => 
+    private SaberFileInfo ToSaberFileInfo(FileInfo info) => 
         new(info,
             GetFileHash(info),
             timeService.GetUtcTime());
     
     private static string GetFileHash(FileInfo info) => Hashing.MD5Checksum(info.FullName, "x2");
+    
+    private static IEnumerable<FileInfo> GetSaberFilesForType(string fileExtension) =>
+        PluginDirs.CustomSabers.EnumerateFiles($"*.{fileExtension}", SearchOption.AllDirectories);
 }

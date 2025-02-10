@@ -1,37 +1,30 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace CustomSabersLite.Models;
 
 internal class CustomSaberData : ISaberData
 {
+    private readonly AssetBundle bundle;
+    
     public CustomSaberData(CustomSaberMetadata metadata, AssetBundle assetBundle, ISaberPrefab customSaberPrefab)
     {
+        bundle = assetBundle;
         Metadata = metadata;
-        AssetBundle = assetBundle;
         Prefab = customSaberPrefab;
     }
 
     public CustomSaberMetadata Metadata { get; }
-    private AssetBundle AssetBundle { get; }
     public ISaberPrefab Prefab { get; }
 
     public void Dispose(bool unloadAllLoadedObjects)
     {
         if (unloadAllLoadedObjects) Prefab.Dispose();
-        if (AssetBundle) AssetBundle.Unload(unloadAllLoadedObjects);
+        if (bundle != null) bundle.Unload(unloadAllLoadedObjects);
     }
 
     public void Dispose()
     {
-        try
-        {
-            Prefab.Dispose();
-            if (AssetBundle != null) AssetBundle.Unload(true);
-        }
-        catch (Exception ex)
-        {
-            Logger.Error($"Couldn't dispose data for saber asset\n{ex}");
-        }
+        Prefab.Dispose();
+        if (bundle != null) bundle.Unload(true);
     }
 }

@@ -11,7 +11,6 @@ internal interface ISharedSaberSettings
     public float SaberLength { get; set; }
     public bool OverrideSaberWidth { get; set; }
     public float SaberWidth { get; set; }
-    // public string TrailType { get; set; }
     public bool EnableCustomEvents { get; set; }
 
     internal static string[] PropertyNames { get; } =
@@ -25,7 +24,6 @@ internal interface ISharedSaberSettings
         nameof(SaberLength),
         nameof(OverrideSaberWidth),
         nameof(SaberWidth),
-        // nameof(TrailType),
         nameof(EnableCustomEvents)
     ];
 }

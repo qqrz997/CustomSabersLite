@@ -6,7 +6,6 @@ namespace CustomSabersLite.Models;
 internal interface ILiteSaber
 {
     public GameObject GameObject { get; }
-
     public EventManager? EventManager { get; }
 
     public void SetColor(Color color);

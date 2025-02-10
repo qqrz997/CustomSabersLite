@@ -30,8 +30,6 @@ internal class CslConfig
     public virtual bool OverrideSaberWidth { get; set; } = false;
     public virtual float SaberWidth { get; set; } = 1f;
         
-    // public virtual TrailType TrailType { get; set; } = TrailType.Custom;
-
     public virtual bool EnableCustomEvents { get; set; } = true;
 
     [Ignore] public bool EnableMenuSabers { get; set; } = false;

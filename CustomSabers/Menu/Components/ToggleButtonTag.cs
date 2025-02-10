@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 namespace CustomSabersLite.Menu.Components;
 
+// unused
 public class ToggleButtonTag : ButtonWithIconTag
 {
     public override string[] Aliases { get; } = ["toggle-button"];
