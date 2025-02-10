@@ -8,15 +8,14 @@ internal class DefaultSaber : ILiteSaber
 {
     private readonly DefaultSaberColorer defaultSaberColorer;
     
+    public GameObject GameObject { get; }
+    public EventManager? EventManager => null;
+    
     public DefaultSaber(GameObject defaultSaberObject)
     {
         GameObject = defaultSaberObject;
         defaultSaberColorer = GameObject.AddComponent<DefaultSaberColorer>();
     }
-
-    public GameObject GameObject { get; }
-    public EventManager? EventManager => null;
-    public CustomTrailData[] TrailData { get; } = [];
 
     public void SetColor(Color color) => defaultSaberColorer.SetColor(color);
     public void SetParent(Transform parent) => GameObject.transform.SetParent(parent, false);

@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Common;
@@ -17,8 +18,6 @@ internal class SaberLoader
         this.spriteCache = spriteCache;
         this.timeService = timeService;
     }
-
-    private const CustomSaberType Type = CustomSaberType.Saber;
 
     /// <summary>
     /// Loads a custom saber from a .saber file
@@ -63,13 +62,14 @@ internal class SaberLoader
 
         return
             new CustomSaberData(
-                new CustomSaberMetadata(
-                    saberFile,
+                new(saberFile,
                     SaberLoaderError.None,
                     new(RichTextString.Create(descriptor.SaberName),
                         RichTextString.Create(descriptor.AuthorName),
-                        icon != null ? icon : CSLResources.NullCoverImage)),
+                        icon != null ? icon : CSLResources.NullCoverImage),
+                    new(// todo: replace with efficient method and don't inline
+                        CustomTrailUtils.GetTrailsFromCustomSaber(saberPrefab).Any())),
                 bundle,
-                new(saberPrefab, Type));
+                new CustomSaberPrefab(saberPrefab));
     }
 }

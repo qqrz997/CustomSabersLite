@@ -4,7 +4,7 @@ namespace CustomSabersLite.Models;
 
 internal interface ISaberData : IDisposable
 {
-    ISaberMetadata Metadata { get; }
+    CustomSaberMetadata? Metadata { get; }
 
-    SaberPrefab? Prefab { get; }
+    ISaberPrefab? Prefab { get; }
 }

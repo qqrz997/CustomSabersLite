@@ -3,4 +3,5 @@
 internal record CustomSaberMetadata(
     SaberFileInfo SaberFile,
     SaberLoaderError LoaderError,
-    Descriptor Descriptor) : ISaberMetadata;
+    Descriptor Descriptor,
+    TrailsInfo TrailsInfo);

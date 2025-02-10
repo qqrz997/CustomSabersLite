@@ -21,8 +21,6 @@ internal class WhackerLoader
         this.timeService = timeService;
     }
 
-    private const CustomSaberType Type = CustomSaberType.Whacker;
-
     /// <summary>
     /// Loads a custom saber from a .whacker file
     /// </summary>
@@ -83,14 +81,15 @@ internal class WhackerLoader
         Logger.Debug("Whacker loaded");
         return
             new CustomSaberData(
-                new CustomSaberMetadata(
-                    saberFile,
+                new(saberFile,
                     SaberLoaderError.None,
                     new(RichTextString.Create(whacker.Descriptor.Name),
                         RichTextString.Create(whacker.Descriptor.Author),
-                        icon != null ? icon : CSLResources.NullCoverImage)),
+                        icon != null ? icon : CSLResources.NullCoverImage),
+                    new(// todo: replace with efficient method and don't inline
+                        CustomTrailUtils.GetTrailsFromCustomSaber(saberPrefab).Any())),
                 bundle,
-                new(saberPrefab, Type));
+                new WhackerPrefab(saberPrefab));
     }
 
     private static async Task<Sprite?> GetDownscaledIcon(ZipArchive archive, WhackerModel whacker)

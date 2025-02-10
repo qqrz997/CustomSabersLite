@@ -1,20 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
 using CustomSabersLite.Components;
-using CustomSabersLite.Configuration;
 using CustomSabersLite.Models;
-using CustomSabersLite.Utilities.Common;
 using UnityEngine;
 
 namespace CustomSabersLite.Utilities.Services;
 
 internal class TrailFactory
 {
-    private readonly CslConfig config;
     private readonly GameResourcesProvider gameResourcesProvider;
 
-    public TrailFactory(CslConfig config, GameResourcesProvider gameResourcesProvider)
+    public TrailFactory(GameResourcesProvider gameResourcesProvider)
     {
-        this.config = config;
         this.gameResourcesProvider = gameResourcesProvider;
     }
 
@@ -22,76 +18,50 @@ internal class TrailFactory
     private const int DefaultGranularity = 45;
 
     /// <summary>
-    /// Sets up custom trails for a custom saber
+    /// Adds trails to a custom saber.
     /// </summary>
-    /// <returns>if no suitable trail is created, a custom trail using the default trail material is created instead</returns>
-    public LiteSaberTrail[] CreateTrail(ILiteSaber customSaber, SaberType saberType, float intensity = 1f) =>
-        CreateTrail(customSaber, saberType, config.TrailType, intensity);
+    /// <param name="saber">The saber to add the trails to.</param>
+    /// <param name="trails">The trail data to create the trails with.</param>
+    /// <param name="intensity">The alpha of the trail. Only works with certain shaders.</param>
+    /// <returns>An array containing the new trail instances. Returns an empty array if none are created.</returns>
+    public LiteSaberTrail[] AddTrailsTo(ILiteSaber saber, ITrailData[] trails, float intensity) => trails
+        .Select(trail => AddCustomTrailTo(saber.GameObject, trail, intensity))
+        .ToArray();
 
-    public LiteSaberTrail[] CreateTrail(ILiteSaber customSaber, SaberType saberType, TrailType trailType, float intensity = 1f) => trailType switch
-    {
-        TrailType.Vanilla => [CreateDefaultTrail(customSaber.GameObject, saberType, intensity)],
-        TrailType.Custom => CreateTrails(customSaber.GameObject, customSaber.TrailData, saberType, intensity),
-        _ => []
-    };
-
-    private LiteSaberTrail[] CreateTrails(GameObject saberObject, CustomTrailData[] trailsData, SaberType saberType, float intensity)
-    {
-        var trails = new List<LiteSaberTrail>();
-        for (int i = 0; i < trailsData.Length; i++)
-        {
-            var trail = CreateTrail(saberObject, trailsData[i], intensity);
-            trail.ConfigureTrail(config, i == 0);
-            trails.Add(trail);
-        }
-        return trails.Count > 0 ? trails.ToArray()
-            : [CreateDefaultTrail(saberObject, saberType, intensity)];
-    }
-
-    private LiteSaberTrail CreateTrail(GameObject saberObject, CustomTrailData trailData, float intensity)
+    private LiteSaberTrail AddCustomTrailTo(
+        GameObject saberObject,
+        ITrailData trailData,
+        float intensity)
     {
         var trail = saberObject.AddComponent<LiteSaberTrail>();
-        var baseColor = trailData.GetTrailColor() with { a = intensity };
+        var baseColor = (trailData.CustomColor * trailData.ColorMultiplier) with { a = intensity };
 
-        trail._trailDuration = trailData.Length;
+        trail._trailDuration = trailData.LengthSeconds;
         trail._samplingFrequency = DefaultSamplingFrequency;
         trail._granularity = DefaultGranularity;
+        trail._color = baseColor;
         trail._trailRenderer = gameResourcesProvider.CreateNewSaberTrailRenderer();
-        if (trail._trailRenderer != null)
+        if (trailData.Material != null)
         {
             trail._trailRenderer._meshRenderer.material = trailData.Material;
-            if (trail._trailRenderer._meshRenderer.material != null)
-            {
-                trail._trailRenderer._meshRenderer.material.color = baseColor;
-            }
+            trail._trailRenderer._meshRenderer.material.color = baseColor;
         }
-        trail._color = baseColor;
-        trail.Init(trailData);
 
+        var trailTransformContainer = new GameObject("TrailTransformContainer") { layer = 12 }.transform;
+        trailTransformContainer.SetParent(saberObject.transform, false);
+        trailTransformContainer.localPosition = Vector3.zero;
+        
+        var trailTop = new GameObject("LiteSaberTrailTop") { layer = 12 }.transform;
+        trailTop.SetParent(trailTransformContainer, false);
+        trailTop.localPosition = trailData.TrailTopOffset;
+        
+        var trailBottom = new GameObject("LiteSaberTrailBottom") { layer = 12 }.transform;
+        trailBottom.SetParent(trailTransformContainer, false);
+        trailBottom.localPosition = trailData.TrailBottomOffset;
+
+        trail.Init(trailTop, trailBottom, trailData);
         return trail;
     }
 
-    public LiteSaberTrail CreateDefaultTrail(GameObject saberObject, SaberType saberType, float intensity)
-    {
-        // Make new transforms based on the default ones, because we cannot modify the default transforms
-        var top = new GameObject("Top").transform;
-        var bottom = new GameObject("Bottom").transform;
-        bottom.localPosition = Vector3.zero;
-        top.localPosition = Vector3.forward;
-
-        bottom.SetParent(saberObject.transform, false);
-        top.SetParent(saberObject.transform, false);
-
-        var trailData = new CustomTrailData(
-            top, bottom,
-            gameResourcesProvider.DefaultTrailMaterial,
-            saberType == SaberType.SaberA ? CustomSaber.ColorType.LeftSaber : CustomSaber.ColorType.RightSaber,
-            Color.white, Color.white,
-            TrailUtils.DefaultDuration);
-
-        var trail = CreateTrail(saberObject, trailData, intensity);
-        trail.ConfigureTrail(config, true);
-
-        return trail;
-    }
+    public DefaultTrailData CreateDefaultTrailData() => new(gameResourcesProvider.DefaultTrailMaterial);
 }

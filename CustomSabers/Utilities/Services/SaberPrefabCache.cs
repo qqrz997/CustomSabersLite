@@ -18,6 +18,14 @@ internal class SaberPrefabCache
         return saberData != null;
     }
 
+    public void UnloadSaber(string saberHash)
+    {
+        if (cache.TryGetValue(saberHash, out var saberData))
+        {
+            saberData.Dispose(true);
+        }
+    }
+
     public void Clear(bool unloadAllLoadedObjects)
     {
         cache.Values.ForEach(i => i.Dispose(unloadAllLoadedObjects));

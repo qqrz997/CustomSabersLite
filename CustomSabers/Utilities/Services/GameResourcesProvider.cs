@@ -30,7 +30,7 @@ internal class GameResourcesProvider : IInitializable
         var saberObject = Instantiate(saberModelPrefab, Vector3.zero, Quaternion.identity);
         saberObject.name = "NewSaberModel";
         saberObject.GetComponentsInChildren<SetSaberGlowColor>().ForEach(x => x.enabled = false);
-            saberObject.GetComponentsInChildren<SetSaberFakeGlowColor>().ForEach(x => x.enabled = false);
+        saberObject.GetComponentsInChildren<SetSaberFakeGlowColor>().ForEach(x => x.enabled = false);
         saberObject.GetComponent<SaberTrail>().enabled = false;
         return saberObject;
     }

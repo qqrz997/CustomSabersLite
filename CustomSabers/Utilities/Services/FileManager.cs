@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -30,15 +29,7 @@ internal class FileManager
     private SaberFileInfo FileInfoToSaberFileInfo(FileInfo info) => 
         new(info,
             GetFileHash(info),
-            timeService.GetUtcTime(),
-            GetSaberFileType(info));
-
-    private static CustomSaberType GetSaberFileType(FileInfo info) => info.Extension switch
-    {
-        "saber" => CustomSaberType.Saber,
-        "whacker" => CustomSaberType.Whacker,
-        _ => CustomSaberType.Default
-    };
+            timeService.GetUtcTime());
     
     private static string GetFileHash(FileInfo info) => Hashing.MD5Checksum(info.FullName, "x2");
 }

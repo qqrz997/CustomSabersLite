@@ -1,4 +1,3 @@
-using System;
 using BeatSaberMarkupLanguage.Parser;
 using HMUI;
 using UnityEngine;
@@ -9,10 +8,18 @@ namespace CustomSabersLite.Menu.Components;
 
 public class ToggleButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    private ImageView? background;
+    // Should only be used as a BSML component
+    private ImageView background = null!;
 
     private bool highlighted;
     private bool value;
+       
+    public void Init(ImageView background, Button button)
+    {
+        this.background = background;
+        button.onClick.AddListener(() => ToggleValue = !ToggleValue);
+        ReceiveValue();
+    }
     
     public BSMLValue? ToggleAssociatedValue { get; set; }
     public bool ToggleValue
@@ -24,14 +31,6 @@ public class ToggleButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
             ApplyValue();
             UpdateVisuals();
         }
-    }
-       
-    public void Init(ImageView background, Button button)
-    {
-        if (background == null) throw new ArgumentNullException(nameof(background));
-        this.background = background;
-        button.onClick.AddListener(() => ToggleValue = !ToggleValue);
-        ReceiveValue();
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -51,13 +50,6 @@ public class ToggleButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 
     private void UpdateVisuals()
     {
-        if (background == null)
-        {
-            return;
-        }
-
-        Logger.Info($"{value}, {highlighted}");
-        
         var (color, color0, color1) = (value, highlighted) switch
         {
             (false, false) => (new Color(0f, 0f, 0f, 0.5f), Color.white, Color.white),

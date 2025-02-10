@@ -1,7 +1,6 @@
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.Tags;
-using CustomSabersLite.Models;
 using HMUI;
 using UnityEngine;
 using UnityEngine.UI;

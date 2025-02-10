@@ -1,4 +1,5 @@
-﻿using CustomSabersLite.Components;
+﻿using System.Linq;
+using CustomSabersLite.Components;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Common;
@@ -13,76 +14,50 @@ internal class MenuSaber
 {
     private readonly CslConfig config;
     private readonly TrailFactory trailFactory;
-    private readonly SaberType saberType;
-
-    private readonly GameObject gameObject;
-    private readonly GameObject defaultTrailObject;
-    private readonly LiteSaberTrail defaultTrail;
-
-    private MenuSaber(CslConfig config, TrailFactory trailFactory, Transform saberParent, SaberType saberType)
+    private readonly Transform parent;
+    
+    private MenuSaber(CslConfig config, TrailFactory trailFactory)
     {
         this.config = config;
         this.trailFactory = trailFactory;
-        this.saberType = saberType;
 
-        gameObject = new("MenuLiteSaber");
-        gameObject.SetActive(false);
-        gameObject.transform.SetParent(saberParent, false);
-        defaultTrailObject = new("DefaultTrail");
-        defaultTrailObject.transform.SetParent(gameObject.transform, false);
-        defaultTrail = trailFactory.CreateDefaultTrail(defaultTrailObject, saberType, 1f);
+        parent = new GameObject("MenuLiteSaber").transform;
+        parent.gameObject.SetActive(false);
     }
 
     private ILiteSaber? liteSaberInstance;
     private LiteSaberTrail[] trailInstances = [];
 
-    public void ReplaceSaber(ILiteSaber? newSaber)
+    public void ReplaceSaber(ILiteSaber? newSaber, ITrailData[] newTrails)
     {
         liteSaberInstance?.Destroy();
         trailInstances.ForEach(t => { if (t && t._trailRenderer) t._trailRenderer.gameObject.Destroy(); });
-        if (newSaber == null) return;
+        
+        if (newSaber is null) return;
 
-        newSaber.SetParent(gameObject.transform);
+        newSaber.SetParent(parent);
         newSaber.GameObject.GetComponentsInChildren<Collider>().ForEach(c => c.enabled = false);
 
-        trailInstances = trailFactory.CreateTrail(newSaber, saberType, TrailType.Custom);
+        trailInstances = trailFactory.AddTrailsTo(newSaber, newTrails, 1f);
         liteSaberInstance = newSaber;
     }
 
-    public void UpdateTrails()
-    {
-        defaultTrail.ConfigureTrail(config, true);
-        defaultTrail.enabled = !config.OverrideTrailDuration ? config.TrailType == TrailType.Vanilla
-            : config.TrailDuration > 0 && config.TrailType == TrailType.Vanilla;
-
-        for (int i = 0; i < trailInstances.Length; i++)
-        {
-            if (trailInstances[i])
-            {
-                trailInstances[i].ConfigureTrail(config, i == 0);
-                trailInstances[i].enabled = !config.OverrideTrailDuration ? config.TrailType == TrailType.Custom
-                    : config.TrailDuration > 0 && config.TrailType == TrailType.Custom;
-            }
-        }
-    }
+    public void UpdateTrails() => trailInstances.ConfigureTrails(config);
 
     public void UpdateSaberScale(float length, float width)
     {
         if (liteSaberInstance == null) return;
         liteSaberInstance.SetLength(length);
         liteSaberInstance.SetWidth(width);
-        defaultTrailObject.transform.localScale = defaultTrailObject.transform.localScale with { z = length };
     }
 
+    public void SetParent(Transform t) => parent.SetParent(t, false); 
+    
     public void SetColor(Color color)
     {
-        defaultTrail.SetColor(color);
         liteSaberInstance?.SetColor(color);
         trailInstances.ForEach(t => t.SetColor(color));
     }
 
-    public void SetActive(bool active) =>
-        gameObject.SetActive(liteSaberInstance != null && active);
-
-    public class Factory : PlaceholderFactory<Transform, SaberType, MenuSaber> { }
+    public void SetActive(bool active) => parent.gameObject.SetActive(liteSaberInstance != null && active);
 }

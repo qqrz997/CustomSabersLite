@@ -1,8 +1,8 @@
 ﻿namespace CustomSabersLite.Models;
 
-public enum TrailType
+/*public enum TrailType
 {
     Custom,
     Vanilla,
     None
-}
+}*/

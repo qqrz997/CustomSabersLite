@@ -4,23 +4,36 @@ using Zenject;
 
 namespace CustomSabersLite.Menu;
 
-internal class MenuButtonManager(MenuButtons menuButtons, MainFlowCoordinator mainFlowCoordinator, CSLFlowCoordinator sabersFlowCoordinator) : IInitializable, IDisposable
+internal class MenuButtonManager : IInitializable, IDisposable
 {
-    private readonly MenuButtons menuButtons = menuButtons;
-    private readonly MainFlowCoordinator mainFlowCoordinator = mainFlowCoordinator;
-    private readonly CSLFlowCoordinator sabersFlowCoordinator = sabersFlowCoordinator;
+    private readonly CslFlowCoordinator cslFlowCoordinator;
+    private readonly MainFlowCoordinator mainFlowCoordinator;
+    private readonly MenuButtons menuButtons;
+    private readonly MenuButton menuButton;
 
-    private MenuButton button = null!;
-
+    public MenuButtonManager(
+        MenuButtons menuButtons,
+        CslFlowCoordinator cslFlowCoordinator,
+        MainFlowCoordinator mainFlowCoordinator)
+    {
+        this.menuButtons = menuButtons;
+        this.cslFlowCoordinator = cslFlowCoordinator;
+        this.mainFlowCoordinator = mainFlowCoordinator;
+        menuButton = new("CustomSabersLite", PresentFlowCoordinator);
+    }
+    
     public void Initialize()
     {
-        button = new("Custom Sabers", "Choose your custom sabers", PresentCSLFlowCoordinator, interactable: true);
-        menuButtons.RegisterButton(button);
+        cslFlowCoordinator.DidFinish += DismissFlowCoordinator;
+        menuButtons.RegisterButton(menuButton);
     }
 
-    private void PresentCSLFlowCoordinator() =>
-        mainFlowCoordinator.PresentFlowCoordinator(sabersFlowCoordinator);
-
-    public void Dispose() =>
-        menuButtons.UnregisterButton(button);
+    public void Dispose()
+    {
+        cslFlowCoordinator.DidFinish -= DismissFlowCoordinator;
+        menuButtons.UnregisterButton(menuButton);
+    }
+    
+    private void PresentFlowCoordinator() => mainFlowCoordinator.PresentFlowCoordinator(cslFlowCoordinator);
+    private void DismissFlowCoordinator() => mainFlowCoordinator.DismissFlowCoordinator(cslFlowCoordinator);
 }

@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Parser;
 using BeatSaberMarkupLanguage.TypeHandlers;
-using CustomSabersLite.Models;
 using UnityEngine.UI;
 
 namespace CustomSabersLite.Menu.Components;

@@ -33,8 +33,8 @@
                          apply-on-change="true" bind-values="true" format-string="{0:##0%}"
                          hover-hint="Modify the girth of the saber model - has no affect on hit box"/>
       
-      <list-setting value='trail-type' text='Saber Trail Type' hover-hint='Select the type of trail you want to use' 
-                    options='trail-type-choices' apply-on-change='true' bind-value='true' id='trail-type'/>
+      <!--<list-setting value='trail-type' text='Saber Trail Type' hover-hint='Select the type of trail you want to use' 
+                    options='trail-type-choices' apply-on-change='true' bind-value='true' id='trail-type'/>-->
 
       <checkbox-setting value='enable-custom-events' text='Enable Saber Events' hover-hint='Toggles saber events. For instance, an effect happening when you achieve a full combo'
                         apply-on-change='true' bind-value='true'/>

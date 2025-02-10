@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using BeatSaberMarkupLanguage.Attributes;
@@ -13,11 +12,10 @@ using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Common;
 using CustomSabersLite.Utilities.Services;
 using HMUI;
-using IPA.Utilities.Async;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 using Zenject;
+using static CustomSabersLite.Utilities.Common.UnityAsync;
 
 namespace CustomSabersLite.Menu.Views;
 
@@ -27,29 +25,26 @@ internal class SaberListViewController : BSMLAutomaticViewController
 {
     [Inject] private readonly CslConfig config = null!;
     [Inject] private readonly MetadataCacheLoader metadataCacheLoader = null!;
+    [Inject] private readonly SaberMetadataCache saberMetadataCache = null!;
     [Inject] private readonly SaberListManager saberListManager = null!;
     [Inject] private readonly SaberPreviewManager previewManager = null!;
     
     private CancellationTokenSource? saberPreviewTokenSource;
+    private SaberListType currentSaberList = SaberListType.Sabers;
 
     [UIComponent("saber-list")] private readonly SaberListTableData saberList = null!;
-    [UIComponent("reload-button")] private readonly Selectable reloadButtonSelectable = null!;
     [UIComponent("delete-saber-modal")] private readonly ModalView deleteSaberModal = null!;
     [UIComponent("delete-saber-modal-text")] private readonly TextMeshProUGUI deleteSaberModalText = null!;
     [UIComponent("search-input")] private readonly BsInputField searchBsInputField = null!;
-    [UIComponent("sort-direction-button")] private readonly ImageView sortDirectionIcon = null!;
     [UIObject("loading-icon")] private readonly GameObject loadingIcon = null!;
 
     [UIAction("#post-parse")]
     public void PostParse()
     {
         metadataCacheLoader.LoadingProgressChanged += LoadingProgressChanged;
-        saberList.DidSelectCellWithIdxEvent += SelectSaber;
 
         searchBsInputField.Text = SearchFilter;
         searchBsInputField.AddInputChangedListener(inp => SearchFilter = inp.text);
-
-        sortDirectionIcon.rectTransform.localRotation = Quaternion.Euler(0f, 0f, config.ReverseSort ? 180f : 0f);
 
         loadingIcon.SetActive(!metadataCacheLoader.CurrentProgress.Completed);
     }
@@ -79,8 +74,8 @@ internal class SaberListViewController : BSMLAutomaticViewController
 
     public void ToggleSortDirection()
     {
+        // TODO: change sort direction icon
         config.ReverseSort = !config.ReverseSort;
-        sortDirectionIcon.rectTransform.localRotation = Quaternion.Euler(0f, 0f, config.ReverseSort ? 180f : 0f);
         RefreshList();
     }
 
@@ -100,11 +95,24 @@ internal class SaberListViewController : BSMLAutomaticViewController
         saberList.ScrollToCellWithIdx(selectedCellIdx, TableView.ScrollPositionType.Center, true);
     }
 
-    public async void SelectSaber(TableView tableView, int row)
+    public async void ListCellSelected(TableView tableView, int row)
     {
-        config.CurrentlySelectedSaber = saberListManager.SelectFromCurrentList(row)?.SaberHash;
-        Logger.Debug($"Saber selected: {config.CurrentlySelectedSaber ?? "Default"}");
+        var selectedCell = saberListManager.SelectFromCurrentList(row);
+        if (currentSaberList == SaberListType.Sabers)
+        {
+            config.CurrentlySelectedSaber = selectedCell?.Value;
+        }
+        else if (currentSaberList == SaberListType.Trails)
+        {
+            config.CurrentlySelectedTrail = selectedCell?.Value;
+        }
         await GeneratePreview();
+    }
+
+    public void ListSelected(SegmentedControl segmentedControl, int idx)
+    {
+        currentSaberList = (SaberListType)idx;
+        RefreshList();
     }
 
     public void OpenSabersFolder() => Process.Start(PluginDirs.CustomSabers.FullName);
@@ -113,7 +121,8 @@ internal class SaberListViewController : BSMLAutomaticViewController
     {
         if (config.CurrentlySelectedSaber != null)
         {
-            deleteSaberModalText.text = $"{Path.GetFileName(config.CurrentlySelectedSaber)}?";
+            deleteSaberModalText.text = saberMetadataCache.GetOrDefault(config.CurrentlySelectedSaber)?
+                .Descriptor.SaberName.FullName ?? "Unknown";
             deleteSaberModal.Show(true);
         }
     }
@@ -128,18 +137,25 @@ internal class SaberListViewController : BSMLAutomaticViewController
         int selectedSaberIndex = saberListManager.IndexForSaberHash(config.CurrentlySelectedSaber);
         saberListManager.DeleteSaber(config.CurrentlySelectedSaber);
         
-        config.CurrentlySelectedSaber = saberListManager.SelectFromCurrentList(selectedSaberIndex - 1)?.SaberHash;
+        config.CurrentlySelectedSaber = saberListManager.SelectFromCurrentList(selectedSaberIndex - 1)?.Value;
 
         RefreshList();
         StartCoroutine(SelectSelectedAndScrollTo());
     }
 
+    public void ToggleHeldSabers()
+    {
+        config.EnableMenuSabers = !config.EnableMenuSabers;
+        previewManager.UpdateActivePreview();
+    }
+
     public async void ReloadSabers()
     {
-        reloadButtonSelectable.interactable = false;
+        // TODO: interactable
+        // reloadButtonSelectable.Interactable = false;
         saberList.Data.Clear();
         saberList.ReloadDataKeepingPosition();
-
+        
         saberListManager.Clear();
         
         // this will invoke an event on completion that gets used to refresh the list
@@ -148,22 +164,34 @@ internal class SaberListViewController : BSMLAutomaticViewController
 
     private void RefreshList()
     {
-        var filterOptions = new SaberListFilterOptions(config.SearchFilter, config.OrderByFilter, config.ReverseSort);
+        var filterOptions = new SaberListFilterOptions(
+            config.SearchFilter, 
+            config.OrderByFilter, 
+            config.ReverseSort, 
+            currentSaberList);
+        
         saberList.Data.Clear();
         saberList.Data.AddRange(saberListManager.UpdateList(filterOptions));
         saberList.ReloadData();
-
-        if (saberListManager.CurrentListContains(config.CurrentlySelectedSaber))
+        
+        if (currentSaberList == SaberListType.Sabers 
+            && saberListManager.CurrentListContains(config.CurrentlySelectedSaber))
         {
             saberList.SelectCellWithIdx(saberListManager.IndexForSaberHash(config.CurrentlySelectedSaber));
+        }
+        else if (currentSaberList == SaberListType.Trails
+                 && saberListManager.CurrentListContains(config.CurrentlySelectedTrail))
+        {
+            saberList.SelectCellWithIdx(saberListManager.IndexForSaberHash(config.CurrentlySelectedTrail));
         }
         else
         {
             saberList.ClearSelection();
         }
 
-        UnityMainThreadTaskScheduler.Factory.StartNew(GeneratePreview);
-        reloadButtonSelectable.interactable = true;
+        StartUnitySafeTask(GeneratePreview);
+        // TODO: interactable
+        // reloadButtonSelectable.Interactable = true;
     }
 
     private void LoadingProgressChanged(MetadataCacheLoader.Progress progress)
@@ -199,7 +227,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
 
         if (!firstActivation)
         {
-            UnityMainThreadTaskScheduler.Factory.StartNew(GeneratePreview);
+            StartUnitySafeTask(GeneratePreview);
         }
 
         RefreshList();

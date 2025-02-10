@@ -54,13 +54,14 @@ internal class SaberPreviewManager : IInitializable, IDisposable
         heldPreviewSaberSet?.Dispose();
 
         basicPreviewSaberSet = await saberFactory.InstantiateCurrentSabers();
+        token.ThrowIfCancellationRequested();
+        basicPreviewTrailManager.SetTrails(basicPreviewSaberSet);
+        
         heldPreviewSaberSet = await saberFactory.InstantiateCurrentSabers();
         token.ThrowIfCancellationRequested();
-
         basicPreviewSaberManager.ReplaceSabers(basicPreviewSaberSet.LeftSaber, basicPreviewSaberSet.RightSaber);
-        basicPreviewTrailManager.SetTrails(basicPreviewSaberSet.LeftSaber, basicPreviewSaberSet.RightSaber);
 
-        menuSaberManager.ReplaceSabers(heldPreviewSaberSet.LeftSaber, heldPreviewSaberSet.RightSaber);
+        menuSaberManager.ReplaceSabers(heldPreviewSaberSet);
 
         UpdateTrails();
         UpdateSaberModels();

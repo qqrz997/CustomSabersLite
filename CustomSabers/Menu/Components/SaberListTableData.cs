@@ -1,13 +1,14 @@
 using System;
 using BeatSaberMarkupLanguage.Tags;
 using CustomSabersLite.Menu.Views;
+using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Common;
 using CustomSabersLite.Utilities.Extensions;
 using HMUI;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace CustomSabersLite.Models;
+namespace CustomSabersLite.Menu.Components;
 
 internal class SaberListTableData : MonoBehaviour, TableView.IDataSource
 {

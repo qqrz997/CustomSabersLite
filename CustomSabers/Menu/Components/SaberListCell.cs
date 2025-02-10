@@ -3,7 +3,7 @@ using CustomSabersLite.Models;
 using HMUI;
 using UnityEngine;
 
-namespace CustomSabersLite.Menu.Views;
+namespace CustomSabersLite.Menu.Components;
 
 /// <summary>
 /// The list cell that is used in the main saber list.
@@ -21,8 +21,8 @@ internal class SaberListCell : TableCell
 
     public void SetInfo(SaberListCellInfo info)
     {
-        mainText.text = info.Text.FullName;
-        subText.text = info.Subtext.FullName;
+        mainText.text = info.NameText.FullName;
+        subText.text = info.AuthorText.FullName;
         icon.sprite = info.Icon;
         
         RefreshVisuals();

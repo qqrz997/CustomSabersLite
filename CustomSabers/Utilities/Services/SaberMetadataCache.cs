@@ -9,9 +9,7 @@ internal class SaberMetadataCache
 {
     private readonly Dictionary<string, CustomSaberMetadata> cache = [];
 
-    public bool TryAdd(ISaberMetadata saberMetadata) =>
-        saberMetadata is CustomSaberMetadata customSaberMetadata 
-        && cache.TryAdd(customSaberMetadata.SaberFile.Hash, customSaberMetadata);
+    public bool TryAdd(CustomSaberMetadata saberMetadata) => cache.TryAdd(saberMetadata.SaberFile.Hash, saberMetadata);
 
     public void Remove(string saberHash) => cache.Remove(saberHash);
 
@@ -19,7 +17,14 @@ internal class SaberMetadataCache
     
     public IEnumerable<SaberListCellInfo> GetSortedData(SaberListFilterOptions options)
     {
-        var data = cache.Values.Select(meta => new SaberListCellInfo(meta));
+        // TODO: remove metadata for sabers that don't exist. this may happen if the file gets move/deleted
+        var cachedData = options.SaberListType switch
+        {
+            SaberListType.Trails => cache.Values.Where(meta => meta.TrailsInfo.HasCustomSaberTrail),
+            _ => cache.Values
+        };
+        
+        var data = cachedData.Select(meta => new SaberListCellInfo(meta));
 
         if (!string.IsNullOrWhiteSpace(options.SearchFilter))
         {
@@ -28,9 +33,9 @@ internal class SaberMetadataCache
             
         data = options.OrderBy switch
         {
-            OrderBy.Name => data.OrderBy(i => i.Text).ThenBy(i => i.Subtext),
-            OrderBy.Author => data.OrderBy(i => i.Subtext).ThenBy(i => i.Text),
-            OrderBy.RecentlyAdded => data.OrderBy(i => i.DateAdded).ThenBy(i => i.Text),
+            OrderBy.Name => data.OrderBy(i => i.NameText).ThenBy(i => i.AuthorText),
+            OrderBy.Author => data.OrderBy(i => i.AuthorText).ThenBy(i => i.NameText),
+            OrderBy.RecentlyAdded => data.OrderBy(i => i.DateAdded).ThenBy(i => i.NameText),
             _ => throw new ArgumentOutOfRangeException(nameof(options.OrderBy))
         };
 

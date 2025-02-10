@@ -10,11 +10,12 @@ namespace CustomSabersLite.Configuration;
 [UsedImplicitly]
 internal class CslConfig
 {
+    // TODO: maybe decompose the config class
     public virtual bool Enabled { get; set; } = true;
     
-    // TODO: use file hash as the key for saber data
-    public virtual string? CurrentlySelectedSaber { get; set; } = null;
-
+    public virtual string? CurrentlySelectedSaber { get; set; }
+    public virtual string? CurrentlySelectedTrail { get; set; }
+    
     public virtual bool DisableWhiteTrail { get; set; } = true;
 
     public virtual bool OverrideTrailDuration { get; set; } = false;
@@ -29,7 +30,7 @@ internal class CslConfig
     public virtual bool OverrideSaberWidth { get; set; } = false;
     public virtual float SaberWidth { get; set; } = 1f;
         
-    public virtual TrailType TrailType { get; set; } = TrailType.Custom;
+    // public virtual TrailType TrailType { get; set; } = TrailType.Custom;
 
     public virtual bool EnableCustomEvents { get; set; } = true;
 
@@ -39,8 +40,6 @@ internal class CslConfig
     [Ignore] public bool ReverseSort { get; set; } = false;
 
     // public virtual void OnReload() { }
-
     // public virtual void Changed() { }
-
     // public virtual void CopyFrom(CustomSaberConfig other) { }
 }

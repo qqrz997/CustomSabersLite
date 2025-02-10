@@ -18,7 +18,7 @@
       <checkbox-setting text='Disable White Trail' value='disable-white-trail' apply-on-change='true' bind-value='true' hover-hint='Toggles the initial white part of trails' />
 
       <!--Trail type (custom, vanilla, none)-->
-      <list-setting text='Saber Trail Type' value='trail-type' options='trail-type-choices' apply-on-change='true' bind-value='true' hover-hint='Select the type of trail you want to use' />
+      <!--<list-setting text='Saber Trail Type' value='trail-type' options='trail-type-choices' apply-on-change='true' bind-value='true' hover-hint='Select the type of trail you want to use' />-->
       
       <!--Trail duration-->
       <toggleable-slider text="Trail Length" id="trail-duration" slider-value="trail-duration" toggle-value="override-trail-duration" 

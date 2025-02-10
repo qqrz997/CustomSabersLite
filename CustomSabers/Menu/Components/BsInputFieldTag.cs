@@ -1,4 +1,5 @@
 using BeatSaberMarkupLanguage.Tags;
+using HMUI;
 using UnityEngine;
 using UnityEngine.UI;
 using static UnityEngine.Object;
@@ -22,6 +23,10 @@ internal class BsInputFieldTag : BSMLTag
         var searchInputField = Instantiate(searchTextInputFieldView, gameObject.transform);
         inputField.Init(searchInputField);
 
+        // Add skew
+        var bgImage = searchInputField.transform.Find("BG").GetComponent<ImageView>();
+        bgImage._skew = 0.18f;
+        
         // Add additional components
         gameObject.AddComponent<LayoutElement>();
         gameObject.AddComponent<VerticalLayoutGroup>();

@@ -22,14 +22,18 @@ internal class MenuInstaller : Installer
         Container.Bind<BSMLTag>().To<ToggleButtonTag>().AsSingle();
         Container.Bind<BSMLTag>().To<BsInputFieldTag>().AsSingle();
         Container.Bind<BSMLTag>().To<SaberListTag>().AsSingle();
+        Container.Bind<BSMLTag>().To<FavouriteToggleTag>().AsSingle();
+        Container.Bind<BSMLTag>().To<CustomClickableImageTag>().AsSingle();
         Container.Bind<TypeHandler>().To<ToggleableSliderHandler>().AsSingle();
         Container.Bind<TypeHandler>().To<ToggleButtonHandler>().AsSingle();
         Container.Bind<TypeHandler>().To<SaberListTableDataHandler>().AsSingle();
+        Container.Bind<TypeHandler>().To<FavouriteToggleHandler>().AsSingle();
+        Container.Bind<TypeHandler>().To<ClickableIconHandler>().AsSingle();
         
         // View controllers
         Container.Bind<SaberListViewController>().FromNewComponentAsViewController().AsSingle();
         Container.Bind<SaberSettingsViewController>().FromNewComponentAsViewController().AsSingle();
-        Container.Bind<CSLFlowCoordinator>().FromNewComponentOnNewGameObject().AsSingle();
+        Container.Bind<CslFlowCoordinator>().FromNewComponentOnNewGameObject().AsSingle();
 
         Container.BindInterfacesAndSelfTo<GameplaySetupTab>().AsSingle();
         //Container.Bind<TabTest>().FromNewComponentAsViewController().AsSingle();
@@ -40,10 +44,13 @@ internal class MenuInstaller : Installer
         Container.BindInterfacesAndSelfTo<SaberPreviewManager>().AsSingle();
 
         Container.Bind<MenuSaberManager>().AsSingle();
-        Container.Bind<MenuSaber>().AsTransient();
-        Container.BindFactory<Transform, SaberType, MenuSaber, MenuSaber.Factory>();
+        Container.Bind<MenuSaber>().WithId(SaberType.SaberA).AsCached();
+        Container.Bind<MenuSaber>().WithId(SaberType.SaberB).AsCached();
+        
         Container.Bind<BasicPreviewSaberManager>().AsSingle();
         Container.Bind<BasicPreviewTrailManager>().AsSingle();
+        Container.Bind<BasicPreviewTrail>().WithId(SaberType.SaberA).AsCached();
+        Container.Bind<BasicPreviewTrail>().WithId(SaberType.SaberB).AsCached();
 
         var time = IPA.Utilities.Utils.CanUseDateTimeNowSafely ? DateTime.Now : DateTime.UtcNow;
         if (time is { Month: 4, Day: 1 })

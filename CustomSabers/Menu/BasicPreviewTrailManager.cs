@@ -3,13 +3,22 @@ using CustomSabersLite.Configuration;
 using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Services;
 using UnityEngine;
+using Zenject;
 
 namespace CustomSabersLite.Menu;
 
-internal class BasicPreviewTrailManager(CslConfig config, GameResourcesProvider gameResourcesProvider)
+internal class BasicPreviewTrailManager
 {
-    private readonly BasicPreviewTrail leftTrail = new(config, gameResourcesProvider, SaberType.SaberA);
-    private readonly BasicPreviewTrail rightTrail = new(config, gameResourcesProvider, SaberType.SaberB);
+    private readonly BasicPreviewTrail leftTrail;
+    private readonly BasicPreviewTrail rightTrail;
+
+    public BasicPreviewTrailManager(
+        [Inject(Id = SaberType.SaberA)] BasicPreviewTrail leftTrail,
+        [Inject(Id = SaberType.SaberB)] BasicPreviewTrail rightTrail)
+    {
+        this.leftTrail = leftTrail;
+        this.rightTrail = rightTrail;
+    }
 
     public void Init(Transform leftParent, Transform rightParent)
     {
@@ -17,10 +26,10 @@ internal class BasicPreviewTrailManager(CslConfig config, GameResourcesProvider 
         rightTrail.Init(rightParent);
     }
 
-    public void SetTrails(ILiteSaber? leftSaber, ILiteSaber? rightSaber)
+    public void SetTrails(SaberInstanceSet saberInstanceSet)
     {
-        leftTrail.ReplaceTrail(leftSaber?.TrailData.FirstOrDefault());
-        rightTrail.ReplaceTrail(rightSaber?.TrailData.FirstOrDefault());
+        leftTrail.ReplaceTrail(saberInstanceSet.LeftTrails.FirstOrDefault());
+        rightTrail.ReplaceTrail(saberInstanceSet.RightTrails.FirstOrDefault());
     }
 
     public void UpdateTrails()

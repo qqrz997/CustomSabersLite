@@ -14,7 +14,7 @@ internal record RichTextString : IComparable<RichTextString>
         Value = comparableValue;
     }
 
-    private static RichTextString Unknown { get; } = new("Unknown", "_");
+    private static RichTextString Unknown { get; } = new("", "_");
 
     public static RichTextString Create(string? fullText)
     {

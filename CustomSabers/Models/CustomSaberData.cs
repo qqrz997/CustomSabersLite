@@ -3,11 +3,18 @@ using UnityEngine;
 
 namespace CustomSabersLite.Models;
 
-internal class CustomSaberData(ISaberMetadata metadata, AssetBundle assetBundle, SaberPrefab saberPrefab) : ISaberData
+internal class CustomSaberData : ISaberData
 {
-    public ISaberMetadata Metadata { get; } = metadata;
-    private AssetBundle AssetBundle { get; } = assetBundle;
-    public SaberPrefab Prefab { get; } = saberPrefab;
+    public CustomSaberData(CustomSaberMetadata metadata, AssetBundle assetBundle, ISaberPrefab customSaberPrefab)
+    {
+        Metadata = metadata;
+        AssetBundle = assetBundle;
+        Prefab = customSaberPrefab;
+    }
+
+    public CustomSaberMetadata Metadata { get; }
+    private AssetBundle AssetBundle { get; }
+    public ISaberPrefab Prefab { get; }
 
     public void Dispose(bool unloadAllLoadedObjects)
     {

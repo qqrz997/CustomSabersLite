@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using BeatSaberMarkupLanguage.Attributes;
+﻿using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.ViewControllers;
 using CustomSabersLite.Configuration;
-using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Common;
 using CustomSabersLite.Utilities.Extensions;
 using HMUI;
@@ -129,17 +126,17 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController, IShare
         }
     }
     
-    [UIValue("trail-type-choices")] private List<object> trailTypeChoices = [.. Enum.GetNames(typeof(TrailType))];
-    [UIValue("trail-type")]
-    public string TrailType
-    {
-        get => config.TrailType.ToString();
-        set
-        {
-            config.TrailType = Enum.TryParse(value, out TrailType trailType) ? trailType : config.TrailType;
-            previewManager.UpdateTrails();
-        }
-    }
+    // [UIValue("trail-type-choices")] private List<object> trailTypeChoices = [.. Enum.GetNames(typeof(TrailType))];
+    // [UIValue("trail-type")]
+    // public string TrailType
+    // {
+    //     get => config.TrailType.ToString();
+    //     set
+    //     {
+    //         config.TrailType = Enum.TryParse(value, out TrailType trailType) ? trailType : config.TrailType;
+    //         previewManager.UpdateTrails();
+    //     }
+    // }
 
     [UIValue("enable-custom-events")]
     public bool EnableCustomEvents

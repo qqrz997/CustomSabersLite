@@ -15,7 +15,11 @@ internal class CustomSabersLoader
     private readonly WhackerLoader whackerLoader;
     private readonly ITimeService timeService;
 
-    public CustomSabersLoader(SaberPrefabCache saberPrefabCache, SaberLoader saberLoader, WhackerLoader whackerLoader, ITimeService timeService)
+    public CustomSabersLoader(
+        SaberPrefabCache saberPrefabCache,
+        SaberLoader saberLoader,
+        WhackerLoader whackerLoader,
+        ITimeService timeService)
     {
         this.saberPrefabCache = saberPrefabCache;
         this.saberLoader = saberLoader;

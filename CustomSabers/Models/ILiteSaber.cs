@@ -8,7 +8,6 @@ internal interface ILiteSaber
     public GameObject GameObject { get; }
 
     public EventManager? EventManager { get; }
-    public CustomTrailData[] TrailData { get; }
 
     public void SetColor(Color color);
     public void SetParent(Transform parent);

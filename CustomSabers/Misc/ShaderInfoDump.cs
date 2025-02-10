@@ -66,7 +66,7 @@ internal class ShaderInfoDump
             var shaderNamesWithModelNames = shaderInfos
                 .GroupBy(info => info.ShaderName)
                 .SelectFromCurrentList(group => new ShadersWithModels(group.Key, group.SelectFromCurrentList(i => i.ModelName).ToArray()))
-                .OrderByDescending(x => x.ModelNames.Length)
+                .OrderByDescending(x => x.ModelNames.LengthSeconds)
                 .ToList();
 
             File.WriteAllText(Path.Combine(dir, "byCount.json"), JsonConvert.SerializeObject(byCount, Formatting.Indented));

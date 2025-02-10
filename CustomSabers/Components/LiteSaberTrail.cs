@@ -1,5 +1,6 @@
 ﻿using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Common;
+using CustomSabersLite.Utilities.Extensions;
 using UnityEngine;
 
 namespace CustomSabersLite.Components;
@@ -8,25 +9,31 @@ internal class LiteSaberTrail : SaberTrail
 {
     private readonly SaberMovementData customTrailMovementData = new();
 
+    private Transform trailTop = null!;
+    private Transform trailBottom = null!;
+    private ITrailData trailData = null!;
+    private bool didInit;
+    
+    public void Init(
+        Transform trailTop,
+        Transform trailBottom,
+        ITrailData trailData)
+    {
+        this.trailTop = trailTop;
+        this.trailBottom = trailBottom;
+        this.trailData = trailData;
+        _trailDuration = trailData.LengthSeconds;
+        
+        gameObject.layer = 12;
+        didInit = true;
+    }
+
     public float OverrideWidth { private get; set; } = 1f;
     public bool UseWidthOverride { private get; set; }
-
-    public CustomTrailData? InstanceTrailData { get; private set; }
-
-    public void Init(CustomTrailData trailData)
-    {
-        InstanceTrailData = trailData;
-        gameObject.layer = 12;
-    }
     
     public void SetColor(Color color)
     {
-        if (InstanceTrailData == null)
-        {
-            return;
-        }
-        
-        _color = InstanceTrailData.GetTrailColor(color);
+        _color = (trailData.UseCustomColor ? trailData.CustomColor : color) * trailData.ColorMultiplier;
         
         foreach (var trailMaterial in _trailRenderer._meshRenderer.materials)
         {
@@ -41,14 +48,23 @@ internal class LiteSaberTrail : SaberTrail
 
     private void Update()
     {
-        if (!gameObject.activeInHierarchy || InstanceTrailData == null)
-        {
-            return;
-        }
+        if (!gameObject.activeInHierarchy || !didInit) return;
 
+        var topPos = trailTop.position;
+        var bottomPos = trailBottom.position;
+        
         customTrailMovementData.AddNewData(
-            InstanceTrailData.TopPosition, 
-            UseWidthOverride ? InstanceTrailData.GetOverrideWidthBottom(OverrideWidth) : InstanceTrailData.BottomPosition,
+            topPos,
+            UseWidthOverride ? GetOverrideWidthBottom(OverrideWidth) : bottomPos,
             TimeHelper.time);
+
+        return;
+        
+        Vector3 GetOverrideWidthBottom(float trailWidth)
+        {
+            float distance = Vector3.Distance(topPos, bottomPos);
+            return distance.Approximately(0) ? bottomPos 
+                : Vector3.LerpUnclamped(topPos, bottomPos, trailWidth / distance);
+        }
     }
 }

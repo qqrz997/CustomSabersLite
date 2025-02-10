@@ -80,7 +80,7 @@ public class ToggleableSliderTag : BSMLTag
         toggleableSlider.Label.fontSize = 4;
         toggleableSlider.Label.alignment = TextAlignmentOptions.CaplineLeft;
         toggleableSlider.Label.color = Color.white;
-        toggleableSlider.Label.text = "Default Text";
+        toggleableSlider.Label.text = "Default NameText";
         toggleableSlider.Label.rectTransform.anchorMin = Vector3.zero;
         toggleableSlider.Label.rectTransform.anchorMax = Vector3.one;
         toggleableSlider.Label.rectTransform.offsetMin = Vector3.zero;

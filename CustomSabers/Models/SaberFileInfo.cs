@@ -8,8 +8,7 @@ namespace CustomSabersLite.Models;
 internal record SaberFileInfo(
     FileInfo FileInfo,
     string Hash,
-    DateTime DateAdded,
-    CustomSaberType Type)
+    DateTime DateAdded)
 {
     private string? relativePath;
     public string RelativePath => relativePath ??= TrimPath(FileInfo.FullName, PluginDirs.CustomSabers.FullName);

@@ -3,35 +3,50 @@ using TrailColorType = CustomSaber.ColorType;
 
 namespace CustomSabersLite.Models;
 
-/// <summary>
-/// Class that declares the necessary information to create a <see cref="Components.LiteSaberTrail"/>
-/// </summary>
-internal class CustomTrailData(Transform top, Transform bottom, Material? material, TrailColorType colorType, Color color, Color colorMultiplier, float length)
+internal class CustomTrailData : ITrailData
 {
-    private readonly Transform top = top;
-    private readonly Transform bottom = bottom;
-    
-    private readonly TrailColorType colorType = colorType;
-    private readonly Color color = color;
-    private readonly Color colorMultiplier = colorMultiplier;
-
-    public Material? Material { get; } = material;
-    public float Length { get; } = length;
-
-    public Vector3 TopPosition => top.position;
-    public Vector3 BottomPosition => bottom.position;
-    public Vector3 TopLocalPosition => top.localPosition;
-    public Vector3 BottomLocalPosition => bottom.localPosition;
-    
-    public Vector3 GetOverrideWidthBottom(float trailWidth)
+    public CustomTrailData(
+        Material? material,
+        float lengthSeconds,
+        TrailColorType colorType,
+        Color customColor,
+        Color colorMultiplier,
+        Vector3 trailTopOffset,
+        Vector3 trailBottomOffset)
     {
-        float distance = Vector3.Distance(TopPosition, BottomPosition);
-        float width = distance > 0 ? trailWidth / distance : 1f;
-        return Vector3.LerpUnclamped(TopPosition, BottomPosition, width);
+        Material = material;
+        LengthSeconds = lengthSeconds;
+        UseCustomColor = colorType == TrailColorType.CustomColor;
+        CustomColor = customColor;
+        ColorMultiplier = colorMultiplier;
+        TrailTopOffset = trailTopOffset;
+        TrailBottomOffset = trailBottomOffset;
     }
 
-    public Color GetTrailColor(Color baseColor) => 
-        colorMultiplier * (colorType == TrailColorType.CustomColor ? color : baseColor);
+    public CustomTrailData(
+        Material? material,
+        float lengthSeconds,
+        TrailColorType colorType,
+        Color customColor,
+        Color colorMultiplier,
+        GameObject saberObjectRoot,
+        Transform trailTop,
+        Transform trailBottom)
+    {
+        Material = material;
+        LengthSeconds = lengthSeconds;
+        UseCustomColor = colorType == TrailColorType.CustomColor;
+        CustomColor = customColor;
+        ColorMultiplier = colorMultiplier;
+        TrailTopOffset = trailTop.position - saberObjectRoot.transform.position;
+        TrailBottomOffset = trailBottom.position - saberObjectRoot.transform.position;
+    }
 
-    public Color GetTrailColor() => colorMultiplier * color;
-};
+    public Material? Material { get; }
+    public float LengthSeconds { get; }
+    public bool UseCustomColor { get; }
+    public Color CustomColor { get; }
+    public Color ColorMultiplier { get; }
+    public Vector3 TrailTopOffset { get; }
+    public Vector3 TrailBottomOffset { get; }
+}

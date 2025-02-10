@@ -7,7 +7,7 @@ using static UnityEngine.Object;
 
 namespace CustomSabersLite.Utilities.Common;
 
-internal static class BSMLHelpers
+internal static class BsmlHelpers
 {
     public static void SetDropDownSettingWidth(this ListSetting list, float dropdownWidth, float labelWidth)
     {

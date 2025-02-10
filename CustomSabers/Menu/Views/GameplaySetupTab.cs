@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.Components.Settings;
 using CustomSabersLite.Configuration;
-using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Common;
 using CustomSabersLite.Utilities.Extensions;
 using CustomSabersLite.Utilities.Services;
@@ -105,13 +103,13 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
         set => config.SaberWidth = value;
     }
 
-    [UIValue("trail-type-choices")] private List<object> trailTypeChoices = [.. Enum.GetNames(typeof(TrailType))];
-    [UIValue("trail-type")]
-    public string TrailType
-    {
-        get => config.TrailType.ToString();
-        set => config.TrailType = Enum.TryParse(value, out TrailType trailType) ? trailType : config.TrailType;
-    }
+    // [UIValue("trail-type-choices")] private List<object> trailTypeChoices = [.. Enum.GetNames(typeof(TrailType))];
+    // [UIValue("trail-type")]
+    // public string TrailType
+    // {
+    //     get => config.TrailType.ToString();
+    //     set => config.TrailType = Enum.TryParse(value, out TrailType trailType) ? trailType : config.TrailType;
+    // }
 
     [UIValue("enable-custom-events")]
     public bool EnableCustomEvents
@@ -138,7 +136,7 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
     [UIAction("select-saber")]
     private void SelectSaber(TableView tableView, int row)
     {
-        config.CurrentlySelectedSaber = saberListManager.SelectFromUnsortedData(row)?.SaberHash;
+        config.CurrentlySelectedSaber = saberListManager.SelectFromUnsortedData(row)?.Value;
         Logger.Debug($"Saber selected: {config.CurrentlySelectedSaber ?? "Default"}");
     }
     
@@ -151,7 +149,7 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
         
         saberList.Data.Clear();
         saberListManager.GetUnsortedData()
-            .Select(info => new CustomListTableData.CustomCellInfo(info.Text.FullName))
+            .Select(info => new CustomListTableData.CustomCellInfo(info.NameText.FullName))
             .ForEach(saberList.Data.Add);
         saberList.TableView.ReloadData();
     }

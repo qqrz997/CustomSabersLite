@@ -7,34 +7,39 @@ namespace CustomSabersLite.Models;
 
 internal class SaberListCellInfo
 {
-    public RichTextString Text { get; }
-    public RichTextString Subtext { get; }
+    public RichTextString NameText { get; }
+    public RichTextString AuthorText { get; }
     public Sprite Icon { get; }
-    public string? SaberHash { get; }
+    public string? Value { get; }
     public DateTime DateAdded { get; }
     
     public SaberListCellInfo(CustomSaberMetadata meta)
     {
-        SaberHash = meta.SaberFile.Hash;
+        Value = meta.SaberFile.Hash;
         DateAdded = meta.SaberFile.DateAdded;
         if (meta.LoaderError == SaberLoaderError.None)
         {
-            Text = meta.Descriptor.SaberName;
-            Subtext = meta.Descriptor.AuthorName;
+            NameText = meta.Descriptor.SaberName;
+            AuthorText = meta.Descriptor.AuthorName;
             Icon = meta.Descriptor.Icon;
         }
         else
         {
-            Text = RichTextString.Create(meta.LoaderError.GetErrorMessage());
-            Subtext = RichTextString.Create(meta.SaberFile.FileInfo.Name);
+            NameText = RichTextString.Create(meta.LoaderError.GetErrorMessage());
+            AuthorText = RichTextString.Create(meta.SaberFile.FileInfo.Name);
             Icon = CSLResources.DefaultCoverImage;
         }
     }
     
-    public SaberListCellInfo(string text, string subtext, Sprite icon) =>
-        (Text, Subtext, Icon) = (RichTextString.Create(text), RichTextString.Create(subtext), icon);
-    
+    public SaberListCellInfo(string text, string subtext, Sprite icon, string? value)
+    {
+        NameText = RichTextString.Create(text);
+        AuthorText = RichTextString.Create(subtext);
+        Icon = icon;
+        Value = value;
+    }
+
     public bool TextContains(string value) => 
-        Text.Contains(value, StringComparison.OrdinalIgnoreCase) 
-        || Subtext.Contains(value, StringComparison.OrdinalIgnoreCase);
+        NameText.Contains(value, StringComparison.OrdinalIgnoreCase) 
+        || AuthorText.Contains(value, StringComparison.OrdinalIgnoreCase);
 }
