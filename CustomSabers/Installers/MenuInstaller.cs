@@ -40,6 +40,9 @@ internal class MenuInstaller : Installer
         Container.BindInterfacesTo<GameplaySetupTabController>().AsSingle();
         Container.BindInterfacesTo<MenuButtonManager>().AsSingle();
         Container.BindInterfacesAndSelfTo<SaberPreviewManager>().AsSingle();
+        
+        Container.Bind<SaberListFolderManager>().AsSingle();
+        Container.Bind<SaberListManager>().AsSingle();
 
         Container.Bind<MenuSaberManager>().AsSingle();
         Container.Bind<MenuSaber>().WithId(SaberType.SaberA).AsCached();

@@ -2,6 +2,8 @@
 using System.IO;
 using System.Threading.Tasks;
 using CustomSabersLite.Models;
+using CustomSabersLite.Utilities.Common;
+using CustomSabersLite.Utilities.Extensions;
 
 namespace CustomSabersLite.Utilities.Services;
 
@@ -14,17 +16,20 @@ internal class CustomSabersLoader
     private readonly SaberLoader saberLoader;
     private readonly WhackerLoader whackerLoader;
     private readonly ITimeService timeService;
+    private readonly DirectoryManager directoryManager;
 
     public CustomSabersLoader(
         SaberPrefabCache saberPrefabCache,
         SaberLoader saberLoader,
         WhackerLoader whackerLoader,
-        ITimeService timeService)
+        ITimeService timeService,
+        DirectoryManager directoryManager)
     {
         this.saberPrefabCache = saberPrefabCache;
         this.saberLoader = saberLoader;
         this.whackerLoader = whackerLoader;
         this.timeService = timeService;
+        this.directoryManager = directoryManager;
     }
 
     public async Task<ISaberData> GetSaberData(SaberFileInfo saberFile, bool keepSaberInstance) =>
@@ -46,19 +51,19 @@ internal class CustomSabersLoader
         }
         catch (DirectoryNotFoundException)
         {
-            return new NoSaberData(saberFile.FileInfo.FullName, timeService.GetUtcTime(), SaberLoaderError.FileNotFound);
+            return new NoSaberData(saberFile, SaberLoaderError.FileNotFound);
         }
         catch (Exception ex)
         {
             Logger.Warn($"Problem encountered when trying to load a saber\n{ex}");
         }
-        return new NoSaberData(saberFile.FileInfo.FullName, timeService.GetUtcTime(), SaberLoaderError.Unknown);
+        return new NoSaberData(saberFile, SaberLoaderError.Unknown);
     }
 
     private async Task<ISaberData> LoadSaberDataAsync(SaberFileInfo saberFile) => saberFile.FileInfo.Extension switch
     {
         ".saber" => await saberLoader.LoadCustomSaberAsync(saberFile),
         ".whacker" => await whackerLoader.LoadWhackerAsync(saberFile),
-        _ => new NoSaberData(saberFile.RelativePath, timeService.GetUtcTime(), SaberLoaderError.InvalidFileType)
+        _ => new NoSaberData(saberFile, SaberLoaderError.InvalidFileType)
     };
 }

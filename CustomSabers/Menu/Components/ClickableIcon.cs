@@ -11,6 +11,7 @@ internal class ClickableIcon
     // Should only be used as a BSML component
     private Image image = null!;
     private Signal buttonClickedSignal = null!;
+    private bool highlighted;
     
     public void Init(Image image, Signal buttonClickedSignal)
     {
@@ -23,31 +24,33 @@ internal class ClickableIcon
     public event Action<PointerEventData>? PointerExitEvent;
     
     public bool Interactable { get; set; } = true;
-    public Color NotHighlightedColor { get; set; } = Color.white;
-    public Color HighlightedColor { get; set; } = new(0.7f, 0.8f, 1f);
+    public Color NotHighlightedColor { get; set; } = new(1f, 1f, 1f, 0.75f);
+    public Color HighlightedColor { get; set; } = Color.white;
     public float IconSize { get; set; } = 4.5f;
 
     public void OnPointerClick(PointerEventData eventData)
     {
         OnClickEvent?.Invoke(eventData);
         buttonClickedSignal.Raise();
-        image.color = NotHighlightedColor;
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
         PointerEnterEvent?.Invoke(eventData);
-        image.color = HighlightedColor;
+        highlighted = true;
+        UpdateVisuals();
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
         PointerExitEvent?.Invoke(eventData);
-        image.color = NotHighlightedColor;
+        highlighted = false;
+        UpdateVisuals();
     }
 
     public void UpdateVisuals()
     {
         image.rectTransform.sizeDelta = new(IconSize, IconSize);
+        image.color = highlighted ? HighlightedColor : NotHighlightedColor;
     }
 }

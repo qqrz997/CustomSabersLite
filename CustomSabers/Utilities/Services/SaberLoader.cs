@@ -11,12 +11,14 @@ namespace CustomSabersLite.Utilities.Services;
 internal class SaberLoader
 {
     private readonly SpriteCache spriteCache;
-    private readonly ITimeService timeService;
+    private readonly FavouritesManager favouritesManager;
 
-    public SaberLoader(SpriteCache spriteCache, ITimeService timeService)
+    public SaberLoader(
+        SpriteCache spriteCache,
+        FavouritesManager favouritesManager)
     {
         this.spriteCache = spriteCache;
-        this.timeService = timeService;
+        this.favouritesManager = favouritesManager;
     }
 
     /// <summary>
@@ -25,7 +27,7 @@ internal class SaberLoader
     public async Task<ISaberData> LoadCustomSaberAsync(SaberFileInfo saberFile)
     {
         if (!saberFile.FileInfo.Exists)
-            return new NoSaberData(saberFile.FileInfo.Name, timeService.GetUtcTime(), SaberLoaderError.FileNotFound);
+            return new NoSaberData(saberFile, SaberLoaderError.FileNotFound);
 
         Logger.Debug($"Attempting to load saber file - {saberFile.FileInfo.Name}");
 
@@ -34,14 +36,14 @@ internal class SaberLoader
         var bundle = await BundleLoading.LoadBundle(fileStream);
 
         if (bundle == null)
-            return new NoSaberData(saberFile.FileInfo.Name, timeService.GetUtcTime(), SaberLoaderError.NullBundle);
+            return new NoSaberData(saberFile, SaberLoaderError.NullBundle);
 
         var saberPrefab = await BundleLoading.LoadAsset<GameObject>(bundle, "_CustomSaber");
 
         if (saberPrefab == null)
         {
             bundle.Unload(true);
-            return new NoSaberData(saberFile.FileInfo.Name, timeService.GetUtcTime(), SaberLoaderError.NullAsset);
+            return new NoSaberData(saberFile, SaberLoaderError.NullAsset);
         }
 
         var descriptor = saberPrefab.GetComponent<SaberDescriptor>();
@@ -67,8 +69,8 @@ internal class SaberLoader
                     new(RichTextString.Create(descriptor.SaberName),
                         RichTextString.Create(descriptor.AuthorName),
                         icon != null ? icon : CSLResources.NullCoverImage),
-                    new(// todo: replace with efficient method and don't inline
-                        CustomTrailUtils.GetTrailsFromCustomSaber(saberPrefab).Any())),
+                    CustomTrailUtils.GetTrailsFromCustomSaber(saberPrefab).Any(),
+                    favouritesManager.IsFavourite(saberFile)),
                 bundle,
                 new CustomSaberPrefab(saberPrefab));
     }

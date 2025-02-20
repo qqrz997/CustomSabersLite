@@ -123,8 +123,9 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
         }
         
         saberList.Data.Clear();
-        saberListManager.GetUnsortedData()
-            .Select(info => new CustomListTableData.CustomCellInfo(info.NameText.FullName))
+        saberListManager.UpdateUnsortedList()
+            // todo: temporarily converting saber list cells to BSML cells
+            .Select(saberListCell => new CustomListTableData.CustomCellInfo(saberListCell.NameText.FullName))
             .ForEach(saberList.Data.Add);
         saberList.TableView.ReloadData();
     }

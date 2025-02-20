@@ -1,7 +1,10 @@
+using System;
+using System.ComponentModel;
 using BeatSaberMarkupLanguage;
 using CustomSabersLite.Models;
 using HMUI;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace CustomSabersLite.Menu.Components;
 
@@ -19,15 +22,35 @@ internal class SaberListCell : TableCell
     [SerializeField] private ImageView icon  = null!;
     [SerializeField] private ImageView favoriteImage = null!;
 
-    public void SetInfo(SaberListCellInfo info)
+    private ISaberListCell? saberListCell;
+    
+    public void SetInfo(ISaberListCell cell)
     {
-        mainText.text = info.NameText.FullName;
-        subText.text = info.AuthorText.FullName;
-        icon.sprite = info.Icon;
+        saberListCell = cell;
+
+        if (cell is SaberListInfoCell infoCell)
+        {
+            infoCell.PropertyChanged -= CellInfoPropertyChanged;
+            infoCell.PropertyChanged += CellInfoPropertyChanged;
+        }
         
+        UpdateInfo(cell);
         RefreshVisuals();
     }
-    
+
+    private void CellInfoPropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+        if (saberListCell != null) UpdateInfo(saberListCell);
+    }
+
+    private void UpdateInfo(ISaberListCell saberListCell)
+    {
+        mainText.text = saberListCell.NameText.FullName;
+        subText.text = saberListCell.AuthorText.FullName;
+        icon.sprite = saberListCell.Icon;
+        favoriteImage.enabled = saberListCell.IsFavourite;
+    }
+
     public override void HighlightDidChange(TransitionType transitionType) => RefreshVisuals();
     public override void SelectionDidChange(TransitionType transitionType) => RefreshVisuals();
 
@@ -42,9 +65,13 @@ internal class SaberListCell : TableCell
         };
         backgroundImage.enabled = interactable && (selected || highlighted);
     }
-    
-    
-    
+
+    private void OnDestroy()
+    {
+        if (saberListCell is SaberListInfoCell infoCell) infoCell.PropertyChanged -= CellInfoPropertyChanged;
+    }
+
+
     /// <summary>
     /// Makes a new table cell from a prefab. The first call to this method will create the prefab.
     /// </summary>

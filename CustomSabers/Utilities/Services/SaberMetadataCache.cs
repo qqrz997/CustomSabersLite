@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using CustomSabersLite.Models;
+using CustomSabersLite.Utilities.Extensions;
 
 namespace CustomSabersLite.Utilities.Services;
 
@@ -13,32 +15,61 @@ internal class SaberMetadataCache
 
     public void Remove(string saberHash) => cache.Remove(saberHash);
 
-    public CustomSaberMetadata? GetOrDefault(string saberHash) => cache.GetValueOrDefault(saberHash);
-    
-    public IEnumerable<SaberListCellInfo> GetSortedData(SaberListFilterOptions options)
+    public bool TryGetMetadata(string? saberHash, [NotNullWhen(true)] out CustomSaberMetadata? meta) => 
+        (meta = GetOrDefault(saberHash)) != null;
+
+    public CustomSaberMetadata? GetOrDefault(string? saberHash)
     {
-        // TODO: remove metadata for sabers that don't exist. this may happen if the file gets move/deleted
-        var cachedData = options.SaberListType switch
+        if (saberHash is null || !cache.TryGetValue(saberHash, out var meta))
         {
-            SaberListType.Trails => cache.Values.Where(meta => meta.TrailsInfo.HasCustomSaberTrail),
-            _ => cache.Values
-        };
+            return null;
+        }
         
-        var data = cachedData.Select(meta => new SaberListCellInfo(meta));
+        meta.SaberFile.FileInfo.Refresh();
+        
+        if (!meta.SaberFile.FileInfo.Exists)
+        {
+            Remove(saberHash);
+            return null;
+        }
+        
+        return meta;
+    }
+
+    public IEnumerable<CustomSaberMetadata> GetSortedData(SaberListFilterOptions options)
+    {
+        var cache = RefreshCache();
+        
+        if (options.SaberListType == SaberListType.Trails)
+        {
+            cache = cache.Where(meta => meta.HasTrails);
+        }
 
         if (!string.IsNullOrWhiteSpace(options.SearchFilter))
         {
-            data = data.Where(info => info.TextContains(options.SearchFilter));
+            cache = cache.Where(meta =>
+                meta.Descriptor.SaberName.Contains(options.SearchFilter)
+                || meta.Descriptor.AuthorName.Contains(options.SearchFilter));
         }
-            
-        data = options.OrderBy switch
+        
+        cache = options.OrderBy switch
         {
-            OrderBy.Name => data.OrderBy(i => i.NameText).ThenBy(i => i.AuthorText),
-            OrderBy.Author => data.OrderBy(i => i.AuthorText).ThenBy(i => i.NameText),
-            OrderBy.RecentlyAdded => data.OrderBy(i => i.DateAdded).ThenBy(i => i.NameText),
+            OrderBy.Name => cache.OrderBy(x => x.Descriptor.SaberName).ThenBy(x => x.Descriptor.AuthorName),
+            OrderBy.Author => cache.OrderBy(x => x.Descriptor.AuthorName).ThenBy(x => x.Descriptor.SaberName),
+            OrderBy.RecentlyAdded => cache.OrderBy(x => x.SaberFile.DateAdded).ThenBy(x => x.Descriptor.SaberName),
             _ => throw new ArgumentOutOfRangeException(nameof(options.OrderBy))
         };
+        
+        return options.ReverseOrder ? cache.Reverse() : cache;
+    }
 
-        return options.ReverseOrder ? data.Reverse() : data;
+    private IEnumerable<CustomSaberMetadata> RefreshCache()
+    {
+        foreach (var meta in cache.Values)
+        {
+            meta.SaberFile.FileInfo.Refresh();
+        }
+        
+        return cache.Values;
     }
 }

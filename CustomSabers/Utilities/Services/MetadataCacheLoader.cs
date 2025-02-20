@@ -23,13 +23,17 @@ internal class MetadataCacheLoader : IInitializable
     private readonly SaberMetadataCacheMigrationManager saberMetadataCacheMigrationManager;
     private readonly FileManager fileManager;
     private readonly SaberMetadataCache saberMetadataCache;
+    private readonly DirectoryManager directoryManager;
+    private readonly SaberMetadataConverter saberMetadataConverter;
     
     public MetadataCacheLoader(CustomSabersLoader customSabersLoader,
         SpriteCache spriteCache,
         SaberPrefabCache saberPrefabCache,
         SaberMetadataCacheMigrationManager saberMetadataCacheMigrationManager,
         FileManager fileManager, 
-        SaberMetadataCache saberMetadataCache)
+        SaberMetadataCache saberMetadataCache, 
+        DirectoryManager directoryManager,
+        SaberMetadataConverter saberMetadataConverter)
     {
         this.customSabersLoader = customSabersLoader;
         this.spriteCache = spriteCache;
@@ -37,9 +41,11 @@ internal class MetadataCacheLoader : IInitializable
         this.saberMetadataCacheMigrationManager = saberMetadataCacheMigrationManager;
         this.fileManager = fileManager;
         this.saberMetadataCache = saberMetadataCache;
+        this.directoryManager = directoryManager;
+        this.saberMetadataConverter = saberMetadataConverter;
     }
 
-    private static string CacheArchiveFilePath => Path.Combine(PluginDirs.UserData.FullName, "cache");
+    private string CacheArchiveFilePath => Path.Combine(directoryManager.UserData.FullName, "cache");
 
     internal record Progress(bool Completed, string Stage, int? StagePercent = null);
 
@@ -68,16 +74,18 @@ internal class MetadataCacheLoader : IInitializable
         
         CurrentProgress = new(false, "Retrieving Saber Files");
         var localSaberFiles = await fileManager.GetSaberFilesAsync();
+
+        CurrentProgress = currentProgress with { Stage = "Loading Cache" };
         var cacheFile = await ReloadCache(localSaberFiles);
         
         var installedSaberHashes = localSaberFiles.Select(file => file.Hash).ToHashSet();
 
         var customSaberMetadata = cacheFile.CachedMetadata
             .Where(meta => installedSaberHashes.Contains(meta.Hash))
-            .Select(meta => meta.ToSaberMetadata(spriteCache.GetSprite(meta.Hash)));
+            .Select(meta => saberMetadataConverter.ConvertJson(meta));
 
         #if SHADER_DEBUG
-        ShaderInfoDump.Instance.DumpTo(PluginDirs.UserData.FullName);
+        ShaderInfoDump.Instance.DumpTo(DirectoryManager.UserData.FullName);
         #endif
 
         customSaberMetadata.ForEach(m => saberMetadataCache.TryAdd(m));
@@ -95,8 +103,7 @@ internal class MetadataCacheLoader : IInitializable
             Logger.Warn("Internal reload was denied because of a failure during cache migration");
             return CacheFileModel.Empty;
         }
-
-        CurrentProgress = currentProgress with { Stage = "Loading Cache" };
+        
         var localCacheFile = await GetLocalCache();
         Logger.Notice($"Found {localCacheFile.CachedMetadata.Length} cached saber entries");
 
@@ -136,7 +143,7 @@ internal class MetadataCacheLoader : IInitializable
 
     private async Task SaveMetadataToCache(CacheFileModel cacheFile)
     {
-        var tempCacheDir = Directory.CreateDirectory(Path.Combine(PluginDirs.UserData.FullName, "temp"));
+        var tempCacheDir = Directory.CreateDirectory(Path.Combine(directoryManager.UserData.FullName, "temp"));
         var imagesDir = tempCacheDir.CreateSubdirectory("images");
 
         try
@@ -157,28 +164,53 @@ internal class MetadataCacheLoader : IInitializable
             if (File.Exists(CacheArchiveFilePath)) File.Delete(CacheArchiveFilePath);
             ZipFile.CreateFromDirectory(tempCacheDir.FullName, CacheArchiveFilePath);
         }
+        catch (Exception ex)
+        {
+            Logger.Warn($"Problem encountered when saving the saber metadata cache\n{ex}");
+        }
         finally
         {
             tempCacheDir.Delete(true);
         }
     }
-
+    
     private async Task<CacheFileModel> UpdateLocalCache(CacheFileModel existingCache, SaberFileInfo[] localSaberFiles)
     {
-        // file paths should always be distinct and are used as a key
-        var cachedRelativePaths = existingCache.CachedMetadata.Select(m => m.RelativePath).ToHashSet();
+        // the cache shouldn't hold duplicate data for the same saber file in different directories
+        // we use the hash to make sure we only ever have one of any potential duplicate saber files
+        var cachedSaberHashes = existingCache.CachedMetadata.Select(meta => meta.Hash).ToHashSet();
+        var notCachedSaberFiles = localSaberFiles.Where(file => !cachedSaberHashes.Contains(file.Hash));
 
-        var notCachedSabers = localSaberFiles
-            .Where(file => !cachedRelativePaths.Contains(file.RelativePath))
-            .ToList();
+        var invalidPathSaberFiles = localSaberFiles
+            // pair each saber file with its corresponding metadata
+            .Join(existingCache.CachedMetadata,
+                saberFileInfo => saberFileInfo.Hash,
+                saberMetadata => saberMetadata.Hash,
+                (file, meta) => (file, meta))
+            // filter for metadata which have mismatched paths, caused by duped or moved files
+            .Where(x =>
+                x.file.FileInfo.FullName != Path.Combine(directoryManager.CustomSabers.FullName, x.meta.RelativePath))
+            .Select(x => x.file);
 
-        var loadedMetadata = await LoadMetadataFromSabers(notCachedSabers);
+        // we are just reloading sabers with mismatched paths in metadata, not because we have to but because I am lazy
+        // and stupid and really just need a solution to this problem, plus people won't move files very often
+        var sabersToLoad = notCachedSaberFiles.Concat(invalidPathSaberFiles).ToList();
+
+        Logger.Notice($"Found {sabersToLoad.Count} saber files to load");
+        
+        if (!sabersToLoad.Any())
+        {
+            return existingCache; // nothing to update
+        }
+
+        var loadedMetadata = await LoadMetadataFromSabers(sabersToLoad);
         
         if (!loadedMetadata.Any())
         {
-            return existingCache; // no new sabers were found, so continue with existing cache
+            return existingCache;
         }
-
+        
+        // add the new metadata to the existing metadata
         var cachedMetadata = existingCache.CachedMetadata.Concat(loadedMetadata).ToArray();
         
         return new(Plugin.Version.ToString(), cachedMetadata);
@@ -197,7 +229,7 @@ internal class MetadataCacheLoader : IInitializable
 
             if (saberData.Metadata is CustomSaberMetadata customSaberMetadata)
             {
-                loadedSaberMetadata.Add(customSaberMetadata.ToJson());
+                loadedSaberMetadata.Add(saberMetadataConverter.CreateJson(customSaberMetadata));
             }
 
             CurrentProgress = currentProgress with { StagePercent = currentItem * 100 / sabersForCaching.Count };

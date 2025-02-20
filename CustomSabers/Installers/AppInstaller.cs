@@ -1,5 +1,7 @@
 ﻿using CustomSabersLite.Configuration;
 using CustomSabersLite.Menu;
+using CustomSabersLite.Menu.Views;
+using CustomSabersLite.Utilities.Common;
 using CustomSabersLite.Utilities.Services;
 using Zenject;
 
@@ -11,13 +13,15 @@ internal class AppInstaller(CslConfig config) : Installer
 
     public override void InstallBindings()
     {
+        Container.BindInterfacesAndSelfTo<FavouritesManager>().AsSingle();
         Container.BindInterfacesAndSelfTo<GameResourcesProvider>().AsSingle();
         Container.BindInterfacesAndSelfTo<MetadataCacheLoader>().AsSingle();
+        Container.BindInterfacesAndSelfTo<DirectoryManager>().AsSingle();
         Container.Bind<SaberMetadataCacheMigrationManager>().AsSingle();
         Container.Bind<ITimeService>().To<UtcTimeService>().AsSingle();
+        Container.Bind<SaberMetadataConverter>().AsSingle();
         Container.Bind<CustomSabersLoader>().AsSingle();
         Container.Bind<SaberMetadataCache>().AsSingle();
-        Container.Bind<SaberListManager>().AsSingle();
         Container.Bind<SaberPrefabCache>().AsSingle();
         Container.Bind<WhackerLoader>().AsSingle();
         Container.Bind<SaberFactory>().AsSingle();

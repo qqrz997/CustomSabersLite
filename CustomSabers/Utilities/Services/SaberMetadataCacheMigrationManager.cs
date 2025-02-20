@@ -10,7 +10,17 @@ namespace CustomSabersLite.Utilities.Services;
 
 internal class SaberMetadataCacheMigrationManager
 {
-    public Task<bool> MigrationTask { get; } = Task.Run(() => Migrate(GetCurrentCacheVersion()));
+    private readonly DirectoryManager directoryManager;
+
+    public SaberMetadataCacheMigrationManager(DirectoryManager directoryManager)
+    {
+        this.directoryManager = directoryManager;
+
+        var cacheVersion = GetCurrentCacheVersion();
+        MigrationTask = Task.Run(() => Migrate(cacheVersion));
+    }
+    
+    public Task<bool> MigrationTask { get; }
 
     private enum CacheVersion
     {
@@ -18,7 +28,7 @@ internal class SaberMetadataCacheMigrationManager
         V1 // Cache folder used by CustomSabersLite prior to v0.13.0
     }
 
-    private static bool Migrate(CacheVersion cacheVersion)
+    private bool Migrate(CacheVersion cacheVersion)
     {
         if (cacheVersion == CacheVersion.Current) return true;
         Logger.Notice("Old cache version detected, running migration for saber metadata");
@@ -41,9 +51,9 @@ internal class SaberMetadataCacheMigrationManager
         }
     }
 
-    private static void V1Migration()
+    private void V1Migration()
     {
-        var v1Dir = new DirectoryInfo(Path.Combine(PluginDirs.UserData.FullName, "Cache"));
+        var v1Dir = new DirectoryInfo(Path.Combine(directoryManager.UserData.FullName, "Cache"));
         if (!v1Dir.Exists) return;
 
         v1Dir.EnumerateFiles("*.meta", SearchOption.TopDirectoryOnly).ForEach(f => f.Delete());
@@ -54,7 +64,7 @@ internal class SaberMetadataCacheMigrationManager
         v1Dir.Delete();
     }
 
-    private static CacheVersion GetCurrentCacheVersion() =>
-        Directory.Exists(Path.Combine(PluginDirs.UserData.FullName, "Cache")) ? CacheVersion.V1
+    private CacheVersion GetCurrentCacheVersion() =>
+        Directory.Exists(Path.Combine(directoryManager.UserData.FullName, "Cache")) ? CacheVersion.V1
         : CacheVersion.Current;
 }

@@ -25,18 +25,31 @@
                                        apply-on-change='true'
                                        word-wrapping='false'/>
             </horizontal>
-            <favorite-toggle icon-size="9"/>
-            <clickable-icon on-click="ToggleHeldSabers"
-                            hover-hint="Something"
-                            src="#AvatarHandsIcon" icon-size="9"/>
-            <clickable-icon on-click='OpenSabersFolder'
-                            src="#MusicPacksIcon" icon-size="9"/>
-            <clickable-icon on-click='ReloadSabers' id='reload-button'
-                            src="#ResetIcon" icon-size="9"/>
-            <clickable-icon on-click='ShowDeleteSaberModal'
-                            src="#CloseIcon" icon-size="9"/>
-            <clickable-icon on-click="ToggleSortDirection"
-                            src="#LockIcon" icon-size="9"/>
+            <favorite-toggle value="FavouriteButtonValue" 
+                             id="favourite-button"
+                             bind-value="true"
+                             icon-size="9" 
+                             hover-hint="Favourite selected saber"/>
+            <clickable-icon on-click="PreviewButtonPressed"
+                            id="preview-button"
+                            hover-hint="Switch between previews"
+                            src="CustomSabersLite.Resources.preview-static.png" icon-size="9"/>
+            <clickable-icon on-click='FolderButtonPressed'
+                            id="open-folder-button"
+                            hover-hint="Open CustomSabers folder"
+                            src="CustomSabersLite.Resources.folder.png" icon-size="9"/>
+            <clickable-icon on-click='ReloadButtonPressed'
+                            id='reload-button'
+                            hover-hint="Refresh loaded sabers"
+                            src="CustomSabersLite.Resources.reload.png" icon-size="9"/>
+            <clickable-icon on-click='DeleteButtonPressed'
+                            id="delete-button"
+                            hover-hint="Delete selected saber"
+                            src="CustomSabersLite.Resources.delete.png" icon-size="9"/>
+            <clickable-icon on-click="ListDirectionButtonPressed"
+                            id="sort-direction-button"
+                            hover-hint="Switch sort direction"
+                            src="CustomSabersLite.Resources.sort-descending.png" icon-size="9"/>
         </horizontal>
     </vertical>
 
@@ -50,11 +63,11 @@
                   text='cyan is a furry'
                   word-wrapping='false' overflow-mode='Ellipsis' align='Center' font-size='4'/>
             <horizontal preferred-height='8' spacing='2' pad-left='3' pad-right='3'>
-                <action-button on-click='DeleteSelectedSaber'
+                <action-button on-click='DeleteConfirmPressed'
                                text='Confirm'
                                face-color='red'
                                horizontal-fit='Unconstrained' vertical-fit='Unconstrained'/>
-                <button on-click='HideDeleteSaberModal'
+                <button on-click='DeleteCancelPressed'
                         text='Cancel'
                         horizontal-fit='Unconstrained' vertical-fit='Unconstrained'/>
             </horizontal>

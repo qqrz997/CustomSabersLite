@@ -3,8 +3,10 @@ using Newtonsoft.Json;
 
 namespace CustomSabersLite.Utilities.Common;
 
-internal class JsonReading
+internal static class JsonReading
 {
+    public static T? DeserializeStream<T>(this FileStream fileStream) => DeserializeStream<T>((Stream)fileStream);
+    
     public static T? DeserializeStream<T>(Stream stream)
     {
         using var streamReader = new StreamReader(stream);

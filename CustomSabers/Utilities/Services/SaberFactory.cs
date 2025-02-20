@@ -31,7 +31,7 @@ internal class SaberFactory
         var selectedSaber = await GetCurrentSaberData();
         var (leftTrails, rightTrails) = await GetCurrentTrailData();
 
-        return (selectedSaber.Prefab?.Instantiate() ?? CreateDefaultSaberSet()).WithTrails(leftTrails, rightTrails);
+        return (selectedSaber?.Prefab?.Instantiate() ?? CreateDefaultSaberSet()).WithTrails(leftTrails, rightTrails);
     }
 
     private async Task<(ITrailData[] leftTrails, ITrailData[] rightTrails)> GetCurrentTrailData()
@@ -64,18 +64,10 @@ internal class SaberFactory
         return saberData.Prefab is not null ? GetTrailsFromPrefab(saberData.Prefab) : GetDefaultTrailData();
     }
 
-    private async Task<ISaberData> GetCurrentSaberData()
-    {
-        if (config.CurrentlySelectedSaber is null)
-        {
-            return NoSaberData.Value;
-        }
-
-        var meta = saberMetadataCache.GetOrDefault(config.CurrentlySelectedSaber);
-        
-        return meta is null || !meta.SaberFile.FileInfo.Exists ? NoSaberData.Value
-            : await customSabersLoader.GetSaberData(meta.SaberFile, true);
-    }
+    private async Task<ISaberData?> GetCurrentSaberData() =>
+        config.CurrentlySelectedSaber is null ? null 
+        : !saberMetadataCache.TryGetMetadata(config.CurrentlySelectedSaber, out var meta) ? null
+        : await customSabersLoader.GetSaberData(meta.SaberFile, true);
 
     private SaberInstanceSet CreateDefaultSaberSet() =>
         new(new DefaultSaber(gameResourcesProvider.CreateNewDefaultSaber()),

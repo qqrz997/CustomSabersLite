@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,27 +11,43 @@ namespace CustomSabersLite.Utilities.Services;
 internal class FileManager
 {
     private readonly ITimeService timeService;
-    private readonly string[] saberFileTypes = ["saber", "whacker"];
+    private readonly DirectoryManager directoryManager;
 
-    public FileManager(ITimeService timeService)
+    public FileManager(ITimeService timeService, DirectoryManager directoryManager)
     {
         this.timeService = timeService;
+        this.directoryManager = directoryManager;
     }
 
-    public async Task<SaberFileInfo[]> GetSaberFilesAsync() => await Task.Run(GetSaberFiles);
+    /// <summary>
+    /// Search the sabers directory for all saber files, getting their file info and computing their checksum. This will
+    /// ignore duplicate saber files with the same hash.
+    /// </summary>
+    /// <returns>An array containing each saber file info</returns>
+    public async Task<SaberFileInfo[]> GetSaberFilesAsync() => await Task.Run(GetDistinctSaberFiles);
    
-    private SaberFileInfo[] GetSaberFiles() => saberFileTypes
-        .SelectMany(GetSaberFilesForType)
-        .Select(ToSaberFileInfo)
-        .ToArray();
+    private SaberFileInfo[] GetDistinctSaberFiles() => 
+        directoryManager.CustomSabers.EnumerateSaberFiles(SearchOption.AllDirectories)
+            .Select(TryCreateSaberFile)
+            .OfType<SaberFileInfo>()
+            .Distinct(new SaberFileInfoHashComparer())
+            .ToArray();
 
-    private SaberFileInfo ToSaberFileInfo(FileInfo info) => 
-        new(info,
-            GetFileHash(info),
-            timeService.GetUtcTime());
-    
-    private static string GetFileHash(FileInfo info) => Hashing.MD5Checksum(info.FullName, "x2");
-    
-    private static IEnumerable<FileInfo> GetSaberFilesForType(string fileExtension) =>
-        PluginDirs.CustomSabers.EnumerateFiles($"*.{fileExtension}", SearchOption.AllDirectories);
+    private SaberFileInfo? TryCreateSaberFile(FileInfo file)
+    {
+        try
+        {
+            return new(file, Hashing.MD5Checksum(file, "x2"), timeService.GetUtcTime());
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    private class SaberFileInfoHashComparer : IEqualityComparer<SaberFileInfo>
+    {
+        public bool Equals(SaberFileInfo? a, SaberFileInfo? b) => a != null && b != null && a.Hash == b.Hash;
+        public int GetHashCode(SaberFileInfo obj) => obj.Hash.GetHashCode();
+    }
 }

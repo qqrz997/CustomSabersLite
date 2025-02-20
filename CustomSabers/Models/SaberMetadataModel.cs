@@ -5,7 +5,7 @@ namespace CustomSabersLite.Models;
 /// <summary>
 /// Serializable model for a custom saber's metadata
 /// </summary>
-internal record SaberMetadataModel(
+internal record struct SaberMetadataModel(
     string RelativePath,
     string Hash,
     DateTime DateAdded,

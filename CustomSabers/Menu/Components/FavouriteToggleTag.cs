@@ -45,7 +45,10 @@ internal class FavouriteToggleTag : BSMLTag
         activeIcon.rectTransform.offsetMax = Vector2.zero;
         
         var favouriteToggle = gameObject.AddComponent<FavouriteToggle>();
-        favouriteToggle.Init(activeIcon, inactiveIcon);
+        favouriteToggle.Init(activeIcon, inactiveIcon, toggle);
+        
+        var externalComponents = gameObject.AddComponent<ExternalComponents>();
+        externalComponents.Components.Add(toggle);
         
         // Additional components
         gameObject.AddComponent<LayoutElement>();

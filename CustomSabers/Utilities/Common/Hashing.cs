@@ -8,9 +8,9 @@ namespace CustomSabersLite.Utilities.Common;
 
 internal class Hashing
 {
-    public static string MD5Checksum(string filePath, string format)
+    public static string MD5Checksum(FileInfo file, string format)
     {
-        using var fileStream = File.OpenRead(filePath);
+        using var fileStream = file.OpenRead();
         return MD5Checksum(fileStream, format);
     }
 

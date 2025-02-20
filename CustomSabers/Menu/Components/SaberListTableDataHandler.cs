@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using System.Linq;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Parser;
 using BeatSaberMarkupLanguage.TypeHandlers;
+using CustomSabersLite.Models;
 using UnityEngine.UI;
 
 namespace CustomSabersLite.Menu.Components;
@@ -61,7 +63,7 @@ internal class SaberListTableDataHandler : TypeHandler
         {
             if (parserParams.Values.TryGetValue(value, out var contents))
             {
-                var data = (IEnumerable<object>)contents.GetValue();
+                var data = ((IEnumerable<object>)contents.GetValue()).OfType<ISaberListCell>();
                 saberList.Data.AddRange(data);
                 saberList.ReloadData();
             }

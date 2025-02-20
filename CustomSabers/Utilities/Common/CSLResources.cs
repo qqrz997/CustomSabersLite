@@ -15,6 +15,13 @@ internal class CSLResources
     public static Sprite TrailWidthIcon { get; } = LoadSpriteResource("trail-width.png");
     public static Sprite SaberLengthIcon { get; } = LoadSpriteResource("saber-length.png");
     public static Sprite SaberWidthIcon { get; } = LoadSpriteResource("saber-width.png");
+    public static Sprite DeleteIcon { get; } = LoadSpriteResource("delete.png");
+    public static Sprite FolderIcon { get; } = LoadSpriteResource("folder.png");
+    public static Sprite ReloadIcon { get; } = LoadSpriteResource("reload.png");
+    public static Sprite SortAscendingIcon { get; } = LoadSpriteResource("sort-ascending.png");
+    public static Sprite SortDescendingIcon { get; } = LoadSpriteResource("sort-descending.png");
+    public static Sprite PreviewStaticIcon { get; } = LoadSpriteResource("preview-static.png");
+    public static Sprite PreviewHeldIcon { get; } = LoadSpriteResource("preview-held.png");
 
     private static Sprite LoadSpriteResource(string resourceName) =>
         new Texture2D(2, 2).ToSprite(ResourceLoading.GetResource(ResourcesPath + resourceName))

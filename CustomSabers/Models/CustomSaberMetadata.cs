@@ -4,4 +4,5 @@ internal record CustomSaberMetadata(
     SaberFileInfo SaberFile,
     SaberLoaderError LoaderError,
     Descriptor Descriptor,
-    TrailsInfo TrailsInfo);
+    bool HasTrails,
+    bool IsFavourite);

@@ -1,22 +1,63 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
+using System.Runtime.CompilerServices;
+using CustomSabersLite.Menu.Views;
 using CustomSabersLite.Utilities.Common;
 using CustomSabersLite.Utilities.Extensions;
 using UnityEngine;
 
 namespace CustomSabersLite.Models;
 
-internal class SaberListCellInfo
+internal interface ISaberListCell
 {
     public RichTextString NameText { get; }
     public RichTextString AuthorText { get; }
     public Sprite Icon { get; }
     public string? Value { get; }
-    public DateTime DateAdded { get; }
+    public bool IsFavourite { get; }
+}
+
+internal class SaberListDirectoryCell : ISaberListCell
+{
+    public SaberListDirectoryCell(DirectoryInfo directoryInfo)
+    {
+        NameText = RichTextString.Create(directoryInfo.Name);
+        DirectoryInfo = directoryInfo;
+    }
     
-    public SaberListCellInfo(CustomSaberMetadata meta)
+    public RichTextString NameText { get; }
+    public RichTextString AuthorText { get; } = RichTextString.Empty;
+    public Sprite Icon => CSLResources.FolderIcon;
+    public string? Value { get; } = null;
+    public bool IsFavourite => false;
+    
+    public DirectoryInfo DirectoryInfo { get; }
+}
+
+internal class SaberListInfoCell : ISaberListCell, INotifyPropertyChanged
+{
+    private bool isFavourite;
+
+    public RichTextString NameText { get; }
+    public RichTextString AuthorText { get; }
+    public Sprite Icon { get; }
+    
+    public string? Value { get; }
+
+    public bool IsFavourite
+    {
+        get => isFavourite;
+        set { isFavourite = value; NotifyPropertyChanged(); }
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    public SaberListInfoCell(CustomSaberMetadata meta)
     {
         Value = meta.SaberFile.Hash;
-        DateAdded = meta.SaberFile.DateAdded;
+        IsFavourite = meta.IsFavourite;
         if (meta.LoaderError == SaberLoaderError.None)
         {
             NameText = meta.Descriptor.SaberName;
@@ -31,15 +72,16 @@ internal class SaberListCellInfo
         }
     }
     
-    public SaberListCellInfo(string text, string subtext, Sprite icon, string? value)
+    public SaberListInfoCell(string text, string subtext, Sprite icon, string? value)
     {
         NameText = RichTextString.Create(text);
         AuthorText = RichTextString.Create(subtext);
         Icon = icon;
         Value = value;
     }
-
-    public bool TextContains(string value) => 
-        NameText.Contains(value, StringComparison.OrdinalIgnoreCase) 
-        || AuthorText.Contains(value, StringComparison.OrdinalIgnoreCase);
+    
+    private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+    {
+        PropertyChanged?.Invoke(this, new(propertyName));
+    }
 }

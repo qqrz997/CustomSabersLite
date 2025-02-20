@@ -100,7 +100,10 @@ internal class SaberListTableData : MonoBehaviour, TableView.IDataSource
             tableCell.reuseIdentifier = CellReuseIdentifier;
         }
 
-        tableCell.SetInfo((SaberListCellInfo)Data.ElementAt(idx));
+        if (Data.TryGetElementAt(idx, out var saberListCell))
+        {
+            tableCell.SetInfo(saberListCell);
+        }
 
         return tableCell;
     }
