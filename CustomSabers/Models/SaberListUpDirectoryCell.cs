@@ -14,7 +14,7 @@ internal class SaberListUpDirectoryCell : ISaberListCell
     
     public RichTextString NameText { get; } = RichTextString.Create("Go back...");
     public RichTextString AuthorText { get; }
-    public Sprite Icon => CSLResources.TrailDurationIcon;
+    public Sprite Icon => CSLResources.EllipsisIcon;
     public string? Value => null;
     public bool IsFavourite => false;
     

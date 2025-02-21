@@ -183,8 +183,16 @@ internal class SaberListViewController : BSMLAutomaticViewController
         saberListManager.DeleteSaber(config.CurrentlySelectedSaber);
         
         int selectedSaberIndex = saberListManager.IndexForSaberHash(config.CurrentlySelectedSaber);
-        config.CurrentlySelectedSaber = saberListManager.SelectFromCurrentList(selectedSaberIndex - 1)?.Value;
-
+        var selectedSaberHash = saberListManager.SelectFromCurrentList(selectedSaberIndex - 1)?.Value;
+        if (currentSaberList == SaberListType.Sabers)
+        {
+            config.CurrentlySelectedSaber = selectedSaberHash;
+        }
+        else if (currentSaberList == SaberListType.Trails)
+        {
+            config.CurrentlySelectedTrail = selectedSaberHash;
+        }
+        
         RefreshList();
         StartCoroutine(SelectSelectedAndScrollTo());
     }
