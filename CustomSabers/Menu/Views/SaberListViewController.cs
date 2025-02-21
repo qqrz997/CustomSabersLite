@@ -143,7 +143,11 @@ internal class SaberListViewController : BSMLAutomaticViewController
         {
             var meta = saberMetadataCache.GetOrDefault(GetSelectedSaberHash());
             if (meta is null) return;
-        
+
+            meta = meta with { IsFavourite = value };
+            saberMetadataCache.Remove(meta.SaberFile.Hash);
+            saberMetadataCache.TryAdd(meta);
+            
             if (saberList.Data.TryGetElementAt(saberListManager.IndexForSaberHash(GetSelectedSaberHash()), out var cell)
                 && cell is SaberListInfoCell infoCell) 
                 infoCell.IsFavourite = value;
@@ -194,10 +198,9 @@ internal class SaberListViewController : BSMLAutomaticViewController
 
     public async void ReloadButtonPressed()
     {
+        saberListManager.Refresh();
         saberList.Data.Clear();
         saberList.ReloadDataKeepingPosition();
-        
-        saberListManager.Clear();
         
         // this will invoke an event on completion that gets used to refresh the list
         await metadataCacheLoader.ReloadAsync();

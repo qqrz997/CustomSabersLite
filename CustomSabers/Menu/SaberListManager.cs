@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CustomSabersLite.Menu.Views;
@@ -46,7 +47,11 @@ internal class SaberListManager
         new SaberListInfoCell("Default", "Beat Games", DefaultCoverImage, null)
     ];
 
-    public void Clear() => list.Clear();
+    public void Refresh()
+    {
+        list.Clear();
+        saberListFolderManager.Refresh();
+    }
 
     public IEnumerable<ISaberListCell> UpdateUnsortedList() => PopulateUnsortedList();
 
@@ -93,7 +98,7 @@ internal class SaberListManager
     {
         if (string.IsNullOrWhiteSpace(saberHash)) return 0;
         int index = list.IndexOf(list.FirstOrDefault(i => i.Value == saberHash));
-        return index != -1 ? index : 0;
+        return Math.Max(0, index);
     }
 
     public ISaberListCell? SelectFromUnsortedData(int row) => unsortedList.ElementAtOrDefault(row);
