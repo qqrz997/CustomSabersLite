@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using CustomSabersLite.Models;
-using CustomSabersLite.Utilities.Extensions;
 
 namespace CustomSabersLite.Utilities.Services;
 
@@ -40,9 +39,14 @@ internal class SaberMetadataCache
     {
         var cache = RefreshCache();
         
-        if (options.SaberListType == SaberListType.Trails)
+        if (options.Trails)
         {
             cache = cache.Where(meta => meta.HasTrails);
+        }
+
+        if (options.Favourites)
+        {
+            cache = cache.Where(meta => meta.IsFavourite);
         }
 
         if (!string.IsNullOrWhiteSpace(options.SearchFilter))

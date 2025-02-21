@@ -29,6 +29,8 @@ internal class SaberListFolderManager
     }
 
     public DirectoryInfo CurrentDirectory { get; set; }
+    public DirectoryInfo ParentDirectory => CurrentDirectory.Parent ?? directoryManager.CustomSabers;
+    public bool InTopDirectory => CurrentDirectory.FullName == directoryManager.CustomSabers.FullName;
 
     public IEnumerable<DirectoryInfo> CurrentDirectorySubDirectories => GetSubDirectoriesOf(CurrentDirectory);
     

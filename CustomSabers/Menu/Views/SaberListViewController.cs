@@ -101,7 +101,17 @@ internal class SaberListViewController : BSMLAutomaticViewController
 
         if (saberListCell is SaberListDirectoryCell directoryCell)
         {
-            saberListManager.OpenDirectory(directoryCell);
+            saberListManager.OpenFolder(directoryCell);
+            RefreshList();
+        }
+        else if (saberListCell is SaberListUpDirectoryCell upDirectoryCell)
+        {
+            saberListManager.OpenFolder(upDirectoryCell);
+            RefreshList();
+        }
+        else if (saberListCell is SaberListFavouritesCell favouritesCell)
+        {
+            saberListManager.ShowFavourites = true;
             RefreshList();
         }
         else if (currentSaberList == SaberListType.Sabers)
@@ -199,7 +209,8 @@ internal class SaberListViewController : BSMLAutomaticViewController
             config.SearchFilter, 
             config.OrderByFilter, 
             config.ReverseSort, 
-            currentSaberList);
+            currentSaberList == SaberListType.Trails,
+            false);
         
         saberList.Data.Clear();
         saberList.Data.AddRange(saberListManager.UpdateList(filterOptions));

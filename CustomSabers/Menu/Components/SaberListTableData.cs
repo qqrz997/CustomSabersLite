@@ -1,6 +1,5 @@
 using System;
 using BeatSaberMarkupLanguage.Tags;
-using CustomSabersLite.Menu.Views;
 using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Common;
 using CustomSabersLite.Utilities.Extensions;

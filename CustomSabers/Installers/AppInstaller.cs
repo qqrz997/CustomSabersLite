@@ -1,6 +1,4 @@
 ﻿using CustomSabersLite.Configuration;
-using CustomSabersLite.Menu;
-using CustomSabersLite.Menu.Views;
 using CustomSabersLite.Utilities.Common;
 using CustomSabersLite.Utilities.Services;
 using Zenject;

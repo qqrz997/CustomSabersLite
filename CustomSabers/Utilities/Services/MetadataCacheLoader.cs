@@ -81,8 +81,12 @@ internal class MetadataCacheLoader : IInitializable
         var installedSaberHashes = localSaberFiles.Select(file => file.Hash).ToHashSet();
 
         var customSaberMetadata = cacheFile.CachedMetadata
-            .Where(meta => installedSaberHashes.Contains(meta.Hash))
-            .Select(meta => saberMetadataConverter.ConvertJson(meta));
+            .Join(localSaberFiles,
+                saberMetadata => saberMetadata.Hash,
+                saberFileInfo => saberFileInfo.Hash,
+                (meta, file) => (meta, file))
+            .Where(tuple => installedSaberHashes.Contains(tuple.file.Hash))
+            .Select(tuple => saberMetadataConverter.ConvertJson(tuple.meta, tuple.file));
 
         #if SHADER_DEBUG
         ShaderInfoDump.Instance.DumpTo(DirectoryManager.UserData.FullName);
@@ -180,7 +184,7 @@ internal class MetadataCacheLoader : IInitializable
         // we use the hash to make sure we only ever have one of any potential duplicate saber files
         var cachedSaberHashes = existingCache.CachedMetadata.Select(meta => meta.Hash).ToHashSet();
         var notCachedSaberFiles = localSaberFiles.Where(file => !cachedSaberHashes.Contains(file.Hash));
-
+/*
         var invalidPathSaberFiles = localSaberFiles
             // pair each saber file with its corresponding metadata
             .Join(existingCache.CachedMetadata,
@@ -195,7 +199,8 @@ internal class MetadataCacheLoader : IInitializable
         // we are just reloading sabers with mismatched paths in metadata, not because we have to but because I am lazy
         // and stupid and really just need a solution to this problem, plus people won't move files very often
         var sabersToLoad = notCachedSaberFiles.Concat(invalidPathSaberFiles).ToList();
-
+*/
+        var sabersToLoad = notCachedSaberFiles.ToList();
         Logger.Notice($"Found {sabersToLoad.Count} saber files to load");
         
         if (!sabersToLoad.Any())

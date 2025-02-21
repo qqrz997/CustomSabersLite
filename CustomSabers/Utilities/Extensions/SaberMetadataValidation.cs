@@ -10,7 +10,5 @@ internal static class SaberMetadataValidation
         CachedMetadata = original.CachedMetadata.Where(meta => meta.IsValid()).ToArray(),
     };
     
-    public static bool IsValid(this SaberMetadataModel meta) =>
-        !string.IsNullOrWhiteSpace(meta.RelativePath)
-        && !string.IsNullOrWhiteSpace(meta.Hash);
+    public static bool IsValid(this SaberMetadataModel meta) => !string.IsNullOrWhiteSpace(meta.Hash);
 }

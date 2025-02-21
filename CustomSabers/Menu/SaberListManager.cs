@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CustomSabersLite.Menu.Views;
@@ -33,23 +32,43 @@ internal class SaberListManager
     private readonly List<ISaberListCell> unsortedList = [];
     private readonly List<ISaberListCell> list = [];
 
+    public bool ShowFavourites { get; set; }
+
+    private ISaberListCell[] TrailListDefaultChoices { get; } =
+    [
+        new SaberListInfoCell("Custom", "Use the trail of the selected saber", TrailDurationIcon, "custom"),
+        new SaberListInfoCell("Default", "Beat Games", DefaultCoverImage, "default"),
+        new SaberListInfoCell("None", "Use no trail", BlankSprite, null)
+    ];
+
+    private ISaberListCell[] SaberListDefaultChoices { get; } =
+    [
+        new SaberListInfoCell("Default", "Beat Games", DefaultCoverImage, null)
+    ];
+
     public void Clear() => list.Clear();
 
     public IEnumerable<ISaberListCell> UpdateUnsortedList() => PopulateUnsortedList();
 
     public IEnumerable<ISaberListCell> UpdateList(SaberListFilterOptions filterOptions) =>
-        filterOptions.SaberListType switch
+        PopulateList(filterOptions, filterOptions.Trails switch
         {
-            SaberListType.Sabers => PopulateSaberList(filterOptions),
-            SaberListType.Trails => PopulateTrailList(filterOptions),
-            _ => throw new ArgumentOutOfRangeException(nameof(filterOptions.SaberListType))
-        };
+            false => SaberListDefaultChoices,
+            true => TrailListDefaultChoices
+        });
 
-    public void OpenDirectory(SaberListDirectoryCell directoryCell)
+    public void OpenFolder(SaberListDirectoryCell directoryCell)
     {
         saberListFolderManager.CurrentDirectory = directoryCell.DirectoryInfo;
+        ShowFavourites = false;
     }
-    
+
+    public void OpenFolder(SaberListUpDirectoryCell upDirectoryCell)
+    {
+        saberListFolderManager.CurrentDirectory = upDirectoryCell.DirectoryInfo;
+        ShowFavourites = false;
+    }
+
     public void DeleteSaber(string? saberHash)
     {
         var saberFile = saberMetadataCache.GetOrDefault(saberHash)?.SaberFile;
@@ -83,41 +102,41 @@ internal class SaberListManager
     public bool CurrentListContains(string? saberHash) =>
         !string.IsNullOrEmpty(saberHash) && list.Any(i => i.Value == saberHash);
 
-    private IEnumerable<ISaberListCell> PopulateSaberList(SaberListFilterOptions filterOptions)
+    private IEnumerable<ISaberListCell> PopulateList(
+        SaberListFilterOptions filterOptions,
+        IEnumerable<ISaberListCell> defaultChoices)
     {
         list.Clear();
-        list.Add(new SaberListInfoCell("Default", "Beat Games", DefaultCoverImage, null));
-        list.AddRange(saberListFolderManager.CurrentDirectorySubDirectories.Select(dir => new SaberListDirectoryCell(dir)));
-        var data = saberMetadataCache.GetSortedData(filterOptions).ToList();
-        Logger.Warn($"Displaying data sorted");
-        foreach (var x in data)
-        {
-            Logger.Info($"{x.SaberFile.FileInfo.FullName ?? "null"}");
-        }
 
-        Logger.Warn($"Displaying data, current directory: {saberListFolderManager.CurrentDirectory.FullName}");
-        var inDirectory = data.Where(m => m.SaberFile.FileInfo.DirectoryName == saberListFolderManager.CurrentDirectory.FullName).ToList();
-        foreach (var x in inDirectory)
+        if (ShowFavourites)
         {
-            Logger.Info($"{x.Descriptor.SaberName.FullName}: {x.SaberFile.FileInfo.DirectoryName ?? "null"}");
+            list.Add(new SaberListUpDirectoryCell(directoryManager.CustomSabers));
+            list.AddRange(saberMetadataCache
+                .GetSortedData(filterOptions with { Favourites = true})
+                .Select(meta => new SaberListInfoCell(meta)));
+            return list;
         }
         
-        list.AddRange(inDirectory.Select(m => new SaberListInfoCell(m)));
-        // list.AddRange(
-        //     saberMetadataCache
-        //         .GetSortedData(filterOptions)
-        //         .Where(m => m.SaberFile.FileInfo.Directory?.FullName == saberListFolderManager.CurrentDirectory.FullName)
-        //         .Select(m => new SaberListInfoCell(m)));
-        return list;
-    }
+        var inTopDirectory = saberListFolderManager.InTopDirectory;
 
-    private IEnumerable<ISaberListCell> PopulateTrailList(SaberListFilterOptions filterOptions)
-    {
-        list.Clear();
-        list.Add(new SaberListInfoCell("Custom", "Use the trail of the selected saber", TrailDurationIcon, "custom"));
-        list.Add(new SaberListInfoCell("Default", "Beat Games", DefaultCoverImage, "default"));
-        list.Add(new SaberListInfoCell("None", "Use no trail", BlankSprite, null));
-        list.AddRange(saberMetadataCache.GetSortedData(filterOptions).Select(m => new SaberListInfoCell(m)));
+        list.Add(inTopDirectory 
+            ? new SaberListFavouritesCell() 
+            : new SaberListUpDirectoryCell(saberListFolderManager.ParentDirectory));
+
+        list.AddRange(saberListFolderManager
+            .CurrentDirectorySubDirectories
+            .Select(dir => new SaberListDirectoryCell(dir)));
+
+        if (inTopDirectory)
+        {
+            list.AddRange(defaultChoices);
+        }
+        
+        list.AddRange(saberMetadataCache
+            .GetSortedData(filterOptions)
+            .Where(m => m.SaberFile.FileInfo.DirectoryName == saberListFolderManager.CurrentDirectory.FullName)
+            .Select(m => new SaberListInfoCell(m)));
+        
         return list;
     }
 

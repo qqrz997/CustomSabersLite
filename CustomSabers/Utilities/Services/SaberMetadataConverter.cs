@@ -1,7 +1,5 @@
-using System.IO;
 using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Common;
-using static CustomSabersLite.Utilities.Common.FileUtils;
 
 namespace CustomSabersLite.Utilities.Services;
 
@@ -21,11 +19,11 @@ internal class SaberMetadataConverter
         this.favouritesManager = favouritesManager;
     }
 
-    public CustomSaberMetadata ConvertJson(SaberMetadataModel meta)
+    public CustomSaberMetadata ConvertJson(SaberMetadataModel meta, SaberFileInfo saberFileInfo)
     {
-        var fullPath = Path.Combine(directoryManager.CustomSabers.FullName, meta.RelativePath);
-        var fileInfo = new FileInfo(fullPath);
-        var saberFileInfo = new SaberFileInfo(fileInfo, meta.Hash, meta.DateAdded);
+        // var fullPath = Path.Combine(directoryManager.CustomSabers.FullName, meta.RelativePath);
+        // var fileInfo = new FileInfo(fullPath);
+        // var saberFileInfo = new SaberFileInfo(fileInfo, meta.Hash, meta.DateAdded);
         
         var saberName = RichTextString.Create(meta.SaberName);
         var authorName = RichTextString.Create(meta.AuthorName);
@@ -45,10 +43,9 @@ internal class SaberMetadataConverter
 
     public SaberMetadataModel CreateJson(CustomSaberMetadata meta)
     {
-        var relativePath = TrimPath(meta.SaberFile.FileInfo.FullName, directoryManager.CustomSabers.FullName);
+        // var relativePath = TrimPath(meta.SaberFile.FileInfo.FullName, directoryManager.CustomSabers.FullName);
 
         return new(
-            relativePath,
             meta.SaberFile.Hash,
             meta.SaberFile.DateAdded,
             meta.Descriptor.SaberName.FullName,

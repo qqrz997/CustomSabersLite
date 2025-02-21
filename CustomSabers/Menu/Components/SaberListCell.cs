@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel;
 using BeatSaberMarkupLanguage;
 using CustomSabersLite.Models;

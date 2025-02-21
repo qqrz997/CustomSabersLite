@@ -4,7 +4,13 @@ internal record SaberListFilterOptions(
     string SearchFilter,
     OrderBy OrderBy,
     bool ReverseOrder,
-    SaberListType SaberListType)
+    bool Trails,
+    bool Favourites)
 {
-    public static SaberListFilterOptions Default { get; } = new(string.Empty, OrderBy.Name, false, SaberListType.Sabers);
+    public static SaberListFilterOptions Default { get; } = 
+        new(string.Empty,
+            OrderBy.Name, 
+            false,
+            false,
+            false);
 }
