@@ -10,6 +10,7 @@ using CustomSabersLite.Configuration;
 using CustomSabersLite.Menu.Components;
 using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Common;
+using CustomSabersLite.Utilities.Extensions;
 using CustomSabersLite.Utilities.Services;
 using HMUI;
 using TMPro;
@@ -24,7 +25,7 @@ namespace CustomSabersLite.Menu.Views;
 [ViewDefinition("CustomSabersLite.Menu.BSML.saberList.bsml")]
 internal class SaberListViewController : BSMLAutomaticViewController
 {
-    [Inject] private readonly CslConfig config = null!;
+    [Inject] private readonly PluginConfig config = null!;
     [Inject] private readonly DirectoryManager directoryManager = null!;
     [Inject] private readonly MetadataCacheLoader metadataCacheLoader = null!;
     [Inject] private readonly SaberMetadataCache saberMetadataCache = null!;
@@ -98,29 +99,22 @@ internal class SaberListViewController : BSMLAutomaticViewController
     public async void ListCellSelected(TableView tableView, int row)
     {
         var saberListCell = saberListManager.SelectFromCurrentList(row);
-
-        if (saberListCell is SaberListDirectoryCell directoryCell)
+        if (saberListCell != null)
         {
-            saberListManager.OpenFolder(directoryCell);
-            RefreshList();
-        }
-        else if (saberListCell is SaberListUpDirectoryCell upDirectoryCell)
-        {
-            saberListManager.OpenFolder(upDirectoryCell);
-            RefreshList();
-        }
-        else if (saberListCell is SaberListFavouritesCell favouritesCell)
-        {
-            saberListManager.ShowFavourites = true;
-            RefreshList();
-        }
-        else if (currentSaberList == SaberListType.Sabers)
-        {
-            config.CurrentlySelectedSaber = saberListCell?.Value;
-        }
-        else if (currentSaberList == SaberListType.Trails)
-        {
-            config.CurrentlySelectedTrail = saberListCell?.Value;
+            if (saberListCell.TryGetCellDirectory(out var directoryInfo))
+            {
+                saberListManager.OpenFolder(directoryInfo);
+                RefreshList();
+            }
+            else if (saberListCell is SaberListFavouritesCell)
+            {
+                saberListManager.ShowFavourites = true;
+                RefreshList();
+            }
+            else if (saberListCell.TryGetSaberValue(out var saberValue))
+            {
+                SelectedSaberValue = saberValue;
+            }
         }
 
         NotifyPropertyChanged(nameof(FavouriteButtonValue));
@@ -137,20 +131,20 @@ internal class SaberListViewController : BSMLAutomaticViewController
 
     public bool FavouriteButtonValue
     {
-        get => saberMetadataCache.TryGetMetadata(GetSelectedSaberHash(), out var meta)  
+        get => SelectedSaberValue.TryGetSaberHash(out var saberHash) 
+               && saberMetadataCache.TryGetMetadata(saberHash.Hash, out var meta)  
                && favouritesManager.IsFavourite(meta.SaberFile);
         set
         {
-            var meta = saberMetadataCache.GetOrDefault(GetSelectedSaberHash());
-            if (meta is null) return;
-
+            if (!SelectedSaberValue.TryGetSaberHash(out var saberHash)
+                || !saberMetadataCache.TryGetMetadata(saberHash.Hash, out var meta)) return;
+            
             meta = meta with { IsFavourite = value };
             saberMetadataCache.Remove(meta.SaberFile.Hash);
             saberMetadataCache.TryAdd(meta);
             
-            if (saberList.Data.TryGetElementAt(saberListManager.IndexForSaberHash(GetSelectedSaberHash()), out var cell)
-                && cell is SaberListInfoCell infoCell) 
-                infoCell.IsFavourite = value;
+            if (saberList.Data.TryGetElementAt(saberListManager.IndexForSaberHash(saberHash.Hash), out var cell)
+                && cell is SaberListInfoCell infoCell) infoCell.IsFavourite = value;
             
             if (value) favouritesManager.AddFavourite(meta.SaberFile);
             else favouritesManager.RemoveFavourite(meta.SaberFile);
@@ -164,10 +158,10 @@ internal class SaberListViewController : BSMLAutomaticViewController
 
     public void DeleteButtonPressed()
     {
-        if (config.CurrentlySelectedSaber != null)
+        if (SelectedSaberValue.TryGetSaberHash(out var saberHash))
         {
-            deleteSaberModalText.text = saberMetadataCache.GetOrDefault(config.CurrentlySelectedSaber)?
-                .Descriptor.SaberName.FullName ?? "Unknown";
+            var meta = saberMetadataCache.GetOrDefault(saberHash.Hash);
+            deleteSaberModalText.text = meta?.Descriptor.SaberName.FullName ?? "Unknown";
             deleteSaberModal.Show(true);
         }
     }
@@ -180,18 +174,14 @@ internal class SaberListViewController : BSMLAutomaticViewController
     public void DeleteConfirmPressed()
     {
         deleteSaberModal.Hide(true);
-        saberListManager.DeleteSaber(config.CurrentlySelectedSaber);
+        if (!SelectedSaberValue.TryGetSaberHash(out var deletedSaberHash)) return;
         
-        int selectedSaberIndex = saberListManager.IndexForSaberHash(config.CurrentlySelectedSaber);
-        var selectedSaberHash = saberListManager.SelectFromCurrentList(selectedSaberIndex - 1)?.Value;
-        if (currentSaberList == SaberListType.Sabers)
-        {
-            config.CurrentlySelectedSaber = selectedSaberHash;
-        }
-        else if (currentSaberList == SaberListType.Trails)
-        {
-            config.CurrentlySelectedTrail = selectedSaberHash;
-        }
+        int deletedSaberIndex = saberListManager.IndexForSaberHash(deletedSaberHash.Hash);
+        
+        saberListManager.DeleteSaber(deletedSaberHash.Hash);
+
+        var selectedCell = saberListManager.SelectFromCurrentList(deletedSaberIndex - 1);
+        if (selectedCell != null && selectedCell.TryGetSaberValue(out var saberValue)) SelectedSaberValue = saberValue;
         
         RefreshList();
         StartCoroutine(SelectSelectedAndScrollTo());
@@ -227,11 +217,11 @@ internal class SaberListViewController : BSMLAutomaticViewController
         saberList.Data.AddRange(saberListManager.UpdateList(filterOptions));
         saberList.ReloadData();
 
-        var selectedSaberHash = GetSelectedSaberHash();
-        if (saberListManager.CurrentListContains(selectedSaberHash))
+        if (SelectedSaberValue.TryGetSaberHash(out var saberHash) 
+            && saberListManager.CurrentListContains(saberHash.Hash))
         {
             // todo: test this
-            saberList.SelectCellWithIdx(saberListManager.IndexForSaberHash(selectedSaberHash));
+            saberList.SelectCellWithIdx(saberListManager.IndexForSaberHash(saberHash.Hash));
         }
         else
         {
@@ -261,19 +251,28 @@ internal class SaberListViewController : BSMLAutomaticViewController
 
     private IEnumerator SelectSelectedAndScrollTo()
     {
+        if (!SelectedSaberValue.TryGetSaberHash(out var saberHash)) yield break;
         yield return new WaitUntil(() => saberList.IsActive);
         yield return new WaitForEndOfFrame();
-        int selectedSaberIndex = saberListManager.IndexForSaberHash(config.CurrentlySelectedSaber);
+        int selectedSaberIndex = saberListManager.IndexForSaberHash(saberHash.Hash);
         saberList.SelectCellWithIdx(selectedSaberIndex);
         saberList.ScrollToCellWithIdx(selectedSaberIndex, TableView.ScrollPositionType.Center, true);
     }
 
-    private string? GetSelectedSaberHash() => currentSaberList switch
+    private SaberValue SelectedSaberValue
     {
-        SaberListType.Sabers => config.CurrentlySelectedSaber,
-        SaberListType.Trails => config.CurrentlySelectedTrail,
-        _ => null
-    };
+        get => currentSaberList switch
+        {
+            SaberListType.Sabers => config.CurrentlySelectedSaber,
+            SaberListType.Trails => config.CurrentlySelectedTrail,
+            _ => throw new ArgumentOutOfRangeException(nameof(currentSaberList))
+        };
+        set
+        {
+            if (currentSaberList == SaberListType.Sabers) config.CurrentlySelectedSaber = value;
+            else config.CurrentlySelectedTrail = value;
+        }
+    }
     
     protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
     {

@@ -10,23 +10,9 @@ internal class SaberListInfoCell : ISaberListCell, INotifyPropertyChanged
 {
     private bool isFavourite;
 
-    public RichTextString NameText { get; }
-    public RichTextString AuthorText { get; }
-    public Sprite Icon { get; }
-    
-    public string? Value { get; }
-
-    public bool IsFavourite
-    {
-        get => isFavourite;
-        set { isFavourite = value; NotifyPropertyChanged(); }
-    }
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-
     public SaberListInfoCell(CustomSaberMetadata meta)
     {
-        Value = meta.SaberFile.Hash;
+        Value = new SaberHash(meta.SaberFile.Hash);
         IsFavourite = meta.IsFavourite;
         if (meta.LoaderError == SaberLoaderError.None)
         {
@@ -42,16 +28,26 @@ internal class SaberListInfoCell : ISaberListCell, INotifyPropertyChanged
         }
     }
     
-    public SaberListInfoCell(string text, string subtext, Sprite icon, string? value)
+    public SaberListInfoCell(string text, string subtext, Sprite icon, SaberValue value)
     {
         NameText = RichTextString.Create(text);
         AuthorText = RichTextString.Create(subtext);
         Icon = icon;
         Value = value;
     }
-    
-    private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+
+    public RichTextString NameText { get; }
+    public RichTextString AuthorText { get; }
+    public Sprite Icon { get; }
+    public SaberValue Value { get; }
+    public bool IsFavourite
     {
-        PropertyChanged?.Invoke(this, new(propertyName));
+        get => isFavourite;
+        set { isFavourite = value; NotifyPropertyChanged(); }
     }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+    
+    private void NotifyPropertyChanged([CallerMemberName] string propertyName = "") => 
+        PropertyChanged?.Invoke(this, new(propertyName));
 }

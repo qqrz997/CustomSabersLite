@@ -8,6 +8,5 @@ internal class SaberListFavouritesCell : ISaberListCell
     public RichTextString NameText { get; } = RichTextString.Create("Favourites");
     public RichTextString AuthorText => RichTextString.Empty;
     public Sprite Icon => CSLResources.FolderFavouritesIcon;
-    public string? Value => null;
     public bool IsFavourite => false;
 }

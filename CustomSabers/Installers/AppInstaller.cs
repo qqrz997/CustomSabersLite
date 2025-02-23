@@ -5,28 +5,43 @@ using Zenject;
 
 namespace CustomSabersLite.Installers;
 
-internal class AppInstaller(CslConfig config) : Installer
+internal class AppInstaller : Installer
 {
-    private readonly CslConfig config = config;
+    private readonly PluginConfigModel configModel;
+
+    public AppInstaller(PluginConfigModel configModel)
+    {
+        this.configModel = configModel;
+    }
 
     public override void InstallBindings()
     {
-        Container.BindInterfacesAndSelfTo<FavouritesManager>().AsSingle();
+        // Configs
+        Container.BindInstance(configModel);
+        Container.Bind<PluginConfig>().FromInstance(PluginConfig.FromJson(configModel)).AsSingle();
+        Container.BindInterfacesTo<PluginConfigManager>().AsSingle();
+        
+        // Services
         Container.BindInterfacesAndSelfTo<GameResourcesProvider>().AsSingle();
         Container.BindInterfacesAndSelfTo<MetadataCacheLoader>().AsSingle();
         Container.BindInterfacesAndSelfTo<DirectoryManager>().AsSingle();
+        Container.Bind<SaberMetadataConverter>().AsSingle();
         Container.Bind<SaberMetadataCacheMigrationManager>().AsSingle();
         Container.Bind<ITimeService>().To<UtcTimeService>().AsSingle();
-        Container.Bind<SaberMetadataConverter>().AsSingle();
-        Container.Bind<CustomSabersLoader>().AsSingle();
+        
+        // Cache
+        Container.BindInterfacesAndSelfTo<FavouritesManager>().AsSingle();
         Container.Bind<SaberMetadataCache>().AsSingle();
         Container.Bind<SaberPrefabCache>().AsSingle();
+        Container.Bind<SpriteCache>().AsSingle();
+        
+        // Asset loaders
+        Container.Bind<CustomSabersLoader>().AsSingle();
         Container.Bind<WhackerLoader>().AsSingle();
+        Container.Bind<SaberLoader>().AsSingle();
+        
         Container.Bind<SaberFactory>().AsSingle();
         Container.Bind<TrailFactory>().AsSingle();
-        Container.Bind<SaberLoader>().AsSingle();
-        Container.Bind<SpriteCache>().AsSingle();
         Container.Bind<FileManager>().AsSingle();
-        Container.BindInstance(config);
     }
 }

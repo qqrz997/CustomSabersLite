@@ -8,7 +8,7 @@ namespace CustomSabersLite.Menu;
 
 internal class BasicPreviewTrail
 {
-    private readonly CslConfig config;
+    private readonly PluginConfig config;
 
     private readonly GameObject gameObject;
     private readonly MeshRenderer meshRenderer;
@@ -18,7 +18,7 @@ internal class BasicPreviewTrail
     private readonly Vector2[] uvs = [new(1, 0), new(0, 0), new(1, 1), new(0, 1)];
     private readonly Color[] colors = new Color[4];
 
-    public BasicPreviewTrail(CslConfig config)
+    public BasicPreviewTrail(PluginConfig config)
     {
         this.config = config;
         

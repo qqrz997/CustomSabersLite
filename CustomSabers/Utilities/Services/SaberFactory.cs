@@ -1,19 +1,20 @@
 ﻿using System.Threading.Tasks;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Models;
+using CustomSabersLite.Utilities.Extensions;
 
 namespace CustomSabersLite.Utilities.Services;
 
 internal class SaberFactory
 {
-    private readonly CslConfig config;
+    private readonly PluginConfig config;
     private readonly CustomSabersLoader customSabersLoader;
     private readonly GameResourcesProvider gameResourcesProvider;
     private readonly SaberMetadataCache saberMetadataCache;
     private readonly TrailFactory trailFactory;
 
     public SaberFactory(
-        CslConfig config,
+        PluginConfig config,
         CustomSabersLoader customSabersLoader,
         GameResourcesProvider gameResourcesProvider,
         SaberMetadataCache saberMetadataCache,
@@ -28,46 +29,35 @@ internal class SaberFactory
 
     public async Task<SaberInstanceSet> InstantiateCurrentSabers()
     {
-        var selectedSaber = await GetCurrentSaberData();
-        var (leftTrails, rightTrails) = await GetCurrentTrailData();
+        var selectedSaber = 
+            !config.CurrentlySelectedSaber.TryGetSaberHash(out var saberHash) ? null 
+            : !saberMetadataCache.TryGetMetadata(saberHash.Hash, out var meta) ? null
+            : await customSabersLoader.GetSaberData(meta.SaberFile, true);
+        
+        var (leftTrails, rightTrails) = config.CurrentlySelectedTrail switch
+        {
+            NoTrailValue => ([], []),
+            CustomTrailValue => GetTrailsFromPrefab(selectedSaber?.Prefab),
+            SaberHash trailHash => await LoadTrailsFromSaber(trailHash),
+            _ => GetDefaultTrailData(),
+        };
 
         return (selectedSaber?.Prefab?.Instantiate() ?? CreateDefaultSaberSet()).WithTrails(leftTrails, rightTrails);
     }
 
-    private async Task<(ITrailData[] leftTrails, ITrailData[] rightTrails)> GetCurrentTrailData()
+    private async Task<(ITrailData[] leftTrails, ITrailData[] rightTrails)> LoadTrailsFromSaber(SaberHash saberHash)
     {
-        if (config.CurrentlySelectedTrail is null)
-        {
-            return ([], []); // in this case, we will have no trails
-        }
-
-        var saberHash = config.CurrentlySelectedTrail switch
-        {
-            "custom" => config.CurrentlySelectedSaber,
-            _ => config.CurrentlySelectedTrail
-        };
-
-        if (saberHash is null)
-        {
-            return GetDefaultTrailData();
-        }
-
-        var meta = saberMetadataCache.GetOrDefault(saberHash);
-
-        if (meta is null || !meta.SaberFile.FileInfo.Exists)
+        if (!saberMetadataCache.TryGetMetadata(saberHash.Hash, out var meta) || !meta.SaberFile.FileInfo.Exists)
         {
             return GetDefaultTrailData(); // the default trails will be used as a fallback
         }
 
         var saberData = await customSabersLoader.GetSaberData(meta.SaberFile, true);
 
-        return saberData.Prefab is not null ? GetTrailsFromPrefab(saberData.Prefab) : GetDefaultTrailData();
+        return saberData.Prefab is null ? GetDefaultTrailData() 
+            : (saberData.Prefab.GetTrailsForType(SaberType.SaberA), 
+                saberData.Prefab.GetTrailsForType(SaberType.SaberB));
     }
-
-    private async Task<ISaberData?> GetCurrentSaberData() =>
-        config.CurrentlySelectedSaber is null ? null 
-        : !saberMetadataCache.TryGetMetadata(config.CurrentlySelectedSaber, out var meta) ? null
-        : await customSabersLoader.GetSaberData(meta.SaberFile, true);
 
     private SaberInstanceSet CreateDefaultSaberSet() =>
         new(new DefaultSaber(gameResourcesProvider.CreateNewDefaultSaber()),
@@ -81,9 +71,7 @@ internal class SaberFactory
         [trailFactory.CreateDefaultTrailData()]
     );
 
-    private static (ITrailData[], ITrailData[]) GetTrailsFromPrefab(ISaberPrefab prefab) =>
-    (
-        prefab.GetTrailsForType(SaberType.SaberA),
-        prefab.GetTrailsForType(SaberType.SaberB)
-    );
+    private (ITrailData[], ITrailData[]) GetTrailsFromPrefab(ISaberPrefab? prefab) =>
+        prefab is null ? GetDefaultTrailData()
+        : (prefab.GetTrailsForType(SaberType.SaberA), prefab.GetTrailsForType(SaberType.SaberB));
 }

@@ -6,8 +6,10 @@ using CustomSabersLite.Utilities.Extensions;
 
 namespace CustomSabersLite.Utilities.Common;
 
-internal class Hashing
+internal class SaberHashing
 {
+    public const int HashLength = 32; 
+    
     public static string MD5Checksum(FileInfo file, string format)
     {
         using var fileStream = file.OpenRead();

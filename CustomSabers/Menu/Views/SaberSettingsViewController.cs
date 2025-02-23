@@ -12,7 +12,7 @@ namespace CustomSabersLite.Menu.Views;
 [ViewDefinition("CustomSabersLite.Menu.BSML.saberSettings.bsml")]
 internal class SaberSettingsViewController : BSMLAutomaticViewController, ISharedSaberSettings
 {
-    [Inject] private readonly CslConfig config = null!;
+    [Inject] private readonly PluginConfig config = null!;
     [Inject] private readonly SaberPreviewManager previewManager = null!;
 
     [UIComponent("trail-duration")] private readonly ImageView trailDurationIcon = null!; 

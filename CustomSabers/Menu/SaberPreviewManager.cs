@@ -13,7 +13,7 @@ namespace CustomSabersLite.Menu;
 internal class SaberPreviewManager : IInitializable, IDisposable
 {
     [Inject] private readonly SaberFactory saberFactory = null!;
-    [Inject] private readonly CslConfig config = null!;
+    [Inject] private readonly PluginConfig config = null!;
     [Inject] private readonly ColorSchemesSettings colorSchemesSettings = null!;
 
     [Inject] private readonly MenuSaberManager menuSaberManager = null!;

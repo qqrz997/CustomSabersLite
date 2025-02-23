@@ -10,11 +10,11 @@ namespace CustomSabersLite.Menu;
 
 internal class MenuSaber
 {
-    private readonly CslConfig config;
+    private readonly PluginConfig config;
     private readonly TrailFactory trailFactory;
     private readonly Transform parent;
     
-    private MenuSaber(CslConfig config, TrailFactory trailFactory)
+    private MenuSaber(PluginConfig config, TrailFactory trailFactory)
     {
         this.config = config;
         this.trailFactory = trailFactory;

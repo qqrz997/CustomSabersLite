@@ -18,7 +18,7 @@ namespace CustomSabersLite.Menu.Views;
 [UsedImplicitly]
 internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSaberSettings
 {
-    [Inject] private readonly CslConfig config = null!;
+    [Inject] private readonly PluginConfig config = null!;
     [Inject] private readonly MetadataCacheLoader metadataCacheLoader = null!;
     [Inject] private readonly ICoroutineStarter coroutineStarter = null!;
     [Inject] private readonly SaberListManager saberListManager = null!;
@@ -112,7 +112,10 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
 
     public void SelectSaber(TableView tableView, int row)
     {
-        config.CurrentlySelectedSaber = saberListManager.SelectFromUnsortedData(row)?.Value;
+        if (saberListManager.SelectFromUnsortedData(row)?.TryGetSaberValue(out var saberValue) ?? false)
+        {
+            config.CurrentlySelectedSaber = saberValue;
+        }
     }
     
     public void RefreshList()
@@ -140,9 +143,10 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
     private Coroutine? scrollToSelectedCellCoroutine;
     private IEnumerator ScrollToSelectedCell()
     {
+        if (!config.CurrentlySelectedSaber.TryGetSaberHash(out var saberHash)) yield break;
         yield return new WaitUntil(() => saberList.gameObject.activeInHierarchy);
         /* wait for some frames */ for (int i = 0; i < 2; i++) yield return null;
-        int selectedSaberIndex = saberListManager.IndexForSaberHash(config.CurrentlySelectedSaber);
+        int selectedSaberIndex = saberListManager.IndexForSaberHash(saberHash.Hash);
         saberList.TableView.SelectCellWithIdx(selectedSaberIndex);
         saberList.TableView.ScrollToCellWithIdx(selectedSaberIndex, TableView.ScrollPositionType.Center, true);
     }

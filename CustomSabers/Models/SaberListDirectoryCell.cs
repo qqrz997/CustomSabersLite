@@ -15,7 +15,6 @@ internal class SaberListDirectoryCell : ISaberListCell
     public RichTextString NameText { get; }
     public RichTextString AuthorText => RichTextString.Empty;
     public Sprite Icon => CSLResources.FolderIcon;
-    public string? Value => null;
     public bool IsFavourite => false;
     
     public DirectoryInfo DirectoryInfo { get; }

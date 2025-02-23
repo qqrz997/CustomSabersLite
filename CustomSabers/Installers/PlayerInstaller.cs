@@ -10,10 +10,10 @@ namespace CustomSabersLite.Installers;
 [UsedImplicitly]
 internal class PlayerInstaller : Installer
 {
-    private readonly CslConfig config;
+    private readonly PluginConfig config;
     private readonly SaberFactory saberFactory;
     
-    private PlayerInstaller(CslConfig config, SaberFactory saberFactory)
+    private PlayerInstaller(PluginConfig config, SaberFactory saberFactory)
     {
         this.config = config;
         this.saberFactory = saberFactory;

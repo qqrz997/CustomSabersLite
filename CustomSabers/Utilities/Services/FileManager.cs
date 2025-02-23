@@ -36,7 +36,7 @@ internal class FileManager
     {
         try
         {
-            return new(file, Hashing.MD5Checksum(file, "x2"), timeService.GetUtcTime());
+            return new(file, SaberHashing.MD5Checksum(file, "x2"), timeService.GetUtcTime());
         }
         catch
         {

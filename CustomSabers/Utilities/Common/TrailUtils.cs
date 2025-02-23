@@ -27,7 +27,7 @@ internal static class TrailUtils
     /// </summary>
     /// <param name="trails">The trails to configure</param>
     /// <param name="config">The config to use</param>
-    public static void ConfigureTrails(this ICollection<LiteSaberTrail> trails, CslConfig config) => 
+    public static void ConfigureTrails(this ICollection<LiteSaberTrail> trails, PluginConfig config) => 
         trails.ForEach((trail, idx) => trail.ConfigureTrail(config, idx == 0));
 
     /// <summary>
@@ -37,7 +37,7 @@ internal static class TrailUtils
     /// <param name="config">The config to use</param>
     /// <param name="useOverrideWidth">If set to true, then the trail will be able to make use of the width override in
     /// the config</param>
-    public static void ConfigureTrail(this LiteSaberTrail trail, CslConfig config, bool useOverrideWidth = false)
+    public static void ConfigureTrail(this LiteSaberTrail trail, PluginConfig config, bool useOverrideWidth = false)
     {
         if (trail == null || trail._trailRenderer == null)
         {

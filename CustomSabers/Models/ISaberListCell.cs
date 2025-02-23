@@ -7,6 +7,5 @@ internal interface ISaberListCell
     public RichTextString NameText { get; }
     public RichTextString AuthorText { get; }
     public Sprite Icon { get; }
-    public string? Value { get; }
     public bool IsFavourite { get; }
 }

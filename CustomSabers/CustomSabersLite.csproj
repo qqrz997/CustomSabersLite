@@ -32,7 +32,24 @@
 
     <ItemGroup>
         <EmbeddedResource Include="Menu\BSML\*.bsml" />
-        <EmbeddedResource Include="Resources\*" />
+        <EmbeddedResource Include="Resources\CustomSaber.dll" />
+        <EmbeddedResource Include="Resources\beatmods.png" />
+        <EmbeddedResource Include="Resources\defaultsabers-image.jpg" />
+        <EmbeddedResource Include="Resources\delete.png" />
+        <EmbeddedResource Include="Resources\ellipsis.png" />
+        <EmbeddedResource Include="Resources\extreme-arrow-icon.png" />
+        <EmbeddedResource Include="Resources\folder.png" />
+        <EmbeddedResource Include="Resources\folder-favourites.png" />
+        <EmbeddedResource Include="Resources\null-image.png" />
+        <EmbeddedResource Include="Resources\preview-held.png" />
+        <EmbeddedResource Include="Resources\preview-static.png" />
+        <EmbeddedResource Include="Resources\reload.png" />
+        <EmbeddedResource Include="Resources\saber-length.png" />
+        <EmbeddedResource Include="Resources\saber-width.png" />
+        <EmbeddedResource Include="Resources\sort-ascending.png" />
+        <EmbeddedResource Include="Resources\sort-descending.png" />
+        <EmbeddedResource Include="Resources\trail-duration.png" />
+        <EmbeddedResource Include="Resources\trail-width.png" />
     </ItemGroup>
     
   <ItemGroup>

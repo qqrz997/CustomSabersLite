@@ -37,14 +37,14 @@ internal class SaberListManager
 
     private ISaberListCell[] TrailListDefaultChoices { get; } =
     [
-        new SaberListInfoCell("Custom", "Use the trail of the selected saber", TrailDurationIcon, "custom"),
-        new SaberListInfoCell("Default", "Beat Games", DefaultCoverImage, "default"),
-        new SaberListInfoCell("None", "Use no trail", BlankSprite, null)
+        new SaberListInfoCell("Custom", "Use the trail of the selected saber", TrailDurationIcon, new CustomTrailValue()),
+        new SaberListInfoCell("Default", "Beat Games", DefaultCoverImage, new DefaultSaberValue()),
+        new SaberListInfoCell("None", "Use no trail", BlankSprite, new NoTrailValue())
     ];
 
     private ISaberListCell[] SaberListDefaultChoices { get; } =
     [
-        new SaberListInfoCell("Default", "Beat Games", DefaultCoverImage, null)
+        new SaberListInfoCell("Default", "Beat Games", DefaultCoverImage, new DefaultSaberValue())
     ];
 
     public void Refresh()
@@ -55,61 +55,7 @@ internal class SaberListManager
 
     public IEnumerable<ISaberListCell> UpdateUnsortedList() => PopulateUnsortedList();
 
-    public IEnumerable<ISaberListCell> UpdateList(SaberListFilterOptions filterOptions) =>
-        PopulateList(filterOptions, filterOptions.Trails switch
-        {
-            false => SaberListDefaultChoices,
-            true => TrailListDefaultChoices
-        });
-
-    public void OpenFolder(SaberListDirectoryCell directoryCell)
-    {
-        saberListFolderManager.CurrentDirectory = directoryCell.DirectoryInfo;
-        ShowFavourites = false;
-    }
-
-    public void OpenFolder(SaberListUpDirectoryCell upDirectoryCell)
-    {
-        saberListFolderManager.CurrentDirectory = upDirectoryCell.DirectoryInfo;
-        ShowFavourites = false;
-    }
-
-    public void DeleteSaber(string? saberHash)
-    {
-        var saberFile = saberMetadataCache.GetOrDefault(saberHash)?.SaberFile;
-        if (saberFile is null || !saberFile.FileInfo.Exists)
-        {
-            return;
-        }
-
-        var destinationFile = new FileInfo(Path.Combine(directoryManager.DeletedSabers.FullName, saberFile.FileInfo.Name));
-        if (destinationFile.Exists)
-        {
-            destinationFile.Delete();
-        }
-
-        saberFile.FileInfo.MoveTo(destinationFile.FullName);
-
-        saberMetadataCache.Remove(saberFile.Hash);
-        saberPrefabCache.UnloadSaber(saberFile.Hash);
-    }
-
-    public int IndexForSaberHash(string? saberHash)
-    {
-        if (string.IsNullOrWhiteSpace(saberHash)) return 0;
-        int index = list.IndexOf(list.FirstOrDefault(i => i.Value == saberHash));
-        return Math.Max(0, index);
-    }
-
-    public ISaberListCell? SelectFromUnsortedData(int row) => unsortedList.ElementAtOrDefault(row);
-    public ISaberListCell? SelectFromCurrentList(int row) => list.ElementAtOrDefault(row);
-
-    public bool CurrentListContains(string? saberHash) =>
-        !string.IsNullOrEmpty(saberHash) && list.Any(i => i.Value == saberHash);
-
-    private IEnumerable<ISaberListCell> PopulateList(
-        SaberListFilterOptions filterOptions,
-        IEnumerable<ISaberListCell> defaultChoices)
+    public IEnumerable<ISaberListCell> UpdateList(SaberListFilterOptions filterOptions)
     {
         list.Clear();
 
@@ -134,7 +80,7 @@ internal class SaberListManager
 
         if (inTopDirectory)
         {
-            list.AddRange(defaultChoices);
+            list.AddRange(filterOptions.Trails ? TrailListDefaultChoices : SaberListDefaultChoices);
         }
         
         list.AddRange(saberMetadataCache
@@ -145,12 +91,52 @@ internal class SaberListManager
         return list;
     }
 
+    public void OpenFolder(DirectoryInfo directoryInfo)
+    {
+        saberListFolderManager.CurrentDirectory = directoryInfo;
+        ShowFavourites = false;
+    }
+
+    public void DeleteSaber(string? saberHash)
+    {
+        var saberFile = saberMetadataCache.GetOrDefault(saberHash)?.SaberFile;
+        if (saberFile is null || !saberFile.FileInfo.Exists)
+        {
+            return;
+        }
+
+        var destinationFile = new FileInfo(Path.Combine(directoryManager.DeletedSabers.FullName, saberFile.FileInfo.Name));
+        if (destinationFile.Exists)
+        {
+            destinationFile.Delete();
+        }
+
+        saberFile.FileInfo.MoveTo(destinationFile.FullName);
+
+        saberMetadataCache.Remove(saberFile.Hash);
+        saberPrefabCache.UnloadSaber(saberFile.Hash);
+    }
+
+    public int IndexForSaberHash(string? saberHash) =>
+        saberHash is null ? 0
+        : Math.Max(0, list.IndexOf(list.FirstOrDefault(cell => FilterForSaberValue(cell, saberHash))));
+
+    public ISaberListCell? SelectFromUnsortedData(int row) => unsortedList.ElementAtOrDefault(row);
+    public ISaberListCell? SelectFromCurrentList(int row) => list.ElementAtOrDefault(row);
+
+    public bool CurrentListContains(string? saberHash) =>
+        saberHash != null && list.Any(cell => FilterForSaberValue(cell, saberHash));
+    
+    private static bool FilterForSaberValue(ISaberListCell cell, string value) =>
+        cell is SaberListInfoCell { Value: SaberHash saberHash } && saberHash.Hash == value;
+
     private IEnumerable<ISaberListCell> PopulateUnsortedList()
     {
         unsortedList.Clear();
-        unsortedList.Add(new SaberListInfoCell("Default", "Beat Games", DefaultCoverImage, null));
-        unsortedList.AddRange(
-            saberMetadataCache.GetSortedData(SaberListFilterOptions.Default).Select(m => new SaberListInfoCell(m)));
+        unsortedList.AddRange(SaberListDefaultChoices);
+        unsortedList.AddRange(saberMetadataCache
+            .GetSortedData(SaberListFilterOptions.Default)
+            .Select(m => new SaberListInfoCell(m)));
         return unsortedList;
     }
 }
