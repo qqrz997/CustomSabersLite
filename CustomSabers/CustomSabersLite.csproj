@@ -50,6 +50,7 @@
         <EmbeddedResource Include="Resources\sort-descending.png" />
         <EmbeddedResource Include="Resources\trail-duration.png" />
         <EmbeddedResource Include="Resources\trail-width.png" />
+        <EmbeddedResource Include="Resources\favourite-blocked.png" />
     </ItemGroup>
     
   <ItemGroup>

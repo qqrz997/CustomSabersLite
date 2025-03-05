@@ -146,7 +146,7 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
         if (!config.CurrentlySelectedSaber.TryGetSaberHash(out var saberHash)) yield break;
         yield return new WaitUntil(() => saberList.gameObject.activeInHierarchy);
         /* wait for some frames */ for (int i = 0; i < 2; i++) yield return null;
-        int selectedSaberIndex = saberListManager.IndexForSaberHash(saberHash.Hash);
+        int selectedSaberIndex = saberListManager.IndexForSaberValue(saberHash);
         saberList.TableView.SelectCellWithIdx(selectedSaberIndex);
         saberList.TableView.ScrollToCellWithIdx(selectedSaberIndex, TableView.ScrollPositionType.Center, true);
     }

@@ -1,6 +1,5 @@
 using System;
 using CustomSabersLite.Utilities.Extensions;
-using Zenject;
 
 namespace CustomSabersLite.Configuration;
 

@@ -17,23 +17,19 @@
 
         <!--bottom bar (buttons)-->
         <horizontal spacing='1'>
-            <horizontal>
-                <dropdown-list-setting text=''
-                                       pref-width='25'
-                                       value='OrderByFilter'
-                                       choices='orderByChoices'
-                                       apply-on-change='true'
-                                       word-wrapping='false'/>
-            </horizontal>
-            <favorite-toggle value="FavouriteButtonValue" 
-                             id="favourite-button"
-                             bind-value="true"
-                             icon-size="9" 
-                             hover-hint="Favourite selected saber"/>
             <clickable-icon on-click="PreviewButtonPressed"
                             id="preview-button"
                             hover-hint="Switch between previews"
                             src="CustomSabersLite.Resources.preview-static.png" icon-size="9"/>
+            <favorite-toggle value="FavouriteButtonValue" 
+                             id="favourite-toggle"
+                             bind-value="true"
+                             icon-size="9" 
+                             hover-hint="Favourite selected saber"/>
+            <clickable-icon on-click='DeleteButtonPressed'
+                            id="delete-button"
+                            hover-hint="Delete selected saber"
+                            src="CustomSabersLite.Resources.delete.png" icon-size="9"/>
             <clickable-icon on-click='FolderButtonPressed'
                             id="open-folder-button"
                             hover-hint="Open CustomSabers folder"
@@ -42,10 +38,14 @@
                             id='reload-button'
                             hover-hint="Refresh loaded sabers"
                             src="CustomSabersLite.Resources.reload.png" icon-size="9"/>
-            <clickable-icon on-click='DeleteButtonPressed'
-                            id="delete-button"
-                            hover-hint="Delete selected saber"
-                            src="CustomSabersLite.Resources.delete.png" icon-size="9"/>
+            <horizontal>
+                <dropdown-list-setting text=''
+                                       pref-width='25'
+                                       value='OrderByFilter'
+                                       choices='orderByChoices'
+                                       apply-on-change='true'
+                                       word-wrapping='false'/>
+            </horizontal>
             <clickable-icon on-click="ListDirectionButtonPressed"
                             id="sort-direction-button"
                             hover-hint="Switch sort direction"

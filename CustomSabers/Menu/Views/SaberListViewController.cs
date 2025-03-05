@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
@@ -37,6 +36,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
     [UIComponent("delete-saber-modal")] private readonly ModalView deleteSaberModal = null!;
     [UIComponent("delete-saber-modal-text")] private readonly TextMeshProUGUI deleteSaberModalText = null!;
     [UIComponent("search-input")] private readonly BsInputField searchBsInputField = null!;
+    [UIComponent("favourite-toggle")] private readonly FavouriteToggle favouriteToggle = null!;
 
     [UIComponent("sort-direction-button")] private readonly ImageView sortDirectionButtonImage = null!;
     [UIComponent("preview-button")] private readonly ImageView previewButtonImage = null!;
@@ -57,6 +57,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
         loadingIcon.SetActive(!metadataCacheLoader.CurrentProgress.Completed);
     }
 
+    // TODO: format this list
     private List<object> orderByChoices = [.. Enum.GetNames(typeof(OrderBy))];
     public string OrderByFilter
     {
@@ -98,27 +99,28 @@ internal class SaberListViewController : BSMLAutomaticViewController
 
     public async void ListCellSelected(TableView tableView, int row)
     {
-        var saberListCell = saberListManager.SelectFromCurrentList(row);
-        if (saberListCell != null)
+        if (saberListManager.SelectFromCurrentList(row) is not ISaberListCell saberListCell) return;
+        if (saberListCell.TryGetCellDirectory(out var directoryInfo))
         {
-            if (saberListCell.TryGetCellDirectory(out var directoryInfo))
-            {
-                saberListManager.OpenFolder(directoryInfo);
-                RefreshList();
-            }
-            else if (saberListCell is SaberListFavouritesCell)
-            {
-                saberListManager.ShowFavourites = true;
-                RefreshList();
-            }
-            else if (saberListCell.TryGetSaberValue(out var saberValue))
-            {
-                SelectedSaberValue = saberValue;
-            }
+            saberListManager.OpenFolder(directoryInfo);
+            RefreshList();
         }
-
-        NotifyPropertyChanged(nameof(FavouriteButtonValue));
+        else if (saberListCell is SaberListFavouritesCell)
+        {
+            saberListManager.ShowFavourites = true;
+            RefreshList();
+        }
+        else if (saberListCell.TryGetSaberValue(out var saberValue))
+        {
+            SelectedSaberValue = saberValue;
+            favouriteToggle.Interactable = saberValue is SaberHash;
+        }
+        else
+        {
+            favouriteToggle.Interactable = false;
+        }
         
+        NotifyPropertyChanged(nameof(FavouriteButtonValue));
         await GeneratePreview();
     }
 
@@ -143,7 +145,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
             saberMetadataCache.Remove(meta.SaberFile.Hash);
             saberMetadataCache.TryAdd(meta);
             
-            if (saberList.Data.TryGetElementAt(saberListManager.IndexForSaberHash(saberHash.Hash), out var cell)
+            if (saberList.Data.TryGetElementAt(saberListManager.IndexForSaberValue(saberHash), out var cell)
                 && cell is SaberListInfoCell infoCell) infoCell.IsFavourite = value;
             
             if (value) favouritesManager.AddFavourite(meta.SaberFile);
@@ -176,7 +178,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
         deleteSaberModal.Hide(true);
         if (!SelectedSaberValue.TryGetSaberHash(out var deletedSaberHash)) return;
         
-        int deletedSaberIndex = saberListManager.IndexForSaberHash(deletedSaberHash.Hash);
+        int deletedSaberIndex = saberListManager.IndexForSaberValue(deletedSaberHash);
         
         saberListManager.DeleteSaber(deletedSaberHash.Hash);
 
@@ -184,7 +186,6 @@ internal class SaberListViewController : BSMLAutomaticViewController
         if (selectedCell != null && selectedCell.TryGetSaberValue(out var saberValue)) SelectedSaberValue = saberValue;
         
         RefreshList();
-        StartCoroutine(SelectSelectedAndScrollTo());
     }
 
     public void PreviewButtonPressed()
@@ -217,11 +218,9 @@ internal class SaberListViewController : BSMLAutomaticViewController
         saberList.Data.AddRange(saberListManager.UpdateList(filterOptions));
         saberList.ReloadData();
 
-        if (SelectedSaberValue.TryGetSaberHash(out var saberHash) 
-            && saberListManager.CurrentListContains(saberHash.Hash))
+        if (saberListManager.CurrentListContains(SelectedSaberValue))
         {
-            // todo: test this
-            saberList.SelectCellWithIdx(saberListManager.IndexForSaberHash(saberHash.Hash));
+            saberList.SelectCellWithIdx(saberListManager.IndexForSaberValue(SelectedSaberValue));
         }
         else
         {
@@ -249,16 +248,6 @@ internal class SaberListViewController : BSMLAutomaticViewController
         catch (OperationCanceledException) { }
     }
 
-    private IEnumerator SelectSelectedAndScrollTo()
-    {
-        if (!SelectedSaberValue.TryGetSaberHash(out var saberHash)) yield break;
-        yield return new WaitUntil(() => saberList.IsActive);
-        yield return new WaitForEndOfFrame();
-        int selectedSaberIndex = saberListManager.IndexForSaberHash(saberHash.Hash);
-        saberList.SelectCellWithIdx(selectedSaberIndex);
-        saberList.ScrollToCellWithIdx(selectedSaberIndex, TableView.ScrollPositionType.Center, true);
-    }
-
     private SaberValue SelectedSaberValue
     {
         get => currentSaberList switch
@@ -284,7 +273,6 @@ internal class SaberListViewController : BSMLAutomaticViewController
         }
 
         RefreshList();
-        StartCoroutine(SelectSelectedAndScrollTo());
         previewManager.SetPreviewActive(true);
     }
 

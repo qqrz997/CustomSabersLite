@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
+using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Common;
 using CustomSabersLite.Utilities.Extensions;
 using IPA.Utilities;
@@ -25,7 +27,8 @@ internal class SaberMetadataCacheMigrationManager
     private enum CacheVersion
     {
         Current = 0,
-        V1 // Cache folder used by CustomSabersLite prior to v0.13.0
+        V1, // Cache folder (v0.12.7 and below)
+        V2 // Cache with relative path used as key for metadata (v0.14.2 and below)
     }
 
     private bool Migrate(CacheVersion cacheVersion)
@@ -38,6 +41,7 @@ internal class SaberMetadataCacheMigrationManager
             Action? migration = cacheVersion switch
             {
                 CacheVersion.V1 => V1Migration,
+                CacheVersion.V2 => V2Migration,
                 _ => null,
             };
             migration?.Invoke();
@@ -64,7 +68,38 @@ internal class SaberMetadataCacheMigrationManager
         v1Dir.Delete();
     }
 
-    private CacheVersion GetCurrentCacheVersion() =>
-        Directory.Exists(Path.Combine(directoryManager.UserData.FullName, "Cache")) ? CacheVersion.V1
-        : CacheVersion.Current;
+    private void V2Migration()
+    {
+        var cacheFile = new FileInfo(Path.Combine(directoryManager.UserData.FullName, "cache"));
+        if (!cacheFile.Exists) return;
+        
+        using var zipArchive = ZipFile.Open(cacheFile.FullName, ZipArchiveMode.Update);
+        
+        zipArchive.GetEntry("metadata.json")?.Delete();
+    }
+
+    private CacheVersion GetCurrentCacheVersion()
+    {
+        if (Directory.Exists(Path.Combine(directoryManager.UserData.FullName, "Cache"))) return CacheVersion.V1;
+
+        var metadataVersion = GetMetadataVersionFromZip();
+        if (metadataVersion <= new Version(0, 14, 3))
+            return CacheVersion.V2;
+        
+        return CacheVersion.Current;
+    }
+
+    private Version GetMetadataVersionFromZip()
+    {
+        var cacheFile = new FileInfo(Path.Combine(directoryManager.UserData.FullName, "cache"));
+        if (!cacheFile.Exists) return new(0, 0, 0);
+        
+        using var zipArchive = ZipFile.OpenRead(cacheFile.FullName);
+        using var metadataStream = zipArchive.GetEntry("metadata.json")?.Open();
+        if (metadataStream == null) return new(0, 0, 0);
+
+        var versionString = JsonReading.DeserializeStream<CacheFileModel>(metadataStream)?.Version;
+        
+        return versionString is null ? new(0, 0, 0) : new Version(versionString);
+    }
 }

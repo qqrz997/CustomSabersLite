@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CustomSabersLite.Menu.Views;
 using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Common;
+using CustomSabersLite.Utilities.Extensions;
 using CustomSabersLite.Utilities.Services;
 using static BeatSaberMarkupLanguage.Utilities.ImageResources;
 using static CustomSabersLite.Utilities.Common.CSLResources;
@@ -17,6 +17,22 @@ internal class SaberListManager
     private readonly SaberMetadataCache saberMetadataCache;
     private readonly DirectoryManager directoryManager;
     private readonly SaberListFolderManager saberListFolderManager;
+
+    private readonly List<ISaberListCell> unsortedList = [];
+    private readonly List<ISaberListCell> list = [];
+    private readonly Dictionary<SaberValue, int> cellValueIndexesMap = [];
+
+    private ISaberListCell[] SaberListDefaultChoices { get; } =
+    [
+        new SaberListInfoCell("Default", "Beat Games", DefaultCoverImage, new DefaultSaberValue())
+    ];
+
+    private ISaberListCell[] TrailListDefaultChoices { get; } =
+    [
+        new SaberListInfoCell("Custom", "Use the trail of the selected saber", TrailDurationIcon, new CustomTrailValue()),
+        new SaberListInfoCell("Default", "Beat Games", DefaultCoverImage, new DefaultSaberValue()),
+        new SaberListInfoCell("None", "Use no trail", BlankSprite, new NoTrailValue())
+    ];
     
     public SaberListManager(
         SaberPrefabCache saberPrefabCache,
@@ -30,22 +46,7 @@ internal class SaberListManager
         this.saberListFolderManager = saberListFolderManager;
     }
 
-    private readonly List<ISaberListCell> unsortedList = [];
-    private readonly List<ISaberListCell> list = [];
-
     public bool ShowFavourites { get; set; }
-
-    private ISaberListCell[] TrailListDefaultChoices { get; } =
-    [
-        new SaberListInfoCell("Custom", "Use the trail of the selected saber", TrailDurationIcon, new CustomTrailValue()),
-        new SaberListInfoCell("Default", "Beat Games", DefaultCoverImage, new DefaultSaberValue()),
-        new SaberListInfoCell("None", "Use no trail", BlankSprite, new NoTrailValue())
-    ];
-
-    private ISaberListCell[] SaberListDefaultChoices { get; } =
-    [
-        new SaberListInfoCell("Default", "Beat Games", DefaultCoverImage, new DefaultSaberValue())
-    ];
 
     public void Refresh()
     {
@@ -58,6 +59,7 @@ internal class SaberListManager
     public IEnumerable<ISaberListCell> UpdateList(SaberListFilterOptions filterOptions)
     {
         list.Clear();
+        cellValueIndexesMap.Clear();
 
         if (ShowFavourites)
         {
@@ -87,6 +89,11 @@ internal class SaberListManager
             .GetSortedData(filterOptions)
             .Where(m => m.SaberFile.FileInfo.DirectoryName == saberListFolderManager.CurrentDirectory.FullName)
             .Select(m => new SaberListInfoCell(m)));
+
+        list.ForEach((cell, i) =>
+        {
+            if (cell.TryGetSaberValue(out var v)) cellValueIndexesMap.Add(v, i);
+        });
         
         return list;
     }
@@ -117,18 +124,14 @@ internal class SaberListManager
         saberPrefabCache.UnloadSaber(saberFile.Hash);
     }
 
-    public int IndexForSaberHash(string? saberHash) =>
-        saberHash is null ? 0
-        : Math.Max(0, list.IndexOf(list.FirstOrDefault(cell => FilterForSaberValue(cell, saberHash))));
-
     public ISaberListCell? SelectFromUnsortedData(int row) => unsortedList.ElementAtOrDefault(row);
     public ISaberListCell? SelectFromCurrentList(int row) => list.ElementAtOrDefault(row);
 
-    public bool CurrentListContains(string? saberHash) =>
-        saberHash != null && list.Any(cell => FilterForSaberValue(cell, saberHash));
-    
-    private static bool FilterForSaberValue(ISaberListCell cell, string value) =>
-        cell is SaberListInfoCell { Value: SaberHash saberHash } && saberHash.Hash == value;
+    public int IndexForSaberValue(SaberValue saberValue) => 
+        cellValueIndexesMap.GetValueOrDefault(saberValue, 0);
+
+    public bool CurrentListContains(SaberValue value) => list.Any(cell =>
+        cell.TryGetSaberValue(out var cellValue) && cellValue == value);
 
     private IEnumerable<ISaberListCell> PopulateUnsortedList()
     {

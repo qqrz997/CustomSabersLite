@@ -13,12 +13,14 @@ internal class FavouriteToggleHandler : TypeHandler<FavouriteToggle>
     {
         { "value", ["value"] },
         { "iconSize", ["icon-size"] },
-        { "bindValue", ["bind-value"] }
+        { "bindValue", ["bind-value"] },
+        { "interactable", ["interactable"] },
     };
 
     public override Dictionary<string, Action<FavouriteToggle, string>> Setters => new()
     {
-        { "iconSize", (toggle, val) => toggle.IconSize = Parse.Float(val) }
+        { "iconSize", (toggle, val) => toggle.IconSize = Parse.Float(val) },
+        { "interactable", (toggle, val) => toggle.Interactable = Parse.Bool(val) },
     };
 
     public override void HandleTypeAfterChildren(BSMLParser.ComponentTypeWithData componentType, BSMLParserParams parserParams)
