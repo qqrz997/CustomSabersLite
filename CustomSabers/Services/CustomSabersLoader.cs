@@ -2,9 +2,8 @@
 using System.IO;
 using System.Threading.Tasks;
 using CustomSabersLite.Models;
-using CustomSabersLite.Utilities.Common;
 
-namespace CustomSabersLite.Utilities.Services;
+namespace CustomSabersLite.Services;
 
 /// <summary>
 /// Class for loading different kinds of custom saber assets
@@ -14,21 +13,15 @@ internal class CustomSabersLoader
     private readonly SaberPrefabCache saberPrefabCache;
     private readonly SaberLoader saberLoader;
     private readonly WhackerLoader whackerLoader;
-    private readonly ITimeService timeService;
-    private readonly DirectoryManager directoryManager;
 
     public CustomSabersLoader(
         SaberPrefabCache saberPrefabCache,
         SaberLoader saberLoader,
-        WhackerLoader whackerLoader,
-        ITimeService timeService,
-        DirectoryManager directoryManager)
+        WhackerLoader whackerLoader)
     {
         this.saberPrefabCache = saberPrefabCache;
         this.saberLoader = saberLoader;
         this.whackerLoader = whackerLoader;
-        this.timeService = timeService;
-        this.directoryManager = directoryManager;
     }
 
     public async Task<ISaberData> GetSaberData(SaberFileInfo saberFile, bool keepSaberInstance) =>

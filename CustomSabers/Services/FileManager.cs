@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Common;
 
-namespace CustomSabersLite.Utilities.Services;
+namespace CustomSabersLite.Services;
 
 internal class FileManager
 {
@@ -24,7 +24,8 @@ internal class FileManager
     /// </summary>
     /// <returns>An array containing each saber file info</returns>
     public async Task<SaberFileInfo[]> GetSaberFilesAsync() => await Task.Run(GetDistinctSaberFiles);
-   
+    
+    // todo: optimize this by hashing files in parallel
     private SaberFileInfo[] GetDistinctSaberFiles() => 
         directoryManager.CustomSabers.EnumerateSaberFiles(SearchOption.AllDirectories)
             .Select(TryCreateSaberFile)

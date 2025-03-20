@@ -8,7 +8,7 @@ using CustomSabersLite.Utilities.Extensions;
 using Newtonsoft.Json;
 using UnityEngine;
 
-namespace CustomSabersLite.Utilities.Services;
+namespace CustomSabersLite.Services;
 
 internal class WhackerLoader
 {
@@ -72,26 +72,24 @@ internal class WhackerLoader
         saberPrefab.hideFlags |= HideFlags.DontUnloadUnusedAsset;
         saberPrefab.name += $" {whacker.Descriptor.Name}";
 
+        var icon = await GetDownscaledIcon(archive, whacker);
+        spriteCache.AddSprite(saberFile.Hash, icon);
+
         #if SHADER_DEBUG
         await ShaderInfoDump.Instance.RegisterModelShaders(saberPrefab, whacker.descriptor.objectName ?? "Unknown Whacker");
         #else
         await ShaderRepairUtils.RepairSaberShadersAsync(saberPrefab);
         #endif
 
-        var icon = await GetDownscaledIcon(archive, whacker);
-        spriteCache.AddSprite(saberFile.Hash, icon);
-
-        return
-            new CustomSaberData(
-                new(saberFile,
-                    SaberLoaderError.None,
-                    new(RichTextString.Create(whacker.Descriptor.Name),
-                        RichTextString.Create(whacker.Descriptor.Author),
-                        icon != null ? icon : CSLResources.NullCoverImage),
-                    CustomTrailUtils.GetTrailsFromWhacker(saberPrefab).Any(),
-                    favouritesManager.IsFavourite(saberFile)),
-                bundle,
-                new WhackerPrefab(saberPrefab));
+        var saberName = RichTextString.Create(whacker.Descriptor.Name);
+        var authorName = RichTextString.Create(whacker.Descriptor.Author);
+        var saberIcon = icon != null ? icon : CSLResources.NullCoverImage;
+        var descriptor = new Descriptor(saberName, authorName, saberIcon);
+        var hasTrails = CustomTrailUtils.GetTrailsFromWhacker(saberPrefab).Any();
+        var isFavourite = favouritesManager.IsFavourite(saberFile);
+        var metadata = new CustomSaberMetadata(saberFile, SaberLoaderError.None, descriptor, hasTrails, isFavourite);
+        var whackerPrefab = new WhackerPrefab(saberPrefab);
+        return new CustomSaberData(metadata, bundle, whackerPrefab);
     }
 
     private static async Task<Sprite?> GetDownscaledIcon(ZipArchive archive, WhackerModel whacker)

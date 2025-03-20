@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace CustomSabersLite.Models;
 
-internal class SaberListDirectoryCell : ISaberListCell
+internal class ListDirectoryCellInfo : IListCellInfo
 {
-    public SaberListDirectoryCell(DirectoryInfo directoryInfo)
+    public ListDirectoryCellInfo(DirectoryInfo directoryInfo)
     {
         NameText = RichTextString.Create(directoryInfo.Name);
         DirectoryInfo = directoryInfo;

@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.ComponentModel;
-using System.Linq;
 using BeatSaberMarkupLanguage.Attributes;
-using BeatSaberMarkupLanguage.Components;
 using CustomSabersLite.Configuration;
+using CustomSabersLite.Menu.Components;
+using CustomSabersLite.Models;
+using CustomSabersLite.Services;
 using CustomSabersLite.Utilities.Common;
 using CustomSabersLite.Utilities.Extensions;
-using CustomSabersLite.Utilities.Services;
 using HMUI;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -29,7 +29,7 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
     [UIComponent("trail-width")] private readonly ImageView trailWidthIcon = null!;
     [UIComponent("saber-length")] private readonly ImageView saberLengthIcon = null!;
     [UIComponent("saber-width")] private readonly ImageView saberWidthIcon = null!;
-    [UIComponent("saber-list")] private readonly CustomListTableData saberList = null!;
+    [UIComponent("saber-list")] private readonly SaberListTableData saberList = null!;
 
     [UIAction("#post-parse")]
     private void PostParse()
@@ -110,27 +110,37 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
         set => config.EnableCustomEvents = value;
     }
 
-    public void SelectSaber(TableView tableView, int row)
+    public void ListCellSelected(TableView tableView, int row)
     {
-        if (saberListManager.SelectFromUnsortedData(row)?.TryGetSaberValue(out var saberValue) ?? false)
+        if (saberListManager.SelectFromUnsortedList(row) is not { } saberListCell) return;
+        if (saberListCell.TryGetCellDirectory(out var directoryInfo))
         {
+            saberListManager.OpenFolder(directoryInfo);
+            RefreshList();
+        }
+        else if (saberListCell is ListFavouritesCellInfo)
+        {
+            saberListManager.ShowFavourites = true;
+            RefreshList();
+        }
+        else if (saberListCell.TryGetSaberValue(out var saberValue))
+        {
+            // todo: consider introducing trail selection to the tab 
             config.CurrentlySelectedSaber = saberValue;
         }
     }
-    
-    public void RefreshList()
+
+    private void RefreshList()
     {
-        if (!metadataCacheLoader.CurrentProgress.Completed)
-        {
-            return;
-        }
-        
         saberList.Data.Clear();
-        saberListManager.UpdateUnsortedList()
-            // todo: temporarily converting saber list cells to BSML cells
-            .Select(saberListCell => new CustomListTableData.CustomCellInfo(saberListCell.NameText.FullName))
-            .ForEach(saberList.Data.Add);
-        saberList.TableView.ReloadData();
+        saberList.Data.AddRange(saberListManager.UpdateUnsortedList());
+        saberList.ReloadData();
+
+        // todo: consider introducing trail selection to the tab 
+        if (saberListManager.UnsortedListContains(config.CurrentlySelectedSaber))
+            saberList.SelectCellWithIdx(saberListManager.IndexForSaberValue(config.CurrentlySelectedSaber));
+        else
+            saberList.ClearSelection();
     }
 
     public void Activated(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
@@ -147,8 +157,8 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
         yield return new WaitUntil(() => saberList.gameObject.activeInHierarchy);
         /* wait for some frames */ for (int i = 0; i < 2; i++) yield return null;
         int selectedSaberIndex = saberListManager.IndexForSaberValue(saberHash);
-        saberList.TableView.SelectCellWithIdx(selectedSaberIndex);
-        saberList.TableView.ScrollToCellWithIdx(selectedSaberIndex, TableView.ScrollPositionType.Center, true);
+        saberList.SelectCellWithIdx(selectedSaberIndex);
+        saberList.ScrollToCellWithIdx(selectedSaberIndex, TableView.ScrollPositionType.Center, true);
     }
 
     private void LoadingProgressChanged(MetadataCacheLoader.Progress progress)

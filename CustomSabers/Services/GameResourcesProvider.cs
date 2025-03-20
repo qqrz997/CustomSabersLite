@@ -7,7 +7,7 @@ using static BGLib.UnityExtension.AddressablesExtensions;
 using static UnityEngine.Object;
 using Object = UnityEngine.Object;
 
-namespace CustomSabersLite.Utilities.Services;
+namespace CustomSabersLite.Services;
 
 internal class GameResourcesProvider : IInitializable
 {

@@ -5,11 +5,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Common;
-using CustomSabersLite.Utilities.Extensions;
 using Newtonsoft.Json;
 using Zenject;
 
-namespace CustomSabersLite.Utilities.Services;
+namespace CustomSabersLite.Services;
 
 internal class FavouritesManager : IInitializable
 {
@@ -22,31 +21,37 @@ internal class FavouritesManager : IInitializable
     }
 
     private CancellationTokenSource updateFavouritesTokenSource = new();
-    
-    public void Initialize()
-    {
-        if (favouritesFile.Exists)
-        {
-            using var stream = favouritesFile.OpenRead();
-            stream.DeserializeStream<string[]>()?.ForEach(hash => favouriteSaberHashes.Add(hash));
-        }
-    }
+
+    public void Initialize() => ReadFavourites();
 
     public void AddFavourite(SaberFileInfo saberFile)
     {
         favouriteSaberHashes.Add(saberFile.Hash);
-        InitiateUpdate();
+        SaveFavourites();
     }
 
     public void RemoveFavourite(SaberFileInfo saberFile)
     {
         favouriteSaberHashes.Remove(saberFile.Hash);
-        InitiateUpdate();
+        SaveFavourites();
     }
 
     public bool IsFavourite(SaberFileInfo saberFile) => favouriteSaberHashes.Contains(saberFile.Hash);
+
+    private void ReadFavourites()
+    {
+        if (!favouritesFile.Exists) return;
+        using var favouritesStream = favouritesFile.OpenRead();
+        var savedFavourites = favouritesStream.DeserializeStream<string[]>();
+        if (savedFavourites is null) return;
+        favouriteSaberHashes.Clear();
+        foreach (var hash in savedFavourites)
+        {
+            favouriteSaberHashes.Add(hash);
+        }
+    }
     
-    private void InitiateUpdate()
+    private void SaveFavourites()
     {
         updateFavouritesTokenSource.Cancel();
         updateFavouritesTokenSource.Dispose();
@@ -54,21 +59,22 @@ internal class FavouritesManager : IInitializable
 
         try
         {
-            Task.Run(() => WriteUpdateTo(favouritesFile, updateFavouritesTokenSource.Token));
+            Task.Run(() => SaveFavouritesAsync(updateFavouritesTokenSource.Token));
         }
         catch (OperationCanceledException) { }
         catch (Exception e)
         {
             Logger.Error($"Problem encountered while updating favourites file:\n{e}");
         }
-    }
-
-    private async Task WriteUpdateTo(FileInfo file, CancellationToken token)
-    {
-        file.Delete();
-        await using var streamWriter = file.CreateText();
-        using var jsonWriter = new JsonTextWriter(streamWriter);
-        JsonSerializer.CreateDefault().Serialize(jsonWriter, favouriteSaberHashes);
-        await jsonWriter.FlushAsync(token);
+        return;
+        
+        async Task SaveFavouritesAsync(CancellationToken token)
+        {
+            favouritesFile.Delete();
+            await using var streamWriter = favouritesFile.CreateText();
+            using var jsonWriter = new JsonTextWriter(streamWriter);
+            JsonSerializer.CreateDefault().Serialize(jsonWriter, favouriteSaberHashes);
+            await jsonWriter.FlushAsync(token);
+        }
     }
 }

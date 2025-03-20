@@ -5,7 +5,7 @@ using CustomSabersLite.Menu;
 using CustomSabersLite.Menu.Components;
 using CustomSabersLite.Menu.Views;
 using CustomSabersLite.Misc;
-using CustomSabersLite.Utilities.Services;
+using CustomSabersLite.Services;
 using Zenject;
 
 namespace CustomSabersLite.Installers;
@@ -29,7 +29,6 @@ internal class MenuInstaller : Installer
         Container.Bind<TypeHandler>().To<ClickableIconHandler>().AsSingle();
         
         // View controllers
-        // Container.Bind<TabTest>().FromNewComponentAsViewController().AsSingle();
         Container.Bind<SaberListViewController>().FromNewComponentAsViewController().AsSingle();
         Container.Bind<SaberSettingsViewController>().FromNewComponentAsViewController().AsSingle();
         Container.Bind<CslFlowCoordinator>().FromNewComponentOnNewGameObject().AsSingle();
@@ -41,7 +40,6 @@ internal class MenuInstaller : Installer
         Container.BindInterfacesTo<MenuButtonManager>().AsSingle();
         Container.BindInterfacesAndSelfTo<SaberPreviewManager>().AsSingle();
         
-        Container.BindInterfacesAndSelfTo<SaberListFolderManager>().AsSingle();
         Container.Bind<SaberListManager>().AsSingle();
 
         Container.Bind<MenuSaberManager>().AsSingle();

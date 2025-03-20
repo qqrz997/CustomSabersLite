@@ -8,9 +8,9 @@ using BeatSaberMarkupLanguage.ViewControllers;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Menu.Components;
 using CustomSabersLite.Models;
+using CustomSabersLite.Services;
 using CustomSabersLite.Utilities.Common;
 using CustomSabersLite.Utilities.Extensions;
-using CustomSabersLite.Utilities.Services;
 using HMUI;
 using TMPro;
 using UnityEngine;
@@ -57,7 +57,6 @@ internal class SaberListViewController : BSMLAutomaticViewController
         loadingIcon.SetActive(!metadataCacheLoader.CurrentProgress.Completed);
     }
 
-    // TODO: format this list
     private List<object> orderByChoices = [.. Enum.GetNames(typeof(OrderBy))];
     public string OrderByFilter
     {
@@ -69,6 +68,15 @@ internal class SaberListViewController : BSMLAutomaticViewController
             saberList.ScrollToTop();
         }
     }
+
+    public string OrderByFormatter(string value) => !Enum.TryParse<OrderBy>(value, out var orderBy) ? string.Empty
+        : orderBy switch
+        {
+            OrderBy.Name => "Name",
+            OrderBy.Author => "Author",
+            OrderBy.RecentlyAdded => "Most Recent",
+            _ => throw new ArgumentOutOfRangeException(nameof(value))
+        };
 
     public string SearchFilter
     {
@@ -99,13 +107,13 @@ internal class SaberListViewController : BSMLAutomaticViewController
 
     public async void ListCellSelected(TableView tableView, int row)
     {
-        if (saberListManager.SelectFromCurrentList(row) is not ISaberListCell saberListCell) return;
+        if (saberListManager.SelectFromCurrentList(row) is not { } saberListCell) return;
         if (saberListCell.TryGetCellDirectory(out var directoryInfo))
         {
             saberListManager.OpenFolder(directoryInfo);
             RefreshList();
         }
-        else if (saberListCell is SaberListFavouritesCell)
+        else if (saberListCell is ListFavouritesCellInfo)
         {
             saberListManager.ShowFavourites = true;
             RefreshList();
@@ -146,7 +154,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
             saberMetadataCache.TryAdd(meta);
             
             if (saberList.Data.TryGetElementAt(saberListManager.IndexForSaberValue(saberHash), out var cell)
-                && cell is SaberListInfoCell infoCell) infoCell.IsFavourite = value;
+                && cell is ListInfoCellInfo infoCell) infoCell.IsFavourite = value;
             
             if (value) favouritesManager.AddFavourite(meta.SaberFile);
             else favouritesManager.RemoveFavourite(meta.SaberFile);
@@ -272,7 +280,9 @@ internal class SaberListViewController : BSMLAutomaticViewController
             StartUnitySafeTask(GeneratePreview);
         }
 
+        saberListManager.OpenFolder(directoryManager.CustomSabers);
         RefreshList();
+        
         previewManager.SetPreviewActive(true);
     }
 

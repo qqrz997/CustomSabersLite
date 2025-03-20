@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace CustomSabersLite.Models;
 
-internal class SaberListFavouritesCell : ISaberListCell
+internal class ListFavouritesCellInfo : IListCellInfo
 {
     public RichTextString NameText { get; } = RichTextString.Create("Favourites");
     public RichTextString AuthorText => RichTextString.Empty;

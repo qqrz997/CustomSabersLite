@@ -1,6 +1,6 @@
 ﻿using CustomSabersLite.Components;
 using CustomSabersLite.Configuration;
-using CustomSabersLite.Utilities.Services;
+using CustomSabersLite.Services;
 using JetBrains.Annotations;
 using SiraUtil.Sabers;
 using Zenject;

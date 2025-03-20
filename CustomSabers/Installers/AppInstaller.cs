@@ -1,6 +1,7 @@
 ﻿using CustomSabersLite.Configuration;
+using CustomSabersLite.Menu.Views;
+using CustomSabersLite.Services;
 using CustomSabersLite.Utilities.Common;
-using CustomSabersLite.Utilities.Services;
 using Zenject;
 
 namespace CustomSabersLite.Installers;
@@ -23,6 +24,7 @@ internal class AppInstaller : Installer
         
         // Services
         Container.BindInterfacesAndSelfTo<GameResourcesProvider>().AsSingle();
+        Container.BindInterfacesAndSelfTo<SaberFoldersManager>().AsSingle();
         Container.BindInterfacesAndSelfTo<MetadataCacheLoader>().AsSingle();
         Container.BindInterfacesAndSelfTo<DirectoryManager>().AsSingle();
         Container.Bind<SaberMetadataConverter>().AsSingle();

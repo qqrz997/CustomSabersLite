@@ -6,11 +6,11 @@ using UnityEngine;
 
 namespace CustomSabersLite.Models;
 
-internal class SaberListInfoCell : ISaberListCell, INotifyPropertyChanged
+internal class ListInfoCellInfo : IListCellInfo, INotifyPropertyChanged
 {
     private bool isFavourite;
 
-    public SaberListInfoCell(CustomSaberMetadata meta)
+    public ListInfoCellInfo(CustomSaberMetadata meta)
     {
         Value = new SaberHash(meta.SaberFile.Hash);
         IsFavourite = meta.IsFavourite;
@@ -28,7 +28,7 @@ internal class SaberListInfoCell : ISaberListCell, INotifyPropertyChanged
         }
     }
     
-    public SaberListInfoCell(string text, string subtext, Sprite icon, SaberValue value)
+    public ListInfoCellInfo(string text, string subtext, Sprite icon, SaberValue value)
     {
         NameText = RichTextString.Create(text);
         AuthorText = RichTextString.Create(subtext);

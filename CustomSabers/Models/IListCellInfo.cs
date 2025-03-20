@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace CustomSabersLite.Models;
 
-internal interface ISaberListCell
+internal interface IListCellInfo
 {
     public RichTextString NameText { get; }
     public RichTextString AuthorText { get; }

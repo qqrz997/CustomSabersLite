@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Models;
+using CustomSabersLite.Services;
 using CustomSabersLite.Utilities.Common;
 using CustomSabersLite.Utilities.Extensions;
-using CustomSabersLite.Utilities.Services;
 using SiraUtil.Interfaces;
 using UnityEngine;
 using Zenject;

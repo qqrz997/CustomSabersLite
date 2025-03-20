@@ -1,63 +1,69 @@
-﻿<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' 
-    xsi:noNamespaceSchemaLocation='https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd'>
-  <horizontal spacing='4' preferred-width="115">
+﻿<bg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:noNamespaceSchemaLocation="https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd">
+  <horizontal spacing="4" preferred-width="115">
     <!--Settings container-->
-    <vertical child-expand-height='false' child-control-height="false" horizontal-fit="Unconstrained">
-      <text text='more settings in main menu' font-size='3' color='grey' align='Center' size-delta-y="7"/>
-      
-      <!-- Mod toggle -->
-      <checkbox-setting value='Enabled'
-                        text='Enabled' hover-hint='Disable this to stop the mod from running in maps'
-                        apply-on-change='true' bind-value="true"/>
-      
-      <!-- White trail -->
-      <checkbox-setting value='DisableWhiteTrail' 
-                        text='Disable White Trail' hover-hint='Toggles the initial white part of trails'
-                        apply-on-change='true' bind-value='true'/>
+    <vertical spacing="1" horizontal-fit="Unconstrained">
+      <vertical horizontal-fit="Unconstrained" child-control-height="false" child-expand-height="false"
+                bg="round-rect-panel" bg-color="#00000077" pad="1" pad-left="2" pad-right="2">
+        <!-- Mod toggle -->
+        <checkbox-setting value="Enabled"
+                          text="Enabled" hover-hint="Disable this to stop the mod from running in maps"
+                          apply-on-change="true" bind-value="true"/>
+      </vertical>
+      <vertical horizontal-fit="Unconstrained" child-control-height="false" child-expand-height="false"
+                bg="round-rect-panel" bg-color="#00000077" pad="1" pad-left="2" pad-right="2">
+        <!-- White trail -->
+        <checkbox-setting value="DisableWhiteTrail"
+                          text="Disable White Trail" hover-hint="Toggles the initial white part of trails"
+                          apply-on-change="true" bind-value="true"/>
 
-      <!-- Trail duration -->
-      <toggleable-slider slider-value="TrailDuration" toggle-value="OverrideTrailDuration" 
-                         text="" id="trail-duration" 
-                         min="0" max="1" increment="0.01"
-                         apply-on-change="true" bind-values="true" format-string="{0:##0%}"
-                         hover-hint="Modify the duration, or lifetime, of saber trails"/>
+        <!-- Trail duration -->
+        <toggleable-slider slider-value="TrailDuration" toggle-value="OverrideTrailDuration"
+                           text="" id="trail-duration"
+                           min="0" max="1" increment="0.01"
+                           apply-on-change="true" bind-values="true" format-string="{0:##0%}"
+                           hover-hint="Modify the duration, or lifetime, of saber trails"/>
 
-      <!-- Trail width -->
-      <toggleable-slider slider-value="TrailWidth" toggle-value="OverrideTrailWidth"
-                         text="" id="trail-width" 
-                         min="0" max="1" increment="0.01"
-                         apply-on-change="true" bind-values="true" format-string="{0:##0%}"
-                         hover-hint="Modify the width of saber trails"/>
+        <!-- Trail width -->
+        <toggleable-slider slider-value="TrailWidth" toggle-value="OverrideTrailWidth"
+                           text="" id="trail-width"
+                           min="0" max="1" increment="0.01"
+                           apply-on-change="true" bind-values="true" format-string="{0:##0%}"
+                           hover-hint="Modify the width of saber trails"/>
 
-      <!-- Saber length -->
-      <toggleable-slider slider-value="SaberLength" toggle-value="OverrideSaberLength"
-                         text="" id="saber-length" 
-                         min="0.25" max="1.5" increment="0.05"
-                         apply-on-change="true" bind-values="true" format-string="{0:##0%}"
-                         hover-hint="Modify the length of the saber model - has no affect on hit box"/>
+        <!-- Saber length -->
+        <toggleable-slider slider-value="SaberLength" toggle-value="OverrideSaberLength"
+                           text="" id="saber-length"
+                           min="0.25" max="1.5" increment="0.05"
+                           apply-on-change="true" bind-values="true" format-string="{0:##0%}"
+                           hover-hint="Modify the length of the saber model - has no affect on hit box"/>
 
-      <!-- Saber width -->
-      <toggleable-slider slider-value="SaberWidth" toggle-value="OverrideSaberWidth"
-                         text="" id="saber-width" 
-                         min="0" max="2" increment="0.01"
-                         apply-on-change="true" bind-values="true" format-string="{0:##0%}"
-                         hover-hint="Modify the girth of the saber model - has no affect on hit box"/>
-    
-      <!-- Saber events -->
-      <checkbox-setting value='EnableCustomEvents' 
-                        text='Enable Saber Events' 
-                        hover-hint='Toggles saber events. For instance, an effect happening when you achieve a full combo'
-                        apply-on-change='true' bind-value='true'/>
+        <!-- Saber width -->
+        <toggleable-slider slider-value="SaberWidth" toggle-value="OverrideSaberWidth"
+                           text="" id="saber-width"
+                           min="0" max="2" increment="0.01"
+                           apply-on-change="true" bind-values="true" format-string="{0:##0%}"
+                           hover-hint="Modify the girth of the saber model - has no affect on hit box"/>
+      </vertical>
+      <vertical horizontal-fit="Unconstrained" child-control-height="false" child-expand-height="false"
+                bg="round-rect-panel" bg-color="#00000077" pad="1" pad-left="2" pad-right="2">
+        <!-- Saber events -->
+        <checkbox-setting value="EnableCustomEvents"
+                          text="Enable Saber Events"
+                          hover-hint="Toggles saber events. For instance, an effect happening when you achieve a full combo"
+                          apply-on-change="true" bind-value="true"/>
+      </vertical>
     </vertical>
+    
   
     <!--Saber list container-->
-    <vertical child-control-height='false' spacing='2' preferred-width='40' child-align='MiddleCenter'>
-      <horizontal background='round-rect-panel' bg-color='#000000AA' pad='1'>
-        <list list-style='Simple' visible-cells='6' select-cell='SelectSaber' id='saber-list'/>
+    <vertical child-control-height="false" spacing="2" preferred-width="40" vertical-fit="PreferredSize" child-align="MiddleCenter">
+      <horizontal bg="round-rect-panel" bg-color="#00000077" pad="1">
+        <saber-list id="saber-list" visible-cells="10" select-cell="ListCellSelected" list-style="Simple"/>
       </horizontal>
       <horizontal>
-        <page-button event-click='saber-list#PageUp' direction='Up' preferred-width='25'/>
-        <page-button event-click='saber-list#PageDown' direction='Down' preferred-width='25'/>
+        <page-button event-click="saber-list#PageUp" direction="Up" preferred-width="20"/>
+        <page-button event-click="saber-list#PageDown" direction="Down" preferred-width="20"/>
       </horizontal>
     </vertical>
   </horizontal>

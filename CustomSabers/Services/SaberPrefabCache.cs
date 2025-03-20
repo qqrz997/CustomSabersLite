@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Extensions;
 
-namespace CustomSabersLite.Utilities.Services;
+namespace CustomSabersLite.Services;
 
 internal class SaberPrefabCache
 {

@@ -6,14 +6,14 @@ namespace CustomSabersLite.Utilities.Extensions;
 
 internal static class SaberListCellExtensions
 {
-    public static bool TryGetCellDirectory(this ISaberListCell cell, [NotNullWhen(true)] out DirectoryInfo? dir)
+    public static bool TryGetCellDirectory(this IListCellInfo cellInfo, [NotNullWhen(true)] out DirectoryInfo? dir)
     {
-        if (cell is SaberListDirectoryCell directoryCell)
+        if (cellInfo is ListDirectoryCellInfo directoryCell)
         {
             return (dir = directoryCell.DirectoryInfo) != null;
         }
 
-        if (cell is SaberListUpDirectoryCell upDirectoryCell)
+        if (cellInfo is ListUpDirectoryCellInfo upDirectoryCell)
         {
             return (dir = upDirectoryCell.DirectoryInfo) != null;
         }
@@ -22,10 +22,10 @@ internal static class SaberListCellExtensions
         return false;
     }
 
-    public static bool TryGetSaberValue(this ISaberListCell cell, [NotNullWhen(true)] out SaberValue? saberValue)
+    public static bool TryGetSaberValue(this IListCellInfo cellInfo, [NotNullWhen(true)] out SaberValue? saberValue)
     {
         saberValue = null;
-        if (cell is SaberListInfoCell infoCell)
+        if (cellInfo is ListInfoCellInfo infoCell)
         {
             saberValue = infoCell.Value;
         }

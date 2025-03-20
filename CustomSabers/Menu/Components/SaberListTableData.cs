@@ -13,19 +13,38 @@ internal class SaberListTableData : MonoBehaviour, TableView.IDataSource
 {
     private const string CellReuseIdentifier = "SaberListTableCell";
     
-    [SerializeField] private float cellSize = 8.5f;
+    [SerializeField] private float cellSize = SaberListCell.StandardCellSize;
     [SerializeField] private TableView tableView = null!;
 
     private GameObject? scrollbar;
     private Button? topButton;
     private Button? bottomButton;
+    private ListStyle listStyle = ListStyle.Normal;
     
-    public void Init(TableView tableView) => this.tableView = tableView;
+    public void Init(TableView tv)
+    {
+        tableView = tv;
+    }
 
     public void InitTableView()
     {
         tableView.gameObject.SetActive(true);
         tableView.LazyInit();
+    }
+
+    public ListStyle Style
+    {
+        get => listStyle;
+        set
+        {
+            listStyle = value;
+            cellSize = value switch
+            {
+                ListStyle.Normal => SaberListCell.StandardCellSize,
+                ListStyle.Simple => SaberListCell.SimpleCellSize,
+                _ => throw new ArgumentOutOfRangeException(nameof(value))
+            };
+        }
     }
 
     public void AddScrollBar(Transform parent)
@@ -63,9 +82,7 @@ internal class SaberListTableData : MonoBehaviour, TableView.IDataSource
     }
 
     public CustomListCollection Data { get; } = [];
-    
-    public bool IsActive => tableView.gameObject.activeInHierarchy;
-    
+
     public event Action<TableView, int> DidSelectCellWithIdxEvent
     {
         add => tableView.didSelectCellWithIdxEvent += value;
@@ -95,7 +112,12 @@ internal class SaberListTableData : MonoBehaviour, TableView.IDataSource
 
         if (tableCell == null)
         {
-            tableCell = SaberListCell.Instantiate();
+            tableCell = listStyle switch
+            {
+                ListStyle.Normal => SaberListCell.CreateStandardCell(),
+                ListStyle.Simple => SaberListCell.CreateSimpleCell(),
+                _ => throw new ArgumentOutOfRangeException(nameof(listStyle))
+            };
             tableCell.reuseIdentifier = CellReuseIdentifier;
         }
 
@@ -118,5 +140,11 @@ internal class SaberListTableData : MonoBehaviour, TableView.IDataSource
     private void OnDestroy()
     {
         if (tableView != null) tableView.scrollView.scrollPositionChangedEvent -= ScrollPositionChanged;
+    }
+    
+    public enum ListStyle
+    {
+        Normal = 0,
+        Simple
     }
 }

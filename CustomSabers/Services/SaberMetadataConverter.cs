@@ -1,7 +1,7 @@
 using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Common;
 
-namespace CustomSabersLite.Utilities.Services;
+namespace CustomSabersLite.Services;
 
 internal class SaberMetadataConverter
 {

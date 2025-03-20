@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using CustomSabersLite.Models;
 
-namespace CustomSabersLite.Utilities.Services;
+namespace CustomSabersLite.Services;
 
 internal class SaberMetadataCache
 {
@@ -13,6 +13,8 @@ internal class SaberMetadataCache
     public bool TryAdd(CustomSaberMetadata saberMetadata) => cache.TryAdd(saberMetadata.SaberFile.Hash, saberMetadata);
 
     public void Remove(string saberHash) => cache.Remove(saberHash);
+
+    public void Clear() => cache.Clear();
 
     public bool TryGetMetadata(string? saberHash, [NotNullWhen(true)] out CustomSaberMetadata? meta) => 
         (meta = GetOrDefault(saberHash)) != null;

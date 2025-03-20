@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
+using CustomSabersLite.Menu.Views;
 using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Common;
 using CustomSabersLite.Utilities.Extensions;
@@ -13,7 +14,7 @@ using UnityEngine;
 using Zenject;
 using static CustomSabersLite.Utilities.Common.JsonReading;
 
-namespace CustomSabersLite.Utilities.Services;
+namespace CustomSabersLite.Services;
 
 internal class MetadataCacheLoader : IInitializable
 {
@@ -25,6 +26,7 @@ internal class MetadataCacheLoader : IInitializable
     private readonly SaberMetadataCache saberMetadataCache;
     private readonly DirectoryManager directoryManager;
     private readonly SaberMetadataConverter saberMetadataConverter;
+    private readonly SaberFoldersManager saberFoldersManager;
     
     public MetadataCacheLoader(CustomSabersLoader customSabersLoader,
         SpriteCache spriteCache,
@@ -33,7 +35,8 @@ internal class MetadataCacheLoader : IInitializable
         FileManager fileManager, 
         SaberMetadataCache saberMetadataCache, 
         DirectoryManager directoryManager,
-        SaberMetadataConverter saberMetadataConverter)
+        SaberMetadataConverter saberMetadataConverter, 
+        SaberFoldersManager saberFoldersManager)
     {
         this.customSabersLoader = customSabersLoader;
         this.spriteCache = spriteCache;
@@ -43,6 +46,7 @@ internal class MetadataCacheLoader : IInitializable
         this.saberMetadataCache = saberMetadataCache;
         this.directoryManager = directoryManager;
         this.saberMetadataConverter = saberMetadataConverter;
+        this.saberFoldersManager = saberFoldersManager;
     }
 
     private string CacheArchiveFilePath => Path.Combine(directoryManager.UserData.FullName, "cache");
@@ -70,6 +74,7 @@ internal class MetadataCacheLoader : IInitializable
     public async Task ReloadAsync()
     {
         saberPrefabCache.Clear(false);
+        saberMetadataCache.Clear();
         var stopwatch = Stopwatch.StartNew();
         
         CurrentProgress = new(false, "Retrieving Saber Files");
@@ -94,6 +99,8 @@ internal class MetadataCacheLoader : IInitializable
 
         customSaberMetadata.ForEach(m => saberMetadataCache.TryAdd(m));
         
+        saberFoldersManager.Refresh();
+
         stopwatch.Stop();
         Logger.Notice($"Cache loading took {stopwatch.ElapsedMilliseconds}ms");
 

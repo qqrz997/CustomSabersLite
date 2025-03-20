@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using BeatSaberMarkupLanguage;
@@ -27,6 +28,7 @@ internal class SaberListTableDataHandler : TypeHandler
         { "showScrollbar", ["show-scrollbar"] },
         { "extraButtons", ["extra-buttons", "extra-scrollbar-buttons"] },
         { "scrollbarDelta", ["scrollbar-delta"] },
+        { "listStyle", ["list-style"] },
     };
 
     public override void HandleType(BSMLParser.ComponentTypeWithData componentType, BSMLParserParams parserParams)
@@ -63,10 +65,15 @@ internal class SaberListTableDataHandler : TypeHandler
         {
             if (parserParams.Values.TryGetValue(value, out var contents))
             {
-                var data = ((IEnumerable<object>)contents.GetValue()).OfType<ISaberListCell>();
+                var data = ((IEnumerable<object>)contents.GetValue()).OfType<IListCellInfo>();
                 saberList.Data.AddRange(data);
                 saberList.ReloadData();
             }
+        }
+
+        if (componentType.Data.TryGetValue("listStyle", out string listStyle))
+        {
+            saberList.Style = (SaberListTableData.ListStyle)Enum.Parse(typeof(SaberListTableData.ListStyle), listStyle);
         }
 
         var visibleCells = componentType.Data.TryGetValue("visibleCells", out string c) ? Parse.Float(c) : DefaultCellCount;

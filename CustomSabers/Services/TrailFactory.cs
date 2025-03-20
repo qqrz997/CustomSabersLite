@@ -3,7 +3,7 @@ using CustomSabersLite.Components;
 using CustomSabersLite.Models;
 using UnityEngine;
 
-namespace CustomSabersLite.Utilities.Services;
+namespace CustomSabersLite.Services;
 
 internal class TrailFactory
 {

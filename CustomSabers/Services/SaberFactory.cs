@@ -3,7 +3,7 @@ using CustomSabersLite.Configuration;
 using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Extensions;
 
-namespace CustomSabersLite.Utilities.Services;
+namespace CustomSabersLite.Services;
 
 internal class SaberFactory
 {

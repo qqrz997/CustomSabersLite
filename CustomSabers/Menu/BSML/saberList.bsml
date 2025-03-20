@@ -1,22 +1,22 @@
-﻿<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd'>
+﻿<bg xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd">
     <vertical anchor-pos-x="-25" pref-width="100">
         <!--top bar (list select, search)-->
-        <horizontal child-expand-width="false" pref-height="8" spacing="2">
+        <horizontal child-expand-width="false" pref-height="8" spacing="0.5">
             <tab-select tab-tag="list-tabs" select-cell="ListSelected"/>
             <tab tags="list-tabs" tab-name="Sabers"/>
             <tab tags="list-tabs" tab-name="Trails"/>
-            <input-field id='search-input' preferred-width='50'/>
+            <input-field id="search-input" preferred-width="50"/>
         </horizontal>
 
         <!--saber list-->
         <stack vertical-fit="PreferredSize" pref-height="59">
-            <saber-list id='saber-list' select-cell="ListCellSelected" visible-cells='7' 
-                        show-scrollbar='true' extra-buttons='true' scrollbar-delta='-3'/>
-            <loading id='loading-icon' ignore-layout='true'/>
+            <saber-list id="saber-list" select-cell="ListCellSelected" visible-cells="7" 
+                        show-scrollbar="true" extra-buttons="true" scrollbar-delta="-3"/>
+            <loading id="loading-icon" ignore-layout="true"/>
         </stack>
 
         <!--bottom bar (buttons)-->
-        <horizontal spacing='1'>
+        <horizontal spacing="1">
             <clickable-icon on-click="PreviewButtonPressed"
                             id="preview-button"
                             hover-hint="Switch between previews"
@@ -26,25 +26,26 @@
                              bind-value="true"
                              icon-size="9" 
                              hover-hint="Favourite selected saber"/>
-            <clickable-icon on-click='DeleteButtonPressed'
+            <clickable-icon on-click="DeleteButtonPressed"
                             id="delete-button"
                             hover-hint="Delete selected saber"
                             src="CustomSabersLite.Resources.delete.png" icon-size="9"/>
-            <clickable-icon on-click='FolderButtonPressed'
+            <clickable-icon on-click="FolderButtonPressed"
                             id="open-folder-button"
                             hover-hint="Open CustomSabers folder"
                             src="CustomSabersLite.Resources.folder.png" icon-size="9"/>
-            <clickable-icon on-click='ReloadButtonPressed'
-                            id='reload-button'
+            <clickable-icon on-click="ReloadButtonPressed"
+                            id="reload-button"
                             hover-hint="Refresh loaded sabers"
                             src="CustomSabersLite.Resources.reload.png" icon-size="9"/>
             <horizontal>
-                <dropdown-list-setting text=''
-                                       pref-width='25'
-                                       value='OrderByFilter'
-                                       choices='orderByChoices'
-                                       apply-on-change='true'
-                                       word-wrapping='false'/>
+                <dropdown-list-setting text=""
+                                       pref-width="25"
+                                       value="OrderByFilter"
+                                       choices="orderByChoices"
+                                       formatter="OrderByFormatter"
+                                       apply-on-change="true"
+                                       word-wrapping="false"/>
             </horizontal>
             <clickable-icon on-click="ListDirectionButtonPressed"
                             id="sort-direction-button"
@@ -54,22 +55,22 @@
     </vertical>
 
     <!--deletion modal-->
-    <modal id='delete-saber-modal' click-off-closes='true'
-           size-delta-x='69' size-delta-y='26' anchor-pos-x='0' anchor-pos-y='20'>
-        <vertical pad='1' horizontal-fit='Unconstrained'>
-            <text text='Are you sure you want to &lt;color=red&gt;delete&lt;/color&gt;'
-                  align='Center' font-size='5'/>
-            <text id='delete-saber-modal-text'
-                  text='cyan is a furry'
-                  word-wrapping='false' overflow-mode='Ellipsis' align='Center' font-size='4'/>
-            <horizontal preferred-height='8' spacing='2' pad-left='3' pad-right='3'>
-                <action-button on-click='DeleteConfirmPressed'
-                               text='Confirm'
-                               face-color='red'
-                               horizontal-fit='Unconstrained' vertical-fit='Unconstrained'/>
-                <button on-click='DeleteCancelPressed'
-                        text='Cancel'
-                        horizontal-fit='Unconstrained' vertical-fit='Unconstrained'/>
+    <modal id="delete-saber-modal" click-off-closes="true"
+           size-delta-x="69" size-delta-y="26" anchor-pos-x="0" anchor-pos-y="20">
+        <vertical pad="1" horizontal-fit="Unconstrained">
+            <text text="Are you sure you want to &lt;color=red&gt;delete&lt;/color&gt;"
+                  align="Center" font-size="5"/>
+            <text id="delete-saber-modal-text"
+                  text="cyan is a furry"
+                  word-wrapping="false" overflow-mode="Ellipsis" align="Center" font-size="4"/>
+            <horizontal preferred-height="8" spacing="2" pad-left="3" pad-right="3">
+                <action-button on-click="DeleteConfirmPressed"
+                               text="Confirm"
+                               face-color="red"
+                               horizontal-fit="Unconstrained" vertical-fit="Unconstrained"/>
+                <button on-click="DeleteCancelPressed"
+                        text="Cancel"
+                        horizontal-fit="Unconstrained" vertical-fit="Unconstrained"/>
             </horizontal>
         </vertical>
     </modal>

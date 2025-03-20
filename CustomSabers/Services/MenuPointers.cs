@@ -2,7 +2,7 @@
 using System.Linq;
 using UnityEngine;
 
-namespace CustomSabersLite.Utilities.Services;
+namespace CustomSabersLite.Services;
 
 internal class MenuPointers
 {

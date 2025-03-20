@@ -6,24 +6,21 @@ using CustomSabersLite.Utilities.Extensions;
 
 namespace CustomSabersLite.Models;
 
-internal class CustomListCollection : IEnumerable<ISaberListCell>
+internal class CustomListCollection : IEnumerable<IListCellInfo>
 {
-    private readonly List<ISaberListCell> data = [];
+    private readonly List<IListCellInfo> data = [];
     
     public int Count => data.Count;
     
     public void Clear() => data.Clear();
     
-    public void Add(ISaberListCell item) => data.Add(item);
+    public void Add(IListCellInfo item) => data.Add(item);
     
-    public void AddRange(IEnumerable<ISaberListCell> items) => items.ForEach(data.Add);
+    public void AddRange(IEnumerable<IListCellInfo> items) => items.ForEach(data.Add);
     
-    public bool TryGetElementAt(int index, [NotNullWhen(true)] out ISaberListCell? saberListCell)
-    {
-        saberListCell = data.ElementAtOrDefault(index);
-        return saberListCell != null;
-    }
+    public bool TryGetElementAt(int index, [NotNullWhen(true)] out IListCellInfo? saberListCell) => 
+        (saberListCell = data.ElementAtOrDefault(index)) != null;
 
-    public IEnumerator<ISaberListCell> GetEnumerator() => data.GetEnumerator();
+    public IEnumerator<IListCellInfo> GetEnumerator() => data.GetEnumerator();
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

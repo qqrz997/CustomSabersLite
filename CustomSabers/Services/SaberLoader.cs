@@ -6,7 +6,7 @@ using CustomSabersLite.Utilities.Common;
 using CustomSabersLite.Utilities.Extensions;
 using UnityEngine;
 
-namespace CustomSabersLite.Utilities.Services;
+namespace CustomSabersLite.Services;
 
 internal class SaberLoader
 {
@@ -46,12 +46,12 @@ internal class SaberLoader
             return new NoSaberData(saberFile, SaberLoaderError.NullAsset);
         }
 
-        var descriptor = saberPrefab.GetComponent<SaberDescriptor>();
+        var saberDescriptor = saberPrefab.GetComponent<SaberDescriptor>();
 
         saberPrefab.hideFlags |= HideFlags.DontUnloadUnusedAsset;
-        saberPrefab.name += $" {descriptor.SaberName}";
+        saberPrefab.name += $" {saberDescriptor.SaberName}";
 
-        var icon = descriptor.CoverImage;
+        var icon = saberDescriptor.CoverImage;
         if (icon != null && icon.texture != null)
             icon = icon.texture.DuplicateTexture().Downscale(128, 128).ToSprite();
         spriteCache.AddSprite(saberFile.Hash, icon);
@@ -61,17 +61,15 @@ internal class SaberLoader
         #else
         await ShaderRepairUtils.RepairSaberShadersAsync(saberPrefab);
         #endif
-
-        return
-            new CustomSaberData(
-                new(saberFile,
-                    SaberLoaderError.None,
-                    new(RichTextString.Create(descriptor.SaberName),
-                        RichTextString.Create(descriptor.AuthorName),
-                        icon != null ? icon : CSLResources.NullCoverImage),
-                    CustomTrailUtils.GetTrailsFromCustomSaber(saberPrefab).Any(),
-                    favouritesManager.IsFavourite(saberFile)),
-                bundle,
-                new CustomSaberPrefab(saberPrefab));
+        
+        var saberName = RichTextString.Create(saberDescriptor.SaberName);
+        var authorName = RichTextString.Create(saberDescriptor.AuthorName);
+        var saberIcon = icon != null ? icon : CSLResources.NullCoverImage;
+        var descriptor = new Descriptor(saberName, authorName, saberIcon);
+        var hasTrails = CustomTrailUtils.GetTrailsFromCustomSaber(saberPrefab).Any();
+        var isFavourite = favouritesManager.IsFavourite(saberFile);
+        var metadata = new CustomSaberMetadata(saberFile, SaberLoaderError.None, descriptor, hasTrails, isFavourite); 
+        var customSaberPrefab = new CustomSaberPrefab(saberPrefab);
+        return new CustomSaberData(metadata, bundle, customSaberPrefab);
     }
 }

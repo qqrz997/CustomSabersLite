@@ -3,7 +3,7 @@ using System.Linq;
 using CustomSaber;
 using CustomSabersLite.Utilities.Extensions;
 
-namespace CustomSabersLite.Utilities.Services;
+namespace CustomSabersLite.Services;
 
 internal class SaberEventService : IDisposable
 {

@@ -1,9 +1,9 @@
 ﻿using CustomSabersLite.Components;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Models;
+using CustomSabersLite.Services;
 using CustomSabersLite.Utilities.Common;
 using CustomSabersLite.Utilities.Extensions;
-using CustomSabersLite.Utilities.Services;
 using UnityEngine;
 
 namespace CustomSabersLite.Menu;

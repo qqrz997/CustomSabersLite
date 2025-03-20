@@ -8,7 +8,7 @@ using CustomSabersLite.Utilities.Common;
 using CustomSabersLite.Utilities.Extensions;
 using IPA.Utilities;
 
-namespace CustomSabersLite.Utilities.Services;
+namespace CustomSabersLite.Services;
 
 internal class SaberMetadataCacheMigrationManager
 {

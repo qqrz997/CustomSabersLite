@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using CustomSabersLite.Menu.Views;
-using CustomSabersLite.Utilities.Services;
+using CustomSabersLite.Services;
 using HMUI;
 using Zenject;
 using static CustomSabersLite.Utilities.Common.UnityAsync;

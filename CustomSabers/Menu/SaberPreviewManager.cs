@@ -3,8 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Models;
+using CustomSabersLite.Services;
 using CustomSabersLite.Utilities.Extensions;
-using CustomSabersLite.Utilities.Services;
 using UnityEngine;
 using Zenject;
 

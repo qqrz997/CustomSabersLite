@@ -2,29 +2,24 @@
 
 namespace CustomSabersLite.Models;
 
-internal class CustomSaberData : ISaberData
+internal class CustomSaberData(
+    CustomSaberMetadata metadata,
+    AssetBundle assetBundle,
+    ISaberPrefab customSaberPrefab) : ISaberData
 {
-    private readonly AssetBundle bundle;
-    
-    public CustomSaberData(CustomSaberMetadata metadata, AssetBundle assetBundle, ISaberPrefab customSaberPrefab)
-    {
-        bundle = assetBundle;
-        Metadata = metadata;
-        Prefab = customSaberPrefab;
-    }
-
-    public CustomSaberMetadata Metadata { get; }
-    public ISaberPrefab Prefab { get; }
+    public CustomSaberMetadata Metadata { get; } = metadata;
+    public ISaberPrefab Prefab { get; } = customSaberPrefab;
+    private AssetBundle Bundle { get; } = assetBundle;
 
     public void Dispose(bool unloadAllLoadedObjects)
     {
         if (unloadAllLoadedObjects) Prefab.Dispose();
-        if (bundle != null) bundle.Unload(unloadAllLoadedObjects);
+        if (Bundle != null) Bundle.Unload(unloadAllLoadedObjects);
     }
 
     public void Dispose()
     {
         Prefab.Dispose();
-        if (bundle != null) bundle.Unload(true);
+        if (Bundle != null) Bundle.Unload(true);
     }
 }

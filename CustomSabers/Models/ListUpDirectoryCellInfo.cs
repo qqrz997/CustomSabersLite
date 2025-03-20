@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace CustomSabersLite.Models;
 
-internal class SaberListUpDirectoryCell : ISaberListCell
+internal class ListUpDirectoryCellInfo : IListCellInfo
 {
-    public SaberListUpDirectoryCell(DirectoryInfo directoryInfo)
+    public ListUpDirectoryCellInfo(DirectoryInfo directoryInfo)
     {
         AuthorText = RichTextString.Create(directoryInfo.Name);
         DirectoryInfo = directoryInfo;

@@ -23,6 +23,8 @@ internal class CSLResources
     public static Sprite PreviewHeldIcon { get; } = LoadSpriteResource("preview-held.png");
     public static Sprite EllipsisIcon { get; } = LoadSpriteResource("ellipsis.png");
     public static Sprite FavouriteBlockedIcon { get; } = LoadSpriteResource("favourite-blocked.png");
+    public static Sprite CustomTrailIcon { get; } = LoadSpriteResource("custom-trail.png");
+    public static Sprite NoTrailIcon { get; } = LoadSpriteResource("no-trail.png");
     
 
     private static Sprite LoadSpriteResource(string resourceName) =>
