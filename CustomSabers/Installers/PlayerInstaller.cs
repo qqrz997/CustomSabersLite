@@ -1,4 +1,5 @@
-﻿using CustomSabersLite.Components;
+﻿using System.Threading;
+using CustomSabersLite.Components;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Services;
 using JetBrains.Annotations;
@@ -28,7 +29,7 @@ internal class PlayerInstaller : Installer
         }
 
         Container.BindInterfacesAndSelfTo<SaberEventService>().AsTransient();
-        Container.BindInstance(saberFactory.InstantiateCurrentSabers()).AsSingle();
+        Container.BindInstance(saberFactory.InstantiateCurrentSabers(CancellationToken.None)).AsSingle();
         
         // This replaces the default sabers
         Container.BindInstance(SaberModelRegistration.Create<LiteSaberModelController>(5));

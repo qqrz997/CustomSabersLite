@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using CustomSabersLite.Models;
 
@@ -24,15 +25,25 @@ internal class CustomSabersLoader
         this.whackerLoader = whackerLoader;
     }
 
-    public async Task<ISaberData> GetSaberData(SaberFileInfo saberFile, bool keepSaberInstance) =>
+    public async Task<ISaberData> GetSaberData(
+        SaberFileInfo saberFile,
+        bool keepSaberInstance,
+        CancellationToken token) => 
         saberPrefabCache.TryGetSaberPrefab(saberFile.Hash, out var saberData) ? saberData 
-            : await LoadNew(saberFile, keepSaberInstance);
+            : await LoadNew(saberFile, keepSaberInstance, token);
 
-    private async Task<ISaberData> LoadNew(SaberFileInfo saberFile, bool keepSaberInstance)
+    private async Task<ISaberData> LoadNew(SaberFileInfo saberFile, bool keepSaberInstance, CancellationToken token)
     {
         try
         {
             var saberData = await LoadSaberDataAsync(saberFile);
+
+            if (token.IsCancellationRequested)
+            {
+                // todo: while unlikely, it should be possible that a saber is loaded twice before this dispose 
+                saberData.Dispose();
+                throw new OperationCanceledException();
+            }
 
             if (keepSaberInstance && saberData is CustomSaberData customSaber)
             {
@@ -40,6 +51,10 @@ internal class CustomSabersLoader
             }
 
             return saberData;
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
         }
         catch (DirectoryNotFoundException)
         {

@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Common;
+using CustomSabersLite.Utilities.Extensions;
 using Newtonsoft.Json;
 using Zenject;
 
@@ -53,8 +54,7 @@ internal class FavouritesManager : IInitializable
     
     private void SaveFavourites()
     {
-        updateFavouritesTokenSource.Cancel();
-        updateFavouritesTokenSource.Dispose();
+        updateFavouritesTokenSource.CancelThenDispose();
         updateFavouritesTokenSource = new();
 
         try

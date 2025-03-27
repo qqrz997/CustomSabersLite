@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CustomSabersLite.Menu.Views;
 using CustomSabersLite.Services;
+using CustomSabersLite.Utilities.Extensions;
 using HMUI;
 using Zenject;
 using static CustomSabersLite.Utilities.Common.UnityAsync;
@@ -24,11 +25,8 @@ internal class CslFlowCoordinator : FlowCoordinator
         if (firstActivation) showBackButton = true;
         if (addedToHierarchy) ProvideInitialViewControllers(saberList, saberSettings);
         
-        SetTitle(metadataCacheLoader.CurrentProgress switch
-        {
-            { Completed: true } => "Custom Sabers",
-            _ => FormatProgress(metadataCacheLoader.CurrentProgress)            
-        });
+        SetTitle(metadataCacheLoader.CurrentProgress is { Completed: true } ? "Custom Sabers"
+            : FormatProgress(metadataCacheLoader.CurrentProgress));
     }
 
     public override void BackButtonWasPressed(ViewController topViewController) => DidFinish?.Invoke();
@@ -44,8 +42,7 @@ internal class CslFlowCoordinator : FlowCoordinator
             return;
         }
 
-        titleTokenSource.Cancel();
-        titleTokenSource.Dispose();
+        titleTokenSource.CancelThenDispose();
         titleTokenSource = new();
         
         StartUnitySafeTask(() => AnimateTitleOnLoadingCompleted(titleTokenSource.Token));
@@ -61,6 +58,5 @@ internal class CslFlowCoordinator : FlowCoordinator
     protected void OnDestroy() => titleTokenSource.Dispose();
     
     private static string FormatProgress(MetadataCacheLoader.Progress progress) => 
-        !progress.StagePercent.HasValue ? $"{progress.Stage}"
-        : $"{progress.Stage} {progress.StagePercent.Value}%";
+        progress is { StagePercent: int p } ? $"{progress.Stage} {p}%" : $"{progress.Stage}";
 }

@@ -1,9 +1,14 @@
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Common;
+using JetBrains.Annotations;
 
 namespace CustomSabersLite.Services;
 
@@ -23,25 +28,50 @@ internal class FileManager
     /// ignore duplicate saber files with the same hash.
     /// </summary>
     /// <returns>An array containing each saber file info</returns>
-    public async Task<SaberFileInfo[]> GetSaberFilesAsync() => await Task.Run(GetDistinctSaberFiles);
+    public async Task<SaberFileInfo[]> GetSaberFilesAsync(CancellationToken token, IProgress<int> progress) => 
+        await Task.Run(() => GetDistinctSaberFiles(token, progress), token);
     
-    // todo: optimize this by hashing files in parallel
-    private SaberFileInfo[] GetDistinctSaberFiles() => 
-        directoryManager.CustomSabers.EnumerateSaberFiles(SearchOption.AllDirectories)
-            .Select(TryCreateSaberFile)
-            .OfType<SaberFileInfo>()
-            .Distinct(new SaberFileInfoHashComparer())
-            .ToArray();
+    private SaberFileInfo[] GetDistinctSaberFiles(CancellationToken token, IProgress<int> progress)
+    {
+        progress.Report(0);
+        
+        var fileInfos = directoryManager.CustomSabers.EnumerateSaberFiles(SearchOption.AllDirectories).ToList();
+        int i = 0;
+        int lastPercent = 0;
+        var saberFileBag = new ConcurrentBag<SaberFileInfo>();
+        var parallelOptions = new ParallelOptions
+        {
+            MaxDegreeOfParallelism = Environment.ProcessorCount / 2 - 1,
+            CancellationToken = token
+        };
+        
+        Parallel.ForEach(fileInfos, parallelOptions, file =>
+        {
+            if (TryCreateSaberFile(file, out var saberFileInfo)) saberFileBag.Add(saberFileInfo);
+            
+            int newPercent = (i + 1) * 100 / fileInfos.Count;
+            if (newPercent != lastPercent)
+            {
+                progress.Report(newPercent);
+                lastPercent = newPercent;
+            }
+            i++;
+        });
 
-    private SaberFileInfo? TryCreateSaberFile(FileInfo file)
+        return saberFileBag.Distinct(new SaberFileInfoHashComparer()).ToArray();
+    }
+
+    private bool TryCreateSaberFile(FileInfo file, [NotNullWhen(true)] out SaberFileInfo? saberFileInfo)
     {
         try
         {
-            return new(file, SaberHashing.MD5Checksum(file, "x2"), timeService.GetUtcTime());
+            saberFileInfo = new(file, SaberHashing.MD5Checksum(file, "x2"), timeService.GetUtcTime());
+            return true;
         }
         catch
         {
-            return null;
+            saberFileInfo = null;
+            return false;
         }
     }
 

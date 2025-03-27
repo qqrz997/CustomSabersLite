@@ -248,8 +248,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
     {
         try
         {
-            saberPreviewTokenSource.Cancel();
-            saberPreviewTokenSource.Dispose();
+            saberPreviewTokenSource.CancelThenDispose();
             saberPreviewTokenSource = new();
             await previewManager.GeneratePreview(saberPreviewTokenSource.Token);
         }
