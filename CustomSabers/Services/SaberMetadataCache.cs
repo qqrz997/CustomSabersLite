@@ -39,34 +39,34 @@ internal class SaberMetadataCache
 
     public IEnumerable<CustomSaberMetadata> GetSortedData(SaberListFilterOptions options)
     {
-        var cache = RefreshCache();
+        var data = RefreshCache();
         
         if (options.Trails)
         {
-            cache = cache.Where(meta => meta.HasTrails);
+            data = data.Where(meta => meta.HasTrails);
         }
 
         if (options.Favourites)
         {
-            cache = cache.Where(meta => meta.IsFavourite);
+            data = data.Where(meta => meta.IsFavourite);
         }
 
         if (!string.IsNullOrWhiteSpace(options.SearchFilter))
         {
-            cache = cache.Where(meta =>
-                meta.Descriptor.SaberName.Contains(options.SearchFilter)
-                || meta.Descriptor.AuthorName.Contains(options.SearchFilter));
+            data = data.Where(meta =>
+                meta.Descriptor.SaberName.Contains(options.SearchFilter, StringComparison.CurrentCultureIgnoreCase)
+                || meta.Descriptor.AuthorName.Contains(options.SearchFilter, StringComparison.CurrentCultureIgnoreCase));
         }
         
-        cache = options.OrderBy switch
+        data = options.OrderBy switch
         {
-            OrderBy.Name => cache.OrderBy(x => x.Descriptor.SaberName).ThenBy(x => x.Descriptor.AuthorName),
-            OrderBy.Author => cache.OrderBy(x => x.Descriptor.AuthorName).ThenBy(x => x.Descriptor.SaberName),
-            OrderBy.RecentlyAdded => cache.OrderBy(x => x.SaberFile.DateAdded).ThenBy(x => x.Descriptor.SaberName),
+            OrderBy.Name => data.OrderBy(x => x.Descriptor.SaberName).ThenBy(x => x.Descriptor.AuthorName),
+            OrderBy.Author => data.OrderBy(x => x.Descriptor.AuthorName).ThenBy(x => x.Descriptor.SaberName),
+            OrderBy.RecentlyAdded => data.OrderBy(x => x.SaberFile.DateAdded).ThenBy(x => x.Descriptor.SaberName),
             _ => throw new ArgumentOutOfRangeException(nameof(options.OrderBy))
         };
         
-        return options.ReverseOrder ? cache.Reverse() : cache;
+        return options.ReverseOrder ? data.Reverse() : data;
     }
 
     private IEnumerable<CustomSaberMetadata> RefreshCache()
