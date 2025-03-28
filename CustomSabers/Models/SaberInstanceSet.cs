@@ -15,14 +15,6 @@ internal class SaberInstanceSet : IDisposable
     public ITrailData[] RightTrails { get; }
     
     /// <summary>
-    /// Create a saber set from existing sabers with no trails. The sabers should not have any parent objects.
-    /// </summary>
-    /// <param name="leftSaber">A single, existing saber</param>
-    /// <param name="rightSaber">A single, existing saber</param>
-    public SaberInstanceSet(ILiteSaber leftSaber, ILiteSaber rightSaber) =>
-        (LeftSaber, RightSaber, LeftTrails, RightTrails) = (leftSaber, rightSaber, [], []);
-    
-    /// <summary>
     /// Create a saber set from existing sabers and trails. The sabers should not have any parent objects.
     /// </summary>
     /// <param name="leftSaber">A single, existing saber</param>
@@ -30,28 +22,8 @@ internal class SaberInstanceSet : IDisposable
     /// <param name="leftTrails">The trails to use on the left saber</param>
     /// <param name="rightTrails">The trails to use on the right saber</param>
     public SaberInstanceSet(
-        ILiteSaber? leftSaber,
-        ILiteSaber? rightSaber,
-        ITrailData[] leftTrails,
-        ITrailData[] rightTrails) =>
+        ILiteSaber? leftSaber, ILiteSaber? rightSaber, ITrailData[] leftTrails, ITrailData[] rightTrails) =>
         (LeftSaber, RightSaber, LeftTrails, RightTrails) = (leftSaber, rightSaber, leftTrails, rightTrails);
-
-    /// <summary>
-    /// Create a saber instance from a new saber object and trails.
-    /// </summary>
-    /// <param name="saberRoot">The root GameObject of the new saber. Do not provide a prefab.</param>
-    /// <param name="leftTrails">The trails to use on the left saber</param>
-    /// <param name="rightTrails">The trails to use on the right saber</param>
-    public SaberInstanceSet(GameObject saberRoot, ITrailData[] leftTrails, ITrailData[] rightTrails)
-    {
-        root = saberRoot;
-        LeftTrails = leftTrails;
-        RightTrails = rightTrails;
-        var left = root.transform.Find("LeftSaber")?.gameObject;
-        var right = root.transform.Find("RightSaber")?.gameObject;
-        if (left != null) LeftSaber = new CustomLiteSaber(left);
-        if (right != null) RightSaber = new CustomLiteSaber(right);
-    }
     
     /// <summary>
     /// Instantiate a new saber instance from a saber prefab 
@@ -74,8 +46,17 @@ internal class SaberInstanceSet : IDisposable
     /// <param name="rightTrails">The trails to use on the right saber</param>
     /// <returns></returns>
     public SaberInstanceSet WithTrails(ITrailData[] leftTrails, ITrailData[] rightTrails) => 
-        new(LeftSaber, RightSaber, leftTrails, rightTrails);
+        new(root, LeftSaber, RightSaber, leftTrails, rightTrails);
 
+    private SaberInstanceSet(
+        GameObject? saberRoot,
+        ILiteSaber? leftSaber,
+        ILiteSaber? rightSaber,
+        ITrailData[] leftTrails,
+        ITrailData[] rightTrails) =>
+        (root, LeftSaber, RightSaber, LeftTrails, RightTrails) =
+        (saberRoot, leftSaber, rightSaber, leftTrails, rightTrails);
+    
     public ILiteSaber? GetSaberForType(SaberType type) => type == SaberType.SaberA ? LeftSaber : RightSaber;
     public ITrailData[] GetTrailsForType(SaberType type) => type == SaberType.SaberA ? LeftTrails : RightTrails;
     
