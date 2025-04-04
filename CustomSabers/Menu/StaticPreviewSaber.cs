@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace CustomSabersLite.Menu;
 
-internal class BasicPreviewSaber
+internal class StaticPreviewSaber
 {
-    private readonly Transform root = new GameObject("BasicPreviewSaber").transform;
+    private readonly Transform root = new GameObject("StaticPreviewSaber").transform;
     private ILiteSaber? saber;
     
     public void SetParent(Transform parent) => root.SetParent(parent, false);

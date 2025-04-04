@@ -12,7 +12,6 @@ using CustomSabersLite.Utilities.Extensions;
 using Newtonsoft.Json;
 using SiraUtil.Zenject;
 using UnityEngine;
-using Zenject;
 using static CustomSabersLite.Utilities.Common.JsonReading;
 
 namespace CustomSabersLite.Services;

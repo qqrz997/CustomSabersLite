@@ -47,10 +47,10 @@ internal class MenuInstaller : Installer
         Container.Bind<MenuSaber>().WithId(SaberType.SaberB).AsCached();
         
         Container.BindInterfacesAndSelfTo<StaticPreviewManager>().AsSingle();
-        Container.Bind<BasicPreviewSaberManager>().AsSingle();
-        Container.Bind<BasicPreviewTrailManager>().AsSingle();
-        Container.Bind<BasicPreviewTrail>().WithId(SaberType.SaberA).AsCached();
-        Container.Bind<BasicPreviewTrail>().WithId(SaberType.SaberB).AsCached();
+        Container.Bind<StaticPreviewSaberManager>().AsSingle();
+        Container.Bind<StaticPreviewTrailManager>().AsSingle();
+        Container.Bind<StaticPreviewTrail>().WithId(SaberType.SaberA).AsCached();
+        Container.Bind<StaticPreviewTrail>().WithId(SaberType.SaberB).AsCached();
 
         var time = IPA.Utilities.Utils.CanUseDateTimeNowSafely ? DateTime.Now : DateTime.UtcNow;
         if (time is { Year: 2025, Month: 4, Day: 1 })

@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace CustomSabersLite.Menu;
 
-internal class BasicPreviewTrail
+internal class StaticPreviewTrail
 {
     private readonly PluginConfig config;
 
@@ -18,11 +18,11 @@ internal class BasicPreviewTrail
     private readonly Vector2[] uvs = [new(1, 0), new(0, 0), new(1, 1), new(0, 1)];
     private readonly Color[] colors = new Color[4];
 
-    public BasicPreviewTrail(PluginConfig config)
+    public StaticPreviewTrail(PluginConfig config)
     {
         this.config = config;
         
-        gameObject = new("BasicPreviewTrail");
+        gameObject = new("StaticPreviewTrail");
         meshRenderer = gameObject.AddComponent<MeshRenderer>();
         gameObject.AddComponent<MeshFilter>().mesh = mesh;
         mesh.MarkDynamic();

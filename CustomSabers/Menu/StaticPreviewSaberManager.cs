@@ -3,10 +3,10 @@ using UnityEngine;
 
 namespace CustomSabersLite.Menu;
 
-internal class BasicPreviewSaberManager
+internal class StaticPreviewSaberManager
 {
-    private readonly BasicPreviewSaber leftSaber = new();
-    private readonly BasicPreviewSaber rightSaber = new();
+    private readonly StaticPreviewSaber leftSaber = new();
+    private readonly StaticPreviewSaber rightSaber = new();
 
     public void Init(Transform leftParent, Transform rightParent)
     {

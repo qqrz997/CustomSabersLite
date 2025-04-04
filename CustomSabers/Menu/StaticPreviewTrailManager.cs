@@ -5,14 +5,14 @@ using Zenject;
 
 namespace CustomSabersLite.Menu;
 
-internal class BasicPreviewTrailManager
+internal class StaticPreviewTrailManager
 {
-    private readonly BasicPreviewTrail leftTrail;
-    private readonly BasicPreviewTrail rightTrail;
+    private readonly StaticPreviewTrail leftTrail;
+    private readonly StaticPreviewTrail rightTrail;
 
-    public BasicPreviewTrailManager(
-        [Inject(Id = SaberType.SaberA)] BasicPreviewTrail leftTrail,
-        [Inject(Id = SaberType.SaberB)] BasicPreviewTrail rightTrail)
+    public StaticPreviewTrailManager(
+        [Inject(Id = SaberType.SaberA)] StaticPreviewTrail leftTrail,
+        [Inject(Id = SaberType.SaberB)] StaticPreviewTrail rightTrail)
     {
         this.leftTrail = leftTrail;
         this.rightTrail = rightTrail;
