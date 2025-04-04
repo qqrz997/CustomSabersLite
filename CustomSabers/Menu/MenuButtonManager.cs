@@ -19,7 +19,7 @@ internal class MenuButtonManager : IInitializable, IDisposable
         this.menuButtons = menuButtons;
         this.cslFlowCoordinator = cslFlowCoordinator;
         this.mainFlowCoordinator = mainFlowCoordinator;
-        menuButton = new("CustomSabersLite", PresentFlowCoordinator);
+        menuButton = new("Custom Sabers", PresentFlowCoordinator);
     }
     
     public void Initialize()
