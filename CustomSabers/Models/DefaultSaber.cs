@@ -18,8 +18,13 @@ internal class DefaultSaber : ILiteSaber
     }
 
     public void SetColor(Color color) => defaultSaberColorer.SetColor(color);
-    public void SetParent(Transform parent) => GameObject.transform.SetParent(parent, false);
-    
+    public void SetParent(Transform parent)
+    {
+        GameObject.transform.SetParent(parent, false);
+        GameObject.transform.position = parent.position;
+        GameObject.transform.rotation = parent.rotation;
+    }
+
     public void SetLength(float length) =>
         GameObject.transform.localScale = GameObject.transform.localScale with { z = length };
 
