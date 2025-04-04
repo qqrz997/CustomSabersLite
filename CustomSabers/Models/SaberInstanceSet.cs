@@ -59,6 +59,13 @@ internal class SaberInstanceSet : IDisposable
     
     public ILiteSaber? GetSaberForType(SaberType type) => type == SaberType.SaberA ? LeftSaber : RightSaber;
     public ITrailData[] GetTrailsForType(SaberType type) => type == SaberType.SaberA ? LeftTrails : RightTrails;
+
+    public void SetActive(bool active)
+    {
+        root?.SetActive(active);
+        LeftSaber?.GameObject.SetActive(active);
+        RightSaber?.GameObject.SetActive(active);
+    }
     
     public void Dispose()
     {
