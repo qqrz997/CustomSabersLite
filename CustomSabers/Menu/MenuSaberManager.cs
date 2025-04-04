@@ -7,7 +7,6 @@ namespace CustomSabersLite.Menu;
 
 internal class MenuSaberManager
 {
-    private readonly MenuPointers menuPointers;
     private readonly MenuSaber leftSaber;
     private readonly MenuSaber rightSaber;
 
@@ -16,12 +15,11 @@ internal class MenuSaberManager
         [Inject(Id = SaberType.SaberA)] MenuSaber leftSaber,
         [Inject(Id = SaberType.SaberB)] MenuSaber rightSaber)
     {
-        leftSaber.SetParent(menuPointers.LeftParent);
-        rightSaber.SetParent(menuPointers.RightParent);
-        
-        this.menuPointers = menuPointers;
         this.leftSaber = leftSaber;
         this.rightSaber = rightSaber;
+        var (left, right) = menuPointers.Parents;
+        this.leftSaber.SetParent(left);
+        this.rightSaber.SetParent(right);
     }
 
     public void ReplaceSabers(SaberInstanceSet saberSet)
@@ -46,13 +44,5 @@ internal class MenuSaberManager
     {
         leftSaber.SetColor(left);
         rightSaber.SetColor(right);
-    }
-
-    public void SetActive(bool active)
-    {
-        leftSaber.SetActive(active);
-        rightSaber.SetActive(active);
-
-        menuPointers.SetPointerVisibility(!active);
     }
 }

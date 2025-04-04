@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using CustomSabersLite.Configuration;
@@ -10,83 +11,52 @@ using Zenject;
 
 namespace CustomSabersLite.Menu;
 
-internal class SaberPreviewManager : IInitializable, IDisposable
+internal class SaberPreviewManager
 {
     [Inject] private readonly SaberFactory saberFactory = null!;
     [Inject] private readonly PluginConfig config = null!;
     [Inject] private readonly ColorSchemesSettings colorSchemesSettings = null!;
-
-    [Inject] private readonly MenuSaberManager menuSaberManager = null!;
-    [Inject] private readonly BasicPreviewTrailManager basicPreviewTrailManager = null!;
-    [Inject] private readonly BasicPreviewSaberManager basicPreviewSaberManager = null!;
-
-    private readonly Transform previewParent = new GameObject("CustomSabersLite Basic Preview").transform;
-    private readonly Transform leftPreviewParent = new GameObject("Left").transform;
-    private readonly Transform rightPreviewParent = new GameObject("Right").transform;
-
-    private bool previewActive;
-    private bool previewGenerating;
-
-    private SaberInstanceSet? basicPreviewSaberSet;
-    private SaberInstanceSet? heldPreviewSaberSet;
+    [Inject] private readonly MenuPointers menuPointers = null!;
+    [Inject] private readonly ICoroutineStarter coroutineStarter = null!;
     
-    public void Initialize()
-    {
-        leftPreviewParent.SetParent(previewParent);
-        rightPreviewParent.SetParent(previewParent);
+    [Inject] private readonly MenuSaberManager menuSaberManager = null!;
+    [Inject] private readonly StaticPreviewManager staticPreviewManager = null!;
 
-        previewParent.SetPositionAndRotation(new(0.8f, 0.8f, 1.1f), Quaternion.Euler(270f, 125f, 0f));
-        leftPreviewParent.localPosition = new(0f, 0.16f, 0f);
-        rightPreviewParent.localPosition = new(0f, -0.16f, 0f);
-        rightPreviewParent.localRotation = Quaternion.Euler(0f, 0f, 180f);
+    private readonly AnimationCurve animateSabersCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+    private readonly List<Coroutine> animations = [];
 
-        basicPreviewSaberManager.Init(leftPreviewParent, rightPreviewParent);
-        basicPreviewTrailManager.Init(leftPreviewParent, rightPreviewParent);
-    }
+    private enum PreviewPosition { Animating, Generating, Static, Held }
+    private const float AnimationDuration = 0.66f;
+    
+    private bool previewActive;
+    private PreviewPosition previewPosition = PreviewPosition.Static;
+    private SaberInstanceSet? saberSet;
+    private CancellationTokenSource animationTokenSource = new();
 
     public async Task GeneratePreview(CancellationToken token)
     {
+        CancelAnimations();
+        SetNewPosition(PreviewPosition.Generating);
+        
         Logger.Debug("Generating preview");
-        previewGenerating = true;
-        UpdateActivePreview();
         
-        basicPreviewSaberSet?.Dispose();
-        heldPreviewSaberSet?.Dispose();
-
-        basicPreviewSaberSet = await saberFactory.InstantiateCurrentSabers(token);
+        saberSet?.Dispose();
+        saberSet = await saberFactory.InstantiateCurrentSabers(token);
         token.ThrowIfCancellationRequested();
-        basicPreviewTrailManager.SetTrails(basicPreviewSaberSet);
         
-        heldPreviewSaberSet = await saberFactory.InstantiateCurrentSabers(token);
-        token.ThrowIfCancellationRequested();
-        basicPreviewSaberManager.ReplaceSabers(basicPreviewSaberSet.LeftSaber, basicPreviewSaberSet.RightSaber);
-
-        menuSaberManager.ReplaceSabers(heldPreviewSaberSet);
+        menuSaberManager.ReplaceSabers(saberSet);
+        staticPreviewManager.ReplaceSabers(saberSet);
 
         UpdateTrails();
         UpdateSaberModels();
         UpdateColor();
-
-        previewGenerating = false;
-        UpdateActivePreview();
+        
+        UpdateActivePreviewInstant();
     }
-
-    public void SetPreviewActive(bool active)
-    {
-        previewActive = active;
-        UpdateActivePreview();
-    }
-
-    public void UpdateActivePreview()
-    {
-        bool previewIsActive = previewActive && !previewGenerating;
-        previewParent.gameObject.SetActive(previewIsActive && !config.EnableMenuSabers);
-        menuSaberManager.SetActive(previewIsActive && config.EnableMenuSabers);
-    }
-
+    
     public void UpdateTrails()
     {
-        basicPreviewTrailManager.UpdateTrails();
+        staticPreviewManager.UpdateTrails();
         menuSaberManager.UpdateTrails();
     }
 
@@ -94,22 +64,90 @@ internal class SaberPreviewManager : IInitializable, IDisposable
     {
         float length = config.OverrideSaberLength ? config.SaberLength : 1f;
         float width = config.OverrideSaberWidth ? config.SaberWidth : 1f;
-        basicPreviewSaberManager.UpdateSaberScale(length, width);
+        staticPreviewManager.UpdateSaberScale(length, width);
         menuSaberManager.UpdateSaberScale(length, width);
-        basicPreviewTrailManager.UpdateTrails();
     }
 
-    public void UpdateColor()
+    public void SetPreviewActive(bool active)
+    {
+        previewActive = active;
+        UpdateActiveObjects();
+    }
+    
+    public void UpdateActivePreviewAnimated()
+    {
+        bool isGenerating = previewPosition == PreviewPosition.Generating;
+        if (!previewActive || isGenerating || saberSet is null) return;
+        
+        CancelAnimations();
+        SetNewPosition(PreviewPosition.Animating);
+        var token = animationTokenSource.Token;
+        var (left, right) = config.EnableMenuSabers ? menuPointers.Parents : staticPreviewManager.Parents;
+        var leftAnim = AnimateSaberToParent(saberSet.LeftSaber, left);
+        var rightAnim = AnimateSaberToParent(saberSet.RightSaber, right);
+        animations.AddRange(coroutineStarter.StartCoroutines(leftAnim, rightAnim));
+        return;
+        
+        IEnumerator AnimateSaberToParent(ILiteSaber? saber, Transform target)
+        {
+            if (saber is null) yield break;
+            var transform = saber.GameObject.transform;
+            transform.parent = null;
+            var (startPos, startRot) = (transform.position, transform.rotation);
+            float t = 0f;
+            while (t < 1f && !token.IsCancellationRequested)
+            {
+                t += Time.deltaTime / AnimationDuration;
+                float tx = animateSabersCurve.Evaluate(t);
+                transform.position = Vector3.Lerp(startPos, target.position, tx);
+                transform.rotation = Quaternion.Slerp(startRot, target.rotation, tx);
+                yield return null;
+            }
+            saber.SetParent(target);
+            SetNewPosition(config.EnableMenuSabers ? PreviewPosition.Held : PreviewPosition.Static);
+        }
+    }
+
+    private void UpdateColor()
     {
         var selectedColorScheme = colorSchemesSettings.GetSelectedColorScheme();
         var (colorLeft, colorRight) = (selectedColorScheme.saberAColor, selectedColorScheme.saberBColor);
-        basicPreviewSaberManager.SetColor(colorLeft, colorRight);
         menuSaberManager.SetColor(colorLeft, colorRight);
-        basicPreviewTrailManager.SetColor(colorLeft, colorRight);
+        staticPreviewManager.SetColor(colorLeft, colorRight);
     }
 
-    public void Dispose()
+    private void UpdateActivePreviewInstant()
     {
-        if (previewParent != null) previewParent.gameObject.Destroy();
+        if (!previewActive || saberSet is null) return;
+        CancelAnimations();
+
+        var (left, right) = config.EnableMenuSabers ? menuPointers.Parents : staticPreviewManager.Parents;
+        saberSet.LeftSaber?.SetParent(left);
+        saberSet.RightSaber?.SetParent(right);
+        
+        SetNewPosition(config.EnableMenuSabers ? PreviewPosition.Held : PreviewPosition.Static);
+    }
+
+    private void SetNewPosition(PreviewPosition position)
+    {
+        previewPosition = position;
+        UpdateActiveObjects();
+    }
+
+    private void UpdateActiveObjects()
+    {
+        bool isHeld = previewPosition == PreviewPosition.Held;
+        bool isAnimating = previewPosition == PreviewPosition.Animating;
+        bool isGenerating = previewPosition == PreviewPosition.Generating;
+        staticPreviewManager.SetActive(previewActive && !isGenerating && !isAnimating && !isHeld); 
+        menuPointers.SetPointerVisibility(!(previewActive && !isGenerating && !isAnimating && isHeld));
+    }
+    
+    private void CancelAnimations()
+    {
+        animationTokenSource.CancelThenDispose();
+        animationTokenSource = new();
+        animations.ForEach(coroutineStarter.StopCoroutine);
+        animations.Clear();
     }
 }

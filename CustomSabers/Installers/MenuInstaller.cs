@@ -46,6 +46,7 @@ internal class MenuInstaller : Installer
         Container.Bind<MenuSaber>().WithId(SaberType.SaberA).AsCached();
         Container.Bind<MenuSaber>().WithId(SaberType.SaberB).AsCached();
         
+        Container.BindInterfacesAndSelfTo<StaticPreviewManager>().AsSingle();
         Container.Bind<BasicPreviewSaberManager>().AsSingle();
         Container.Bind<BasicPreviewTrailManager>().AsSingle();
         Container.Bind<BasicPreviewTrail>().WithId(SaberType.SaberA).AsCached();

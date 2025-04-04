@@ -28,9 +28,6 @@ internal class MenuSaber
 
     public void ReplaceSaber(ILiteSaber? newSaber, ITrailData[] newTrails)
     {
-        liteSaberInstance?.Destroy();
-        trailInstances.ForEach(t => { if (t && t._trailRenderer) t._trailRenderer.gameObject.Destroy(); });
-        
         if (newSaber is null) return;
 
         newSaber.SetParent(parent);
@@ -40,22 +37,32 @@ internal class MenuSaber
         liteSaberInstance = newSaber;
     }
 
-    public void UpdateTrails() => trailInstances.ConfigureTrails(config);
+    public void UpdateTrails()
+    {
+        trailInstances.ConfigureTrails(config);
+    }
 
     public void UpdateSaberScale(float length, float width)
     {
-        if (liteSaberInstance == null) return;
+        if (liteSaberInstance is null) return;
         liteSaberInstance.SetLength(length);
         liteSaberInstance.SetWidth(width);
     }
 
-    public void SetParent(Transform t) => parent.SetParent(t, false); 
-    
+    public void SetParent(Transform t)
+    {
+        parent.SetParent(t, false);
+    }
+
     public void SetColor(Color color)
     {
         liteSaberInstance?.SetColor(color);
         trailInstances.ForEach(t => t.SetColor(color));
     }
 
-    public void SetActive(bool active) => parent.gameObject.SetActive(liteSaberInstance != null && active);
+    public void SetActive(bool active)
+    {
+        parent.gameObject.SetActive(active);
+        liteSaberInstance?.GameObject.SetActive(active);
+    }
 }

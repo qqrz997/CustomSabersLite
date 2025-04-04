@@ -5,47 +5,30 @@ namespace CustomSabersLite.Menu;
 
 internal class BasicPreviewSaberManager
 {
-    private readonly Transform left = new GameObject("Basic Preview Saber").transform;
-    private readonly Transform right = new GameObject("Basic Preview Saber").transform;
-
-    private ILiteSaber? leftSaber;
-    private ILiteSaber? rightSaber;
+    private readonly BasicPreviewSaber leftSaber = new();
+    private readonly BasicPreviewSaber rightSaber = new();
 
     public void Init(Transform leftParent, Transform rightParent)
     {
-        left.SetParent(leftParent, false);
-        right.SetParent(rightParent, false);
+        leftSaber.SetParent(leftParent);
+        rightSaber.SetParent(rightParent);
     }
 
-    public void ReplaceSabers(ILiteSaber? newLeftSaber, ILiteSaber? newRightSaber)
+    public void ReplaceSabers(SaberInstanceSet saberSet)
     {
-        leftSaber?.Destroy();
-        rightSaber?.Destroy();
-
-        leftSaber = newLeftSaber;
-        rightSaber = newRightSaber;
-
-        leftSaber?.SetParent(left);
-        rightSaber?.SetParent(right);
+        leftSaber.ReplaceSaber(saberSet.LeftSaber);
+        rightSaber.ReplaceSaber(saberSet.RightSaber);
     }
 
     public void SetColor(Color left, Color right)
     {
-        leftSaber?.SetColor(left);
-        rightSaber?.SetColor(right);
+        leftSaber.SetColor(left);
+        rightSaber.SetColor(right);
     }
 
     public void UpdateSaberScale(float length, float width)
     {
-        if (leftSaber != null)
-        {
-            leftSaber.SetLength(length);
-            leftSaber.SetWidth(width);   
-        }
-        if (rightSaber != null)
-        {
-            rightSaber.SetLength(length);
-            rightSaber.SetWidth(width);
-        }
+        leftSaber.SetScale(length, width);
+        rightSaber.SetScale(length, width);
     }
 }

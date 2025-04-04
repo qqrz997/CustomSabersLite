@@ -190,7 +190,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
     {
         config.EnableMenuSabers = !config.EnableMenuSabers;
         previewButtonImage.sprite = config.EnableMenuSabers ? PreviewHeldIcon : PreviewStaticIcon;
-        previewManager.UpdateActivePreview();
+        previewManager.UpdateActivePreviewAnimated();
     }
 
     public async void ReloadButtonPressed()

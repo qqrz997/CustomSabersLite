@@ -19,9 +19,8 @@ internal class MenuPointers
         MeshRenderers.AddRange(GetMenuHandleRenderers(LeftPointer));
         MeshRenderers.AddRange(GetMenuHandleRenderers(RightPointer));
     }
-
-    public Transform LeftParent => LeftPointer.transform;
-    public Transform RightParent => RightPointer.transform;
+    
+    public (Transform leftParent, Transform rightParent) Parents => (LeftPointer.transform, RightPointer.transform);
 
     public void SetPointerVisibility(bool visible) =>
         MeshRenderers.ForEach(r => r.enabled = visible);
