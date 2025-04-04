@@ -264,11 +264,6 @@ internal class SaberListViewController : BSMLAutomaticViewController
     {
         base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
 
-        if (!firstActivation)
-        {
-            StartUnitySafeTask(GeneratePreview);
-        }
-
         saberListManager.OpenFolder(directoryManager.CustomSabers);
         RefreshList();
         
