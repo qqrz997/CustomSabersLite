@@ -26,6 +26,8 @@ internal class MenuSaber
     private ILiteSaber? liteSaberInstance;
     private LiteSaberTrail[] trailInstances = [];
 
+    public Transform Parent => parent;
+    
     public void ReplaceSaber(ILiteSaber? newSaber, ITrailData[] newTrails)
     {
         if (newSaber is null) return;
@@ -63,6 +65,5 @@ internal class MenuSaber
     public void SetActive(bool active)
     {
         parent.gameObject.SetActive(active);
-        liteSaberInstance?.GameObject.SetActive(active);
     }
 }

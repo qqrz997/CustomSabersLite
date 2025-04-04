@@ -13,15 +13,29 @@ namespace CustomSabersLite.Menu;
 
 internal class SaberPreviewManager
 {
-    [Inject] private readonly SaberFactory saberFactory = null!;
-    [Inject] private readonly PluginConfig config = null!;
-    [Inject] private readonly ColorSchemesSettings colorSchemesSettings = null!;
-    [Inject] private readonly MenuPointers menuPointers = null!;
-    [Inject] private readonly ICoroutineStarter coroutineStarter = null!;
-    
-    [Inject] private readonly MenuSaberManager menuSaberManager = null!;
-    [Inject] private readonly StaticPreviewManager staticPreviewManager = null!;
+    private readonly SaberFactory saberFactory;
+    private readonly PluginConfig config;
+    private readonly ColorSchemesSettings colorSchemesSettings;
+    private readonly ICoroutineStarter coroutineStarter;
+    private readonly MenuSaberManager menuSaberManager;
+    private readonly StaticPreviewManager staticPreviewManager;
 
+    public SaberPreviewManager(
+        SaberFactory saberFactory,
+        PluginConfig config,
+        ColorSchemesSettings colorSchemesSettings,
+        ICoroutineStarter coroutineStarter,
+        MenuSaberManager menuSaberManager,
+        StaticPreviewManager staticPreviewManager)
+    {
+        this.saberFactory = saberFactory;
+        this.config = config;
+        this.colorSchemesSettings = colorSchemesSettings;
+        this.coroutineStarter = coroutineStarter;
+        this.menuSaberManager = menuSaberManager;
+        this.staticPreviewManager = staticPreviewManager;
+    }
+    
     private readonly AnimationCurve animateSabersCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
     private readonly List<Coroutine> animations = [];
 
@@ -84,7 +98,7 @@ internal class SaberPreviewManager
         CancelAnimations();
         SetNewPosition(PreviewPosition.Animating);
         var token = animationTokenSource.Token;
-        var (left, right) = config.EnableMenuSabers ? menuPointers.Parents : staticPreviewManager.Parents;
+        var (left, right) = config.EnableMenuSabers ? menuSaberManager.Parents : staticPreviewManager.Parents;
         var leftAnim = AnimateSaberToParent(saberSet.LeftSaber, left);
         var rightAnim = AnimateSaberToParent(saberSet.RightSaber, right);
         animations.AddRange(coroutineStarter.StartCoroutines(leftAnim, rightAnim));
@@ -124,7 +138,7 @@ internal class SaberPreviewManager
         if (!previewActive || saberSet is null) return;
         CancelAnimations();
 
-        var (left, right) = config.EnableMenuSabers ? menuPointers.Parents : staticPreviewManager.Parents;
+        var (left, right) = config.EnableMenuSabers ? menuSaberManager.Parents : staticPreviewManager.Parents;
         saberSet.LeftSaber?.SetParent(left);
         saberSet.RightSaber?.SetParent(right);
         
@@ -142,10 +156,12 @@ internal class SaberPreviewManager
         bool isHeld = previewPosition == PreviewPosition.Held;
         bool isAnimating = previewPosition == PreviewPosition.Animating;
         bool isGenerating = previewPosition == PreviewPosition.Generating;
-        staticPreviewManager.SetActive(previewActive && !isGenerating && !isAnimating && !isHeld);
-        bool heldSabersActive = previewActive && !isGenerating && !isAnimating && isHeld;
-        menuSaberManager.SetActive(heldSabersActive);
-        menuPointers.SetPointerVisibility(!heldSabersActive);
+        bool sabersActive = previewActive && !isGenerating && !isAnimating;
+        staticPreviewManager.SetActive(sabersActive && !isHeld);
+        menuSaberManager.SetActive(sabersActive && isHeld);
+        if (previewActive || saberSet == null) return;
+        saberSet.LeftSaber?.GameObject.SetActive(false);
+        saberSet.RightSaber?.GameObject.SetActive(false);
     }
     
     private void CancelAnimations()
