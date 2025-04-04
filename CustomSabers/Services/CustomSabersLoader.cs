@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,22 +26,29 @@ internal class CustomSabersLoader
         this.whackerLoader = whackerLoader;
     }
 
-    public async Task<ISaberData> GetSaberData(
-        SaberFileInfo saberFile,
-        bool keepSaberInstance,
-        CancellationToken token) => 
-        saberPrefabCache.TryGetSaberPrefab(saberFile.Hash, out var saberData) ? saberData 
-            : await LoadNew(saberFile, keepSaberInstance, token);
+    private readonly Dictionary<SaberFileInfo, Task<ISaberData>> runningTasks = [];
 
-    private async Task<ISaberData> LoadNew(SaberFileInfo saberFile, bool keepSaberInstance, CancellationToken token)
+    public async Task<ISaberData> GetSaberData(SaberFileInfo saberFile, bool keepSaberInstance, CancellationToken token)
     {
+        if (saberPrefabCache.TryGetSaberPrefab(saberFile.Hash, out var cachedSaberData))
+        {
+            return cachedSaberData;
+        }
+        
+        if (runningTasks.TryGetValue(saberFile, out var task))
+        {
+            return await task;
+        }
+
+        var loadSaberDataTask = LoadSaberDataAsync(saberFile);
+        runningTasks.Add(saberFile, loadSaberDataTask);
+
         try
         {
-            var saberData = await LoadSaberDataAsync(saberFile);
+            var saberData = await loadSaberDataTask;
 
             if (token.IsCancellationRequested)
             {
-                // todo: while unlikely, it should be possible that a saber is loaded twice before this dispose 
                 saberData.Dispose();
                 throw new OperationCanceledException();
             }
@@ -52,19 +60,14 @@ internal class CustomSabersLoader
 
             return saberData;
         }
-        catch (OperationCanceledException)
-        {
-            throw;
-        }
         catch (DirectoryNotFoundException)
         {
             return new NoSaberData(saberFile, SaberLoaderError.FileNotFound);
         }
-        catch (Exception ex)
+        finally
         {
-            Logger.Warn($"Problem encountered when trying to load a saber\n{ex}");
+            runningTasks.Remove(saberFile);
         }
-        return new NoSaberData(saberFile, SaberLoaderError.Unknown);
     }
 
     private async Task<ISaberData> LoadSaberDataAsync(SaberFileInfo saberFile) => saberFile.FileInfo.Extension switch
