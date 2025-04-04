@@ -45,4 +45,10 @@ internal class MenuSaberManager
         leftSaber.SetColor(left);
         rightSaber.SetColor(right);
     }
+
+    public void SetActive(bool heldSabersActive)
+    {
+        leftSaber.SetActive(heldSabersActive);
+        rightSaber.SetActive(heldSabersActive);
+    }
 }

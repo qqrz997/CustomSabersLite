@@ -142,8 +142,10 @@ internal class SaberPreviewManager
         bool isHeld = previewPosition == PreviewPosition.Held;
         bool isAnimating = previewPosition == PreviewPosition.Animating;
         bool isGenerating = previewPosition == PreviewPosition.Generating;
-        staticPreviewManager.SetActive(previewActive && !isGenerating && !isAnimating && !isHeld); 
-        menuPointers.SetPointerVisibility(!(previewActive && !isGenerating && !isAnimating && isHeld));
+        staticPreviewManager.SetActive(previewActive && !isGenerating && !isAnimating && !isHeld);
+        bool heldSabersActive = previewActive && !isGenerating && !isAnimating && isHeld;
+        menuSaberManager.SetActive(heldSabersActive);
+        menuPointers.SetPointerVisibility(!heldSabersActive);
     }
     
     private void CancelAnimations()
