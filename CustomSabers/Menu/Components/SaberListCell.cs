@@ -66,7 +66,7 @@ internal class SaberListCell : TableCell
         backgroundImage.enabled = interactable && (selected || highlighted);
     }
 
-    private void OnDestroy()
+    protected override void OnDestroy()
     {
         if (listCellInfo is ListInfoCellInfo infoCell) infoCell.PropertyChanged -= CellInfoPropertyChanged;
     }
