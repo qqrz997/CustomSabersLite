@@ -56,12 +56,14 @@ internal class SaberPreviewManager
     
     public void UpdateTrails()
     {
+        if (!previewActive) return;
         staticPreviewManager.UpdateTrails();
         menuSaberManager.UpdateTrails();
     }
 
     public void UpdateSaberModels()
     {
+        if (!previewActive) return;
         float length = config.OverrideSaberLength ? config.SaberLength : 1f;
         float width = config.OverrideSaberWidth ? config.SaberWidth : 1f;
         staticPreviewManager.UpdateSaberScale(length, width);
@@ -110,6 +112,7 @@ internal class SaberPreviewManager
 
     private void UpdateColor()
     {
+        if (!previewActive) return;
         var selectedColorScheme = colorSchemesSettings.GetSelectedColorScheme();
         var (colorLeft, colorRight) = (selectedColorScheme.saberAColor, selectedColorScheme.saberBColor);
         menuSaberManager.SetColor(colorLeft, colorRight);
