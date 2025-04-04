@@ -89,16 +89,6 @@ internal class SaberListViewController : BSMLAutomaticViewController
         }
     }
 
-    public bool EnableMenuSabers
-    {
-        get => config.EnableMenuSabers;
-        set
-        {
-            config.EnableMenuSabers = value;
-            previewManager.UpdateActivePreview();
-        }
-    }
-
     public void ListSelected(SegmentedControl segmentedControl, int idx)
     {
         currentSaberList = (SaberListType)idx;
