@@ -8,27 +8,18 @@ internal static class SaberListCellExtensions
 {
     public static bool TryGetCellDirectory(this IListCellInfo cellInfo, [NotNullWhen(true)] out DirectoryInfo? dir)
     {
-        if (cellInfo is ListDirectoryCellInfo directoryCell)
+        dir = cellInfo switch
         {
-            return (dir = directoryCell.DirectoryInfo) != null;
-        }
-
-        if (cellInfo is ListUpDirectoryCellInfo upDirectoryCell)
-        {
-            return (dir = upDirectoryCell.DirectoryInfo) != null;
-        }
-
-        dir = null;
-        return false;
+            ListDirectoryCellInfo directoryCell => directoryCell.DirectoryInfo,
+            ListUpDirectoryCellInfo upDirectoryCell => upDirectoryCell.DirectoryInfo,
+            _ => null
+        };
+        return dir != null;
     }
 
     public static bool TryGetSaberValue(this IListCellInfo cellInfo, [NotNullWhen(true)] out SaberValue? saberValue)
     {
-        saberValue = null;
-        if (cellInfo is ListInfoCellInfo infoCell)
-        {
-            saberValue = infoCell.Value;
-        }
+        saberValue = cellInfo is ListInfoCellInfo infoCell ? infoCell.Value : null;
         return saberValue != null;
     }
 }
