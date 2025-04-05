@@ -46,14 +46,14 @@
                          text="Saber Length" src="CustomSabersLite.Resources.saber-length.png"
                          min="0.25" max="1.5" increment="0.05"
                          apply-on-change="true" bind-values="true" format-string="{0:##0%}"
-                         hover-hint="Modify the length of the saber model - has no affect on hit box"/>
+                         hover-hint="Modify the length of the saber model - has no effect on hit box"/>
       
       <!-- Saber width -->
       <toggleable-slider slider-value="SaberWidth" toggle-value="OverrideSaberWidth"
                          text="Saber Width" src="CustomSabersLite.Resources.saber-width.png"
                          min="0" max="2" increment="0.01"
                          apply-on-change="true" bind-values="true" format-string="{0:##0%}"
-                         hover-hint="Modify the girth of the saber model - has no affect on hit box"/>
+                         hover-hint="Modify the girth of the saber model - has no effect on hit box"/>
     </vertical>
 
     <vertical horizontal-fit="Unconstrained" child-control-height="false" child-expand-height="false"
