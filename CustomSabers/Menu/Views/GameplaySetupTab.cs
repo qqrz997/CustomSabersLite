@@ -18,29 +18,31 @@ namespace CustomSabersLite.Menu.Views;
 [UsedImplicitly]
 internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSaberSettings
 {
-    [Inject] private readonly PluginConfig config = null!;
-    [Inject] private readonly MetadataCacheLoader metadataCacheLoader = null!;
-    [Inject] private readonly ICoroutineStarter coroutineStarter = null!;
-    [Inject] private readonly SaberListManager saberListManager = null!;
+    private readonly PluginConfig config;
+    private readonly MetadataCacheLoader metadataCacheLoader;
+    private readonly ICoroutineStarter coroutineStarter;
+    private readonly SaberListManager saberListManager;
+
+    public GameplaySetupTab(
+        PluginConfig config,
+        MetadataCacheLoader metadataCacheLoader,
+        ICoroutineStarter coroutineStarter,
+        SaberListManager saberListManager)
+    {
+        this.config = config;
+        this.metadataCacheLoader = metadataCacheLoader;
+        this.coroutineStarter = coroutineStarter;
+        this.saberListManager = saberListManager;
+    }
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    [UIComponent("trail-duration")] private readonly ImageView trailDurationIcon = null!; 
-    [UIComponent("trail-width")] private readonly ImageView trailWidthIcon = null!;
-    [UIComponent("saber-length")] private readonly ImageView saberLengthIcon = null!;
-    [UIComponent("saber-width")] private readonly ImageView saberWidthIcon = null!;
     [UIComponent("saber-list")] private readonly SaberListTableData saberList = null!;
 
     [UIAction("#post-parse")]
     private void PostParse()
     {
         metadataCacheLoader.LoadingProgressChanged += LoadingProgressChanged;
-        
-        trailDurationIcon.sprite = CSLResources.TrailDurationIcon;
-        trailWidthIcon.sprite = CSLResources.TrailWidthIcon;
-        saberLengthIcon.sprite = CSLResources.SaberLengthIcon;
-        saberWidthIcon.sprite = CSLResources.SaberWidthIcon;
-
         RefreshList();
     }
     

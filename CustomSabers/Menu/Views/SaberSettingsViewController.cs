@@ -14,20 +14,6 @@ internal class SaberSettingsViewController : BSMLAutomaticViewController, IShare
 {
     [Inject] private readonly PluginConfig config = null!;
     [Inject] private readonly SaberPreviewManager previewManager = null!;
-
-    [UIComponent("trail-duration")] private readonly ImageView trailDurationIcon = null!; 
-    [UIComponent("trail-width")] private readonly ImageView trailWidthIcon = null!;
-    [UIComponent("saber-length")] private readonly ImageView saberLengthIcon = null!;
-    [UIComponent("saber-width")] private readonly ImageView saberWidthIcon = null!;
-
-    [UIAction("#post-parse")]
-    private void PostParse()
-    {
-        trailDurationIcon.sprite = CSLResources.TrailDurationIcon;
-        trailWidthIcon.sprite = CSLResources.TrailWidthIcon;
-        saberLengthIcon.sprite = CSLResources.SaberLengthIcon;
-        saberWidthIcon.sprite = CSLResources.SaberWidthIcon;
-    }
     
     public bool Enabled
     {
