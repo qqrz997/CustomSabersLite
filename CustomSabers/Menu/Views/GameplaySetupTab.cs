@@ -23,6 +23,8 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
     private readonly ICoroutineStarter coroutineStarter;
     private readonly SaberListManager saberListManager;
 
+    [UIComponent("saber-list")] private readonly SaberListTableData saberList = null!;
+
     public GameplaySetupTab(
         PluginConfig config,
         MetadataCacheLoader metadataCacheLoader,
@@ -36,8 +38,7 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
-
-    [UIComponent("saber-list")] private readonly SaberListTableData saberList = null!;
+    private Coroutine? scrollToSelectedCellCoroutine;
 
     [UIAction("#post-parse")]
     private void PostParse()
@@ -140,7 +141,7 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
 
         // todo: consider introducing trail selection to the tab 
         if (saberListManager.UnsortedListContains(config.CurrentlySelectedSaber))
-            saberList.SelectCellWithIdx(saberListManager.IndexForSaberValue(config.CurrentlySelectedSaber));
+            saberList.SelectCellWithIdx(saberListManager.IndexForSaberValueUnsorted(config.CurrentlySelectedSaber));
         else
             saberList.ClearSelection();
     }
@@ -151,8 +152,7 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
         RefreshList();
         coroutineStarter.StartSingleCoroutine(ref scrollToSelectedCellCoroutine, ScrollToSelectedCell());
     }
-
-    private Coroutine? scrollToSelectedCellCoroutine;
+    
     private IEnumerator ScrollToSelectedCell()
     {
         if (!config.CurrentlySelectedSaber.TryGetSaberHash(out var saberHash)) yield break;
@@ -168,9 +168,13 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
         if (progress.Completed) RefreshList();
     }
 
-    private void NotifyPropertyChanged(string propertyName) =>
+    private void NotifyPropertyChanged(string propertyName)
+    {
         PropertyChanged?.Invoke(this, new(propertyName));
+    }
 
-    public void Dispose() =>
+    public void Dispose()
+    {
         metadataCacheLoader.LoadingProgressChanged -= LoadingProgressChanged;
+    }
 }
