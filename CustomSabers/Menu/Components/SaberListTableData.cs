@@ -20,6 +20,8 @@ internal class SaberListTableData : MonoBehaviour, TableView.IDataSource
     private Button? topButton;
     private Button? bottomButton;
     private ListStyle listStyle = ListStyle.Normal;
+
+    public event Action? DidActivate;
     
     public void Init(TableView tv)
     {
@@ -135,6 +137,11 @@ internal class SaberListTableData : MonoBehaviour, TableView.IDataSource
         // Only should be called after creating the buttons
         topButton!.interactable = pos > 0.001f;
         bottomButton!.interactable = pos < tableView.scrollView.contentSize - tableView.scrollView.scrollPageSize - 0.001f;
+    }
+
+    private void OnEnable()
+    {
+        DidActivate?.Invoke();
     }
 
     private void OnDestroy()

@@ -44,6 +44,7 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
     private void PostParse()
     {
         metadataCacheLoader.LoadingProgressChanged += LoadingProgressChanged;
+        saberList.DidActivate += Activated;
         RefreshList();
     }
     
@@ -146,7 +147,7 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
             saberList.ClearSelection();
     }
 
-    public void Activated(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
+    private void Activated()
     {
         ISharedSaberSettings.PropertyNames.ForEach(NotifyPropertyChanged);
         RefreshList();
@@ -156,8 +157,6 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
     private IEnumerator ScrollToSelectedCell()
     {
         if (!config.CurrentlySelectedSaber.TryGetSaberHash(out var saberHash)) yield break;
-        yield return new WaitUntil(() => saberList.gameObject.activeInHierarchy);
-        /* wait for some frames */ for (int i = 0; i < 2; i++) yield return null;
         int selectedSaberIndex = saberListManager.IndexForSaberValueUnsorted(saberHash);
         saberList.SelectCellWithIdx(selectedSaberIndex);
         saberList.ScrollToCellWithIdx(selectedSaberIndex, TableView.ScrollPositionType.Center, true);
@@ -176,5 +175,6 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
     public void Dispose()
     {
         metadataCacheLoader.LoadingProgressChanged -= LoadingProgressChanged;
+        if (saberList != null) saberList.DidActivate -= Activated;
     }
 }
