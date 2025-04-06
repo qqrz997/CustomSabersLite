@@ -273,8 +273,8 @@ internal class SaberListViewController : BSMLAutomaticViewController
     protected override void DidDeactivate(bool removedFromHierarchy, bool screenSystemDisabling)
     {
         base.DidDeactivate(removedFromHierarchy, screenSystemDisabling);
-        previewManager.SetPreviewActive(false);
         saberPreviewTokenSource.Cancel();
+        previewManager.SetPreviewActive(false);
     }
 
     protected override void OnDestroy()

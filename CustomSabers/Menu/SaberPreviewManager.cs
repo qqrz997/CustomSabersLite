@@ -159,6 +159,7 @@ internal class SaberPreviewManager
         bool sabersActive = previewActive && !isGenerating && !isAnimating;
         staticPreviewManager.SetActive(sabersActive && !isHeld);
         menuSaberManager.SetActive(sabersActive && isHeld);
+        if (isGenerating) return;
         saberSet?.SetActive(previewActive);
     }
     
