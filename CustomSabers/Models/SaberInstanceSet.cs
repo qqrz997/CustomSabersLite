@@ -62,7 +62,7 @@ internal class SaberInstanceSet : IDisposable
 
     public void SetActive(bool active)
     {
-        root?.SetActive(active);
+        if (root != null) root.SetActive(active);
         LeftSaber?.GameObject.SetActive(active);
         RightSaber?.GameObject.SetActive(active);
     }
