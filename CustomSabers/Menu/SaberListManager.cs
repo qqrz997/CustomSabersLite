@@ -91,9 +91,11 @@ internal class SaberListManager
         unsortedList.ElementAtOrDefault(row);
 
     public int IndexForSaberValue(SaberValue saberValue) => 
-        sortedListIndexMap.GetValueOrDefault(saberValue, 0);
+        sortedListIndexMap.TryGetValue(saberValue, out var idx) ? idx
+        : sortedListIndexMap.GetValueOrDefault(new DefaultSaberValue(), 0);
     public int IndexForSaberValueUnsorted(SaberValue saberValue) => 
-        unsortedListIndexMap.GetValueOrDefault(saberValue, 0);
+        unsortedListIndexMap.TryGetValue(saberValue, out int idx) ? idx 
+        : unsortedListIndexMap.GetValueOrDefault(new DefaultSaberValue(), 0);
 
     public bool CurrentListContains(SaberValue value) => 
         sortedList.Any(cell => cell.TryGetSaberValue(out var cellValue) && cellValue == value);
