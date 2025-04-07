@@ -7,6 +7,6 @@ internal class MultiPlayerInstaller : Installer
 {
     public override void InstallBindings()
     {
-        Container.BindInterfacesTo<PauseMenuHandlesFix>().AsSingle();
+        // Container.BindInterfacesTo<PauseMenuHandlesFix>().AsSingle();
     }
 }

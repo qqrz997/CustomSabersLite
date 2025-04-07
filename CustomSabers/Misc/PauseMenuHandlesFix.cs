@@ -3,6 +3,8 @@ using Zenject;
 
 namespace CustomSabersLite.Misc;
 
+// TODO: this patch has been disabled; as of Beat Saber 1.40.4 the problem appears to be fixed. monitoring.
+
 internal class PauseMenuHandlesFix : IInitializable
 {
     private readonly MultiplayerLocalActivePlayerInGameMenuViewController multiplayerLocalActivePlayerInGameMenuViewController;
