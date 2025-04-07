@@ -114,7 +114,7 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
 
     public void ListCellSelected(TableView tableView, int row)
     {
-        if (saberListManager.SelectFromUnsortedList(row) is not { } saberListCell) return;
+        if (!saberListManager.TrySelectUnsorted(row, out var saberListCell)) return;
         if (saberListCell.TryGetCellDirectory(out var directoryInfo))
         {
             saberListManager.OpenFolder(directoryInfo);

@@ -97,7 +97,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
 
     public async void ListCellSelected(TableView tableView, int row)
     {
-        if (saberListManager.SelectFromCurrentList(row) is not { } saberListCell) return;
+        if (!saberListManager.TrySelectSorted(row, out var saberListCell)) return;
         if (saberListCell.TryGetCellDirectory(out var directoryInfo))
         {
             saberListManager.OpenFolder(directoryInfo);
@@ -180,9 +180,12 @@ internal class SaberListViewController : BSMLAutomaticViewController
         
         saberListManager.DeleteSaber(deletedSaberHash.Hash);
 
-        var selectedCell = saberListManager.SelectFromCurrentList(deletedSaberIndex - 1);
-        if (selectedCell != null && selectedCell.TryGetSaberValue(out var saberValue)) SelectedSaberValue = saberValue;
-        
+        if (saberListManager.TrySelectSorted(deletedSaberIndex - 1, out var cell) 
+            && cell.TryGetSaberValue(out var saberValue))
+        {
+            SelectedSaberValue = saberValue;
+        }
+
         RefreshList();
     }
 

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using CustomSabersLite.Menu.Views;
@@ -85,11 +86,11 @@ internal class SaberListManager
         saberPrefabCache.UnloadSaber(saberFile.Hash);
     }
 
-    public IListCellInfo? SelectFromCurrentList(int row) => 
-        sortedList.ElementAtOrDefault(row);
-    public IListCellInfo? SelectFromUnsortedList(int row) => 
-        unsortedList.ElementAtOrDefault(row);
-
+    public bool TrySelectSorted(int row, [NotNullWhen(true)] out IListCellInfo? cell) =>
+        TrySelect(sortedList, row, out cell);
+    public bool TrySelectUnsorted(int row, [NotNullWhen(true)] out IListCellInfo? cell) => 
+        TrySelect(unsortedList, row, out cell);
+    
     public int IndexForSaberValue(SaberValue saberValue) => 
         sortedListIndexMap.TryGetValue(saberValue, out var idx) ? idx
         : sortedListIndexMap.GetValueOrDefault(new DefaultSaberValue(), 0);
@@ -146,4 +147,7 @@ internal class SaberListManager
         
         return list;
     }
+    
+    private static bool TrySelect(List<IListCellInfo> list, int row, [NotNullWhen(true)] out IListCellInfo? cell) =>
+        (cell = list.ElementAtOrDefault(row)) != null;
 }
