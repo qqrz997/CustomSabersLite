@@ -7,7 +7,6 @@ using CustomSabersLite.Models;
 using CustomSabersLite.Services;
 using CustomSabersLite.Utilities.Extensions;
 using UnityEngine;
-using Zenject;
 
 namespace CustomSabersLite.Menu;
 

@@ -1,9 +1,7 @@
 ﻿using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.ViewControllers;
 using CustomSabersLite.Configuration;
-using CustomSabersLite.Utilities.Common;
 using CustomSabersLite.Utilities.Extensions;
-using HMUI;
 using Zenject;
 
 namespace CustomSabersLite.Menu.Views;

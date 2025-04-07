@@ -12,7 +12,6 @@ using CustomSabersLite.Utilities.Extensions;
 using Newtonsoft.Json;
 using SiraUtil.Zenject;
 using UnityEngine;
-using static CustomSabersLite.Utilities.Common.JsonReading;
 
 namespace CustomSabersLite.Services;
 
@@ -90,7 +89,7 @@ internal class MetadataCacheLoader : IAsyncInitializable, IDisposable
     
     private async Task ReloadAsync(CancellationToken token) 
     {
-        saberPrefabCache.Clear(false);
+        saberPrefabCache.Clear();
         saberMetadataCache.Clear();
         var stopwatch = Stopwatch.StartNew();
         var simpleIntProgress = new Progress<int>(v => CurrentProgress = currentProgress with { StagePercent = v });

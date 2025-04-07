@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using CustomSabersLite.Models;
-using CustomSabersLite.Utilities.Extensions;
 
 namespace CustomSabersLite.Services;
 
-internal class SaberPrefabCache
+internal class SaberPrefabCache : IDisposable
 {
     private readonly Dictionary<string, CustomSaberData> cache = [];
 
@@ -20,15 +20,20 @@ internal class SaberPrefabCache
 
     public void UnloadSaber(string saberHash)
     {
-        if (cache.TryGetValue(saberHash, out var saberData))
-        {
-            saberData.Dispose(true);
-        }
+        if (!cache.TryGetValue(saberHash, out var saberData)) return;
+        saberData.Dispose();
+        cache.Remove(saberHash);
     }
 
-    public void Clear(bool unloadAllLoadedObjects)
+    public void Dispose()
     {
-        cache.Values.ForEach(i => i.Dispose(unloadAllLoadedObjects));
+        Clear();
+    }
+    
+    public void Clear()
+    {
+        if (cache.Count == 0) return;
+        foreach (var customSaberData in cache.Values) customSaberData.Dispose();
         cache.Clear();
     }
 }

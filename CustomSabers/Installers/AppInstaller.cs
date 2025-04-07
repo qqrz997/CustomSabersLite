@@ -33,8 +33,8 @@ internal class AppInstaller : Installer
         
         // Cache
         Container.BindInterfacesAndSelfTo<FavouritesManager>().AsSingle();
+        Container.BindInterfacesAndSelfTo<SaberPrefabCache>().AsSingle();
         Container.Bind<SaberMetadataCache>().AsSingle();
-        Container.Bind<SaberPrefabCache>().AsSingle();
         Container.Bind<SpriteCache>().AsSingle();
         
         // Asset loaders

@@ -11,12 +11,6 @@ internal class CustomSaberData(
     public ISaberPrefab Prefab { get; } = customSaberPrefab;
     private AssetBundle Bundle { get; } = assetBundle;
 
-    public void Dispose(bool unloadAllLoadedObjects)
-    {
-        if (unloadAllLoadedObjects) Prefab.Dispose();
-        if (Bundle != null) Bundle.Unload(unloadAllLoadedObjects);
-    }
-
     public void Dispose()
     {
         Prefab.Dispose();
