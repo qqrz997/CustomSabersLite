@@ -98,7 +98,7 @@ internal class SaberMetadataCacheMigrationManager
         using var metadataStream = zipArchive.GetEntry("metadata.json")?.Open();
         if (metadataStream == null) return new(0, 0, 0);
 
-        var versionString = JsonReading.DeserializeStream<CacheFileModel>(metadataStream)?.Version;
+        var versionString = metadataStream.DeserializeStream<CacheFileModel>()?.Version;
         
         return versionString is null ? new(0, 0, 0) : new Version(versionString);
     }

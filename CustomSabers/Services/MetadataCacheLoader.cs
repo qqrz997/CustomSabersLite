@@ -147,7 +147,7 @@ internal class MetadataCacheLoader : IAsyncInitializable, IDisposable
 
         if (metadataJsonStream is null) return CacheFileModel.Empty;
 
-        var cache = DeserializeStream<CacheFileModel>(metadataJsonStream)?.WithValidation() ?? CacheFileModel.Empty;
+        var cache = metadataJsonStream.DeserializeStream<CacheFileModel>()?.WithValidation() ?? CacheFileModel.Empty;
         
         foreach (var meta in cache.CachedMetadata)
         {
