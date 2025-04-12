@@ -201,6 +201,8 @@ internal class SaberListViewController : BSMLAutomaticViewController
         saberListManager.Refresh();
         saberList.Data.Clear();
         saberList.ReloadDataKeepingPosition();
+     
+        previewManager.SetPreviewActive(false);
         
         // this will invoke an event on completion that gets used to refresh the list
         await metadataCacheLoader.ReloadAsync();
@@ -241,6 +243,8 @@ internal class SaberListViewController : BSMLAutomaticViewController
     {
         try
         {
+            previewManager.SetPreviewActive(true);
+            
             saberPreviewTokenSource.CancelThenDispose();
             saberPreviewTokenSource = new();
             await previewManager.GeneratePreview(saberPreviewTokenSource.Token);
