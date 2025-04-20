@@ -128,13 +128,22 @@ internal class WhackerLoader
         if (iconEntry is null) return null;
 
         using var memoryStream = new MemoryStream();
-        using var thumbStream = iconEntry.Open();
+        await using var thumbStream = iconEntry.Open();
         
         await thumbStream.CopyToAsync(memoryStream);
         
         var icon = new Texture2D(2, 2).ToSprite(memoryStream.ToArray());
-        
-        return icon == null || icon.texture == null ? null
-            : icon.texture.Downscale(128, 128).ToSprite();
+        if (icon == null)
+        {
+            return null;
+        }
+        if (icon.texture == null)
+        {
+            Object.Destroy(icon);
+            return null;
+        }
+        var downscaledIcon = icon.texture.Downscale(128, 128).ToSprite(rename: whacker.Descriptor.Name);
+        Object.Destroy(icon);
+        return downscaledIcon;
     }
 }

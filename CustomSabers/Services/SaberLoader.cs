@@ -63,7 +63,7 @@ internal class SaberLoader
             var icon = saberDescriptor.CoverImage;
             if (icon != null && icon.texture != null)
             {
-                icon = icon.texture.DuplicateTexture().Downscale(128, 128).ToSprite();
+                icon = icon.texture.DuplicateTexture().Downscale(128, 128).ToSprite(rename: saberDescriptor.SaberName);
             }
 
             spriteCache.AddSprite(saberFile.Hash, icon);

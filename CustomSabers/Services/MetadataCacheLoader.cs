@@ -150,9 +150,7 @@ internal class MetadataCacheLoader : IAsyncInitializable, IDisposable
         
         foreach (var meta in cache.CachedMetadata)
         {
-            token.ThrowIfCancellationRequested();
-            var iconEntry = cacheZipArchive.GetEntry($"images/{meta.Hash}.png");
-            var sprite = await LoadSpriteFromEntry(iconEntry, token);
+            var sprite = await LoadSpriteFromCache(cacheZipArchive, meta, token);
             spriteCache.AddSprite(meta.Hash, sprite);
         }
 
@@ -251,13 +249,15 @@ internal class MetadataCacheLoader : IAsyncInitializable, IDisposable
             .Select(tuple => saberMetadataConverter.ConvertJson(tuple.meta, tuple.file))
             .ForEach(meta => saberMetadataCache.TryAdd(meta));
 
-    private static async Task<Sprite?> LoadSpriteFromEntry(ZipArchiveEntry? entry, CancellationToken token)
+    private static async Task<Sprite?> LoadSpriteFromCache(ZipArchive cache, SaberMetadataModel meta, CancellationToken token)
     {
+        var entry = cache.GetEntry($"images/{meta.Hash}.png");
         if (entry is null) return null;
         using var ms = new MemoryStream();
         await using var s = entry.Open();
         await s.CopyToAsync(ms, token);
-        return new Texture2D(2, 2).ToSprite(ms.ToArray());
+        token.ThrowIfCancellationRequested();
+        return new Texture2D(2, 2).ToSprite(ms.ToArray(), rename: meta.SaberName);
     }
 
     private static IEnumerable<SaberFileInfo> GetSabersToLoad(CacheFileModel existingCache, SaberFileInfo[] localSaberFiles)
