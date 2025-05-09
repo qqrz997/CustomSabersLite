@@ -1,0 +1,68 @@
+<vertical anchor-pos-x="0" preferred-width="120" child-control-height="false" 
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="https://monkeymanboy.github.io/BSML-Docs/BSMLSchema.xsd">
+
+  <vertical spacing="1" horizontal-fit="Unconstrained">
+
+    <vertical child-control-height="true" preferred-width="54" min-height="7" child-expand-height="true">
+      <horizontal horizontal-fit="PreferredSize" background="panel-top" preferred-width="25" preferred-height="7">
+        <text text="Settings" align="Capline" font-size="6" id="settings-title"/>
+      </horizontal>
+    </vertical>
+
+    <vertical horizontal-fit="Unconstrained" child-control-height="false" child-expand-height="false"
+              bg="round-rect-panel" bg-color="#00000077" pad="1" pad-left="2" pad-right="2">
+      
+      <!-- Mod toggle -->
+      <checkbox-setting value="Enabled" 
+                        text="Enable Mod"  hover-hint="Disable this to stop the mod from running in maps" 
+                        apply-on-change="true" bind-value="true"/>
+    </vertical>
+
+    <vertical horizontal-fit="Unconstrained" child-control-height="false" child-expand-height="false" 
+              bg="round-rect-panel" bg-color="#00000077" pad="1" pad-left="2" pad-right="2">
+      
+      <!-- Toggle white trail gradient -->
+      <checkbox-setting value="DisableWhiteTrail" 
+                        text="Disable White Trail" hover-hint="Toggles the initial white part of trails"
+                        apply-on-change="true" bind-value="true"/>
+
+      <!-- Trail duration -->
+      <toggleable-slider slider-value="TrailDuration" toggle-value="OverrideTrailDuration" 
+                         text="Trail Length" src="CustomSabersLite.Resources.trail-duration.png"
+                         min="0" max="1" increment="0.01"
+                         apply-on-change="true" bind-values="true" format-string="{0:##0%}"
+                         hover-hint="Modify the duration, or lifetime, of saber trails"/>
+      
+      <!-- Trail width -->
+      <toggleable-slider slider-value="TrailWidth" toggle-value="OverrideTrailWidth"
+                         text="Trail Width" src="CustomSabersLite.Resources.trail-width.png"
+                         min="0" max="1" increment="0.01"
+                         apply-on-change="true" bind-values="true" format-string="{0:##0%}"
+                         hover-hint="Modify the width of saber trails"/>
+      
+      <!-- Saber length -->
+      <toggleable-slider slider-value="SaberLength" toggle-value="OverrideSaberLength"
+                         text="Saber Length" src="CustomSabersLite.Resources.saber-length.png"
+                         min="0.25" max="1.5" increment="0.05"
+                         apply-on-change="true" bind-values="true" format-string="{0:##0%}"
+                         hover-hint="Modify the length of the saber model - has no effect on hit box"/>
+      
+      <!-- Saber width -->
+      <toggleable-slider slider-value="SaberWidth" toggle-value="OverrideSaberWidth"
+                         text="Saber Width" src="CustomSabersLite.Resources.saber-width.png"
+                         min="0" max="2" increment="0.01"
+                         apply-on-change="true" bind-values="true" format-string="{0:##0%}"
+                         hover-hint="Modify the girth of the saber model - has no effect on hit box"/>
+    </vertical>
+
+    <vertical horizontal-fit="Unconstrained" child-control-height="false" child-expand-height="false"
+              bg="round-rect-panel" bg-color="#00000077" pad="1" pad-left="2" pad-right="2">
+      
+      <!-- Saber events -->
+      <checkbox-setting value="EnableCustomEvents" 
+                        text="Enable Saber Events" hover-hint="Toggles saber events. For instance, an effect happening when you achieve a full combo"
+                        apply-on-change="true" bind-value="true"/>
+    </vertical>
+  </vertical>
+</vertical>

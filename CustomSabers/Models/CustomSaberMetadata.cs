@@ -1,10 +1,8 @@
 ﻿namespace CustomSabersLite.Models;
 
-internal sealed record CustomSaberMetadata
-    (SaberFileInfo SaberFile, SaberLoaderError LoaderError, Descriptor Descriptor) : ISaberMetadata
-{
-    public static CustomSaberMetadata Default { get; } = new(
-        SaberFileInfo.DefaultSabers,
-        SaberLoaderError.None,
-        Descriptor.DefaultSabers);
-}
+internal record CustomSaberMetadata(
+    SaberFileInfo SaberFile,
+    SaberLoaderError LoaderError,
+    Descriptor Descriptor,
+    bool HasTrails,
+    bool IsFavourite);

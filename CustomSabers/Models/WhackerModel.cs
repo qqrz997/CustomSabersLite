@@ -2,11 +2,17 @@
 
 namespace CustomSabersLite.Models;
 
-[method: JsonConstructor]
-internal class WhackerModel(string androidFileName, string pcFileName, WhackerDescriptor descriptor, WhackerConfig config)
+internal class WhackerModel
 {
-    public string androidFileName = androidFileName;
-    public string pcFileName = pcFileName;
-    public WhackerDescriptor descriptor = descriptor;
-    public WhackerConfig config = config;
+    public string FileName { get; }
+    public WhackerDescriptor Descriptor { get; }
+    public WhackerConfig Config { get; }
+
+    [JsonConstructor]
+    public WhackerModel(string pcFileName, WhackerDescriptor descriptor, WhackerConfig config)
+    {
+        FileName = pcFileName;
+        Descriptor = descriptor;
+        Config = config;
+    }
 }

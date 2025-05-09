@@ -1,12 +1,11 @@
 ﻿using CustomSabersLite.Components;
-using CustomSabersLite.Utilities.Services;
+using CustomSabersLite.Services;
 using UnityEngine;
 using Zenject;
-
 using static UnityEngine.Object;
 using static UnityEngine.Random;
 
-namespace CustomSabersLite;
+namespace CustomSabersLite.Misc;
 
 internal class Jester : IInitializable
 {

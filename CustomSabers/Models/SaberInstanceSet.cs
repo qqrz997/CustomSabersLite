@@ -1,7 +1,7 @@
 using System;
 using CustomSabersLite.Utilities.Extensions;
 using UnityEngine;
-using Object = UnityEngine.Object;
+using static UnityEngine.Object;
 
 namespace CustomSabersLite.Models;
 
@@ -11,42 +11,66 @@ internal class SaberInstanceSet : IDisposable
 
     public ILiteSaber? LeftSaber { get; }
     public ILiteSaber? RightSaber { get; }
+    public ITrailData[] LeftTrails { get; }
+    public ITrailData[] RightTrails { get; }
     
     /// <summary>
-    /// Create a saber set from existing <see cref="ILiteSaber"/>s.
+    /// Create a saber set from existing sabers and trails. The sabers should not have any parent objects.
     /// </summary>
-    public SaberInstanceSet(ILiteSaber leftSaber, ILiteSaber rightSaber) =>
-        (LeftSaber, RightSaber) = (leftSaber, rightSaber);
-
+    /// <param name="leftSaber">A single, existing saber</param>
+    /// <param name="rightSaber">A single, existing saber</param>
+    /// <param name="leftTrails">The trails to use on the left saber</param>
+    /// <param name="rightTrails">The trails to use on the right saber</param>
+    public SaberInstanceSet(
+        ILiteSaber? leftSaber, ILiteSaber? rightSaber, ITrailData[] leftTrails, ITrailData[] rightTrails) =>
+        (LeftSaber, RightSaber, LeftTrails, RightTrails) = (leftSaber, rightSaber, leftTrails, rightTrails);
+    
     /// <summary>
-    /// Create a saber set from a custom saber prefab. Must be the root object of the prefab.
+    /// Instantiate a new saber instance from a saber prefab 
     /// </summary>
-    public static SaberInstanceSet FromPrefab(GameObject prefab, CustomSaberType customSaberType)
+    /// <param name="saberPrefab">The root of the saber prefab</param>
+    public SaberInstanceSet(GameObject saberPrefab)
     {
-        // TODO: CustomSaberType is only used to get the custom trails, use polymorphism instead
-        var saberInstanceSet = new SaberInstanceSet(prefab, customSaberType);
-        
-        if (saberInstanceSet.LeftSaber == null) Logger.Warn("Provided prefab doesn't have a left saber");
-        if (saberInstanceSet.RightSaber == null) Logger.Warn("Provided prefab doesn't have a right saber");
-        
-        return saberInstanceSet;
+        root = Instantiate(saberPrefab);
+        LeftSaber = new CustomLiteSaber(root.transform.Find("LeftSaber").gameObject);
+        RightSaber = new CustomLiteSaber(root.transform.Find("RightSaber").gameObject);
+        LeftTrails = [];
+        RightTrails = [];
     }
     
-    public ILiteSaber? GetSaberForType(SaberType type) => type == SaberType.SaberA ? LeftSaber : RightSaber;
+    /// <summary>
+    /// Creates a new saber set with the current sabers and the provided trails.
+    /// This will not destroy any previous trail data.
+    /// </summary>
+    /// <param name="leftTrails">The trails to use on the left saber</param>
+    /// <param name="rightTrails">The trails to use on the right saber</param>
+    /// <returns></returns>
+    public SaberInstanceSet WithTrails(ITrailData[] leftTrails, ITrailData[] rightTrails) => 
+        new(root, LeftSaber, RightSaber, leftTrails, rightTrails);
 
+    private SaberInstanceSet(
+        GameObject? saberRoot,
+        ILiteSaber? leftSaber,
+        ILiteSaber? rightSaber,
+        ITrailData[] leftTrails,
+        ITrailData[] rightTrails) =>
+        (root, LeftSaber, RightSaber, LeftTrails, RightTrails) =
+        (saberRoot, leftSaber, rightSaber, leftTrails, rightTrails);
+    
+    public ILiteSaber? GetSaberForType(SaberType type) => type == SaberType.SaberA ? LeftSaber : RightSaber;
+    public ITrailData[] GetTrailsForType(SaberType type) => type == SaberType.SaberA ? LeftTrails : RightTrails;
+
+    public void SetActive(bool active)
+    {
+        if (root != null) root.SetActive(active);
+        LeftSaber?.GameObject.SetActive(active);
+        RightSaber?.GameObject.SetActive(active);
+    }
+    
     public void Dispose()
     {
         LeftSaber?.Destroy();
         RightSaber?.Destroy();
         if (root != null) root.Destroy();
-    }
-    
-    private SaberInstanceSet(GameObject prefab, CustomSaberType saberType)
-    {
-        root = Object.Instantiate(prefab);
-        var left = root.transform.Find("LeftSaber")?.gameObject;
-        var right = root.transform.Find("RightSaber")?.gameObject;
-        if (left != null) LeftSaber = new CustomLiteSaber(left, saberType);
-        if (right != null) RightSaber = new CustomLiteSaber(right, saberType);
     }
 }

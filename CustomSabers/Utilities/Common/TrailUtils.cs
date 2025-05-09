@@ -1,6 +1,6 @@
-﻿using CustomSabersLite.Components;
+﻿using System.Collections.Generic;
+using CustomSabersLite.Components;
 using CustomSabersLite.Configuration;
-using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Extensions;
 
 namespace CustomSabersLite.Utilities.Common;
@@ -14,15 +14,30 @@ internal static class TrailUtils
     public const float DefaultDuration = 0.4f;
 
     /// <summary>
-    /// Converts legacy trail length to trail duration in seconds used by <seealso cref="SaberTrail"/>
+    /// Converts legacy trail length in frames to trail duration in seconds used by <see cref="SaberTrail"/>
     /// </summary>
+    /// <param name="customTrailLength">Trail length from a CustomTrail, in frames</param>
+    /// <returns>Trail duration in seconds</returns>
     public static float ConvertLegacyLength(int customTrailLength) =>
         customTrailLength / (float)LegacyDuration * DefaultDuration;
 
     /// <summary>
-    /// Uses the current <seealso cref="CSLConfig"/> to decide the <seealso cref="SaberTrail"/>'s length, whitestep, and visibility
+    /// Configures a collection of trails. The first trail in the sequence will be enabled for overriding width, any
+    /// other trails will not be able to override width.
     /// </summary>
-    public static void ConfigureTrail(this SaberTrail trail, CSLConfig config, bool useOverrideWidth = false)
+    /// <param name="trails">The trails to configure</param>
+    /// <param name="config">The config to use</param>
+    public static void ConfigureTrails(this ICollection<LiteSaberTrail> trails, PluginConfig config) => 
+        trails.ForEach((trail, idx) => trail.ConfigureTrail(config, idx == 0));
+
+    /// <summary>
+    /// Uses the current config to decide the trail's length, width, white section, and visibility.
+    /// </summary>
+    /// <param name="trail">The trail being configured</param>
+    /// <param name="config">The config to use</param>
+    /// <param name="useOverrideWidth">If set to true, then the trail will be able to make use of the width override in
+    /// the config</param>
+    public static void ConfigureTrail(this LiteSaberTrail trail, PluginConfig config, bool useOverrideWidth = false)
     {
         if (trail == null || trail._trailRenderer == null)
         {
@@ -34,23 +49,17 @@ internal static class TrailUtils
         trail._framesToScaleCheck = 0;
         trail._inited = false;
 
-        if (trail is LiteSaberTrail { InstanceTrailData: not null } customTrail)
+        trail.OverrideWidth = config.TrailWidth;
+        trail.UseWidthOverride = config.OverrideTrailWidth && useOverrideWidth;
+        
+        if (config.OverrideTrailDuration)
         {
-            float duration = config.OverrideTrailDuration ? config.TrailDuration * DefaultDuration
-                : customTrail.InstanceTrailData.Length;
-            customTrail.OverrideWidth = config.TrailWidth;
-            customTrail.UseWidthOverride = config.OverrideTrailWidth && useOverrideWidth;
-            customTrail._trailDuration = duration;
-            customTrail.enabled = config.TrailType != TrailType.None && !duration.Approximately(0f);
+            trail._trailDuration =  config.TrailDuration * DefaultDuration;
         }
-        else
+
+        if (trail._trailDuration.Approximately(0f))
         {
-            float duration = config.OverrideTrailDuration ? config.TrailDuration * DefaultDuration : DefaultDuration;
-            trail._trailDuration = duration;
-            if (config.TrailType == TrailType.None || duration.Approximately(0f))
-            {
-                trail._color.a = 0f;
-            }
+            trail.enabled = false;
         }
     }
 }

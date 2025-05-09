@@ -1,13 +1,21 @@
-﻿using System;
+﻿using CustomSabersLite.Utilities.Common;
 
 namespace CustomSabersLite.Models;
 
-internal record NoSaberData(string FullPath, DateTime DateAdded, SaberLoaderError LoaderError) : ISaberData
+internal class NoSaberData : ISaberData
 {
-    public ISaberMetadata Metadata => new NoMetadata(FullPath, DateAdded, LoaderError);
+    public CustomSaberMetadata Metadata { get; }
+    public ISaberPrefab? Prefab => null;
+    
+    public NoSaberData(SaberFileInfo saberFile, SaberLoaderError loaderError)
+    {
+        Metadata = new(saberFile, loaderError, NoDescriptionDescriptor, false, false);
+    }
 
-    public static NoSaberData Value { get; } = new(string.Empty, DateTime.MinValue, SaberLoaderError.None);
-
-    public SaberPrefab? Prefab => null;
+    private Descriptor NoDescriptionDescriptor { get; } = new(
+        RichTextString.Create(null),
+        RichTextString.Create(null),
+        CSLResources.DefaultCoverImage);
+    
     public void Dispose() { }
 }

@@ -17,6 +17,16 @@ internal static class LinqExtensions
         foreach (var item in seq) await asyncAction(item);
     }
 
+    public static void ForEach<T>(this IEnumerable<T> seq, Action<T, int> action)
+    {
+        int index = -1;
+        foreach (var item in seq)
+        {
+            checked { index++; }
+            action(item, index);
+        }
+    }
+
     public static IEnumerable<T> WhereNot<T>(this IEnumerable<T> seq, Func<T, bool> predicate) =>
         seq.Where(x => predicate(x) == false);
 }

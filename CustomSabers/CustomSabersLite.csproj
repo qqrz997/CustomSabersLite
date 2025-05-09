@@ -24,6 +24,36 @@
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
     </ItemGroup>
+
+    <ItemGroup>
+        <None Include="Directory.Build.props" Condition="Exists('Directory.Build.props')"/>
+        <None Include="CustomSabersLite.csproj.user" Condition="Exists('CustomSabersLite.csproj.user')"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="Menu\BSML\*.bsml" />
+        <EmbeddedResource Include="Resources\CustomSaber.dll" />
+        <EmbeddedResource Include="Resources\beatmods.png" />
+        <EmbeddedResource Include="Resources\defaultsabers-image.jpg" />
+        <EmbeddedResource Include="Resources\delete.png" />
+        <EmbeddedResource Include="Resources\ellipsis.png" />
+        <EmbeddedResource Include="Resources\extreme-arrow-icon.png" />
+        <EmbeddedResource Include="Resources\folder.png" />
+        <EmbeddedResource Include="Resources\folder-favourites.png" />
+        <EmbeddedResource Include="Resources\null-image.png" />
+        <EmbeddedResource Include="Resources\preview-held.png" />
+        <EmbeddedResource Include="Resources\preview-static.png" />
+        <EmbeddedResource Include="Resources\reload.png" />
+        <EmbeddedResource Include="Resources\saber-length.png" />
+        <EmbeddedResource Include="Resources\saber-width.png" />
+        <EmbeddedResource Include="Resources\sort-ascending.png" />
+        <EmbeddedResource Include="Resources\sort-descending.png" />
+        <EmbeddedResource Include="Resources\trail-duration.png" />
+        <EmbeddedResource Include="Resources\trail-width.png" />
+        <EmbeddedResource Include="Resources\favourite-blocked.png" />
+        <EmbeddedResource Include="Resources\custom-trail.png" />
+        <EmbeddedResource Include="Resources\no-trail.png" />
+    </ItemGroup>
     
   <ItemGroup>
       <Reference Include="AssetBundleLoadingTools">
@@ -40,6 +70,10 @@
       </Reference>
       <Reference Include="BeatSaber.ViewSystem" Publicize="true">
         <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\BeatSaber.ViewSystem.dll</HintPath>
+          <Private>false</Private>
+      </Reference>
+      <Reference Include="BGLib.FileStorage" Publicize="true">
+          <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\BGLib.FileStorage.dll</HintPath>
           <Private>false</Private>
       </Reference>
       <Reference Include="BGLib.Polyglot">
@@ -74,7 +108,7 @@
         <HintPath>$(BeatSaberDir)\Libs\Hive.Versioning.dll</HintPath>
           <Private>false</Private>
       </Reference>
-      <Reference Include="HMLib">
+      <Reference Include="HMLib" Publicize="True">
         <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\HMLib.dll</HintPath>
           <Private>false</Private>
       </Reference>
@@ -84,6 +118,10 @@
       </Reference>
       <Reference Include="HMUI" Publicize="True">
         <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\HMUI.dll</HintPath>
+          <Private>false</Private>
+      </Reference>
+      <Reference Include="Interactable">
+          <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Interactable.dll</HintPath>
           <Private>false</Private>
       </Reference>
       <Reference Include="IPA.Injector">
@@ -112,6 +150,10 @@
       </Reference>
       <Reference Include="SaberTrail" publicize="True">
         <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\SaberTrail.dll</HintPath>
+          <Private>false</Private>
+      </Reference>
+      <Reference Include="SegmentedControl">
+          <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\SegmentedControl.dll</HintPath>
           <Private>false</Private>
       </Reference>
       <Reference Include="SiraUtil">
@@ -170,6 +212,10 @@
         <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.UIModule.dll</HintPath>
           <Private>false</Private>
       </Reference>
+      <Reference Include="VRUI">
+          <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\VRUI.dll</HintPath>
+          <Private>false</Private>
+      </Reference>
       <Reference Include="Zenject">
         <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Zenject.dll</HintPath>
           <Private>false</Private>
@@ -178,16 +224,6 @@
         <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Zenject-usage.dll</HintPath>
           <Private>false</Private>
       </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Directory.Build.props" Condition="Exists('Directory.Build.props')"/>
-    <Content Include="CustomSabersLite.csproj.user" Condition="Exists('CustomSabersLite.csproj.user')"/>
-  </ItemGroup>
-  
-  <ItemGroup>
-    <EmbeddedResource Include="UI\BSML\*.bsml" />
-    <EmbeddedResource Include="Resources\*" />
   </ItemGroup>
   
 </Project>

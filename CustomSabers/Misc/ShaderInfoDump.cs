@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using AssetBundleLoadingTools.Utilities;
 using CustomSaber;
 using CustomSabersLite.Utilities;
+using CustomSabersLite.Utilities.Common;
 using UnityEngine;
 
 namespace CustomSabersLite;
@@ -26,8 +27,8 @@ internal class ShaderInfoDump
     public async Task RegisterModelShaders(GameObject model, string modelName)
     { 
         var allMaterials = ShaderRepair.GetMaterialsFromGameObjectRenderers(model);
-        allMaterials.AddRange(model.GetComponentsInChildren<CustomTrail>().Select(t => t.TrailMaterial)
-            .Where(m => m != null && m.shader != null && !allMaterials.Contains(m)));
+        allMaterials.AddRange(model.GetComponentsInChildren<CustomTrail>().SelectFromCurrentList(t => t.TrailMaterial)
+            .Where(m => m != null && m.shader != null && !allMaterials.TextContains(m)));
         allMaterials.ForEach(m => ShaderInfos.Add(new(modelName, m.shader.name)));
 
         (await ShaderRepairUtils.RepairSaberShadersAsync(model))
@@ -50,7 +51,7 @@ internal class ShaderInfoDump
         {
             var missingShaderCounts = shaderInfos
                 .GroupBy(i => i.ShaderName)
-                .Select(i => new ShaderCounts(i.Key, i.Count()))
+                .SelectFromCurrentList(i => new ShaderCounts(i.Key, i.Count()))
                 .ToList();
             
             var byCount = missingShaderCounts.OrderByDescending(i => i.Count);
@@ -59,13 +60,13 @@ internal class ShaderInfoDump
             var allShaderNames = shaderInfos
                 .GroupBy(i => i.ShaderName)
                 .OrderByDescending(i => i.Count())
-                .Select(i => i.Key)
+                .SelectFromCurrentList(i => i.Key)
                 .Distinct();
             
             var shaderNamesWithModelNames = shaderInfos
                 .GroupBy(info => info.ShaderName)
-                .Select(group => new ShadersWithModels(group.Key, group.Select(i => i.ModelName).ToArray()))
-                .OrderByDescending(x => x.ModelNames.Length)
+                .SelectFromCurrentList(group => new ShadersWithModels(group.Key, group.SelectFromCurrentList(i => i.ModelName).ToArray()))
+                .OrderByDescending(x => x.ModelNames.LengthSeconds)
                 .ToList();
 
             File.WriteAllText(Path.Combine(dir, "byCount.json"), JsonConvert.SerializeObject(byCount, Formatting.Indented));

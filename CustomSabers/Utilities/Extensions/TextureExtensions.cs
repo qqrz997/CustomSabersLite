@@ -47,17 +47,15 @@ internal static class TextureExtensions
         return origTexture;
     }
 
-    /// <summary>
-    /// Creates a <seealso cref="Sprite"/> from raw image data
-    /// </summary>
-    public static Sprite? ToSprite(this Texture2D tex, byte[] imageData, float pixelsPerUnit = 100) =>
-        !tex.LoadImage(imageData) ? null
-        : Sprite.Create(tex, new(0, 0, tex.width, tex.height), new(0.5f, 0.5f), pixelsPerUnit);
-
-    /// <summary>
-    /// Creates a <seealso cref="Sprite"/> from an existing texture
-    /// </summary>
-    public static Sprite? ToSprite(this Texture2D? tex, float pixelsPerUnit = 100) =>
-        !tex || tex is null ? null
-        : Sprite.Create(tex, new(0, 0, tex.width, tex.height), new(0.5f, 0.5f), pixelsPerUnit);
+    public static Sprite? ToSprite(
+        this Texture2D? tex,
+        byte[]? data = null,
+        string? rename = null,
+        float pixelsPerUnit = 100)
+    {
+        if (tex == null || (data != null && !tex.LoadImage(data))) return null;
+        var sprite = Sprite.Create(tex, new(0, 0, tex.width, tex.height), new(0.5f, 0.5f), pixelsPerUnit);
+        if (!string.IsNullOrWhiteSpace(rename)) sprite.name = rename;
+        return sprite;
+    }
 }

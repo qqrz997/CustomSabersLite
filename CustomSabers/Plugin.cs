@@ -1,14 +1,14 @@
-﻿using IPA;
-using IPA.Config.Stores;
-using IPALogger = IPA.Logging.Logger;
-using Config = IPA.Config.Config;
+﻿using System.Threading.Tasks;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Installers;
-using SiraUtil.Zenject;
-using IPA.Loader;
-using Hive.Versioning;
-using System.Threading.Tasks;
 using CustomSabersLite.Utilities.Common;
+using Hive.Versioning;
+using IPA;
+using IPA.Config.Stores;
+using IPA.Loader;
+using SiraUtil.Zenject;
+using Config = IPA.Config.Config;
+using IPALogger = IPA.Logging.Logger;
 
 namespace CustomSabersLite;
 
@@ -34,7 +34,7 @@ internal class Plugin
 
         zenjector.UseLogger(logger);
 
-        zenjector.Install<AppInstaller>(Location.App, config.Generated<CSLConfig>());
+        zenjector.Install<AppInstaller>(Location.App, config.Generated<PluginConfigModel>());
         zenjector.Install<MenuInstaller>(Location.Menu);
         zenjector.Install<PlayerInstaller>(Location.Player);
         zenjector.Install<MultiPlayerInstaller>(Location.MultiPlayer);
