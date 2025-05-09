@@ -2,7 +2,7 @@
 using IPA.Utilities;
 using Zenject;
 
-namespace CustomSabersLite.Utilities.Common;
+namespace CustomSabersLite.Services;
 
 internal class DirectoryManager : IInitializable
 {

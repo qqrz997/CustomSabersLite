@@ -51,7 +51,7 @@ internal class FavouriteToggleTag : BSMLTag
         activeIcon.rectTransform.offsetMax = Vector2.zero;
 
         var blockedIcon = Instantiate(inactiveIcon, iconContainer, false);
-        blockedIcon.sprite = CSLResources.FavouriteBlockedIcon;
+        blockedIcon.sprite = PluginResources.FavouriteBlockedIcon;
         blockedIcon.color = new(1f, 1f, 1f, 0.5f);
         blockedIcon.rectTransform.anchorMin = new(0.5f, 0.5f);
         blockedIcon.rectTransform.anchorMax = new(0.5f, 0.5f);

@@ -24,7 +24,7 @@ internal class ListInfoCellInfo : IListCellInfo, INotifyPropertyChanged
         {
             NameText = RichTextString.Create(meta.LoaderError.GetErrorMessage());
             AuthorText = RichTextString.Create(meta.SaberFile.FileInfo.Name);
-            Icon = CSLResources.DefaultCoverImage;
+            Icon = PluginResources.DefaultCoverImage;
         }
     }
     

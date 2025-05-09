@@ -15,7 +15,7 @@ internal class NoSaberData : ISaberData
     private Descriptor NoDescriptionDescriptor { get; } = new(
         RichTextString.Create(null),
         RichTextString.Create(null),
-        CSLResources.DefaultCoverImage);
+        PluginResources.DefaultCoverImage);
     
     public void Dispose() { }
 }

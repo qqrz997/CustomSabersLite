@@ -2,7 +2,7 @@
 
 namespace CustomSabersLite.Utilities.Common;
 
-internal class MaterialProperties
+internal static class MaterialProperties
 {
     public static readonly int Color = Shader.PropertyToID("_Color");
     public static readonly int CustomColors = Shader.PropertyToID("_CustomColors");

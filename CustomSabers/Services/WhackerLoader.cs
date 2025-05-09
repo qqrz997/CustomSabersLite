@@ -99,7 +99,7 @@ internal class WhackerLoader
 
             var saberName = RichTextString.Create(whacker.Descriptor.Name);
             var authorName = RichTextString.Create(whacker.Descriptor.Author);
-            var saberIcon = icon != null ? icon : CSLResources.NullCoverImage;
+            var saberIcon = icon != null ? icon : PluginResources.NullCoverImage;
             var descriptor = new Descriptor(saberName, authorName, saberIcon);
             var hasTrails = CustomTrailUtils.GetTrailsFromWhacker(saberPrefab).Any();
             var isFavourite = favouritesManager.IsFavourite(saberFile);

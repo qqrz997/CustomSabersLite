@@ -14,7 +14,7 @@ internal class ListUpDirectoryCellInfo : IListCellInfo
     
     public RichTextString NameText { get; } = RichTextString.Create("Go back...");
     public RichTextString AuthorText { get; }
-    public Sprite Icon => CSLResources.EllipsisIcon;
+    public Sprite Icon => PluginResources.EllipsisIcon;
     public bool IsFavourite => false;
     
     public DirectoryInfo DirectoryInfo { get; }
