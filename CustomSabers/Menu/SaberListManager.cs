@@ -117,6 +117,8 @@ internal class SaberListManager
             list.AddRange(saberMetadataCache
                 .GetSortedData(filterOptions with { Favourites = true})
                 .Select(meta => new ListInfoCellInfo(meta)));
+            
+            PopulateValueIndexMap();
             return list;
         }
         
@@ -139,13 +141,16 @@ internal class SaberListManager
             .GetSortedData(filterOptions)
             .Where(m => m.SaberFile.FileInfo.DirectoryName == saberFoldersManager.CurrentDirectory.FullName)
             .Select(m => new ListInfoCellInfo(m)));
+        
+        PopulateValueIndexMap();
+        return list;
+        
+        
 
-        list.ForEach((cell, i) =>
+        void PopulateValueIndexMap() => list.ForEach((cell, i) =>
         {
             if (cell.TryGetSaberValue(out var v)) valueIndexMap.Add(v, i);
         });
-        
-        return list;
     }
     
     private static bool TrySelect(List<IListCellInfo> list, int row, [NotNullWhen(true)] out IListCellInfo? cell) =>
