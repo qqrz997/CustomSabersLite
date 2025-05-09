@@ -7,6 +7,6 @@ internal class ListFavouritesCellInfo : IListCellInfo
 {
     public RichTextString NameText { get; } = RichTextString.Create("Favourites");
     public RichTextString AuthorText => RichTextString.Empty;
-    public Sprite Icon => CSLResources.FolderFavouritesIcon;
+    public Sprite Icon => PluginResources.FolderFavouritesIcon;
     public bool IsFavourite => false;
 }

@@ -8,7 +8,7 @@ namespace CustomSabersLite.Utilities.Common;
 /// <summary>
 /// Uses AssetBundleExtensions to greatly simplify async <seealso cref="AssetBundle"/> loading
 /// </summary>
-internal class BundleLoading
+internal static class BundleLoading
 {
     public static async Task<AssetBundle?> LoadBundle(string path) =>
         await AssetBundleExtensions.LoadFromFileAsync(path);

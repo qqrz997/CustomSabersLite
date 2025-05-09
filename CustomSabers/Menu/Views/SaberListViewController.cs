@@ -15,7 +15,7 @@ using HMUI;
 using TMPro;
 using UnityEngine;
 using Zenject;
-using static CustomSabersLite.Utilities.Common.CSLResources;
+using static CustomSabersLite.Utilities.Common.PluginResources;
 using static CustomSabersLite.Utilities.Common.UnityAsync;
 
 namespace CustomSabersLite.Menu.Views;

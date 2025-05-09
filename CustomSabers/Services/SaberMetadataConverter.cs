@@ -28,7 +28,7 @@ internal class SaberMetadataConverter
         var saberName = RichTextString.Create(meta.SaberName);
         var authorName = RichTextString.Create(meta.AuthorName);
         var icon = spriteCache.GetSprite(meta.Hash);
-        if (icon == null) icon = CSLResources.NullCoverImage;
+        if (icon == null) icon = PluginResources.NullCoverImage;
         var descriptor = new Descriptor(saberName, authorName, icon);
         
         var isFavourite = favouritesManager.IsFavourite(saberFileInfo);

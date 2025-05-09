@@ -76,7 +76,7 @@ internal class SaberLoader
             
             var saberName = RichTextString.Create(saberDescriptor.SaberName);
             var authorName = RichTextString.Create(saberDescriptor.AuthorName);
-            var saberIcon = icon != null ? icon : CSLResources.NullCoverImage;
+            var saberIcon = icon != null ? icon : PluginResources.NullCoverImage;
             var descriptor = new Descriptor(saberName, authorName, saberIcon);
             var hasTrails = CustomTrailUtils.GetTrailsFromCustomSaber(saberPrefab).Any();
             var isFavourite = favouritesManager.IsFavourite(saberFile);

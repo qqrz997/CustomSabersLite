@@ -14,7 +14,7 @@ internal class ListDirectoryCellInfo : IListCellInfo
     
     public RichTextString NameText { get; }
     public RichTextString AuthorText => RichTextString.Empty;
-    public Sprite Icon => CSLResources.FolderIcon;
+    public Sprite Icon => PluginResources.FolderIcon;
     public bool IsFavourite => false;
     
     public DirectoryInfo DirectoryInfo { get; }

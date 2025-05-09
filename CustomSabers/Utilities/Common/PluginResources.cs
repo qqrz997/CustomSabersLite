@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace CustomSabersLite.Utilities.Common;
 
-internal class CSLResources
+internal class PluginResources
 {
     private const string ResourcesPath = "CustomSabersLite.Resources.";
     

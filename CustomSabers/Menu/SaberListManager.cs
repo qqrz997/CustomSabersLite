@@ -7,7 +7,7 @@ using CustomSabersLite.Models;
 using CustomSabersLite.Services;
 using CustomSabersLite.Utilities.Common;
 using CustomSabersLite.Utilities.Extensions;
-using static CustomSabersLite.Utilities.Common.CSLResources;
+using static CustomSabersLite.Utilities.Common.PluginResources;
 
 namespace CustomSabersLite.Menu;
 
