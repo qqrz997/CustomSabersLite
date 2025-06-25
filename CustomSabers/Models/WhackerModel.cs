@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace CustomSabersLite.Models;
+namespace CustomSabersLite.Models;camSpade.saber
 
 internal class WhackerModel
 {
