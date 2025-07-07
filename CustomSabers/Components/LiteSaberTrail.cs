@@ -31,6 +31,8 @@ internal class LiteSaberTrail : SaberTrail
     public float OverrideWidth { private get; set; } = 1f;
     public bool UseWidthOverride { private get; set; }
     
+    public ITrailData TrailData => trailData;
+    
     public void SetColor(Color color)
     {
         _color = (trailData.UseCustomColor ? trailData.CustomColor : color) * trailData.ColorMultiplier;

@@ -27,8 +27,14 @@ internal static class TrailUtils
     /// </summary>
     /// <param name="trails">The trails to configure</param>
     /// <param name="config">The config to use</param>
-    public static void ConfigureTrails(this ICollection<LiteSaberTrail> trails, PluginConfig config) => 
-        trails.ForEach((trail, idx) => trail.ConfigureTrail(config, idx == 0));
+    public static void ConfigureTrails(this IList<LiteSaberTrail> trails, PluginConfig config)
+    {
+        for (int i = 0; i < trails.Count; i++)
+        {
+            var trail = trails[i];
+            if (trail != null) trail.ConfigureTrail(config, i == 0);
+        }
+    }
 
     /// <summary>
     /// Uses the current config to decide the trail's length, width, white section, and visibility.
@@ -37,9 +43,9 @@ internal static class TrailUtils
     /// <param name="config">The config to use</param>
     /// <param name="useOverrideWidth">If set to true, then the trail will be able to make use of the width override in
     /// the config</param>
-    public static void ConfigureTrail(this LiteSaberTrail trail, PluginConfig config, bool useOverrideWidth = false)
+    private static void ConfigureTrail(this LiteSaberTrail trail, PluginConfig config, bool useOverrideWidth = false)
     {
-        if (trail == null || trail._trailRenderer == null)
+        if (trail._trailRenderer == null)
         {
             return;
         }
@@ -51,15 +57,10 @@ internal static class TrailUtils
 
         trail.OverrideWidth = config.TrailWidth;
         trail.UseWidthOverride = config.OverrideTrailWidth && useOverrideWidth;
-        
-        if (config.OverrideTrailDuration)
-        {
-            trail._trailDuration =  config.TrailDuration * DefaultDuration;
-        }
 
-        if (trail._trailDuration.Approximately(0f))
-        {
-            trail.enabled = false;
-        }
+        trail._trailDuration = config.OverrideTrailDuration ? config.TrailDuration * DefaultDuration
+            : trail.TrailData.LengthSeconds;
+
+        trail.enabled = !trail._trailDuration.Approximately(0f);
     }
 }
