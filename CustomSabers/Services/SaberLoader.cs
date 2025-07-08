@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Common;
@@ -38,9 +37,7 @@ internal class SaberLoader
 
             Logger.Debug($"Attempting to load saber file - {saberFile.FileInfo.Name}");
 
-            await using var fileStream = File.OpenRead(saberFile.FileInfo.FullName);
-
-            bundle = await BundleLoading.LoadBundle(fileStream);
+            bundle = await BundleLoading.LoadBundle(saberFile.FileInfo.FullName);
 
             if (bundle == null)
             {
