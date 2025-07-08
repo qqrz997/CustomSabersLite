@@ -31,8 +31,8 @@ internal class SaberListManager
     private IListCellInfo[] TrailListDefaultChoices { get; } =
     [
         new ListInfoCellInfo("Custom", "Use the trail of the selected saber", CustomTrailIcon, new CustomTrailValue()),
-        new ListInfoCellInfo("Default", "Beat Games", DefaultCoverImage, new DefaultSaberValue()),
-        new ListInfoCellInfo("None", "Use no trail", NoTrailIcon, new NoTrailValue())
+        new ListInfoCellInfo("None", "Use no trail", NoTrailIcon, new NoTrailValue()),
+        new ListInfoCellInfo("Default", "Beat Games", DefaultCoverImage, new DefaultSaberValue())
     ];
     
     public SaberListManager(
