@@ -106,7 +106,7 @@ internal class WhackerLoader
             var metadata =
                 new CustomSaberMetadata(saberFile, SaberLoaderError.None, descriptor, hasTrails, isFavourite);
             var whackerPrefab = new WhackerPrefab(saberPrefab);
-            return new CustomSaberData(metadata, bundle, whackerPrefab);
+            return new CustomSaberData(metadata, whackerPrefab);
         }
         catch
         {
@@ -116,6 +116,7 @@ internal class WhackerLoader
         finally
         {
             if (saberPrefab != null) saberPrefab.hideFlags &= ~HideFlags.DontUnloadUnusedAsset;
+            if (bundle != null) bundle.Unload(false);
         }
     }
 

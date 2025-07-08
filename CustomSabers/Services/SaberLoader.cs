@@ -82,7 +82,7 @@ internal class SaberLoader
             var isFavourite = favouritesManager.IsFavourite(saberFile);
             var metadata = new CustomSaberMetadata(saberFile, SaberLoaderError.None, descriptor, hasTrails, isFavourite); 
             var customSaberPrefab = new CustomSaberPrefab(saberPrefab);
-            return new CustomSaberData(metadata, bundle, customSaberPrefab);
+            return new CustomSaberData(metadata, customSaberPrefab);
         }
         catch
         {
@@ -92,6 +92,7 @@ internal class SaberLoader
         finally
         {
             if (saberPrefab != null) saberPrefab.hideFlags &= ~HideFlags.DontUnloadUnusedAsset;
+            if (bundle != null) bundle.Unload(false);
         }
     }
 }
