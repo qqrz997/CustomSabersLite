@@ -1,5 +1,4 @@
-﻿using CustomSabersLite.Misc;
-using Zenject;
+﻿using Zenject;
 
 namespace CustomSabersLite.Installers;
 

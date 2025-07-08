@@ -1,9 +1,5 @@
-﻿using System;
-using BeatSaberMarkupLanguage.Components.Settings;
-using HMUI;
+﻿using BeatSaberMarkupLanguage.Components.Settings;
 using UnityEngine;
-using UnityEngine.UI;
-using static UnityEngine.Object;
 
 namespace CustomSabersLite.Utilities.Common;
 

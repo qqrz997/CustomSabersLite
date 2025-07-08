@@ -5,7 +5,6 @@ using System.Linq;
 using CustomSabersLite.Menu.Views;
 using CustomSabersLite.Models;
 using CustomSabersLite.Services;
-using CustomSabersLite.Utilities.Common;
 using CustomSabersLite.Utilities.Extensions;
 using static CustomSabersLite.Utilities.Common.PluginResources;
 
