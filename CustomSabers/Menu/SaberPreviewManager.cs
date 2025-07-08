@@ -34,6 +34,9 @@ internal class SaberPreviewManager
         this.menuSaberManager = menuSaberManager;
         this.staticPreviewManager = staticPreviewManager;
     }
+
+    private readonly Color defaultColorLeft = new Color32(0xC8, 0x14, 0x14, 0xFF);
+    private readonly Color defaultColorRight = new Color32(0x28, 0x8E, 0xD2, 0xFF);
     
     private readonly AnimationCurve animateSabersCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
     private readonly List<Coroutine> animations = [];
@@ -126,8 +129,9 @@ internal class SaberPreviewManager
     private void UpdateColor()
     {
         if (!previewActive) return;
-        var selectedColorScheme = colorSchemesSettings.GetSelectedColorScheme();
-        var (colorLeft, colorRight) = (selectedColorScheme.saberAColor, selectedColorScheme.saberBColor);
+        var selectedColorScheme = colorSchemesSettings.GetOverrideColorScheme();
+        var (colorLeft, colorRight) = selectedColorScheme is null ? (defaultColorLeft, defaultColorRight)
+            : (selectedColorScheme.saberAColor, selectedColorScheme.saberBColor);
         menuSaberManager.SetColor(colorLeft, colorRight);
         staticPreviewManager.SetColor(colorLeft, colorRight);
     }
