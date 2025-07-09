@@ -6,7 +6,7 @@
 	<PropertyGroup>
 		<PluginId>CustomSabersLite</PluginId>
 		<PluginName>CustomSabersLite</PluginName>
-		<Authors>CustomSabersLite</Authors>
+		<Authors>qqrz997</Authors>
 		<Version>1.0.0</Version>
 		<GameVersion>1.40.3</GameVersion>
 		<Description>Allows replacement of the default sabers with custom sabers.</Description>
