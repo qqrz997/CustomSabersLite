@@ -1,5 +1,19 @@
 # changelog
 
+## 1.0.1
+- The preview will now show the default red and blue colours if you have override colours disabled
+- Reordered the built-in trail options
+- Fixed an issue where similar but not identical sabers would not load at the same time
+- Fixed the trail length toggle not respecting the default trail length of the custom trail for the held saber preview
+- Fixed the trail length setting being able to disable the trail in the held saber preview
+
+## 1.0.0
+- Features a fresh new menu with cleaner icons and interface elements
+- Placing saber files within folders inside the `CustomSabers` folder will now cause those folders to show in the menu and can be viewed from the saber list
+- Custom sabers' trails can be swapped out for custom trails from other sabers by selecting the 'trails' tab in the saber list
+- Sabers can be favourited. When a saber is favourited, it can be found in the "favourites folder" in the saber list
+- When switching between held and static previews the saber model will animate between the two positions
+
 ## 0.14.2
 - Changed the way that saber objects are created so that GameObjects not parented to the left/right sabers such as events are included 
 
