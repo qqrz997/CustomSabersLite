@@ -30,6 +30,8 @@ internal class SaberFactory
 
     public async Task<SaberInstanceSet> InstantiateCurrentSabers(CancellationToken token)
     {
+        Logger.Debug("Creating a new saber set");
+        
         var selectedSaber = 
             !config.CurrentlySelectedSaber.TryGetSaberHash(out var saberHash) ? null 
             : !saberMetadataCache.TryGetMetadata(saberHash.Hash, out var meta) ? null

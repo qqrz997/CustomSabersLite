@@ -13,6 +13,7 @@ internal class CustomLiteSaber : ILiteSaber
 {
     private readonly Material[] colorableMaterials;
 
+    public bool InUse { get; set; }
     public GameObject GameObject { get; }
     public EventManager EventManager { get; }
 

@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using CustomSabersLite.Configuration;
+﻿using CustomSabersLite.Configuration;
 using CustomSabersLite.Models;
 using CustomSabersLite.Services;
 using CustomSabersLite.Utilities.Common;
@@ -13,7 +12,8 @@ namespace CustomSabersLite.Components;
 internal class LiteSaberModelController : SaberModelController, IColorable, IPreSaberModelInit
 {
     [Inject] private readonly PluginConfig config = null!;
-    [Inject] private readonly Task<SaberInstanceSet> saberInstanceSet = null!;
+    // [Inject] private readonly Task<SaberInstanceSet> saberInstanceSet = null!;
+    [Inject] private readonly SaberInstanceTracker saberInstanceTracker = null!;
     [Inject] private readonly TrailFactory trailFactory = null!;
     [Inject] private readonly SaberEventService saberEventService = null!;
     
@@ -42,9 +42,7 @@ internal class LiteSaberModelController : SaberModelController, IColorable, IPre
 
     private async void CustomSaberInit(Saber saber)
     {
-        var saberSet = await saberInstanceSet;
-
-        liteSaberInstance = saberSet.GetSaberForType(saber.saberType);
+        liteSaberInstance = await saberInstanceTracker.GetSaber(saber.saberType);
 
         if (liteSaberInstance is null)
         {
@@ -71,7 +69,7 @@ internal class LiteSaberModelController : SaberModelController, IColorable, IPre
 
         customTrailInstances = trailFactory.AddTrailsTo(
             liteSaberInstance,
-            saberSet.GetTrailsForType(saber.saberType),
+            await saberInstanceTracker.GetTrails(saber.saberType),
             gameplayCoreSceneSetupData.playerSpecificSettings.saberTrailIntensity);
         
         customTrailInstances.ConfigureTrails(config);
