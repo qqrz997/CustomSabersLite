@@ -1,5 +1,8 @@
 # changelog
 
+## 1.0.2
+- Added a fix for TrickSaber throwing not working with CustomSabersLite enabled
+
 ## 1.0.1
 - The preview will now show the default red and blue colours if you have override colours disabled
 - Reordered the built-in trail options
