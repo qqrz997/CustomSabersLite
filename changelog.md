@@ -1,5 +1,8 @@
 # changelog
 
+## 1.0.3
+- The default selection for trails has been changed to 'Custom' so that trails will match the selected saber after installing the mod for the first time
+
 ## 1.0.2
 - Added a fix for TrickSaber throwing not working with CustomSabersLite enabled
 
