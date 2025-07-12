@@ -9,7 +9,7 @@ internal class PluginConfigModel
     public bool Enabled { get; set; } = true;
 
     public string? CurrentlySelectedSaber { get; set; } = null;
-    public string? CurrentlySelectedTrail { get; set; } = null;
+    public string? CurrentlySelectedTrail { get; set; } = "customTrail";
     
     public bool DisableWhiteTrail { get; set; } = true;
 
