@@ -2,6 +2,7 @@
 using CustomSabersLite.Utilities.Common;
 using CustomSabersLite.Utilities.Extensions;
 using UnityEngine;
+using Zenject;
 
 namespace CustomSabersLite.Components;
 
@@ -9,23 +10,22 @@ internal class LiteSaberTrail : SaberTrail
 {
     private readonly SaberMovementData customTrailMovementData = new();
 
+    private TimeHelper timeHelper = null!;
     private Transform trailTop = null!;
     private Transform trailBottom = null!;
     private ITrailData trailData = null!;
-    private bool didInit;
-    
-    public void Init(
-        Transform trailTop,
-        Transform trailBottom,
-        ITrailData trailData)
+
+    [Inject]
+    public void Construct(
+        TimeHelper timeHelper,
+        InitData initData)
     {
-        this.trailTop = trailTop;
-        this.trailBottom = trailBottom;
-        this.trailData = trailData;
-        _trailDuration = trailData.LengthSeconds;
-        
+        this.timeHelper = timeHelper;
+        trailTop = initData.TrailTop;
+        trailBottom = initData.TrailBottom;
+        trailData = initData.TrailData;
         gameObject.layer = 12;
-        didInit = true;
+        _movementData = customTrailMovementData;
     }
 
     public float OverrideWidth { private get; set; } = 1f;
@@ -43,14 +43,14 @@ internal class LiteSaberTrail : SaberTrail
         }
     }
     
-    private new void Awake()
+    private new void Start()
     {
-        _movementData = customTrailMovementData;
+        // Ignored
     }
 
     private void Update()
     {
-        if (!gameObject.activeInHierarchy || !didInit) return;
+        if (!gameObject.activeInHierarchy) return;
 
         var topPos = trailTop.position;
         var bottomPos = trailBottom.position;
@@ -58,7 +58,7 @@ internal class LiteSaberTrail : SaberTrail
         customTrailMovementData.AddNewData(
             topPos,
             UseWidthOverride ? GetOverrideWidthBottom(OverrideWidth) : bottomPos,
-            TimeHelper.time);
+            timeHelper.Time);
 
         return;
         
@@ -69,4 +69,6 @@ internal class LiteSaberTrail : SaberTrail
                 : Vector3.LerpUnclamped(topPos, bottomPos, trailWidth / distance);
         }
     }
+    
+    internal record InitData(Transform TrailTop, Transform TrailBottom, ITrailData TrailData);
 }

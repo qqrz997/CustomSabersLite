@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using BeatSaber.GameSettings;
 using BeatSaberMarkupLanguage.Components;
@@ -10,22 +11,28 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using static BeatSaberMarkupLanguage.Utilities.ImageResources;
+using Object = UnityEngine.Object;
 
 namespace CustomSabersLite.Menu.Components;
 
 [UsedImplicitly]
 public class ToggleableSliderTag : BSMLTag
 {
+    private GameObject? sliderTemplate;
+    
     public override string[] Aliases { get; } = ["toggleable-slider", "checkbox-slider", "checkbox-slider-setting"];
 
     public override GameObject CreateObject(Transform parent)
     {
         var settingsSubMenuInfos = DiContainer.Resolve<MainSettingsMenuViewController>()._settingsSubMenuInfos;
 
-        var sliderTemplate = Object.FindObjectsOfType<ViewController>(true)
-            .First(x => x is ControllerProfilesSettingsViewController)
-            .transform.Find("Content/MainContent/Sliders/PositionX")
-            .gameObject;
+        if (sliderTemplate == null)
+        {
+            sliderTemplate = Resources.FindObjectsOfTypeAll<ViewController>()
+                .FirstOrDefault(x => x is ControllerProfilesSettingsViewController)?
+                .transform.Find("Content/MainContent/Sliders/PositionX")
+                .gameObject ?? throw new NullReferenceException("Unable to find slider template");
+        }
         
         var labelTemplate = sliderTemplate.transform.Find("Title").GetComponent<CurvedTextMeshPro>();
 
@@ -76,7 +83,7 @@ public class ToggleableSliderTag : BSMLTag
         labelLayoutElement.preferredWidth = 28f;
         toggleableSlider.Label = Object.Instantiate(labelTemplate, labelObject.transform, false);
         toggleableSlider.Label.GetComponent<LocalizedTextMeshProUGUI>().DestroyComponent();
-        toggleableSlider.Label.enableWordWrapping = false;
+        toggleableSlider.Label.textWrappingMode = TextWrappingModes.NoWrap;
         toggleableSlider.Label.fontSize = 4;
         toggleableSlider.Label.alignment = TextAlignmentOptions.CaplineLeft;
         toggleableSlider.Label.color = Color.white;

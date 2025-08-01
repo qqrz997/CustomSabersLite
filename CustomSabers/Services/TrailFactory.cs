@@ -2,16 +2,19 @@
 using CustomSabersLite.Components;
 using CustomSabersLite.Models;
 using UnityEngine;
+using Zenject;
 
 namespace CustomSabersLite.Services;
 
 internal class TrailFactory
 {
     private readonly GameResourcesProvider gameResourcesProvider;
-
-    public TrailFactory(GameResourcesProvider gameResourcesProvider)
+    private readonly DiContainer container;
+    
+    public TrailFactory(GameResourcesProvider gameResourcesProvider, DiContainer container)
     {
         this.gameResourcesProvider = gameResourcesProvider;
+        this.container = container;
     }
 
     private const int DefaultSamplingFrequency = 120;
@@ -33,7 +36,20 @@ internal class TrailFactory
         ITrailData trailData,
         float intensity)
     {
-        var trail = saberObject.AddComponent<LiteSaberTrail>();
+        var trailTransformContainer = new GameObject("TrailTransformContainer") { layer = 12 }.transform;
+        trailTransformContainer.SetParent(saberObject.transform, false);
+        trailTransformContainer.localPosition = Vector3.zero;
+        
+        var trailTop = new GameObject("LiteSaberTrailTop") { layer = 12 }.transform;
+        trailTop.SetParent(trailTransformContainer, false);
+        trailTop.localPosition = trailData.TrailTopOffset;
+        
+        var trailBottom = new GameObject("LiteSaberTrailBottom") { layer = 12 }.transform;
+        trailBottom.SetParent(trailTransformContainer, false);
+        trailBottom.localPosition = trailData.TrailBottomOffset;
+
+        var trailInitData = new LiteSaberTrail.InitData(trailTop, trailBottom, trailData);
+        var trail = container.InstantiateComponent<LiteSaberTrail>(saberObject, [trailInitData]);
         var baseColor = (trailData.CustomColor * trailData.ColorMultiplier) with { a = intensity };
 
         trail._trailDuration = trailData.LengthSeconds;
@@ -47,19 +63,6 @@ internal class TrailFactory
             trail._trailRenderer._meshRenderer.material.color = baseColor;
         }
 
-        var trailTransformContainer = new GameObject("TrailTransformContainer") { layer = 12 }.transform;
-        trailTransformContainer.SetParent(saberObject.transform, false);
-        trailTransformContainer.localPosition = Vector3.zero;
-        
-        var trailTop = new GameObject("LiteSaberTrailTop") { layer = 12 }.transform;
-        trailTop.SetParent(trailTransformContainer, false);
-        trailTop.localPosition = trailData.TrailTopOffset;
-        
-        var trailBottom = new GameObject("LiteSaberTrailBottom") { layer = 12 }.transform;
-        trailBottom.SetParent(trailTransformContainer, false);
-        trailBottom.localPosition = trailData.TrailBottomOffset;
-
-        trail.Init(trailTop, trailBottom, trailData);
         return trail;
     }
 
