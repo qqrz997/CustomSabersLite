@@ -16,8 +16,8 @@
 	<ItemGroup>
 		<DependsOn Include="BSIPA" Version="^4.3.5"/>
 		<DependsOn Include="BeatSaberMarkupLanguage" Version="^1.12.0"/>
-		<DependsOn Include="AssetBundleLoadingTools" Version="^1.1.9"/>
 		<DependsOn Include="SiraUtil" Version="^3.1.12"/>
+		<DependsOn Include="SabersLib" Version="^1.0.0"/>
 	</ItemGroup>
 	
 	<PropertyGroup>

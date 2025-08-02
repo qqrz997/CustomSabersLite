@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using CustomSabersLite.Models;
 using CustomSabersLite.Services;
+using SabersLib.Models;
 
 namespace CustomSabersLite.Components;
 
@@ -25,7 +25,7 @@ internal class SaberInstanceTracker
         return saberType == SaberType.SaberA ? pop.LeftTrails : pop.RightTrails;
     }
     
-    public async Task<ILiteSaber?> GetSaber(SaberType saberType)
+    public async Task<ISaber?> GetSaber(SaberType saberType)
     {
         Logger.Info($"GetSaber {saberType}");
         var pop = await GetMostRecentSet();

@@ -3,29 +3,31 @@ using System.Threading.Tasks;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Extensions;
+using SabersLib.Models;
+using SabersLib.Services;
 
 namespace CustomSabersLite.Services;
 
 internal class SaberFactory
 {
     private readonly PluginConfig config;
-    private readonly CustomSabersLoader customSabersLoader;
     private readonly GameResourcesProvider gameResourcesProvider;
-    private readonly SaberMetadataCache saberMetadataCache;
-    private readonly TrailFactory trailFactory;
+    private readonly ISaberMetadataCache saberMetadataCache;
+    private readonly ITrailFactory trailFactory;
+    private readonly ISabersLoader sabersLoader;
 
     public SaberFactory(
         PluginConfig config,
-        CustomSabersLoader customSabersLoader,
         GameResourcesProvider gameResourcesProvider,
-        SaberMetadataCache saberMetadataCache,
-        TrailFactory trailFactory)
+        ISaberMetadataCache saberMetadataCache,
+        ITrailFactory trailFactory,
+        ISabersLoader sabersLoader)
     {
         this.config = config;
-        this.customSabersLoader = customSabersLoader;
         this.gameResourcesProvider = gameResourcesProvider;
         this.saberMetadataCache = saberMetadataCache;
         this.trailFactory = trailFactory;
+        this.sabersLoader = sabersLoader;
     }
 
     public async Task<SaberInstanceSet> InstantiateCurrentSabers(CancellationToken token)
@@ -35,7 +37,7 @@ internal class SaberFactory
         var selectedSaber = 
             !config.CurrentlySelectedSaber.TryGetSaberHash(out var saberHash) ? null 
             : !saberMetadataCache.TryGetMetadata(saberHash.Hash, out var meta) ? null
-            : await customSabersLoader.GetSaberData(meta.SaberFile, true, token);
+            : await sabersLoader.GetSaberData(meta.SaberFile, true, token);
         
         var (leftTrails, rightTrails) = config.CurrentlySelectedTrail switch
         {
@@ -56,7 +58,7 @@ internal class SaberFactory
             return GetDefaultTrailData(); // the default trails will be used as a fallback
         }
 
-        var saberData = await customSabersLoader.GetSaberData(meta.SaberFile, true, token);
+        var saberData = await sabersLoader.GetSaberData(meta.SaberFile, true, token);
 
         return saberData.Prefab is null ? GetDefaultTrailData() 
             : (saberData.Prefab.GetTrailsForType(SaberType.SaberA), 

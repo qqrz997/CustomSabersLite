@@ -2,9 +2,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 using CustomSabersLite.Menu.Views;
-using CustomSabersLite.Services;
 using CustomSabersLite.Utilities.Extensions;
 using HMUI;
+using SabersLib.Services;
 using Zenject;
 using static CustomSabersLite.Utilities.Common.UnityAsync;
 
@@ -14,7 +14,7 @@ internal class CslFlowCoordinator : FlowCoordinator
 {
     [Inject] private readonly SaberListViewController saberList = null!;
     [Inject] private readonly SaberSettingsViewController saberSettings = null!;
-    [Inject] private readonly MetadataCacheLoader metadataCacheLoader = null!;
+    [Inject] private readonly ISaberMetadataLoader saberMetadataLoader = null!;
 
     private CancellationTokenSource titleTokenSource = new();
 
@@ -25,16 +25,16 @@ internal class CslFlowCoordinator : FlowCoordinator
         if (firstActivation) showBackButton = true;
         if (addedToHierarchy) ProvideInitialViewControllers(saberList, saberSettings);
         
-        SetTitle(metadataCacheLoader.CurrentProgress is { Completed: true } ? "Custom Sabers"
-            : FormatProgress(metadataCacheLoader.CurrentProgress));
+        SetTitle(saberMetadataLoader.CurrentProgress is { Completed: true } ? "Custom Sabers"
+            : FormatProgress(saberMetadataLoader.CurrentProgress));
     }
 
     public override void BackButtonWasPressed(ViewController topViewController) => DidFinish?.Invoke();
 
-    private void OnEnable() => metadataCacheLoader.LoadingProgressChanged += LoadingProgressChanged;
-    private void OnDisable() => metadataCacheLoader.LoadingProgressChanged -= LoadingProgressChanged;
+    private void OnEnable() => saberMetadataLoader.LoadingProgressChanged += LoadingProgressChanged;
+    private void OnDisable() => saberMetadataLoader.LoadingProgressChanged -= LoadingProgressChanged;
 
-    private void LoadingProgressChanged(MetadataCacheLoader.Progress progress)
+    private void LoadingProgressChanged(MetadataLoaderProgress progress)
     {
         if (!progress.Completed)
         {
@@ -57,6 +57,6 @@ internal class CslFlowCoordinator : FlowCoordinator
 
     protected void OnDestroy() => titleTokenSource.Dispose();
     
-    private static string FormatProgress(MetadataCacheLoader.Progress progress) => 
+    private static string FormatProgress(MetadataLoaderProgress progress) => 
         progress is { StagePercent: int p } ? $"{progress.Stage} {p}%" : $"{progress.Stage}";
 }

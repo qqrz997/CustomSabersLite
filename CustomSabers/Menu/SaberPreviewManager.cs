@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using CustomSabersLite.Configuration;
-using CustomSabersLite.Models;
 using CustomSabersLite.Services;
 using CustomSabersLite.Utilities.Extensions;
+using SabersLib.Models;
 using UnityEngine;
 
 namespace CustomSabersLite.Menu;
@@ -106,7 +106,7 @@ internal class SaberPreviewManager
         animations.AddRange(coroutineStarter.StartCoroutines(leftAnim, rightAnim));
         return;
         
-        IEnumerator AnimateSaberToParent(ILiteSaber? saber, Transform target)
+        IEnumerator AnimateSaberToParent(ISaber? saber, Transform target)
         {
             if (saber is null) yield break;
             var transform = saber.GameObject.transform;

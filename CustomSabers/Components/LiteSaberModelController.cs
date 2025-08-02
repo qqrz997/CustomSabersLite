@@ -1,8 +1,10 @@
 ﻿using CustomSabersLite.Configuration;
-using CustomSabersLite.Models;
 using CustomSabersLite.Services;
-using CustomSabersLite.Utilities.Common;
 using CustomSabersLite.Utilities.Extensions;
+using SabersLib.Components;
+using SabersLib.Models;
+using SabersLib.Services;
+using SabersLib.Utilities.Common;
 using SiraUtil.Interfaces;
 using UnityEngine;
 using Zenject;
@@ -12,16 +14,15 @@ namespace CustomSabersLite.Components;
 internal class LiteSaberModelController : SaberModelController, IColorable, IPreSaberModelInit
 {
     [Inject] private readonly PluginConfig config = null!;
-    // [Inject] private readonly Task<SaberInstanceSet> saberInstanceSet = null!;
     [Inject] private readonly SaberInstanceTracker saberInstanceTracker = null!;
-    [Inject] private readonly TrailFactory trailFactory = null!;
-    [Inject] private readonly SaberEventService saberEventService = null!;
+    [Inject] private readonly ITrailFactory trailFactory = null!;
+    [Inject] private readonly ICustomSaberEventManagerHandler eventManagerHandler = null!;
     
     [Inject] private readonly ColorManager colorManager = null!;
     [Inject] private readonly GameplayCoreSceneSetupData gameplayCoreSceneSetupData = null!;
     
-    private ILiteSaber? liteSaberInstance;
-    private LiteSaberTrail[] customTrailInstances = [];
+    private ISaber? saberInstance;
+    private CustomSaberTrail[] customTrailInstances = [];
     private Color color;
 
     public Color Color
@@ -42,37 +43,42 @@ internal class LiteSaberModelController : SaberModelController, IColorable, IPre
 
     private async void CustomSaberInit(Saber saber)
     {
-        liteSaberInstance = await saberInstanceTracker.GetSaber(saber.saberType);
+        saberInstance = await saberInstanceTracker.GetSaber(saber.saberType);
 
-        if (liteSaberInstance is null)
+        if (saberInstance is null)
         {
             Logger.Error("Something went wrong when getting the custom saber instance");
             return;
         }
 
-        liteSaberInstance.SetParent(transform);
+        saberInstance.SetParent(transform);
         
         if (config.OverrideSaberLength)
         {
-            liteSaberInstance.SetLength(config.SaberLength);
+            saberInstance.SetLength(config.SaberLength);
         }
 
         if (config.OverrideSaberWidth)
         {
-            liteSaberInstance.SetWidth(config.SaberWidth);
+            saberInstance.SetWidth(config.SaberWidth);
         }
 
         if (config.EnableCustomEvents)
         {
-            saberEventService.InitializeEventManager(liteSaberInstance.EventManager, saber.saberType);
+            eventManagerHandler.InitializeEventManager(saberInstance.GameObject, saber.saberType);
         }
 
         customTrailInstances = trailFactory.AddTrailsTo(
-            liteSaberInstance,
+            saberInstance,
             await saberInstanceTracker.GetTrails(saber.saberType),
             gameplayCoreSceneSetupData.playerSpecificSettings.saberTrailIntensity);
         
-        customTrailInstances.ConfigureTrails(config);
+        customTrailInstances.ConfigureTrails(new(
+            config.DisableWhiteTrail,
+            config.OverrideTrailWidth,
+            config.TrailWidth,
+            config.OverrideTrailDuration,
+            config.TrailDuration));
 
         SetColor(colorManager.ColorForSaberType(saber.saberType));
     }
@@ -80,7 +86,7 @@ internal class LiteSaberModelController : SaberModelController, IColorable, IPre
     public void SetColor(Color color)
     {
         this.color = color;
-        liteSaberInstance?.SetColor(color);
+        saberInstance?.SetColor(color);
         customTrailInstances.ForEach(t => t.SetColor(color));
     }
 }

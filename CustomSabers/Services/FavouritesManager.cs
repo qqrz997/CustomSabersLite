@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Common;
 using CustomSabersLite.Utilities.Extensions;
 using Newtonsoft.Json;
+using SabersLib.Models;
 using Zenject;
 
 namespace CustomSabersLite.Services;
@@ -37,7 +37,8 @@ internal class FavouritesManager : IInitializable
         SaveFavourites();
     }
 
-    public bool IsFavourite(SaberFileInfo saberFile) => favouriteSaberHashes.Contains(saberFile.Hash);
+    public bool IsFavourite(SaberFileInfo saberFile) => 
+        favouriteSaberHashes.Contains(saberFile.Hash);
 
     private void ReadFavourites()
     {

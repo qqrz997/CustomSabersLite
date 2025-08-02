@@ -1,6 +1,6 @@
 using System;
-using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Extensions;
+using SabersLib.Models;
 using UnityEngine;
 using Zenject;
 
