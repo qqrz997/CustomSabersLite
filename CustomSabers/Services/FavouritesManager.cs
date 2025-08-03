@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using CustomSabersLite.Utilities.Common;
 using CustomSabersLite.Utilities.Extensions;
 using Newtonsoft.Json;
-using SabersLib.Models;
+using SabersCore.Models;
 using Zenject;
 
 namespace CustomSabersLite.Services;

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Services;
 using CustomSabersLite.Utilities.Extensions;
-using SabersLib.Models;
+using SabersCore.Models;
 using UnityEngine;
 
 namespace CustomSabersLite.Menu;

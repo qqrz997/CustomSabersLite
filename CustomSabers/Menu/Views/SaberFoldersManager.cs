@@ -4,8 +4,8 @@ using System.IO;
 using System.Linq;
 using CustomSabersLite.Services;
 using CustomSabersLite.Utilities.Common;
-using SabersLib.Models;
-using SabersLib.Services;
+using SabersCore.Models;
+using SabersCore.Services;
 using Zenject;
 
 namespace CustomSabersLite.Menu.Views;

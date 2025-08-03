@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using CustomSabersLite.Services;
-using SabersLib.Models;
+using SabersCore.Models;
 
 namespace CustomSabersLite.Components;
 

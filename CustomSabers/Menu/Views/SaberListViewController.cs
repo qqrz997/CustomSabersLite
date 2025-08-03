@@ -11,7 +11,7 @@ using CustomSabersLite.Models;
 using CustomSabersLite.Services;
 using CustomSabersLite.Utilities.Extensions;
 using HMUI;
-using SabersLib.Services;
+using SabersCore.Services;
 using TMPro;
 using UnityEngine;
 using Zenject;

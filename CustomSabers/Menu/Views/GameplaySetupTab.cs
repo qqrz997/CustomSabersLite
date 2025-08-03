@@ -8,7 +8,7 @@ using CustomSabersLite.Models;
 using CustomSabersLite.Utilities.Extensions;
 using HMUI;
 using JetBrains.Annotations;
-using SabersLib.Services;
+using SabersCore.Services;
 using UnityEngine;
 
 namespace CustomSabersLite.Menu.Views;

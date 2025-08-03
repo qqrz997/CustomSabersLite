@@ -1,6 +1,6 @@
 using System.IO;
 using CustomSabersLite.Utilities.Common;
-using SabersLib.Models;
+using SabersCore.Models;
 using UnityEngine;
 
 namespace CustomSabersLite.Models;

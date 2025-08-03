@@ -1,10 +1,10 @@
 ﻿using CustomSabersLite.Configuration;
 using CustomSabersLite.Services;
 using CustomSabersLite.Utilities.Extensions;
-using SabersLib.Components;
-using SabersLib.Models;
-using SabersLib.Services;
-using SabersLib.Utilities.Common;
+using SabersCore.Components;
+using SabersCore.Models;
+using SabersCore.Services;
+using SabersCore.Utilities.Common;
 using SiraUtil.Interfaces;
 using UnityEngine;
 using Zenject;

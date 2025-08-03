@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using CustomSabersLite.Utilities.Common;
 using CustomSabersLite.Utilities.Extensions;
-using SabersLib.Models;
+using SabersCore.Models;
 using UnityEngine;
 
 namespace CustomSabersLite.Models;
