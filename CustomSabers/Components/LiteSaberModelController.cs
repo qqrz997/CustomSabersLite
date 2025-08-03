@@ -1,4 +1,5 @@
-﻿using CustomSabersLite.Configuration;
+﻿using System.Threading.Tasks;
+using CustomSabersLite.Configuration;
 using CustomSabersLite.Services;
 using CustomSabersLite.Utilities.Extensions;
 using SabersCore.Components;
@@ -14,7 +15,7 @@ namespace CustomSabersLite.Components;
 internal class LiteSaberModelController : SaberModelController, IColorable, IPreSaberModelInit
 {
     [Inject] private readonly PluginConfig config = null!;
-    [Inject] private readonly SaberInstanceTracker saberInstanceTracker = null!;
+    [Inject] private readonly Task<SaberInstanceSet> saberSet = null!;
     [Inject] private readonly ITrailFactory trailFactory = null!;
     [Inject] private readonly ICustomSaberEventManagerHandler eventManagerHandler = null!;
     
@@ -43,8 +44,9 @@ internal class LiteSaberModelController : SaberModelController, IColorable, IPre
 
     private async void CustomSaberInit(Saber saber)
     {
-        saberInstance = await saberInstanceTracker.GetSaber(saber.saberType);
-
+        var sabers = await saberSet;
+        saberInstance = sabers.GetSaberForType(saber.saberType);
+        
         if (saberInstance is null)
         {
             Logger.Error("Something went wrong when getting the custom saber instance");
@@ -52,6 +54,7 @@ internal class LiteSaberModelController : SaberModelController, IColorable, IPre
         }
 
         saberInstance.SetParent(transform);
+        saberInstance.GameObject.SetActive(true);
         
         if (config.OverrideSaberLength)
         {
@@ -70,7 +73,7 @@ internal class LiteSaberModelController : SaberModelController, IColorable, IPre
 
         customTrailInstances = trailFactory.AddTrailsTo(
             saberInstance,
-            await saberInstanceTracker.GetTrails(saber.saberType),
+            sabers.GetTrailsForType(saber.saberType),
             gameplayCoreSceneSetupData.playerSpecificSettings.saberTrailIntensity);
         
         customTrailInstances.ConfigureTrails(new(
