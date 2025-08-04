@@ -15,7 +15,7 @@ namespace CustomSabersLite.Components;
 internal class LiteSaberModelController : SaberModelController, IColorable, IPreSaberModelInit
 {
     [Inject] private readonly PluginConfig config = null!;
-    [Inject] private readonly Task<SaberInstanceSet> saberSet = null!;
+    [Inject] private readonly GameplaySaberProvider gameplaySaberProvider = null!;
     [Inject] private readonly ITrailFactory trailFactory = null!;
     [Inject] private readonly ICustomSaberEventManagerHandler eventManagerHandler = null!;
     
@@ -44,7 +44,7 @@ internal class LiteSaberModelController : SaberModelController, IColorable, IPre
 
     private async void CustomSaberInit(Saber saber)
     {
-        var sabers = await saberSet;
+        var sabers = await gameplaySaberProvider.GetSabers();
         saberInstance = sabers.GetSaberForType(saber.saberType);
         
         if (saberInstance is null)
