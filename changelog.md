@@ -1,5 +1,10 @@
 # changelog
 
+## 1.0.4
+- Removed temporary TrickSaber compatibility patch, fixing the issue with duplicated saber models
+- No longer depends on AssetBundleLoadingTools
+- New dependency SabersCore, intended to improve the compatibility of multiple mods manipulating sabers
+
 ## 1.0.3
 - The default selection for trails has been changed to 'Custom' so that trails will match the selected saber after installing the mod for the first time
 
