@@ -1,3 +1,4 @@
+using SabersCore.Models;
 using UnityEngine;
 
 namespace CustomSabersLite.Models;

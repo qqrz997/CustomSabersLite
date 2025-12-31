@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using CustomSabersLite.Models;
 using CustomSabersLite.Services;
 using CustomSabersLite.Utilities.Common;
+using SabersCore.Models;
+using SabersCore.Services;
 using Zenject;
 
 namespace CustomSabersLite.Menu.Views;
@@ -12,18 +13,18 @@ namespace CustomSabersLite.Menu.Views;
 internal class SaberFoldersManager : IInitializable, IDisposable
 {
     private readonly DirectoryManager directoryManager;
-    private readonly SaberMetadataCache saberMetadataCache;
-    private readonly MetadataCacheLoader metadataCacheLoader;
+    private readonly ISaberMetadataCache saberMetadataCache;
+    private readonly ISaberMetadataLoader saberMetadataLoader;
     private readonly List<DirectoryInfo> customSabersSubDirs = [];
     
     public SaberFoldersManager(
         DirectoryManager directoryManager,
-        SaberMetadataCache saberMetadataCache,
-        MetadataCacheLoader metadataCacheLoader)
+        ISaberMetadataCache saberMetadataCache,
+        ISaberMetadataLoader saberMetadataLoader)
     {
         this.directoryManager = directoryManager;
         this.saberMetadataCache = saberMetadataCache;
-        this.metadataCacheLoader = metadataCacheLoader;
+        this.saberMetadataLoader = saberMetadataLoader;
         CurrentDirectory = directoryManager.CustomSabers;
     }
 
@@ -36,19 +37,19 @@ internal class SaberFoldersManager : IInitializable, IDisposable
 
     public void Initialize()
     {
-        metadataCacheLoader.LoadingProgressChanged += LoadingProgressChanged;
+        saberMetadataLoader.LoadingProgressChanged += LoadingProgressChanged;
         Refresh();
     }
 
     public void Dispose()
     {
-        metadataCacheLoader.LoadingProgressChanged -= LoadingProgressChanged;
+        saberMetadataLoader.LoadingProgressChanged -= LoadingProgressChanged;
     }
 
     public void Refresh()
     {
         var saberDirs = saberMetadataCache
-            .GetSortedData(SaberListFilterOptions.Default)
+            .GetRefreshedMetadata()
             .SelectMany(GetParentDirectories)
             .DistinctByPath();
         
@@ -67,7 +68,7 @@ internal class SaberFoldersManager : IInitializable, IDisposable
         }
     }
 
-    private void LoadingProgressChanged(MetadataCacheLoader.Progress progress)
+    private void LoadingProgressChanged(MetadataLoaderProgress progress)
     {
         if (progress.Completed) Refresh();
     }

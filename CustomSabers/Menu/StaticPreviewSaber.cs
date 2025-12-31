@@ -1,4 +1,4 @@
-using CustomSabersLite.Models;
+using SabersCore.Models;
 using UnityEngine;
 
 namespace CustomSabersLite.Menu;
@@ -6,10 +6,10 @@ namespace CustomSabersLite.Menu;
 internal class StaticPreviewSaber
 {
     private readonly Transform root = new GameObject("StaticPreviewSaber").transform;
-    private ILiteSaber? saber;
+    private ISaber? saber;
     
     public void SetParent(Transform parent) => root.SetParent(parent, false);
-    public void ReplaceSaber(ILiteSaber? newSaber)
+    public void ReplaceSaber(ISaber? newSaber)
     {
         saber = newSaber;
         saber?.SetParent(root);

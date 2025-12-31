@@ -2,6 +2,7 @@
 using System.Runtime.CompilerServices;
 using CustomSabersLite.Utilities.Common;
 using CustomSabersLite.Utilities.Extensions;
+using SabersCore.Models;
 using UnityEngine;
 
 namespace CustomSabersLite.Models;
@@ -10,10 +11,10 @@ internal class ListInfoCellInfo : IListCellInfo, INotifyPropertyChanged
 {
     private bool isFavourite;
 
-    public ListInfoCellInfo(CustomSaberMetadata meta)
+    public ListInfoCellInfo(CustomSaberMetadata meta, bool isFavourite)
     {
         Value = new SaberHash(meta.SaberFile.Hash);
-        IsFavourite = meta.IsFavourite;
+        IsFavourite = isFavourite;
         if (meta.LoaderError == SaberLoaderError.None)
         {
             NameText = meta.Descriptor.SaberName;

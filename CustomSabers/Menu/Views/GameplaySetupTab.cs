@@ -5,10 +5,10 @@ using BeatSaberMarkupLanguage.Attributes;
 using CustomSabersLite.Configuration;
 using CustomSabersLite.Menu.Components;
 using CustomSabersLite.Models;
-using CustomSabersLite.Services;
 using CustomSabersLite.Utilities.Extensions;
 using HMUI;
 using JetBrains.Annotations;
+using SabersCore.Services;
 using UnityEngine;
 
 namespace CustomSabersLite.Menu.Views;
@@ -17,7 +17,7 @@ namespace CustomSabersLite.Menu.Views;
 internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSaberSettings
 {
     private readonly PluginConfig config;
-    private readonly MetadataCacheLoader metadataCacheLoader;
+    private readonly ISaberMetadataLoader saberMetadataLoader;
     private readonly ICoroutineStarter coroutineStarter;
     private readonly SaberListManager saberListManager;
 
@@ -25,12 +25,12 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
 
     public GameplaySetupTab(
         PluginConfig config,
-        MetadataCacheLoader metadataCacheLoader,
+        ISaberMetadataLoader saberMetadataLoader,
         ICoroutineStarter coroutineStarter,
         SaberListManager saberListManager)
     {
         this.config = config;
-        this.metadataCacheLoader = metadataCacheLoader;
+        this.saberMetadataLoader = saberMetadataLoader;
         this.coroutineStarter = coroutineStarter;
         this.saberListManager = saberListManager;
     }
@@ -41,7 +41,7 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
     [UIAction("#post-parse")]
     private void PostParse()
     {
-        metadataCacheLoader.LoadingProgressChanged += LoadingProgressChanged;
+        saberMetadataLoader.LoadingProgressChanged += LoadingProgressChanged;
         saberList.DidActivate += Activated;
         RefreshList();
     }
@@ -160,7 +160,7 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
         saberList.ScrollToCellWithIdx(selectedSaberIndex, TableView.ScrollPositionType.Center, true);
     }
 
-    private void LoadingProgressChanged(MetadataCacheLoader.Progress progress)
+    private void LoadingProgressChanged(MetadataLoaderProgress progress)
     {
         if (progress.Completed) RefreshList();
     }
@@ -172,7 +172,7 @@ internal class GameplaySetupTab : IDisposable, INotifyPropertyChanged, ISharedSa
 
     public void Dispose()
     {
-        metadataCacheLoader.LoadingProgressChanged -= LoadingProgressChanged;
+        saberMetadataLoader.LoadingProgressChanged -= LoadingProgressChanged;
         if (saberList != null) saberList.DidActivate -= Activated;
     }
 }

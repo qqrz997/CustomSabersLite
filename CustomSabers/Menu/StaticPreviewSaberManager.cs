@@ -1,4 +1,4 @@
-﻿using CustomSabersLite.Models;
+﻿using SabersCore.Models;
 using UnityEngine;
 
 namespace CustomSabersLite.Menu;

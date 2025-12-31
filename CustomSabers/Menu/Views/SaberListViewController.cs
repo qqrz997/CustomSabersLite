@@ -11,6 +11,7 @@ using CustomSabersLite.Models;
 using CustomSabersLite.Services;
 using CustomSabersLite.Utilities.Extensions;
 using HMUI;
+using SabersCore.Services;
 using TMPro;
 using UnityEngine;
 using Zenject;
@@ -25,8 +26,8 @@ internal class SaberListViewController : BSMLAutomaticViewController
 {
     [Inject] private readonly PluginConfig config = null!;
     [Inject] private readonly DirectoryManager directoryManager = null!;
-    [Inject] private readonly MetadataCacheLoader metadataCacheLoader = null!;
-    [Inject] private readonly SaberMetadataCache saberMetadataCache = null!;
+    [Inject] private readonly ISaberMetadataLoader saberMetadataLoader = null!;
+    [Inject] private readonly ISaberMetadataCache saberMetadataCache = null!;
     [Inject] private readonly FavouritesManager favouritesManager = null!;
     [Inject] private readonly SaberListManager saberListManager = null!;
     [Inject] private readonly SaberPreviewManager previewManager = null!;
@@ -48,12 +49,12 @@ internal class SaberListViewController : BSMLAutomaticViewController
     [UIAction("#post-parse")]
     public void PostParse()
     {
-        metadataCacheLoader.LoadingProgressChanged += LoadingProgressChanged;
+        saberMetadataLoader.LoadingProgressChanged += LoadingProgressChanged;
 
         searchBsInputField.Text = SearchFilter;
         searchBsInputField.AddInputChangedListener(inp => SearchFilter = inp.text);
 
-        loadingIcon.SetActive(!metadataCacheLoader.CurrentProgress.Completed);
+        loadingIcon.SetActive(!saberMetadataLoader.CurrentProgress.Completed);
     }
 
     private List<object> orderByChoices = [.. Enum.GetNames(typeof(OrderBy))];
@@ -138,10 +139,6 @@ internal class SaberListViewController : BSMLAutomaticViewController
             if (!SelectedSaberValue.TryGetSaberHash(out var saberHash)
                 || !saberMetadataCache.TryGetMetadata(saberHash.Hash, out var meta)) return;
             
-            meta = meta with { IsFavourite = value };
-            saberMetadataCache.Remove(meta.SaberFile.Hash);
-            saberMetadataCache.TryAdd(meta);
-            
             if (saberList.Data.TryGetElementAt(saberListManager.IndexForSaberValue(saberHash), out var cell)
                 && cell is ListInfoCellInfo infoCell) infoCell.IsFavourite = value;
             
@@ -204,7 +201,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
         previewManager.SetPreviewActive(false);
         
         // this will invoke an event on completion that gets used to refresh the list
-        await metadataCacheLoader.ReloadAsync();
+        await saberMetadataLoader.ReloadAsync();
     }
 
     private void RefreshList()
@@ -232,7 +229,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
         StartUnitySafeTask(GeneratePreview);
     }
 
-    private void LoadingProgressChanged(MetadataCacheLoader.Progress progress)
+    private void LoadingProgressChanged(MetadataLoaderProgress progress)
     {
         if (progress.Completed) RefreshList();
         loadingIcon.SetActive(!progress.Completed);
@@ -285,7 +282,7 @@ internal class SaberListViewController : BSMLAutomaticViewController
 
     protected override void OnDestroy()
     {
-        metadataCacheLoader.LoadingProgressChanged -= LoadingProgressChanged;
+        saberMetadataLoader.LoadingProgressChanged -= LoadingProgressChanged;
         saberPreviewTokenSource.Dispose();
         base.OnDestroy();
     }
