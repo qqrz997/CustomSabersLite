@@ -129,11 +129,10 @@ internal class SaberPreviewManager
     private void UpdateColor()
     {
         if (!previewActive) return;
-        var selectedColorScheme = colorSchemesSettings.GetOverrideColorScheme();
-        var (colorLeft, colorRight) = selectedColorScheme is null ? (defaultColorLeft, defaultColorRight)
-            : (selectedColorScheme.saberAColor, selectedColorScheme.saberBColor);
-        menuSaberManager.SetColor(colorLeft, colorRight);
-        staticPreviewManager.SetColor(colorLeft, colorRight);
+        var colorScheme = colorSchemesSettings.GetOverrideColorScheme();
+        if (colorScheme is null) return;
+        menuSaberManager.SetColor(colorScheme, colorScheme.saberAColor, colorScheme.saberBColor);
+        staticPreviewManager.SetColor(colorScheme, colorScheme.saberAColor, colorScheme.saberBColor);
     }
 
     private void UpdateActivePreviewInstant()

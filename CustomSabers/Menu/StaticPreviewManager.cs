@@ -66,9 +66,9 @@ internal class StaticPreviewManager : IInitializable, IDisposable
         staticPreviewTrailManager.UpdateTrails();
     }
 
-    public void SetColor(Color colorLeft, Color colorRight)
+    public void SetColor(ColorScheme colorScheme, Color colorLeft, Color colorRight)
     {
-        staticPreviewSaberManager.SetColor(colorLeft, colorRight);
+        staticPreviewSaberManager.SetColor(colorScheme);
         staticPreviewTrailManager.SetColor(colorLeft, colorRight);
     }
 }

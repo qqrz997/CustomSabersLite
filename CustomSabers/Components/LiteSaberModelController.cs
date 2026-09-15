@@ -89,7 +89,7 @@ internal class LiteSaberModelController : SaberModelController, IColorable, IPre
     public void SetColor(Color color)
     {
         this.color = color;
-        saberInstance?.SetColor(color);
+        saberInstance?.SetColor(colorManager._colorScheme);
         customTrailInstances.ForEach(t => t.SetColor(color));
     }
 }
