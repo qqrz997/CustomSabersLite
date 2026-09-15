@@ -100,7 +100,7 @@ internal class StaticPreviewTrail
         }
         
         this.color = color;
-        var trailColor = (trailData.UseCustomColor ? trailData.CustomColor : color) * trailData.ColorMultiplier;
+        var trailColor = (trailData.UseTrailColor ? trailData.CustomColor : color) * trailData.ColorMultiplier;
         
         foreach (var material in meshRenderer.materials)
         {
