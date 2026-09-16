@@ -14,7 +14,7 @@ internal class StaticPreviewSaber
         saber = newSaber;
         saber?.SetParent(root);
     }
-    public void SetColor(Color color) => saber?.SetColor(color);
+    public void SetColor(ColorScheme colorScheme) => saber?.SetColor(colorScheme);
     public void SetScale(float length, float width)
     {
         if (saber is null) return;

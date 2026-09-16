@@ -2,6 +2,7 @@
 using CustomSabersLite.Utilities.Common;
 using CustomSabersLite.Utilities.Extensions;
 using SabersCore.Models;
+using SabersCore.Utilities.Extensions;
 using UnityEngine;
 
 namespace CustomSabersLite.Menu;
@@ -92,23 +93,26 @@ internal class StaticPreviewTrail
         UpdateColor(color);
     }
 
-    public void UpdateColor(Color color)
+    public void UpdateColor(ColorScheme colorScheme)
     {
         if (trailData is null)
         {
             return;
         }
-        
-        this.color = color;
-        var trailColor = (trailData.UseCustomColor ? trailData.CustomColor : color) * trailData.ColorMultiplier;
-        
+
+        color = trailData.UseTrailColor ? trailData.CustomColor : colorScheme.GetColorForTrail(trailData)
+            * trailData.ColorMultiplier; 
+        UpdateColor(color);
+    }
+
+    private void UpdateColor(Color color)
+    {
         foreach (var material in meshRenderer.materials)
         {
-            material.SetColor(MaterialProperties.Color, trailColor);
+            material.SetColor(MaterialProperties.Color, color);
         }
         
-        for (int i = 0; i < colors.Length; i++) colors[i] = trailColor;
-        
+        for (int i = 0; i < colors.Length; i++) colors[i] = color;
         mesh.colors = colors;
     }
 }

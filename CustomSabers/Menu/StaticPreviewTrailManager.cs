@@ -36,9 +36,9 @@ internal class StaticPreviewTrailManager
         rightTrail.UpdateMesh();
     }
 
-    public void SetColor(Color left, Color right)
+    public void SetColor(ColorScheme colorScheme)
     {
-        leftTrail.UpdateColor(left);
-        rightTrail.UpdateColor(right);
+        leftTrail.UpdateColor(colorScheme);
+        rightTrail.UpdateColor(colorScheme);
     }
 }

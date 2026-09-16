@@ -61,10 +61,10 @@ internal class MenuSaber
         parent.SetParent(t, false);
     }
 
-    public void SetColor(Color color)
+    public void SetColor(ColorScheme colorScheme)
     {
-        saberInstance?.SetColor(color);
-        trailInstances.ForEach(t => t.SetColor(color));
+        saberInstance?.SetColor(colorScheme);
+        trailInstances.ForEach(t => t.SetColor(colorScheme));
     }
 
     public void SetActive(bool active)
