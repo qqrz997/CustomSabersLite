@@ -44,10 +44,10 @@ internal class MenuSaberManager
         rightSaber.UpdateSaberScale(length, width);
     }
 
-    public void SetColor(ColorScheme colorScheme, Color left, Color right)
+    public void SetColor(ColorScheme colorScheme)
     {
-        leftSaber.SetColor(colorScheme, left);
-        rightSaber.SetColor(colorScheme, right);
+        leftSaber.SetColor(colorScheme);
+        rightSaber.SetColor(colorScheme);
     }
 
     public void SetActive(bool active)
