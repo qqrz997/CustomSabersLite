@@ -63,8 +63,8 @@ internal class MenuSaber
 
     public void SetColor(ColorScheme colorScheme)
     {
-        saberInstance?.SetColor(colorScheme);
-        trailInstances.ForEach(t => t.SetColor(colorScheme));
+        saberInstance?.SetColorScheme(colorScheme);
+        foreach (var t in trailInstances) t.SetColorScheme(colorScheme);
     }
 
     public void SetActive(bool active)
