@@ -38,7 +38,7 @@ internal class StaticPreviewTrailManager
 
     public void SetColor(ColorScheme colorScheme)
     {
-        leftTrail.UpdateColor(colorScheme);
-        rightTrail.UpdateColor(colorScheme);
+        leftTrail.SetColor(colorScheme);
+        rightTrail.SetColor(colorScheme);
     }
 }

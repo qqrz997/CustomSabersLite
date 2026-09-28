@@ -38,6 +38,8 @@ internal class StaticPreviewTrail
 
     public void ReplaceTrail(ITrailData? trailData)
     {
+        ClearPropertyBlock();
+        
         this.trailData = trailData;
 
         if (trailData is null)
@@ -47,19 +49,12 @@ internal class StaticPreviewTrail
         }
         
         meshRenderer.enabled = true;
-        foreach (var mat in trailData.Materials)
-        {
-            Logger.Info($"Setting material {mat.name} to {gameObject.transform.parent.name}");
-        }
-        meshRenderer.materials = trailData.Materials;
+        meshRenderer.sharedMaterials = trailData.Materials;
     }
     
     public void UpdateMesh()
     {
-        if (trailData is null)
-        {
-            return;
-        }
+        if (trailData is null) return;
 
         var bot = trailData.TrailBottomOffset;
         var top = trailData.TrailTopOffset;
@@ -97,15 +92,23 @@ internal class StaticPreviewTrail
         mesh.colors = colors;
     }
 
-    public void UpdateColor(ColorScheme colorScheme)
+    public void SetColor(ColorScheme colorScheme)
     {
+        color = Color.white;
+        
         if (trailData is null) return;
         
         foreach (var info in trailData.Colorizer.GetPropertiesWithColors(colorScheme))
         {
-            materialPropertyBlock.SetColor(info.PropertyName, info.Color);
             if (info.ApplyToVertexColor) color = info.Color;
+            materialPropertyBlock.SetColor(info.PropertyName, info.Color);
+            meshRenderer.SetPropertyBlock(materialPropertyBlock, info.MaterialIndex);
         }
-        meshRenderer.SetPropertyBlock(materialPropertyBlock);
+    }
+
+    private void ClearPropertyBlock()
+    {
+        materialPropertyBlock.Clear();
+        for (int i = 0; i < meshRenderer.sharedMaterials.Length; i++) meshRenderer.SetPropertyBlock(null, i);
     }
 }
