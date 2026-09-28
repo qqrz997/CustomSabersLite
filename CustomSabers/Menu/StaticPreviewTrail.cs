@@ -1,5 +1,4 @@
 ﻿using CustomSabersLite.Configuration;
-using CustomSabersLite.Utilities.Common;
 using CustomSabersLite.Utilities.Extensions;
 using SabersCore.Models;
 using UnityEngine;
@@ -10,8 +9,10 @@ internal class StaticPreviewTrail
 {
     private readonly PluginConfig config;
 
-    private readonly GameObject gameObject;
+    private readonly GameObject gameObject = new("StaticPreviewTrail");
     private readonly MeshRenderer meshRenderer;
+    private readonly MaterialPropertyBlock materialPropertyBlock = new();
+    
     private readonly Mesh mesh = new();
     private readonly Vector3[] vertices = new Vector3[4];
     private readonly int[] triangles = [0, 3, 1, /**/ 0, 2, 3];
@@ -21,15 +22,14 @@ internal class StaticPreviewTrail
     public StaticPreviewTrail(PluginConfig config)
     {
         this.config = config;
-        
-        gameObject = new("StaticPreviewTrail");
+
         meshRenderer = gameObject.AddComponent<MeshRenderer>();
         gameObject.AddComponent<MeshFilter>().mesh = mesh;
         mesh.MarkDynamic();
     }
 
     private ITrailData? trailData;
-    private Color color;
+    private Color color = Color.white;
 
     public void Init(Transform parent)
     {
@@ -38,6 +38,8 @@ internal class StaticPreviewTrail
 
     public void ReplaceTrail(ITrailData? trailData)
     {
+        ClearPropertyBlock();
+        
         this.trailData = trailData;
 
         if (trailData is null)
@@ -47,15 +49,12 @@ internal class StaticPreviewTrail
         }
         
         meshRenderer.enabled = true;
-        meshRenderer.material = trailData.Material;
+        meshRenderer.sharedMaterials = trailData.Materials;
     }
     
     public void UpdateMesh()
     {
-        if (trailData is null)
-        {
-            return;
-        }
+        if (trailData is null) return;
 
         var bot = trailData.TrailBottomOffset;
         var top = trailData.TrailTopOffset;
@@ -89,26 +88,27 @@ internal class StaticPreviewTrail
         mesh.triangles = triangles;
         mesh.RecalculateBounds();
         
-        UpdateColor(color);
+        for (int i = 0; i < colors.Length; i++) colors[i] = color;
+        mesh.colors = colors;
     }
 
-    public void UpdateColor(Color color)
+    public void SetColor(ColorScheme colorScheme)
     {
-        if (trailData is null)
+        color = Color.white;
+        
+        if (trailData is null) return;
+        
+        foreach (var info in trailData.Colorizer.GetPropertiesWithColors(colorScheme))
         {
-            return;
+            if (info.ApplyToVertexColor) color = info.Color;
+            materialPropertyBlock.SetColor(info.PropertyName, info.Color);
+            meshRenderer.SetPropertyBlock(materialPropertyBlock, info.MaterialIndex);
         }
-        
-        this.color = color;
-        var trailColor = (trailData.UseCustomColor ? trailData.CustomColor : color) * trailData.ColorMultiplier;
-        
-        foreach (var material in meshRenderer.materials)
-        {
-            material.SetColor(MaterialProperties.Color, trailColor);
-        }
-        
-        for (int i = 0; i < colors.Length; i++) colors[i] = trailColor;
-        
-        mesh.colors = colors;
+    }
+
+    private void ClearPropertyBlock()
+    {
+        materialPropertyBlock.Clear();
+        for (int i = 0; i < meshRenderer.sharedMaterials.Length; i++) meshRenderer.SetPropertyBlock(null, i);
     }
 }

@@ -1,7 +1,5 @@
-﻿using System.Threading.Tasks;
-using CustomSabersLite.Configuration;
+﻿using CustomSabersLite.Configuration;
 using CustomSabersLite.Services;
-using CustomSabersLite.Utilities.Extensions;
 using SabersCore.Components;
 using SabersCore.Models;
 using SabersCore.Services;
@@ -21,15 +19,17 @@ internal class LiteSaberModelController : SaberModelController, IColorable, IPre
     
     [Inject] private readonly ColorManager colorManager = null!;
     [Inject] private readonly GameplayCoreSceneSetupData gameplayCoreSceneSetupData = null!;
+    [Inject] private readonly BeatmapCallbacksController beatmapCallbacksController = null!;
     
     private ISaber? saberInstance;
     private CustomSaberTrail[] customTrailInstances = [];
     private Color color;
 
+    // Called by SiraUtil events
     public Color Color
     {
         get => color;
-        set => SetColor(value);
+        set => SiraUtilSetColor(value);
     }
 
     public bool PreInit(Transform parent, Saber saber)
@@ -83,13 +83,28 @@ internal class LiteSaberModelController : SaberModelController, IColorable, IPre
             config.OverrideTrailDuration,
             config.TrailDuration));
 
-        SetColor(colorManager.ColorForSaberType(saber.saberType));
+        saberInstance.SetColorScheme(colorManager._colorScheme);
+        foreach (var trail in customTrailInstances)
+        {
+            trail.SetColorScheme(colorManager._colorScheme);
+        }
+
+        beatmapCallbacksController.AddBeatmapCallback<ColorBoostBeatmapEventData>(HandleColorBoostEvent);
     }
 
-    public void SetColor(Color color)
+    private void HandleColorBoostEvent(ColorBoostBeatmapEventData eventData)
+    {
+        saberInstance?.SetBoostColors(colorManager._colorScheme, eventData.boostColorsAreOn);
+        foreach (var trail in customTrailInstances)
+        {
+            trail.SetBoostColors(colorManager._colorScheme, eventData.boostColorsAreOn);
+        }
+    }
+    
+    public void SiraUtilSetColor(Color color)
     {
         this.color = color;
-        saberInstance?.SetColor(color);
-        customTrailInstances.ForEach(t => t.SetColor(color));
+        saberInstance?.SetSpecificColor(color);
+        foreach (var trail in customTrailInstances) trail.SetSpecificColor(color);
     }
 }
