@@ -98,8 +98,9 @@ internal class StaticPreviewTrail
         
         if (trailData is null) return;
         
-        foreach (var info in trailData.Colorizer.GetPropertiesWithColors(colorScheme))
+        foreach (var provider in trailData.ColorProviders)
         {
+            var info = provider.GetColorInfo(colorScheme);
             if (info.ApplyToVertexColor) color = info.Color;
             materialPropertyBlock.SetColor(info.PropertyName, info.Color);
             meshRenderer.SetPropertyBlock(materialPropertyBlock, info.MaterialIndex);
