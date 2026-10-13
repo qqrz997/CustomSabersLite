@@ -105,6 +105,8 @@ internal class StaticPreviewTrail
             materialPropertyBlock.SetColor(info.PropertyName, info.Color);
             meshRenderer.SetPropertyBlock(materialPropertyBlock, info.MaterialIndex);
         }
+        
+        UpdateMesh();
     }
 
     private void ClearPropertyBlock()
