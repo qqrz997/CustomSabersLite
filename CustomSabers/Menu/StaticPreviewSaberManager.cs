@@ -20,10 +20,10 @@ internal class StaticPreviewSaberManager
         rightSaber.ReplaceSaber(saberSet.RightSaber);
     }
 
-    public void SetColor(Color left, Color right)
+    public void SetColor(ColorScheme colorScheme)
     {
-        leftSaber.SetColor(left);
-        rightSaber.SetColor(right);
+        leftSaber.SetColor(colorScheme);
+        rightSaber.SetColor(colorScheme);
     }
 
     public void UpdateSaberScale(float length, float width)
